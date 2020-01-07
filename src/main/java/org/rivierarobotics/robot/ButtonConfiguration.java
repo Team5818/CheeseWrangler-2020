@@ -24,11 +24,16 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.AutoDrive;
 import org.rivierarobotics.commands.DriveModeSwap;
 
+/**
+ * A basic configuration of buttons based on the Joystick/GenericHID platform
+ */
 public class ButtonConfiguration {
     public static void init() {
+        // swaps the driving mode
         JoystickButton changeDriveMode = new JoystickButton(Robot.runningRobot.buttons, 1);
         changeDriveMode.whenPressed(new DriveModeSwap());
 
+        // automatically goes forwards 24 inches on press, back 24 on release
         JoystickButton autoForward = new JoystickButton(Robot.runningRobot.buttons, 2);
         autoForward.whenPressed(new AutoDrive(24));
         autoForward.whenReleased(new AutoDrive(-24));

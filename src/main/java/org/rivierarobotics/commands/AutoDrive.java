@@ -25,16 +25,27 @@ import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.DriveTrainSide;
 
+/**
+ * An instance of InstantCommand because the setpoint only needs to be applied once
+ */
 public class AutoDrive extends InstantCommand {
     private final DriveTrain driveTrain;
     private final double distance;
 
+    /**
+     * The primary constructor for the autonomous distance travel, customizable to different distances through parameters
+     * @param inches the distance desired to travel over the course of the command
+     */
     public AutoDrive(double inches) {
         this.distance = inches;
         this.driveTrain = Robot.runningRobot.driveTrain;
         addRequirements(driveTrain);
     }
 
+    /**
+     * Block only runs once. The position for one side may be different than that of the other,
+     * so the position sets must be relative to each side's current absolute position.
+     */
     @Override
     public void execute() {
         DriveTrainSide left = driveTrain.getLeft(), right = driveTrain.getRight();
