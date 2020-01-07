@@ -1,5 +1,5 @@
 /*
- * This file is part of GradleRIO-Redux-example, licensed under the GNU General Public License (GPLv3).
+ * This file is part of PracticeBot-2020-example, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
