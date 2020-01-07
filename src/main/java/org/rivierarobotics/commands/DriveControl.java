@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.MathUtil;
 
 public class DriveControl extends CommandBase {
     private final DriveTrain driveTrain;
@@ -40,7 +41,8 @@ public class DriveControl extends CommandBase {
     public void execute() {
         if(Robot.runningRobot.isArcade) {
             double left, right;
-            double x = leftJs.getX(), y = leftJs.getY();
+            double x = MathUtil.fitDeadband(leftJs.getX());
+            double y = MathUtil.fitDeadband(leftJs.getY());
             if (y >= 0) {
                 left = y+x;
                 right = y-x;

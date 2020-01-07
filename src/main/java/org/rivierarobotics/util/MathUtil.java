@@ -21,4 +21,24 @@
 package org.rivierarobotics.util;
 
 public class MathUtil {
+    private static final double deadband = 0.08;
+
+    public static double fitDeadband(double val) {
+        if (!(Math.abs(val) < deadband)) {
+            if (val > 0) {
+                if (val >= 1) {
+                    return 1;
+                } else {
+                    return val - deadband;
+                }
+            } else if (val < 0) {
+                if (val <= -1) {
+                    return -1;
+                } else {
+                    return val + deadband;
+                }
+            }
+        }
+        return 0;
+    }
 }
