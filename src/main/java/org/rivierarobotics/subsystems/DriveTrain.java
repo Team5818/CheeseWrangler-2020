@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.RobotMap;
 
@@ -28,43 +27,52 @@ import org.rivierarobotics.util.RobotMap;
  * The DriveTrain subsystem, which consists of two DriveTrainSide(s) (left and right)
  * Each side has three motors in talon/spark/spark orientation, each set being controlled together.
  */
-public class DriveTrain extends SubsystemBase {
-    private final DriveTrainSide left, right;
+public class DriveTrain extends SubsystemBase
+{
+	private final DriveTrainSide left, right;
 
-    /**
-     * The default constructor which initializes both DriveTrainSides (left and right)
-     * Uses motor controller ID and inversion mappings from RobotMap
-     */
-    public DriveTrain() {
-        this.left = new DriveTrainSide(RobotMap.LEFT_TALON_MASTER, RobotMap.LEFT_SPARK_SLAVE_ONE,
-                RobotMap.LEFT_SPARK_SLAVE_TWO, RobotMap.LEFT_INVERT);
-        this.right = new DriveTrainSide(RobotMap.RIGHT_TALON_MASTER, RobotMap.RIGHT_SPARK_SLAVE_ONE,
-                RobotMap.RIGHT_SPARK_SLAVE_TWO, RobotMap.RIGHT_INVERT);
-    }
+	/**
+	 * The default constructor which initializes both DriveTrainSides (left and right)
+	 * Uses motor controller ID and inversion mappings from RobotMap
+	 */
+	public DriveTrain()
+	{
+		this.left = new DriveTrainSide(RobotMap.LEFT_TALON_MASTER, RobotMap.LEFT_SPARK_SLAVE_ONE,
+				RobotMap.LEFT_SPARK_SLAVE_TWO, RobotMap.LEFT_INVERT);
+		this.right = new DriveTrainSide(RobotMap.RIGHT_TALON_MASTER, RobotMap.RIGHT_SPARK_SLAVE_ONE,
+				RobotMap.RIGHT_SPARK_SLAVE_TWO, RobotMap.RIGHT_INVERT);
+		//setDefaultCommand(new DriveControl());
+	}
 
-    /**
-     * Splits power from a single method call in DriveTrain to each DriveTrainSide independently
-     * @param l the power desired to be applied to the left DriveTrainSide
-     * @param r the power desired to be applied to the right DriveTrainSide
-     */
-    public void setPower(double l, double r) {
-        left.setPower(l);
-        right.setPower(r);
-    }
+	/**
+	 * Splits power from a single method call in DriveTrain to each DriveTrainSide independently
+	 *
+	 * @param l the power desired to be applied to the left DriveTrainSide
+	 * @param r the power desired to be applied to the right DriveTrainSide
+	 */
+	public void setPower(double l, double r)
+	{
+		left.setPower(l);
+		right.setPower(r);
+	}
 
-    /**
-     * A utility method to get the left side for use without making a public variable
-     * @return the left DriveTrainSide object
-     */
-    public DriveTrainSide getLeft() {
-        return left;
-    }
+	/**
+	 * A utility method to get the left side for use without making a public variable
+	 *
+	 * @return the left DriveTrainSide object
+	 */
+	public DriveTrainSide getLeft()
+	{
+		return left;
+	}
 
-    /**
-     * A utility method to get the right side for use without making a public variable
-     * @return the right DriveTrainSide object
-     */
-    public DriveTrainSide getRight() {
-        return right;
-    }
+	/**
+	 * A utility method to get the right side for use without making a public variable
+	 *
+	 * @return the right DriveTrainSide object
+	 */
+	public DriveTrainSide getRight()
+	{
+		return right;
+	}
 }

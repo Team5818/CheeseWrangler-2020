@@ -28,9 +28,11 @@ import org.rivierarobotics.robot.Robot;
  * Stored by the instance variable isArcade in the current running robot
  * Only needs to be run once (hence InstantCommand which only runs once) to invert a boolean
  */
-public class DriveModeSwap extends InstantCommand {
-    @Override
-    public void execute() {
-        Robot.runningRobot.isArcade = !Robot.runningRobot.isArcade;
-    }
+public class DriveModeSwap extends InstantCommand
+{
+	@Override
+	public void execute()
+	{
+		Robot.runningRobot.isArcade = !Robot.runningRobot.isArcade;
+	}
 }
