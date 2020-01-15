@@ -20,40 +20,25 @@
 
 package org.rivierarobotics.util;
 
-public class MathUtil
-{
-	private static final double deadband = 0.08;
+public class MathUtil {
+    private static final double deadband = 0.08;
 
-	/**
-	 * Limits a value to between a deadband value and one in the positive direction, the opposite in the negative
-	 *
-	 * @param val the input to fit to a deadband
-	 * @return the input "val" fitted to between a parameter and maximum/minimum
-	 */
-	public static double fitDeadband(double val)
-	{
-		if(!(Math.abs(val) < deadband))
-		{
-			if(val > 0)
-			{
-				if(val >= 1)
-				{
-					return 1;
-				} else
-				{
-					return val - deadband;
-				}
-			} else if(val < 0)
-			{
-				if(val <= -1)
-				{
-					return -1;
-				} else
-				{
-					return val + deadband;
-				}
-			}
-		}
-		return 0;
-	}
+    public static double fitDeadband(double val) {
+        if (!(Math.abs(val) < deadband)) {
+            if (val > 0) {
+                if (val >= 1) {
+                    return 1;
+                } else {
+                    return val - deadband;
+                }
+            } else if (val < 0) {
+                if (val <= -1) {
+                    return -1;
+                } else {
+                    return val + deadband;
+                }
+            }
+        }
+        return 0;
+    }
 }

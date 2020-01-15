@@ -25,26 +25,21 @@ import org.rivierarobotics.commands.AutoDrive;
 import org.rivierarobotics.commands.DriveModeSwap;
 import org.rivierarobotics.commands.SetTurretPosition;
 
-/**
- * A basic configuration of buttons based on the Joystick/GenericHID platform
- */
-public class ButtonConfiguration
-{
-	public static void init()
-	{
-		// swaps the driving mode
+public class ButtonConfiguration {
+    public static void init() {
+        // swaps the driving mode
 //		JoystickButton changeDriveMode = new JoystickButton(Robot.runningRobot.coDriverRightJs, 1);
 //		changeDriveMode.whenPressed(new DriveModeSwap());
 
-		// automatically goes forwards 24 inches on press, back 24 on release
+        // automatically goes forwards 24 inches on press, back 24 on release
 //		JoystickButton autoForward = new JoystickButton(Robot.runningRobot.coDriverRightJs, 2);
 //		autoForward.whenPressed(new AutoDrive(24));
 //		autoForward.whenReleased(new AutoDrive(-24));
 
-		var firstPos = new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1);
-		firstPos.whenPressed(new SetTurretPosition(Robot.runningRobot.turret, 0));
-		var secondPos = new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2);
-		secondPos.whenPressed(new SetTurretPosition(Robot.runningRobot.turret, 2048));
+        var firstPos = new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1);
+        firstPos.whenPressed(new SetTurretPosition(Robot.runningRobot.turret, 0));
+        var secondPos = new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2);
+        secondPos.whenPressed(new SetTurretPosition(Robot.runningRobot.turret, 2048));
 
         /*
         // Should extend and retract piston?
@@ -52,5 +47,5 @@ public class ButtonConfiguration
         controlPiston.whenPressed(new PistonControl(true));
         controlPiston.whenReleased(new PistonControl(false));
          */
-	}
+    }
 }

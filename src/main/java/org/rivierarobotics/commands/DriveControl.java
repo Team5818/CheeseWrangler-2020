@@ -26,66 +26,54 @@ import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
 
-/**
- * A command for active manual driving of the bot by a driver
- * Perpetuated throughout the course of the period of the Scheduler's activity
- * Retrieves control and movement object instances from the Robot class to use
- * Requires the use of the DriveTrain
- */
-public class DriveControl extends CommandBase
-{
-	private final DriveTrain driveTrain;
-	private final Joystick leftJs, rightJs;
+public class DriveControl extends CommandBase {
+    private final DriveTrain driveTrain;
+    private final Joystick leftJs, rightJs;
 
-	/**
-	 * Initializes local fields with runningRobot instances of DriveTrain and Joystick (x2)
-	 * Sets DriveTrain as requirement for this command
-	 */
-	public DriveControl()
-	{
-		this.driveTrain = Robot.runningRobot.driveTrain;
-		this.leftJs = Robot.runningRobot.driverLeftJs;
-		this.rightJs = Robot.runningRobot.driverRightJs;
-		addRequirements(driveTrain);
-	}
+    public DriveControl(DriveTrain driveTrain) {
+        this.driveTrain = driveTrain;
+        this.leftJs = Robot.runningRobot.driverLeftJs;
+        this.rightJs = Robot.runningRobot.driverRightJs;
+        addRequirements(driveTrain);
+    }
 
-	/**
-	 * Runs repeatedly throughout the course of the
-	 */
-	@Override
-	public void execute()
-	{
-		if(Robot.runningRobot.isArcade)
-		{
-			double left, right;
-			double x = MathUtil.fitDeadband(leftJs.getX());
-			double y = MathUtil.fitDeadband(leftJs.getY());
-			if(y >= 0)
-			{
-				left = y + x;
-				right = y - x;
-			} else
-			{
-				left = y - x;
-				right = y + x;
-			}
-			driveTrain.setPower(left, right);
-		} else
-		{
-			driveTrain.setPower(leftJs.getY(), rightJs.getY());
-		}
+    @Override
+    public void execute() {
+        if (Robot.runningRobot.isArcade) {
+            double x = MathUtil.fitDeadband(rightJs.getX());
+            double y = MathUtil.fitDeadband(leftJs.getY());
+            double left, right;
 
-	}
+            double max = Math.max(Math.abs(x), Math.abs(y));
+            double diff = y - x;
+            double sum = y + x;
+            if (y > 0) {
+               if (x > 0) {
+                   left = max;
+                   right = diff;
+               } else {
+                   left = sum;
+                   right = max;
+               }
+            } else {
+                if (x > 0) {
+                    left = sum;
+                    right = -max;
+                } else {
+                    left = -max;
+                    right = diff;
+                }
+            }
 
-	/**
-	 * The command should never finish because it's always needed to control the bot,
-	 * hence returning false all the time would prevent it from ever finishing
-	 *
-	 * @return if the command has finished - always false
-	 */
-	@Override
-	public boolean isFinished()
-	{
-		return false;
-	}
+            driveTrain.setPower(left, right);
+        } else {
+            driveTrain.setPower(leftJs.getY(), rightJs.getY());
+        }
+
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }
