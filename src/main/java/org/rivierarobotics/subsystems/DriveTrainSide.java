@@ -30,6 +30,7 @@ public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
     private final PIDController pidLoop;
+    //TODO tune drive PID and determine ticks to inches factor
     private final double kP = 0.0005, kI = 0.0, kD = 0.0, ticksToInches = 1 / 1;
 
     public DriveTrainSide(int master, int slaveOne, int slaveTwo, boolean invert) {
@@ -42,15 +43,13 @@ public class DriveTrainSide {
         sparkSlaveOne.setInverted(!invert);
         sparkSlaveTwo.setInverted(!invert);
 
+        //TODO switch to NeutralIdleMode based mode set
         masterTalon.setNeutralMode(NeutralMode.Brake);
         sparkSlaveOne.setIdleMode(CANSparkMax.IdleMode.kBrake);
         sparkSlaveTwo.setIdleMode(CANSparkMax.IdleMode.kBrake);
     }
 
     public void setPower(double pwr) {
-        if (!pidLoop.atSetpoint()) {
-            pwr = pidLoop.calculate(getPositionTicks());
-        }
         masterTalon.set(pwr);
         sparkSlaveOne.set(pwr);
         sparkSlaveTwo.set(pwr);

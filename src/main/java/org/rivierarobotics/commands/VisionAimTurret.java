@@ -27,10 +27,8 @@ public class VisionAimTurret extends CommandBase {
         getShuffleboardEntry("Y Offset").setDouble(ty);
 
         if(tv == 1) {
-            //TODO split turret and hood/flywheel into separate subsystems with their own PID loops
             //TODO translate ty into hood movement in degrees
             //TODO incorporate ticks to degrees in subsytems, standardize calls
-            //TODO setHoodPosition should be setPosition if on separate subsystems
 
             double TICKS_TO_DEGREES = 4096.0 / 360;
             turret.setHoodPosition(turret.getPosition() + TICKS_TO_DEGREES * ty);

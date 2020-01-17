@@ -33,6 +33,9 @@ public class Turret extends SubsystemBase {
         setDefaultCommand(new TurretControlPrototype(this));
         entry = Shuffleboard.getTab("Turret")
                 .addNumber("Position", this::getPosition);
+        //TODO split turret and hood/flywheel into separate subsystems with their own PID loops
+        //TODO base both subsystems on BasePIDSubsystem & cleanup
+        //TODO setHoodPosition should be setPosition if on separate subsystems
     }
 
     public void rotateTurret(double power) {

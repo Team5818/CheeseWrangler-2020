@@ -27,6 +27,8 @@ import org.rivierarobotics.commands.SetTurretPosition;
 
 public class ButtonConfiguration {
     public static void init() {
+        //TODO switch over to JSBChain buttons and clean this up
+
         // swaps the driving mode
 //		JoystickButton changeDriveMode = new JoystickButton(Robot.runningRobot.coDriverRightJs, 1);
 //		changeDriveMode.whenPressed(new DriveModeSwap());
