@@ -46,5 +46,9 @@ public class Hood extends BasePIDSubsystem {
         super.setPosition(position);
     }
 
+    public void tickPID() {
+        super.tickPid();
+    }
+
 
 }

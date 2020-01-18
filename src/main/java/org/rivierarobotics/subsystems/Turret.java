@@ -33,7 +33,9 @@ public class Turret extends BasePIDSubsystem {
         this.power.setNumber(power);
         setPower(power);
     }
-
+    public void tickPID(){
+        super.tickPid();
+    }
 
     public double getPosition() {
         var pos = turretTalon.getSensorCollection().getPulseWidthPosition();

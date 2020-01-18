@@ -65,6 +65,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         if (!isDisabled()) {
             turret.tickPID();
+            hood.tickPID();
         }
     }
 

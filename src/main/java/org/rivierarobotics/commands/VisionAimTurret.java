@@ -30,8 +30,6 @@ public class VisionAimTurret extends CommandBase {
         getShuffleboardEntry("Y Offset").setDouble(ty);
 
         if(tv == 1) {
-            //TODO translate ty into hood movement in degrees
-            //TODO incorporate ticks to degrees in subsytems, standardize calls
 
             double TICKS_TO_DEGREES = 4096.0/360;
             hood.setPosition(hood.getPosition() + TICKS_TO_DEGREES * ty);
