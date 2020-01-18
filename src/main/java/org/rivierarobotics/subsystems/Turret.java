@@ -16,21 +16,16 @@ public class Turret extends SubsystemBase {
     private final NetworkTableEntry power = Shuffleboard.getTab("Turret")
             .add("Power", 0.0).getEntry();
     private final WPI_TalonSRX turretTalon;
-    private final WPI_TalonSRX hoodTalon;
-    private final WPI_TalonSRX flywheelTalon;
     private final PIDController pidController;
 
     public Turret() {
         turretTalon = new WPI_TalonSRX(RobotMap.TURRET_TALON);
-        hoodTalon = new WPI_TalonSRX(RobotMap.HOOD_TALON);
-        flywheelTalon = new WPI_TalonSRX(RobotMap.FLYWHEEL_TALON);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         turretTalon.configFeedbackNotContinuous(false, 10);
         pidController = new PIDController(0.0004, 0, 0.0001);
-//		pidController.enableContinuousInput(0, 4095);
-        setDefaultCommand(new TurretControlPrototype(this));
+		//pidController.enableContinuousInput(0, 4095);
         entry = Shuffleboard.getTab("Turret")
                 .addNumber("Position", this::getPosition);
         //TODO split turret and hood/flywheel into separate subsystems with their own PID loops
@@ -43,13 +38,6 @@ public class Turret extends SubsystemBase {
         turretTalon.set(power);
     }
 
-    public void setHoodPosition(double power) {
-        hoodTalon.set(power / 2);
-    }
-
-    public void setFlywheelPower(double power) {
-        flywheelTalon.set(power);
-    }
 
     public int getPosition() {
         var pos = turretTalon.getSensorCollection().getPulseWidthPosition();

@@ -3,16 +3,19 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 
 public class TurretControlPrototype extends CommandBase {
     private final Turret turr;
+    private final Hood ho;
     private final Joystick leftCoDriverJs;
 
-    public TurretControlPrototype(Turret turr) {
+    public TurretControlPrototype(Turret turr, Hood ho) {
 
         addRequirements(turr);
+        this.ho = ho;
         this.turr = turr;
         leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
     }
@@ -20,7 +23,7 @@ public class TurretControlPrototype extends CommandBase {
     @Override
     public void execute() {
         turr.rotateTurret(MathUtil.fitDeadband(leftCoDriverJs.getX()));
-        turr.setHoodPosition(MathUtil.fitDeadband(leftCoDriverJs.getY()));
-        turr.setFlywheelPower(MathUtil.fitDeadband(leftCoDriverJs.getTwist()));
+        ho.setHoodPosition(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+        ho.setFlywheelPower(MathUtil.fitDeadband(leftCoDriverJs.getTwist()));
     }
 }

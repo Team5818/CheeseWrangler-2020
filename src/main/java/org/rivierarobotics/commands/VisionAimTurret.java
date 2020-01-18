@@ -4,15 +4,18 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionUtils;
 
 public class VisionAimTurret extends CommandBase {
     private final ShuffleboardTab vision = Shuffleboard.getTab("vision");
     private Turret turret;
+    private Hood hood;
 
     public VisionAimTurret(Turret turret) {
         this.turret = turret;
+        this.hood = hood;
         addRequirements(turret);
     }
 
@@ -30,8 +33,8 @@ public class VisionAimTurret extends CommandBase {
             //TODO translate ty into hood movement in degrees
             //TODO incorporate ticks to degrees in subsytems, standardize calls
 
-            double TICKS_TO_DEGREES = 4096.0 / 360;
-            turret.setHoodPosition(turret.getPosition() + TICKS_TO_DEGREES * ty);
+            double TICKS_TO_DEGREES = 4096.0/360;
+            hood.setHoodPosition(turret.getPosition() + TICKS_TO_DEGREES * ty);
             turret.setPosition((int) (turret.getPosition() + TICKS_TO_DEGREES * tx));
         }
     }
