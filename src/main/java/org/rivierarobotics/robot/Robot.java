@@ -1,5 +1,5 @@
 /*
- * This file is part of PracticeBot-2020-example, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.RobotMap;
 
@@ -38,15 +39,17 @@ public class Robot extends TimedRobot {
 
     public Robot() {
         runningRobot = this;
+
         this.driverLeftJs = new Joystick(RobotMap.DRIVER_LEFT_JS);
         this.driverRightJs = new Joystick(RobotMap.DRIVER_RIGHT_JS);
         this.coDriverLeftJs = new Joystick(RobotMap.CODRIVER_LEFT_JS);
         this.coDriverRightJs = new Joystick(RobotMap.CODRIVER_RIGHT_JS);
+
         this.driveTrain = new DriveTrain();
         this.hood = new Hood();
         this.flywheel = new Flywheel();
-        this.pistonController = new PistonController();
         this.turret = new Turret();
+        this.pistonController = new PistonController();
     }
 
     @Override
@@ -65,10 +68,14 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        if (!isDisabled()) {
-            turret.tickPID();
-            hood.tickPID();
-        }
+        selectiveTickPid(turret);
+        selectiveTickPid(hood);
+        selectiveTickPid(flywheel);
     }
 
+    private void selectiveTickPid(BasePIDSubsystem subsystem) {
+        if(subsystem.getPidController().atSetpoint()) {
+            subsystem.tickPid();
+        }
+    }
 }

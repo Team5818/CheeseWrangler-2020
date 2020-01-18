@@ -1,5 +1,5 @@
 /*
- * This file is part of PracticeBot-2020-example, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
@@ -31,8 +30,7 @@ public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
     private final PIDController pidLoop;
-    //TODO change ticksToInches when necessary
-    private final double kP = 0.0005, kI = 0.0, kD = 0.0, ticksToInches = 4096 / (4*Math.PI);
+    private final double kP = 0.0005, kI = 0.0, kD = 0.0, ticksToInches = 4096 / (4 * Math.PI);
 
     public DriveTrainSide(int master, int slaveOne, int slaveTwo, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(master);
@@ -40,12 +38,10 @@ public class DriveTrainSide {
         this.sparkSlaveTwo = new CANSparkMax(slaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.pidLoop = new PIDController(kP, kI, kD);
 
+        NeutralIdleMode.BRAKE.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
         masterTalon.setInverted(invert);
         sparkSlaveOne.setInverted(!invert);
         sparkSlaveTwo.setInverted(!invert);
-
-        NeutralIdleMode.BRAKE.applyTo(masterTalon, sparkSlaveOne,sparkSlaveTwo);
-
     }
 
     public void setPower(double pwr) {

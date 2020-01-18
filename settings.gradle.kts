@@ -1,1 +1,1 @@
-rootProject.name = "PracticeBot-2020-example"
+rootProject.name = "Placeholder-2020"

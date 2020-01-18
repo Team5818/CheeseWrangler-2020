@@ -22,23 +22,20 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainSide;
+import org.rivierarobotics.subsystems.Flywheel;
 
-public class AutoDrive extends InstantCommand {
-    private final DriveTrain driveTrain;
-    private final double distance;
+public class FlywheelSetVelocity extends InstantCommand {
+    private final Flywheel flywheel;
+    private final double velocity;
 
-    public AutoDrive(double inches) {
-        this.distance = inches;
-        this.driveTrain = Robot.runningRobot.driveTrain;
-        addRequirements(driveTrain);
+    public FlywheelSetVelocity(double velocity) {
+        this.flywheel = Robot.runningRobot.flywheel;
+        this.velocity = velocity;
+        addRequirements(flywheel);
     }
 
     @Override
     public void execute() {
-        DriveTrainSide left = driveTrain.getLeft(), right = driveTrain.getRight();
-        left.setPosition(left.getPositionInches() + distance);
-        right.setPosition(right.getPositionInches() + distance);
+        flywheel.setPosition(velocity);
     }
 }

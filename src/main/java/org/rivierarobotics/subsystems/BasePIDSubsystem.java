@@ -1,32 +1,40 @@
+/*
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
-    private PIDController pidController;
     private final double pidRange, ticksToAngleOrInches;
+    private PIDController pidController;
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double ticksToAngleOrInches) {
-        this(kP, kI, kD, pidRange, ticksToAngleOrInches, false, 0, 0);
-    }
-
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double ticksToAngleOrInches,
-                            boolean enableContinuous, int minContinuous, int maxContinuous) {
         this.pidController = new PIDController(kP, kI, kD);
         this.pidRange = pidRange;
         this.ticksToAngleOrInches = ticksToAngleOrInches;
-        if(enableContinuous) {
-            pidController.enableContinuousInput(minContinuous, maxContinuous);
-        }
-    }
-
-    public void setPosition(double position) {
-        pidController.setSetpoint(position * ticksToAngleOrInches);
     }
 
     public void tickPid() {
-        double pwr = pidController.calculate(getPosition());
+        double pwr = pidController.calculate(getPositionTicks());
         setPower(Math.min(pidRange, Math.max(-pidRange, pwr)));
     }
 
@@ -34,11 +42,15 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         return pidController;
     }
 
-    public double getPositionInches() {
-        return getPosition() / ticksToAngleOrInches;
+    public double getPosition() {
+        return getPositionTicks() / ticksToAngleOrInches;
     }
 
-    public abstract double getPosition();
+    public void setPosition(double position) {
+        pidController.setSetpoint(position * ticksToAngleOrInches);
+    }
+
+    public abstract double getPositionTicks();
 
     public abstract void setPower(double pwr);
 }

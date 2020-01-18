@@ -1,5 +1,5 @@
 /*
- * This file is part of PracticeBot-2020-example, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -48,13 +48,13 @@ public class DriveControl extends CommandBase {
             double diff = y - x;
             double sum = y + x;
             if (y > 0) {
-               if (x > 0) {
-                   left = max;
-                   right = diff;
-               } else {
-                   left = sum;
-                   right = max;
-               }
+                if (x > 0) {
+                    left = max;
+                    right = diff;
+                } else {
+                    left = sum;
+                    right = max;
+                }
             } else {
                 if (x > 0) {
                     left = sum;

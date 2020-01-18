@@ -1,5 +1,5 @@
 /*
- * This file is part of PracticeBot-2020-example, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -22,6 +22,8 @@ package org.rivierarobotics.util;
 
 public class MathUtil {
     private static final double deadband = 0.08;
+
+    private MathUtil() { }
 
     public static double fitDeadband(double val) {
         if (!(Math.abs(val) < deadband)) {

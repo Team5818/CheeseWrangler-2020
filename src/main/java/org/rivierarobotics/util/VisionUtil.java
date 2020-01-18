@@ -18,27 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainSide;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class AutoDrive extends InstantCommand {
-    private final DriveTrain driveTrain;
-    private final double distance;
+public class VisionUtil {
+    private static final double LLAngle = 0, LLHeight = 10, targetHeight = 20;
+    public static NetworkTable LIMELIGHT = NetworkTableInstance.getDefault().getTable("limelight");
 
-    public AutoDrive(double inches) {
-        this.distance = inches;
-        this.driveTrain = Robot.runningRobot.driveTrain;
-        addRequirements(driveTrain);
+    private VisionUtil() { }
+
+    public static double getLLValue(String key) {
+        return LIMELIGHT.getEntry(key).getDouble(0);
     }
 
-    @Override
-    public void execute() {
-        DriveTrainSide left = driveTrain.getLeft(), right = driveTrain.getRight();
-        left.setPosition(left.getPositionInches() + distance);
-        right.setPosition(right.getPositionInches() + distance);
+    public static double getDistanceToTarget() {
+        if (getLLValue("tv") == 1) {
+            return (targetHeight - LLHeight) / Math.tan(LLAngle + getLLValue("ty"));
+        } else {
+            return -1;
+        }
     }
 }
