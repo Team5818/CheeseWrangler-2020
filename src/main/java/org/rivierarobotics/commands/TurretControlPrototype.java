@@ -23,7 +23,7 @@ public class TurretControlPrototype extends CommandBase {
     @Override
     public void execute() {
         turr.rotateTurret(MathUtil.fitDeadband(leftCoDriverJs.getX()));
-        ho.setHoodPosition(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+        ho.setPosition(MathUtil.fitDeadband(leftCoDriverJs.getY()));
         ho.setFlywheelPower(MathUtil.fitDeadband(leftCoDriverJs.getTwist()));
     }
 }

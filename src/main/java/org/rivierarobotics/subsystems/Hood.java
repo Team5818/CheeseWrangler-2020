@@ -10,7 +10,6 @@ public class Hood extends BasePIDSubsystem {
 
     private final WPI_TalonSRX hoodTalon;
     private final WPI_TalonSRX flywheelTalon;
-    private final PIDController pidController;
 
 
     public Hood() {
@@ -21,7 +20,6 @@ public class Hood extends BasePIDSubsystem {
         hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         hoodTalon.configFeedbackNotContinuous(false, 10);
         flywheelTalon = new WPI_TalonSRX(RobotMap.FLYWHEEL_TALON);
-        pidController = new PIDController(0.0004, 0, 0.0001);
 
     }
 
@@ -32,11 +30,11 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public void setPower(double pwr) {
-
+        hoodTalon.set(pwr);
     }
 
 
-    public void setHoodPosition(double power) {
+    public void setPosition(double power) {
         hoodTalon.set(power / 2);
     }
 
@@ -45,7 +43,7 @@ public class Hood extends BasePIDSubsystem {
     }
 
     public void setPosition(int position) {
-        pidController.setSetpoint(position);
+        super.setPosition(position);
     }
 
 

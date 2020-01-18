@@ -34,7 +34,7 @@ public class VisionAimTurret extends CommandBase {
             //TODO incorporate ticks to degrees in subsytems, standardize calls
 
             double TICKS_TO_DEGREES = 4096.0/360;
-            hood.setHoodPosition(turret.getPosition() + TICKS_TO_DEGREES * ty);
+            hood.setPosition(hood.getPosition() + TICKS_TO_DEGREES * ty);
             turret.setPosition((int) (turret.getPosition() + TICKS_TO_DEGREES * tx));
         }
     }
