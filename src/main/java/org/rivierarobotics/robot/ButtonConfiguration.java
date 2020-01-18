@@ -20,34 +20,8 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.AutoDrive;
-import org.rivierarobotics.commands.DriveModeSwap;
-import org.rivierarobotics.commands.SetTurretPosition;
-
 public class ButtonConfiguration {
     public static void init() {
-        //TODO switch over to JSBChain buttons and clean this up
 
-        // swaps the driving mode
-//		JoystickButton changeDriveMode = new JoystickButton(Robot.runningRobot.coDriverRightJs, 1);
-//		changeDriveMode.whenPressed(new DriveModeSwap());
-
-        // automatically goes forwards 24 inches on press, back 24 on release
-//		JoystickButton autoForward = new JoystickButton(Robot.runningRobot.coDriverRightJs, 2);
-//		autoForward.whenPressed(new AutoDrive(24));
-//		autoForward.whenReleased(new AutoDrive(-24));
-
-        var firstPos = new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1);
-        firstPos.whenPressed(new SetTurretPosition(Robot.runningRobot.turret, 0));
-        var secondPos = new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2);
-        secondPos.whenPressed(new SetTurretPosition(Robot.runningRobot.turret, 2048));
-
-        /*
-        // Should extend and retract piston?
-        JoystickButton controlPiston = new JoystickButton(Robot.runningRobot.buttons, 3);
-        controlPiston.whenPressed(new PistonControl(true));
-        controlPiston.whenReleased(new PistonControl(false));
-         */
     }
 }
