@@ -9,7 +9,6 @@ import org.rivierarobotics.util.RobotMap;
 public class Hood extends BasePIDSubsystem {
 
     private final WPI_TalonSRX hoodTalon;
-    private final WPI_TalonSRX flywheelTalon;
 
 
     public Hood() {
@@ -19,12 +18,11 @@ public class Hood extends BasePIDSubsystem {
         hoodTalon.setSensorPhase(false);
         hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         hoodTalon.configFeedbackNotContinuous(false, 10);
-        flywheelTalon = new WPI_TalonSRX(RobotMap.FLYWHEEL_TALON);
 
     }
 
     public double getPosition() {
-        var pos = hoodTalon.getSensorCollection().getPulseWidthPosition();
+        var pos = hoodTalon.getSensorCollection().getQuadratureVelocity();
         return pos;
     }
 
@@ -35,12 +33,9 @@ public class Hood extends BasePIDSubsystem {
 
 
     public void setPosition(double power) {
-        hoodTalon.set(power / 2);
+        hoodTalon.set(power);
     }
 
-    public void setFlywheelPower(double power) {
-        flywheelTalon.set(power);
-    }
 
     public void setPosition(int position) {
         super.setPosition(position);

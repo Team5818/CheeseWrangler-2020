@@ -23,9 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.RobotMap;
 
 public class Robot extends TimedRobot {
@@ -33,6 +31,8 @@ public class Robot extends TimedRobot {
     public final DriveTrain driveTrain;
     public final Turret turret;
     public final Hood hood;
+    public final Flywheel flywheel;
+    public final PistonController pistonController;
     public final Joystick driverLeftJs, driverRightJs, coDriverRightJs, coDriverLeftJs;
     public boolean isArcade = true;
 
@@ -44,6 +44,8 @@ public class Robot extends TimedRobot {
         this.coDriverRightJs = new Joystick(RobotMap.CODRIVER_RIGHT_JS);
         this.driveTrain = new DriveTrain();
         this.hood = new Hood();
+        this.flywheel = new Flywheel();
+        this.pistonController = new PistonController();
         this.turret = new Turret();
     }
 

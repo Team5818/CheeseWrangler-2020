@@ -17,10 +17,8 @@ public class PistonController{
         return null;
     }
 
-    public void extendPiston(Piston piston) {
-        pistonFor(piston).set(true);
-    }
-    public void retractPiston(Piston piston) {
-        pistonFor(piston).set(false);
-    }
+    public void operatePiston(Piston piston, boolean ext) {
+            pistonFor(piston).set(ext);
+        }
+
 }
