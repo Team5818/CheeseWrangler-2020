@@ -28,24 +28,26 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 
-public class TurretControlPrototype extends CommandBase {
+public class TurretControl extends CommandBase {
     private final Turret turret;
     private final Hood hood;
-    private final Flywheel flywheel;
     private final Joystick leftCoDriverJs;
 
-    public TurretControlPrototype(Turret turret, Hood hood, Flywheel flywheel) {
+    public TurretControl(Turret turret, Hood hood) {
         this.hood = hood;
-        this.flywheel = flywheel;
         this.turret = turret;
         this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
-        addRequirements(turret);
+        addRequirements(turret, hood);
     }
 
     @Override
     public void execute() {
         turret.setPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
         hood.setPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
-        flywheel.setPower(MathUtil.fitDeadband(leftCoDriverJs.getTwist()));
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

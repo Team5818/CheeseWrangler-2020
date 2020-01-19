@@ -20,10 +20,21 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.SetTurretPosition;
+import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.subsystems.Turret;
+
 public class ButtonConfiguration {
     private ButtonConfiguration() { }
 
     public static void init() {
-
+        Turret turret = Robot.runningRobot.turret;
+        var button = new JoystickButton(Robot.runningRobot.coDriverLeftJs,1);
+        button.whenPressed(new SetTurretPosition(turret,90));
+        var button2 = new JoystickButton(Robot.runningRobot.coDriverLeftJs,2);
+        button2.whenPressed(new SetTurretPosition(turret,180));
+        var ctrlbtn = new JoystickButton(Robot.runningRobot.coDriverRightJs, 1);
+        ctrlbtn.whenPressed(new TurretControl(turret, Robot.runningRobot.hood));
     }
 }

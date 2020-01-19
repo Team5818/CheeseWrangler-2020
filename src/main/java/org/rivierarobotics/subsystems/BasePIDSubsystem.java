@@ -21,21 +21,24 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
-    private final double pidRange, ticksToAngleOrInches;
+    private final double pidRange, anglesOrInchesToTicks;
     private PIDController pidController;
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double ticksToAngleOrInches) {
+    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double anglesOrInchesToTicks) {
         this.pidController = new PIDController(kP, kI, kD);
         this.pidRange = pidRange;
-        this.ticksToAngleOrInches = ticksToAngleOrInches;
+        this.anglesOrInchesToTicks = anglesOrInchesToTicks;
     }
 
     public void tickPid() {
         double pwr = pidController.calculate(getPositionTicks());
-        setPower(Math.min(pidRange, Math.max(-pidRange, pwr)));
+        double realPower = Math.min(pidRange, Math.max(-pidRange, pwr));
+        SmartDashboard.putNumber("Real Powah: " + getName(), realPower);
+        setPower(realPower);
     }
 
     public final PIDController getPidController() {
@@ -43,11 +46,11 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     public double getPosition() {
-        return getPositionTicks() / ticksToAngleOrInches;
+        return getPositionTicks() / anglesOrInchesToTicks;
     }
 
     public void setPosition(double position) {
-        pidController.setSetpoint(position * ticksToAngleOrInches);
+        pidController.setSetpoint(position * anglesOrInchesToTicks);
     }
 
     public abstract double getPositionTicks();

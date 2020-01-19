@@ -25,9 +25,9 @@ import org.rivierarobotics.subsystems.Turret;
 
 public class SetTurretPosition extends InstantCommand {
     private final Turret turret;
-    private final int position;
+    private final double position;
 
-    public SetTurretPosition(Turret turret, int position) {
+    public SetTurretPosition(Turret turret, double position) {
         this.turret = turret;
         this.position = position;
     }

@@ -34,8 +34,8 @@ public interface RobotMap {
     boolean RIGHT_INVERT = false;
 
     // Turret and Hood
-    int TURRET_TALON = 10;
-    int HOOD_TALON = 11;
+    int TURRET_TALON = 11;
+    int HOOD_TALON = 10;
     int FLYWHEEL_TALON = 7;
 
     // Joysticks

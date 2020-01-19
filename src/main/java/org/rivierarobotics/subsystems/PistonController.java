@@ -23,18 +23,19 @@ package org.rivierarobotics.subsystems;
 import edu.wpi.first.wpilibj.Solenoid;
 
 public class PistonController {
-    private final Solenoid test;
+//    private final Solenoid test;
 
     public PistonController() {
-        test = new Solenoid(0);
+//        test = new Solenoid(0);
     }
 
     private Solenoid pistonFor(Piston piston) {
-        if (piston == Piston.TEST) {
+        /*if (piston == Piston.TEST) {
             return test;
         } else {
             throw new IllegalArgumentException("Piston invalid");
-        }
+        }*/
+        return null;
     }
 
     public void operatePiston(Piston piston, boolean extend) {

@@ -20,28 +20,47 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.util.RobotMap;
 
 public class Turret extends BasePIDSubsystem {
     private final WPI_TalonSRX turretTalon;
+    private final AnalogInput sensor;
 
     public Turret() {
-        super(0.0004, 0, 0.0001, 1.0, 4096.0 / 360);
+        super(0.0004, 0, 0.0, 0.4, 1023.0 / 360);
         turretTalon = new WPI_TalonSRX(RobotMap.TURRET_TALON);
+        sensor = new AnalogInput(0);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
+        turretTalon.configSelectedFeedbackSensor(FeedbackDevice.Analog);
+        getPidController().setTolerance(0);
+        getPidController().enableContinuousInput(0, 1023);
+    }
+
+    @Override
+    public void setPosition(double position) {
+        SmartDashboard.putNumber("turret setpoint", position);
+        SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
+        super.setPosition(position);
     }
 
     @Override
     public double getPositionTicks() {
-        return turretTalon.getSensorCollection().getPulseWidthPosition();
+        double pos = sensor.getAverageValue();
+        SmartDashboard.putNumber("turret pos", pos);
+        return pos;
     }
 
     @Override
     public void setPower(double pwr) {
+        SmartDashboard.putNumber("turret pwr", pwr);
         turretTalon.set(pwr);
+        getPositionTicks();
     }
 }

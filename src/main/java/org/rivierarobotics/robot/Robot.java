@@ -23,7 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.RobotMap;
 
@@ -74,7 +74,7 @@ public class Robot extends TimedRobot {
     }
 
     private void selectiveTickPid(BasePIDSubsystem subsystem) {
-        if(subsystem.getPidController().atSetpoint()) {
+        if (!isDisabled() && !subsystem.getPidController().atSetpoint()) {
             subsystem.tickPid();
         }
     }

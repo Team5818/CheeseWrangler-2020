@@ -28,7 +28,7 @@ public class Hood extends BasePIDSubsystem {
     private final WPI_TalonSRX hoodTalon;
 
     public Hood() {
-        super(0.0004, 0, 0.0001, 1, 4096.0 / 360.0);
+        super(0.0004, 0, 0.0001, 0.4, 4096.0 / 360.0);
         hoodTalon = new WPI_TalonSRX(RobotMap.HOOD_TALON);
         hoodTalon.configFactoryDefault();
         hoodTalon.setNeutralMode(NeutralMode.Brake);
