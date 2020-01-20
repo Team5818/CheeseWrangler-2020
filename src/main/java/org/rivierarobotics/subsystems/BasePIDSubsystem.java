@@ -21,24 +21,46 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.util.Reporting;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
     private final double pidRange, anglesOrInchesToTicks;
+    private final ShuffleboardTab display;
+    private boolean manualOverride = true;
     private PIDController pidController;
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double anglesOrInchesToTicks) {
+    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance) {
+        this(kP, kI, kD, pidRange, tolerance, 4096.0 / 360);
+    }
+
+    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
         this.pidController = new PIDController(kP, kI, kD);
         this.pidRange = pidRange;
+        this.display = Shuffleboard.getTab(getName());
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
+        //TODO figure out what tolerance values work, or if zero is good with just some PID tuning
+        // remove the tolerance parameter if zero is fine (set to 0 by default)
+        pidController.setTolerance(tolerance);
+
+        //TODO test if both types of statistic reporting work for all subsystems
+        display.addNumber("Position Ticks", this::getPositionTicks);
+        display.addNumber("Position Degrees/Inches", this::getPosition);
+        display.addNumber("Setpoint", pidController::getSetpoint);
+        display.addBoolean("At Setpoint", pidController::atSetpoint);
     }
 
     public void tickPid() {
-        double pwr = pidController.calculate(getPositionTicks());
-        double realPower = Math.min(pidRange, Math.max(-pidRange, pwr));
-        SmartDashboard.putNumber("Real Powah: " + getName(), realPower);
-        setPower(realPower);
+        double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
+        //TODO test if manual override works (any manual js overrides/resets setpoint, no jittering)
+        if(manualOverride) {
+            setPosition(getPosition());
+        } else {
+            Reporting.setOutEntry(display, "PID Power", pidPower);
+            setRawPower(pidPower);
+        }
     }
 
     public final PIDController getPidController() {
@@ -53,7 +75,14 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         pidController.setSetpoint(position * anglesOrInchesToTicks);
     }
 
+    public void setPower(double pwr) {
+        manualOverride = (pwr != 0);
+        Reporting.setOutEntry(display, "Manual Power", pwr);
+        Reporting.setOutEntry(display, "Manual Override", manualOverride);
+        setRawPower(pwr);
+    }
+
     public abstract double getPositionTicks();
 
-    public abstract void setPower(double pwr);
+    protected abstract void setRawPower(double pwr);
 }

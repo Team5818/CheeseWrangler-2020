@@ -20,24 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.Reporting;
 import org.rivierarobotics.util.VisionUtil;
 
 public class VisionAimTurret extends CommandBase {
     private final ShuffleboardTab vision;
-    private Turret turret;
-    private Hood hood;
+    private final Turret turret;
+    private final Hood hood;
 
-    public VisionAimTurret(Turret turret) {
-        vision = Shuffleboard.getTab("vision");
+    public VisionAimTurret(Turret turret, Hood hood) {
+        vision = Shuffleboard.getTab("Vision");
         this.turret = turret;
         this.hood = hood;
-        addRequirements(turret);
+        addRequirements(turret, hood);
     }
 
     @Override
@@ -46,9 +46,9 @@ public class VisionAimTurret extends CommandBase {
         double tx = VisionUtil.getLLValue("tx");
         double ty = VisionUtil.getLLValue("ty");
 
-        getShuffleboardEntry("Valid Target").setBoolean(tv == 1);
-        getShuffleboardEntry("X Offset").setDouble(tx);
-        getShuffleboardEntry("Y Offset").setDouble(ty);
+        Reporting.setOutEntry(vision, "Valid Target", tv == 1);
+        Reporting.setOutEntry(vision, "X Offset", tx);
+        Reporting.setOutEntry(vision, "Y Offset", ty);
 
         if (tv == 1) {
             hood.setPosition(hood.getPosition() + (90 - ty));
@@ -59,9 +59,5 @@ public class VisionAimTurret extends CommandBase {
     @Override
     public boolean isFinished() {
         return false;
-    }
-
-    private NetworkTableEntry getShuffleboardEntry(String key) {
-        return vision.add(key, 0).getEntry();
     }
 }

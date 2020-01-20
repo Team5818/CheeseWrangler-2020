@@ -33,7 +33,7 @@ public class SetTurretPosition extends InstantCommand {
     }
 
     @Override
-    public void initialize() {
+    public void execute() {
         turret.setPosition(position);
     }
 }

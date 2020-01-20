@@ -30,11 +30,11 @@ public class ButtonConfiguration {
 
     public static void init() {
         Turret turret = Robot.runningRobot.turret;
-        var button = new JoystickButton(Robot.runningRobot.coDriverLeftJs,1);
-        button.whenPressed(new SetTurretPosition(turret,90));
-        var button2 = new JoystickButton(Robot.runningRobot.coDriverLeftJs,2);
-        button2.whenPressed(new SetTurretPosition(turret,180));
-        var ctrlbtn = new JoystickButton(Robot.runningRobot.coDriverRightJs, 1);
-        ctrlbtn.whenPressed(new TurretControl(turret, Robot.runningRobot.hood));
+        new JoystickButton(Robot.runningRobot.coDriverLeftJs,1)
+                .whenPressed(new SetTurretPosition(turret,90));
+        new JoystickButton(Robot.runningRobot.coDriverLeftJs,2)
+                .whenPressed(new SetTurretPosition(turret,180));
+        new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
+                .whenPressed(new TurretControl(turret, Robot.runningRobot.hood));
     }
 }

@@ -23,7 +23,6 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.RobotMap;
 
@@ -40,10 +39,10 @@ public class Robot extends TimedRobot {
     public Robot() {
         runningRobot = this;
 
-        this.driverLeftJs = new Joystick(RobotMap.DRIVER_LEFT_JS);
-        this.driverRightJs = new Joystick(RobotMap.DRIVER_RIGHT_JS);
-        this.coDriverLeftJs = new Joystick(RobotMap.CODRIVER_LEFT_JS);
-        this.coDriverRightJs = new Joystick(RobotMap.CODRIVER_RIGHT_JS);
+        this.driverLeftJs = new Joystick(RobotMap.Joysticks.DRIVER_LEFT_JS);
+        this.driverRightJs = new Joystick(RobotMap.Joysticks.DRIVER_RIGHT_JS);
+        this.coDriverLeftJs = new Joystick(RobotMap.Joysticks.CODRIVER_LEFT_JS);
+        this.coDriverRightJs = new Joystick(RobotMap.Joysticks.CODRIVER_RIGHT_JS);
 
         this.driveTrain = new DriveTrain();
         this.hood = new Hood();

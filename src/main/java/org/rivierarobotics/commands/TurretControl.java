@@ -23,7 +23,6 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
@@ -44,6 +43,10 @@ public class TurretControl extends CommandBase {
     public void execute() {
         turret.setPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
         hood.setPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+    }
+
+    @Override
+    public void end(boolean interrupted) {
     }
 
     @Override

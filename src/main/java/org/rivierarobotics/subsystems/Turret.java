@@ -23,44 +23,30 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.util.RobotMap;
 
 public class Turret extends BasePIDSubsystem {
     private final WPI_TalonSRX turretTalon;
-    private final AnalogInput sensor;
 
     public Turret() {
-        super(0.0004, 0, 0.0, 0.4, 1023.0 / 360);
-        turretTalon = new WPI_TalonSRX(RobotMap.TURRET_TALON);
-        sensor = new AnalogInput(0);
+        //TODO tune Turret PID
+        super(0.0004, 0.0, 0.0, 0.4, 0.0);
+        turretTalon = new WPI_TalonSRX(RobotMap.Controllers.TURRET_TALON);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.Analog);
-        getPidController().setTolerance(0);
-        getPidController().enableContinuousInput(0, 1023);
-    }
-
-    @Override
-    public void setPosition(double position) {
-        SmartDashboard.putNumber("turret setpoint", position);
-        SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
-        super.setPosition(position);
+        getPidController().enableContinuousInput(0, 4096);
     }
 
     @Override
     public double getPositionTicks() {
-        double pos = sensor.getAverageValue();
-        SmartDashboard.putNumber("turret pos", pos);
-        return pos;
+        //TODO ensure that this reports correctly: potential fix for digital encoder jumping issues, eliminates some high bits
+        return (turretTalon.getSensorCollection().getPulseWidthRiseToFallUs() - 1024) / 8.0;
     }
 
     @Override
-    public void setPower(double pwr) {
-        SmartDashboard.putNumber("turret pwr", pwr);
+    public void setRawPower(double pwr) {
         turretTalon.set(pwr);
-        getPositionTicks();
     }
 }

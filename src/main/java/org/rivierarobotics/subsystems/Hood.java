@@ -28,19 +28,19 @@ public class Hood extends BasePIDSubsystem {
     private final WPI_TalonSRX hoodTalon;
 
     public Hood() {
-        super(0.0004, 0, 0.0001, 0.4, 4096.0 / 360.0);
-        hoodTalon = new WPI_TalonSRX(RobotMap.HOOD_TALON);
+        super(0.0004, 0, 0.0001, 0.4, 0.0);
+        hoodTalon = new WPI_TalonSRX(RobotMap.Controllers.HOOD_TALON);
         hoodTalon.configFactoryDefault();
         hoodTalon.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
     public double getPositionTicks() {
-        return hoodTalon.getSensorCollection().getQuadratureVelocity();
+        return hoodTalon.getSensorCollection().getPulseWidthPosition();
     }
 
     @Override
-    public void setPower(double pwr) {
+    public void setRawPower(double pwr) {
         hoodTalon.set(pwr);
     }
 }

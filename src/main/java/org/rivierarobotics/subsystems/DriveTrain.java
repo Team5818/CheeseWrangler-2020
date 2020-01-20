@@ -28,10 +28,10 @@ public class DriveTrain extends SubsystemBase {
     private final DriveTrainSide left, right;
 
     public DriveTrain() {
-        this.left = new DriveTrainSide(RobotMap.LEFT_TALON_MASTER, RobotMap.LEFT_SPARK_SLAVE_ONE,
-                RobotMap.LEFT_SPARK_SLAVE_TWO, RobotMap.LEFT_INVERT);
-        this.right = new DriveTrainSide(RobotMap.RIGHT_TALON_MASTER, RobotMap.RIGHT_SPARK_SLAVE_ONE,
-                RobotMap.RIGHT_SPARK_SLAVE_TWO, RobotMap.RIGHT_INVERT);
+        this.left = new DriveTrainSide(RobotMap.DriveTrain.Left.LEFT_TALON_MASTER, RobotMap.DriveTrain.Left.LEFT_SPARK_SLAVE_ONE,
+                RobotMap.DriveTrain.Left.LEFT_SPARK_SLAVE_TWO, RobotMap.DriveTrain.Left.LEFT_INVERT);
+        this.right = new DriveTrainSide(RobotMap.DriveTrain.Right.RIGHT_TALON_MASTER, RobotMap.DriveTrain.Right.RIGHT_SPARK_SLAVE_ONE,
+                RobotMap.DriveTrain.Right.RIGHT_SPARK_SLAVE_TWO, RobotMap.DriveTrain.Right.RIGHT_INVERT);
         setDefaultCommand(new DriveControl(this));
     }
 

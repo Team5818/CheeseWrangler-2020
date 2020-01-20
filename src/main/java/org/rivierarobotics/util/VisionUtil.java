@@ -21,7 +21,9 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class VisionUtil {
     private static final double LLAngle = 0, LLHeight = 10, targetHeight = 20;
