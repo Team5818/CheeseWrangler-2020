@@ -21,6 +21,19 @@
 package org.rivierarobotics.util;
 
 public interface RobotMap {
+    interface Controllers {
+        int TURRET_TALON = 11;
+        int HOOD_TALON = 10;
+        int FLYWHEEL_TALON = 7;
+    }
+
+    interface Joysticks {
+        int DRIVER_LEFT_JS = 0;
+        int DRIVER_RIGHT_JS = 1;
+        int CODRIVER_LEFT_JS = 2;
+        int CODRIVER_RIGHT_JS = 3;
+    }
+
     class DriveTrain {
         public interface Left {
             int LEFT_TALON_MASTER = 1;
@@ -35,19 +48,6 @@ public interface RobotMap {
             int RIGHT_SPARK_SLAVE_TWO = 6;
             boolean RIGHT_INVERT = false;
         }
-    }
-
-    interface Controllers {
-        int TURRET_TALON = 11;
-        int HOOD_TALON = 10;
-        int FLYWHEEL_TALON = 7;
-    }
-
-    interface Joysticks {
-        int DRIVER_LEFT_JS = 0;
-        int DRIVER_RIGHT_JS = 1;
-        int CODRIVER_LEFT_JS = 2;
-        int CODRIVER_RIGHT_JS = 3;
     }
 
 }

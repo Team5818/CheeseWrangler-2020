@@ -23,20 +23,17 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import edu.wpi.first.wpilibj.controller.PIDController;
 import org.rivierarobotics.util.NeutralIdleMode;
 
-public class DriveTrainSide {
+public class DriveTrainSide extends BasePID {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
-    private final PIDController pidLoop;
-    private final double kP = 0.0005, kI = 0.0, kD = 0.0, ticksToInches = 4096 / (4 * Math.PI);
 
     public DriveTrainSide(int master, int slaveOne, int slaveTwo, boolean invert) {
+        super(0.0005, 0.0, 0.0, 1.0, 0.0, 4096 / (4 * Math.PI));
         this.masterTalon = new WPI_TalonSRX(master);
         this.sparkSlaveOne = new CANSparkMax(slaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.sparkSlaveTwo = new CANSparkMax(slaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.pidLoop = new PIDController(kP, kI, kD);
 
         NeutralIdleMode.BRAKE.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
         masterTalon.setInverted(invert);
@@ -44,21 +41,15 @@ public class DriveTrainSide {
         sparkSlaveTwo.setInverted(!invert);
     }
 
+    @Override
     public void setPower(double pwr) {
         masterTalon.set(pwr);
         sparkSlaveOne.set(pwr);
         sparkSlaveTwo.set(pwr);
     }
 
+    @Override
     public double getPositionTicks() {
         return masterTalon.getSensorCollection().getPulseWidthPosition();
-    }
-
-    public double getPositionInches() {
-        return getPositionTicks() / ticksToInches;
-    }
-
-    public void setPosition(double position) {
-        pidLoop.setSetpoint(position * ticksToInches);
     }
 }

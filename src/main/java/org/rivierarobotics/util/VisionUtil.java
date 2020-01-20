@@ -21,15 +21,14 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 public class VisionUtil {
     private static final double LLAngle = 0, LLHeight = 10, targetHeight = 20;
     public static NetworkTable LIMELIGHT = NetworkTableInstance.getDefault().getTable("limelight");
 
-    private VisionUtil() { }
+    private VisionUtil() {
+    }
 
     public static double getLLValue(String key) {
         return LIMELIGHT.getEntry(key).getDouble(0);

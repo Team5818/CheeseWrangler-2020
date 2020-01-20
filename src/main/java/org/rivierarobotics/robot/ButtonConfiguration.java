@@ -26,14 +26,15 @@ import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.subsystems.Turret;
 
 public class ButtonConfiguration {
-    private ButtonConfiguration() { }
+    private ButtonConfiguration() {
+    }
 
     public static void init() {
         Turret turret = Robot.runningRobot.turret;
-        new JoystickButton(Robot.runningRobot.coDriverLeftJs,1)
-                .whenPressed(new SetTurretPosition(turret,90));
-        new JoystickButton(Robot.runningRobot.coDriverLeftJs,2)
-                .whenPressed(new SetTurretPosition(turret,180));
+        new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1)
+                .whenPressed(new SetTurretPosition(turret, 90));
+        new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2)
+                .whenPressed(new SetTurretPosition(turret, 180));
         new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
                 .whenPressed(new TurretControl(turret, Robot.runningRobot.hood));
     }

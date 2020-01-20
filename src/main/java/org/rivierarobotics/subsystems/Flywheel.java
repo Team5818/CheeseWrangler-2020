@@ -22,9 +22,10 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.util.RobotMap;
 
-public class Flywheel extends BasePIDSubsystem {
+public class Flywheel extends BasePID implements Subsystem {
     private final WPI_TalonSRX flywheelTalon;
 
     public Flywheel() {
@@ -42,7 +43,7 @@ public class Flywheel extends BasePIDSubsystem {
     }
 
     @Override
-    public void setRawPower(double pwr) {
+    public void setPower(double pwr) {
         flywheelTalon.set(pwr);
     }
 }

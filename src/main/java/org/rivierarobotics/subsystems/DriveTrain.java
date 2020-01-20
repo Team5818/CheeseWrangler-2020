@@ -20,11 +20,11 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.commands.DriveControl;
 import org.rivierarobotics.util.RobotMap;
 
-public class DriveTrain extends SubsystemBase {
+public class DriveTrain implements Subsystem {
     private final DriveTrainSide left, right;
 
     public DriveTrain() {
@@ -36,8 +36,8 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setPower(double l, double r) {
-        left.setPower(l);
-        right.setPower(r);
+        left.setManualPower(l);
+        right.setManualPower(r);
     }
 
     public DriveTrainSide getLeft() {

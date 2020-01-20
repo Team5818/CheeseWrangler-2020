@@ -23,23 +23,22 @@ package org.rivierarobotics.subsystems;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.Reporting;
 
-public abstract class BasePIDSubsystem extends SubsystemBase {
+public abstract class BasePID {
     private final double pidRange, anglesOrInchesToTicks;
     private final ShuffleboardTab display;
     private boolean manualOverride = true;
     private PIDController pidController;
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance) {
+    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance) {
         this(kP, kI, kD, pidRange, tolerance, 4096.0 / 360);
     }
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
+    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
         this.pidController = new PIDController(kP, kI, kD);
         this.pidRange = pidRange;
-        this.display = Shuffleboard.getTab(getName());
+        this.display = Shuffleboard.getTab(this.getClass().getSimpleName());
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
         //TODO figure out what tolerance values work, or if zero is good with just some PID tuning
         // remove the tolerance parameter if zero is fine (set to 0 by default)
@@ -55,11 +54,11 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     public void tickPid() {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
         //TODO test if manual override works (any manual js overrides/resets setpoint, no jittering)
-        if(manualOverride) {
+        if (manualOverride) {
             setPosition(getPosition());
         } else {
             Reporting.setOutEntry(display, "PID Power", pidPower);
-            setRawPower(pidPower);
+            setPower(pidPower);
         }
     }
 
@@ -75,14 +74,14 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         pidController.setSetpoint(position * anglesOrInchesToTicks);
     }
 
-    public void setPower(double pwr) {
+    public void setManualPower(double pwr) {
         manualOverride = (pwr != 0);
         Reporting.setOutEntry(display, "Manual Power", pwr);
         Reporting.setOutEntry(display, "Manual Override", manualOverride);
-        setRawPower(pwr);
+        setPower(pwr);
     }
 
     public abstract double getPositionTicks();
 
-    protected abstract void setRawPower(double pwr);
+    protected abstract void setPower(double pwr);
 }

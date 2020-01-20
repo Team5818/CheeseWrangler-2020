@@ -22,9 +22,10 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.util.RobotMap;
 
-public class Hood extends BasePIDSubsystem {
+public class Hood extends BasePID implements Subsystem {
     private final WPI_TalonSRX hoodTalon;
 
     public Hood() {
@@ -40,7 +41,7 @@ public class Hood extends BasePIDSubsystem {
     }
 
     @Override
-    public void setRawPower(double pwr) {
+    public void setPower(double pwr) {
         hoodTalon.set(pwr);
     }
 }

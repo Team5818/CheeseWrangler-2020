@@ -72,7 +72,7 @@ public class Robot extends TimedRobot {
         selectiveTickPid(flywheel);
     }
 
-    private void selectiveTickPid(BasePIDSubsystem subsystem) {
+    private void selectiveTickPid(BasePID subsystem) {
         if (!isDisabled() && !subsystem.getPidController().atSetpoint()) {
             subsystem.tickPid();
         }

@@ -23,9 +23,10 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.util.RobotMap;
 
-public class Turret extends BasePIDSubsystem {
+public class Turret extends BasePID implements Subsystem {
     private final WPI_TalonSRX turretTalon;
 
     public Turret() {
@@ -46,7 +47,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     @Override
-    public void setRawPower(double pwr) {
+    public void setPower(double pwr) {
         turretTalon.set(pwr);
     }
 }

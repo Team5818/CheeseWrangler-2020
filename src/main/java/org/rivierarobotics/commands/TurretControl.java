@@ -37,16 +37,14 @@ public class TurretControl extends CommandBase {
         this.turret = turret;
         this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
         addRequirements(turret, hood);
+        //TODO split this into TurretControl and HoodControl
+        //TODO make each control command the default for Hood and Turret, and remove the control button
     }
 
     @Override
     public void execute() {
-        turret.setPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
-        hood.setPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
-    }
-
-    @Override
-    public void end(boolean interrupted) {
+        turret.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
+        hood.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
     }
 
     @Override
