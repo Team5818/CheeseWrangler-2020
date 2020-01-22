@@ -36,6 +36,6 @@ public class ButtonConfiguration {
         new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2)
                 .whenPressed(new SetTurretPosition(turret, 180));
         new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
-                .whenPressed(new TurretControl(turret, Robot.runningRobot.hood));
+                .whenPressed(new TurretControl(turret));
     }
 }
