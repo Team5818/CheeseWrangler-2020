@@ -33,8 +33,6 @@ public class Flywheel extends BasePID implements Subsystem {
         flywheelTalon = new WPI_TalonSRX(RobotMap.Controllers.FLYWHEEL_TALON);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setNeutralMode(NeutralMode.Brake);
-//        getPidController().enableContinuousInput(0, 4096);
-        //TODO figure out how to do velocity control on flywheel via PID
     }
 
     @Override

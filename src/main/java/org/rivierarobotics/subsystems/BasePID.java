@@ -39,8 +39,6 @@ public abstract class BasePID {
         this.pidController = new PIDController(kP, kI, kD, 0.005);
         this.pidRange = pidRange;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
-        //TODO figure out what tolerance values work, or if zero is good with just some PID tuning
-        // remove the tolerance parameter if zero is fine (set to 0 by default)
         pidController.setTolerance(tolerance);
     }
 
