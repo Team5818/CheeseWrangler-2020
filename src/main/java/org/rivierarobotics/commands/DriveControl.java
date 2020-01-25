@@ -40,8 +40,8 @@ public class DriveControl extends CommandBase {
      * Initializes local fields with runningRobot instances of DriveTrain and Joystick (x2)
      * Sets DriveTrain as requirement for this command
      */
-    public DriveControl(DriveTrain driveTrain) {
-        this.driveTrain = driveTrain;
+    public DriveControl() {
+        this.driveTrain = Robot.runningRobot.driveTrain;
         this.leftJs = Robot.runningRobot.leftJs;
         this.rightJs = Robot.runningRobot.rightJs;
         addRequirements(driveTrain);
