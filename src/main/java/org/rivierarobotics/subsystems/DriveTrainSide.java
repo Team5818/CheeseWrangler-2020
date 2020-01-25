@@ -51,6 +51,10 @@ public class DriveTrainSide {
     }
 
     public double getPositionTicks() {
-        return masterTalon.getSensorCollection().getQuadraturePosition();
+        return masterTalon.getSensorCollection().getPulseWidthPosition();
+    }
+
+    public double getVelocity() {
+        return masterTalon.getSensorCollection().getQuadratureVelocity();
     }
 }

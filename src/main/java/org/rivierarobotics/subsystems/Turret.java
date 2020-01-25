@@ -26,7 +26,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.commands.TurretControl;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotMap;
 
 public class Turret extends BasePID implements Subsystem {
@@ -58,7 +57,7 @@ public class Turret extends BasePID implements Subsystem {
     }
 
     public void setAbsoluteAngle(double angle) {
-        setPosition((angle * getAnglesOrInchesToTicks()) + zeroticks);
+        setTicksPosition((angle * getAnglesOrInchesToTicks()) + zeroticks);
     }
 
     @Override

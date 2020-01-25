@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
@@ -57,6 +56,10 @@ public class DriveTrain implements Subsystem {
     public void setPower(double l, double r) {
         dLeft.setPower(l);
         dRight.setPower(r);
+    }
+
+    public double getAvgVelocity() {
+        return (dLeft.getVelocity() + dRight.getVelocity()) / 2;
     }
 
     public DriveTrainSide getLeft() {

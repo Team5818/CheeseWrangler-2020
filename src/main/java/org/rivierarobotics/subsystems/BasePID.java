@@ -28,7 +28,6 @@ import org.rivierarobotics.util.Reporting;
 
 public abstract class BasePID {
     private final double pidRange, anglesOrInchesToTicks;
-    private final ShuffleboardTab display;
     private boolean manualOverride = false;
     private PIDController pidController;
 
@@ -39,17 +38,10 @@ public abstract class BasePID {
     public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks, String name) {
         this.pidController = new PIDController(kP, kI, kD, 0.005);
         this.pidRange = pidRange;
-        this.display = Shuffleboard.getTab(name);
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
         //TODO figure out what tolerance values work, or if zero is good with just some PID tuning
         // remove the tolerance parameter if zero is fine (set to 0 by default)
         pidController.setTolerance(tolerance);
-
-        //TODO test if both types of statistic reporting work for all subsystems
-//        display.addNumber("Position Ticks", this::getPositionTicks);
-//        display.addNumber("Position Degrees/Inches", this::getPosition);
-//        display.addNumber("Setpoint", pidController::getSetpoint);
-//        display.addBoolean("At Setpoint", pidController::atSetpoint);
     }
 
     public void tickPid() {
@@ -71,14 +63,16 @@ public abstract class BasePID {
         return MathUtil.wrapToCircle(getPositionTicks() / anglesOrInchesToTicks);
     }
 
-    public void setPosition(double position) {
+    public void setTicksPosition(double position) {
         pidController.setSetpoint(position);
+    }
+
+    public void setPosition(double position) {
+        pidController.setSetpoint(position * anglesOrInchesToTicks);
     }
 
     public void setManualPower(double pwr) {
         manualOverride = (pwr != 0);
-//        Reporting.setOutEntry(display, "Manual Power", pwr);
-//        Reporting.setOutEntry(display, "Manual Override", manualOverride);
         setPower(pwr);
     }
 

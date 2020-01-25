@@ -21,21 +21,20 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Flywheel;
 
-public class FlywheelSetVelocity extends InstantCommand {
+public class FlywheelSetSpeed extends InstantCommand {
     private final Flywheel flywheel;
-    private final double velocity;
+    private final double speed;
 
-    public FlywheelSetVelocity(double velocity) {
-        this.flywheel = Robot.runningRobot.flywheel;
-        this.velocity = velocity;
+    public FlywheelSetSpeed(Flywheel flywheel, double speed) {
+        this.flywheel = flywheel;
+        this.speed = speed;
         addRequirements(flywheel);
     }
 
     @Override
     public void execute() {
-        flywheel.setTicksPosition(velocity);
+        flywheel.setPower(speed);
     }
 }

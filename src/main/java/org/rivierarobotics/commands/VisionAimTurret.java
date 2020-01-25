@@ -22,7 +22,6 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -41,8 +40,8 @@ public class VisionAimTurret extends CommandBase {
         double tx = VisionUtil.getLLValue("tx");
 
         if (tv == 1) {
-            double set = MathUtil.wrapToCircle(tx + turret.getPosition());
-           turret.setPosition(set * turret.getAnglesOrInchesToTicks());
+            double set = MathUtil.wrapToCircle(tx) + MathUtil.wrapToCircle(turret.getPosition());
+           turret.setTicksPosition(set * turret.getAnglesOrInchesToTicks());
             SmartDashboard.putNumber("initset", set);
         }
     }

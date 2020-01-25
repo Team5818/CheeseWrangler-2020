@@ -21,21 +21,20 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
 
-public class FlywheelSetVelocity extends InstantCommand {
-    private final Flywheel flywheel;
-    private final double velocity;
+public class SetHoodAngle extends InstantCommand {
+    private final Hood hood;
+    private final double angle;
 
-    public FlywheelSetVelocity(double velocity) {
-        this.flywheel = Robot.runningRobot.flywheel;
-        this.velocity = velocity;
-        addRequirements(flywheel);
+    public SetHoodAngle(Hood hood, double angle) {
+        this.hood = hood;
+        this.angle = angle;
+        addRequirements(hood);
     }
 
     @Override
     public void execute() {
-        flywheel.setTicksPosition(velocity);
+        hood.setPosition(angle);
     }
 }
