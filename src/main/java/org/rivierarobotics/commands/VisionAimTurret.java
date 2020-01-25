@@ -20,39 +20,30 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.Hood;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.Reporting;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 public class VisionAimTurret extends CommandBase {
-    private final ShuffleboardTab vision;
     private final Turret turret;
-    private final Hood hood;
 
-    public VisionAimTurret(Turret turret, Hood hood) {
-        vision = Shuffleboard.getTab("Vision");
+    public VisionAimTurret(Turret turret) {
         this.turret = turret;
-        this.hood = hood;
-        addRequirements(turret, hood);
+        addRequirements(turret);
     }
 
     @Override
     public void execute() {
         double tv = VisionUtil.getLLValue("tv");
         double tx = VisionUtil.getLLValue("tx");
-        double ty = VisionUtil.getLLValue("ty");
-
-        Reporting.setOutEntry(vision, "Valid Target", tv == 1);
-        Reporting.setOutEntry(vision, "X Offset", tx);
-        Reporting.setOutEntry(vision, "Y Offset", ty);
 
         if (tv == 1) {
-            hood.setPosition(hood.getPosition() + (90 - ty));
-            turret.setPosition(turret.getPosition() + tx);
+            double set = MathUtil.wrapToCircle(tx + turret.getPosition());
+           turret.setPosition(set * turret.getAnglesOrInchesToTicks());
+            SmartDashboard.putNumber("initset", set);
         }
     }
 

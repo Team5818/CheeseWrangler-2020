@@ -23,42 +23,39 @@ package org.rivierarobotics.subsystems;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Reporting;
 
 public abstract class BasePID {
     private final double pidRange, anglesOrInchesToTicks;
     private final ShuffleboardTab display;
-    private boolean manualOverride = true;
+    private boolean manualOverride = false;
     private PIDController pidController;
 
-    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance) {
-        this(kP, kI, kD, pidRange, tolerance, 4096.0 / 360);
+    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, String name) {
+        this(kP, kI, kD, pidRange, tolerance, 4096.0 / 360, name);
     }
 
-    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
-        this.pidController = new PIDController(kP, kI, kD);
+    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks, String name) {
+        this.pidController = new PIDController(kP, kI, kD, 0.005);
         this.pidRange = pidRange;
-        this.display = Shuffleboard.getTab(this.getClass().getSimpleName());
+        this.display = Shuffleboard.getTab(name);
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
         //TODO figure out what tolerance values work, or if zero is good with just some PID tuning
         // remove the tolerance parameter if zero is fine (set to 0 by default)
         pidController.setTolerance(tolerance);
 
         //TODO test if both types of statistic reporting work for all subsystems
-        display.addNumber("Position Ticks", this::getPositionTicks);
-        display.addNumber("Position Degrees/Inches", this::getPosition);
-        display.addNumber("Setpoint", pidController::getSetpoint);
-        display.addBoolean("At Setpoint", pidController::atSetpoint);
+//        display.addNumber("Position Ticks", this::getPositionTicks);
+//        display.addNumber("Position Degrees/Inches", this::getPosition);
+//        display.addNumber("Setpoint", pidController::getSetpoint);
+//        display.addBoolean("At Setpoint", pidController::atSetpoint);
     }
 
     public void tickPid() {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
-        //TODO test if manual override works (any manual js overrides/resets setpoint, no jittering)
-        if (manualOverride) {
-            setPosition(getPosition());
-        } else {
-            Reporting.setOutEntry(display, "PID Power", pidPower);
-            setPower(pidPower);
+        if (!manualOverride) {
+            setPower(-pidPower);
         }
     }
 
@@ -66,18 +63,22 @@ public abstract class BasePID {
         return pidController;
     }
 
+    public double getAnglesOrInchesToTicks() {
+        return anglesOrInchesToTicks;
+    }
+
     public double getPosition() {
-        return getPositionTicks() / anglesOrInchesToTicks;
+        return MathUtil.wrapToCircle(getPositionTicks() / anglesOrInchesToTicks);
     }
 
     public void setPosition(double position) {
-        pidController.setSetpoint(position * anglesOrInchesToTicks);
+        pidController.setSetpoint(position);
     }
 
     public void setManualPower(double pwr) {
         manualOverride = (pwr != 0);
-        Reporting.setOutEntry(display, "Manual Power", pwr);
-        Reporting.setOutEntry(display, "Manual Override", manualOverride);
+//        Reporting.setOutEntry(display, "Manual Power", pwr);
+//        Reporting.setOutEntry(display, "Manual Override", manualOverride);
         setPower(pwr);
     }
 

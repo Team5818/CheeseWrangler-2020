@@ -23,31 +23,47 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotMap;
 
 public class Turret extends BasePID implements Subsystem {
     private final WPI_TalonSRX turretTalon;
+    private static final double zeroticks = 1186;
 
     public Turret() {
         //TODO tune Turret PID
-        super(0.0004, 0.0, 0.0, 0.4, 0.0);
+        super(0.0015, 0.00002, 0.0, 0.5, 0.0, "Turret");
         turretTalon = new WPI_TalonSRX(RobotMap.Controllers.TURRET_TALON);
         turretTalon.configFactoryDefault();
-        turretTalon.setSensorPhase(false);
+        turretTalon.setSensorPhase(true);
         turretTalon.setNeutralMode(NeutralMode.Brake);
-        turretTalon.configSelectedFeedbackSensor(FeedbackDevice.Analog);
-        getPidController().enableContinuousInput(0, 4096);
+        turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        setDefaultCommand(new TurretControl(this));
+//        getPidController().enableContinuousInput(0, 4096);
     }
 
     @Override
     public double getPositionTicks() {
         //TODO ensure that this reports correctly: potential fix for digital encoder jumping issues, eliminates some high bits
-        return (turretTalon.getSensorCollection().getPulseWidthRiseToFallUs() - 1024) / 8.0;
+        double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
+        SmartDashboard.putNumber("Position", pos);
+        SmartDashboard.putNumber("RisetoFall", turretTalon.getSensorCollection().getPulseWidthRiseToFallUs());
+        SmartDashboard.putNumber("Circle position", (pos % 4096));
+        SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
+        SmartDashboard.putNumber("setpoint", getPidController().getSetpoint());
+        return pos;
+    }
+
+    public void setAbsoluteAngle(double angle) {
+        setPosition((angle * getAnglesOrInchesToTicks()) + zeroticks);
     }
 
     @Override
     public void setPower(double pwr) {
+        SmartDashboard.putNumber("power", pwr);
         turretTalon.set(pwr);
     }
 }

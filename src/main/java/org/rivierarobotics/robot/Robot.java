@@ -22,9 +22,11 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.RobotMap;
+import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
     public static Robot runningRobot;
@@ -33,7 +35,7 @@ public class Robot extends TimedRobot {
     public final Hood hood;
     public final Flywheel flywheel;
     public final PistonController pistonController;
-    public final Joystick driverLeftJs, driverRightJs, coDriverRightJs, coDriverLeftJs;
+    public final Joystick driverLeftJs, driverRightJs, coDriverRightJs, coDriverLeftJs, coDriverButtons;
     public boolean isArcade = true;
 
     public Robot() {
@@ -43,6 +45,7 @@ public class Robot extends TimedRobot {
         this.driverRightJs = new Joystick(RobotMap.Joysticks.DRIVER_RIGHT_JS);
         this.coDriverLeftJs = new Joystick(RobotMap.Joysticks.CODRIVER_LEFT_JS);
         this.coDriverRightJs = new Joystick(RobotMap.Joysticks.CODRIVER_RIGHT_JS);
+        this.coDriverButtons = new Joystick(RobotMap.Joysticks.CODRIVER_BUTTONS);
 
         this.driveTrain = new DriveTrain();
         this.hood = new Hood();
@@ -70,10 +73,16 @@ public class Robot extends TimedRobot {
         selectiveTickPid(turret);
         selectiveTickPid(hood);
         selectiveTickPid(flywheel);
+        SmartDashboard.putNumber("left", driveTrain.getLeft().getPositionTicks());
+        SmartDashboard.putNumber("right", driveTrain.getRight().getPositionTicks());
+        SmartDashboard.putNumber("turret", turret.getPositionTicks());
+        SmartDashboard.putNumber("tv", VisionUtil.getLLValue("tv"));
+        SmartDashboard.putNumber("tx", VisionUtil.getLLValue("tx"));
+        SmartDashboard.putNumber("ty", VisionUtil.getLLValue("ty"));
     }
 
     private void selectiveTickPid(BasePID subsystem) {
-        if (!isDisabled() && !subsystem.getPidController().atSetpoint()) {
+        if (!isDisabled()) {
             subsystem.tickPid();
         }
     }

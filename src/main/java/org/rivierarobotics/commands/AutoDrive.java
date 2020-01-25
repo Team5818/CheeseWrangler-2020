@@ -38,7 +38,7 @@ public class AutoDrive extends InstantCommand {
     @Override
     public void execute() {
         DriveTrainSide left = driveTrain.getLeft(), right = driveTrain.getRight();
-        left.setPosition(left.getPosition() + distance);
-        right.setPosition(right.getPosition() + distance);
+//        left.setPosition(left.getPosition() + distance);
+//        right.setPosition(right.getPosition() + distance);
     }
 }

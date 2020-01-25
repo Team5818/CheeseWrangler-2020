@@ -22,16 +22,18 @@ package org.rivierarobotics.util;
 
 public interface RobotMap {
     interface Controllers {
-        int TURRET_TALON = 11;
-        int HOOD_TALON = 10;
-        int FLYWHEEL_TALON = 7;
+        int TURRET_TALON = 7;
+        int HOOD_TALON = 11;
+        int FLYWHEEL_TALON = 10;
     }
 
     interface Joysticks {
         int DRIVER_LEFT_JS = 0;
         int DRIVER_RIGHT_JS = 1;
+        int DRIVER_BUTTONS = 4;
         int CODRIVER_LEFT_JS = 2;
         int CODRIVER_RIGHT_JS = 3;
+        int CODRIVER_BUTTONS = 5;
     }
 
     class DriveTrain {

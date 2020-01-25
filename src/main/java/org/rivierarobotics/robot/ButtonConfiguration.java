@@ -22,7 +22,9 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.commands.SetTurretPosition;
+import org.rivierarobotics.commands.HoodControl;
 import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.commands.VisionAimTurret;
 import org.rivierarobotics.subsystems.Turret;
 
 public class ButtonConfiguration {
@@ -36,6 +38,10 @@ public class ButtonConfiguration {
         new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2)
                 .whenPressed(new SetTurretPosition(turret, 180));
         new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
-                .whenPressed(new TurretControl(turret, Robot.runningRobot.hood));
+                .whenPressed(new VisionAimTurret(Robot.runningRobot.turret));
+        new JoystickButton(Robot.runningRobot.coDriverButtons, 12)
+                .whenPressed(new SetTurretPosition(turret, 185));
+        new JoystickButton(Robot.runningRobot.coDriverButtons, 11)
+                .whenPressed(new SetTurretPosition(turret, 175));
     }
 }

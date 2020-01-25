@@ -29,7 +29,7 @@ public class Flywheel extends BasePID implements Subsystem {
     private final WPI_TalonSRX flywheelTalon;
 
     public Flywheel() {
-        super(0.0004, 0.0, 0.0, 1.0, 0.0);
+        super(0.0004, 0.0, 0.0, 1.0, 0.0, "Flywheel");
         flywheelTalon = new WPI_TalonSRX(RobotMap.Controllers.FLYWHEEL_TALON);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setNeutralMode(NeutralMode.Brake);

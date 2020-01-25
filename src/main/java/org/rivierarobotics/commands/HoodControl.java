@@ -20,21 +20,29 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.Turret;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.util.MathUtil;
 
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
+public class HoodControl extends CommandBase {
+    private final Hood hood;
+    private final Joystick coDriverRightJs;
 
-    public SetTurretPosition(Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
+    public HoodControl(Hood hood) {
+        this.hood = hood;
+        this.coDriverRightJs = Robot.runningRobot.coDriverRightJs;
+        addRequirements(hood);
     }
 
     @Override
     public void execute() {
-        turret.setAbsoluteAngle(position);
+        hood.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

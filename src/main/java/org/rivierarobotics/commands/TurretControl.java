@@ -29,22 +29,17 @@ import org.rivierarobotics.util.MathUtil;
 
 public class TurretControl extends CommandBase {
     private final Turret turret;
-    private final Hood hood;
     private final Joystick leftCoDriverJs;
 
-    public TurretControl(Turret turret, Hood hood) {
-        this.hood = hood;
+    public TurretControl(Turret turret) {
         this.turret = turret;
         this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
-        addRequirements(turret, hood);
-        //TODO split this into TurretControl and HoodControl
-        //TODO make each control command the default for Hood and Turret, and remove the control button
+        addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        turret.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
-        hood.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+        turret.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
     }
 
     @Override
