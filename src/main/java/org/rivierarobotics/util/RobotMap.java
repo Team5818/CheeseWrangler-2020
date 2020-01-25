@@ -25,6 +25,7 @@ public interface RobotMap {
         int TURRET_TALON = 11;
         int HOOD_TALON = 10;
         int FLYWHEEL_TALON = 7;
+        int CHEESE_TALON = 12;
     }
 
     interface Joysticks {
