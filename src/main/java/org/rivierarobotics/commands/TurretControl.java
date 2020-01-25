@@ -30,8 +30,7 @@ public class TurretControl extends CommandBase {
     private final Turret turret;
     private final Joystick leftCoDriverJs;
 
-    public TurretControl(Turret turret)
-    {
+    public TurretControl(Turret turret) {
         this.turret = turret;
         this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
         addRequirements(turret);
