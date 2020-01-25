@@ -18,30 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-public class MathUtil {
-    private static final double deadband = 0.08;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.Flywheel;
 
-    private MathUtil() {
+public class FlywheelSetVelocity extends InstantCommand {
+    private final Flywheel flywheel;
+    private final double velocity;
+
+    public FlywheelSetVelocity(double velocity) {
+        this.flywheel = Robot.runningRobot.flywheel;
+        this.velocity = velocity;
+        addRequirements(flywheel);
     }
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < deadband)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - deadband;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + deadband;
-                }
-            }
-        }
-        return 0;
+    @Override
+    public void execute() {
+        flywheel.setPosition(velocity);
     }
 }

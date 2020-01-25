@@ -18,30 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-public class MathUtil {
-    private static final double deadband = 0.08;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.util.MathUtil;
 
-    private MathUtil() {
+public class HoodControl extends CommandBase {
+    private final Hood hood;
+    private final Joystick leftCoDriverJs;
+
+    public HoodControl(Hood hood) {
+        this.hood = hood;
+        this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
+        addRequirements(hood);
+        //TODO make each control command the default for Hood and Turret, and remove the control button
     }
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < deadband)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - deadband;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + deadband;
-                }
-            }
-        }
-        return 0;
+    @Override
+    public void execute() {
+        hood.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

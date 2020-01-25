@@ -18,30 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.subsystems;
 
-public class MathUtil {
-    private static final double deadband = 0.08;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.rivierarobotics.util.RobotMap;
 
-    private MathUtil() {
+public class CheeseWheel extends BasePID implements Subsystem {
+    private final WPI_TalonSRX cheeseTalon;
+
+    public CheeseWheel() {
+        super(0.0, 0.0, 0.0, 0.0, 0.0);
+        cheeseTalon = new WPI_TalonSRX(RobotMap.Controllers.CHEESE_TALON);
+        cheeseTalon.configFactoryDefault();
+        cheeseTalon.setNeutralMode(NeutralMode.Brake);
+        getPidController().enableContinuousInput(0, 4096);
     }
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < deadband)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - deadband;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + deadband;
-                }
-            }
-        }
-        return 0;
+    @Override
+    public double getPositionTicks() {
+        return cheeseTalon.getSensorCollection().getPulseWidthVelocity();
+    }
+
+    @Override
+    protected void setPower(double pwr) {
+        cheeseTalon.set(pwr);
     }
 }

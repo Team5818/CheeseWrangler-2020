@@ -18,30 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.subsystems;
 
-public class MathUtil {
-    private static final double deadband = 0.08;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.Subsystem;
+import org.rivierarobotics.util.RobotMap;
 
-    private MathUtil() {
+public class Hood extends BasePID implements Subsystem {
+    private final WPI_TalonSRX hoodTalon;
+
+    public Hood() {
+        super(0.0004, 0, 0.0001, 0.4, 0.0);
+        hoodTalon = new WPI_TalonSRX(RobotMap.Controllers.HOOD_TALON);
+        hoodTalon.configFactoryDefault();
+        hoodTalon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < deadband)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - deadband;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + deadband;
-                }
-            }
-        }
-        return 0;
+    @Override
+    public double getPositionTicks() {
+        return hoodTalon.getSensorCollection().getPulseWidthPosition();
+    }
+
+    @Override
+    public void setPower(double pwr) {
+        hoodTalon.set(pwr);
     }
 }

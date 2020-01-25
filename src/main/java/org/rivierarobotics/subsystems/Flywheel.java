@@ -20,31 +20,30 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import org.rivierarobotics.commands.DriveControl;
 import org.rivierarobotics.util.RobotMap;
 
-public class DriveTrain implements Subsystem {
-    private final DriveTrainSide left, right;
+public class Flywheel extends BasePID implements Subsystem {
+    private final WPI_TalonSRX flywheelTalon;
 
-    public DriveTrain() {
-        this.left = new DriveTrainSide(RobotMap.DriveTrain.Left.LEFT_TALON_MASTER, RobotMap.DriveTrain.Left.LEFT_SPARK_SLAVE_ONE,
-                RobotMap.DriveTrain.Left.LEFT_SPARK_SLAVE_TWO, RobotMap.DriveTrain.Left.LEFT_INVERT);
-        this.right = new DriveTrainSide(RobotMap.DriveTrain.Right.RIGHT_TALON_MASTER, RobotMap.DriveTrain.Right.RIGHT_SPARK_SLAVE_ONE,
-                RobotMap.DriveTrain.Right.RIGHT_SPARK_SLAVE_TWO, RobotMap.DriveTrain.Right.RIGHT_INVERT);
-        setDefaultCommand(new DriveControl(this));
+    public Flywheel() {
+        super(0.0004, 0.0, 0.0, 1.0, 0.0);
+        flywheelTalon = new WPI_TalonSRX(RobotMap.Controllers.FLYWHEEL_TALON);
+        flywheelTalon.configFactoryDefault();
+        flywheelTalon.setNeutralMode(NeutralMode.Brake);
+        getPidController().enableContinuousInput(0, 4096);
+        //TODO figure out how to do velocity control on flywheel via PID
     }
 
-    public void setPower(double l, double r) {
-        left.setManualPower(l);
-        right.setManualPower(r);
+    @Override
+    public double getPositionTicks() {
+        return flywheelTalon.getSensorCollection().getPulseWidthVelocity();
     }
 
-    public DriveTrainSide getLeft() {
-        return left;
-    }
-
-    public DriveTrainSide getRight() {
-        return right;
+    @Override
+    public void setPower(double pwr) {
+        flywheelTalon.set(pwr);
     }
 }

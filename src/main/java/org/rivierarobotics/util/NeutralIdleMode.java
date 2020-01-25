@@ -20,28 +20,30 @@
 
 package org.rivierarobotics.util;
 
-public class MathUtil {
-    private static final double deadband = 0.08;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.revrobotics.CANSparkMax;
+import edu.wpi.first.wpilibj.SpeedController;
 
-    private MathUtil() {
+public enum NeutralIdleMode {
+    BRAKE(CANSparkMax.IdleMode.kBrake, NeutralMode.Brake),
+    COAST(CANSparkMax.IdleMode.kCoast, NeutralMode.Coast);
+
+    public final CANSparkMax.IdleMode spark;
+    public final NeutralMode talon;
+
+    NeutralIdleMode(CANSparkMax.IdleMode spark, NeutralMode talon) {
+        this.spark = spark;
+        this.talon = talon;
     }
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < deadband)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - deadband;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + deadband;
-                }
+    public void applyTo(SpeedController... controllers) {
+        for (SpeedController controller : controllers) {
+            if (controller instanceof CANSparkMax) {
+                ((CANSparkMax) controller).setIdleMode(this.spark);
+            } else if (controller instanceof WPI_TalonSRX) {
+                ((WPI_TalonSRX) controller).setNeutralMode(this.talon);
             }
         }
-        return 0;
     }
 }

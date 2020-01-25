@@ -20,28 +20,25 @@
 
 package org.rivierarobotics.util;
 
-public class MathUtil {
-    private static final double deadband = 0.08;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
-    private MathUtil() {
+public class VisionUtil {
+    private static final double LLAngle = 0, LLHeight = 10, targetHeight = 20;
+    public static NetworkTable LIMELIGHT = NetworkTableInstance.getDefault().getTable("limelight");
+
+    private VisionUtil() {
     }
 
-    public static double fitDeadband(double val) {
-        if (!(Math.abs(val) < deadband)) {
-            if (val > 0) {
-                if (val >= 1) {
-                    return 1;
-                } else {
-                    return val - deadband;
-                }
-            } else if (val < 0) {
-                if (val <= -1) {
-                    return -1;
-                } else {
-                    return val + deadband;
-                }
-            }
+    public static double getLLValue(String key) {
+        return LIMELIGHT.getEntry(key).getDouble(0);
+    }
+
+    public static double getDistanceToTarget() {
+        if (getLLValue("tv") == 1) {
+            return (targetHeight - LLHeight) / Math.tan(LLAngle + getLLValue("ty"));
+        } else {
+            return -1;
         }
-        return 0;
     }
 }

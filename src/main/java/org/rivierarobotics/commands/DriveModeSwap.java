@@ -1,5 +1,5 @@
 /*
- * This file is part of PracticeBot-2020-example, licensed under the GNU General Public License (GPLv3).
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
  *
  * Copyright (c) Riviera Robotics <https://github.com/Team5818>
  * Copyright (c) contributors
@@ -23,11 +23,6 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.robot.Robot;
 
-/**
- * Inverts the driving mode of the robot between arcade and tank drive
- * Stored by the instance variable isArcade in the current running robot
- * Only needs to be run once (hence InstantCommand which only runs once) to invert a boolean
- */
 public class DriveModeSwap extends InstantCommand {
     @Override
     public void execute() {
