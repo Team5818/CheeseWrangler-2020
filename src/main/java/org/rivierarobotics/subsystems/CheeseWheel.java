@@ -28,17 +28,21 @@ import org.rivierarobotics.util.RobotMap;
 public class CheeseWheel extends BasePID implements Subsystem {
     private final WPI_TalonSRX cheeseTalon;
 
-    public CheeseWheel(){
-        super(0.0,0.0,0.0,0.0,0.0);
+    public CheeseWheel() {
+        super(0.0, 0.0, 0.0, 0.0, 0.0);
         cheeseTalon = new WPI_TalonSRX(RobotMap.Controllers.CHEESE_TALON);
         cheeseTalon.configFactoryDefault();
         cheeseTalon.setNeutralMode(NeutralMode.Brake);
-        getPidController().enableContinuousInput(0,4096);
+        getPidController().enableContinuousInput(0, 4096);
     }
 
     @Override
-    public double getPositionTicks() { return cheeseTalon.getSensorCollection().getPulseWidthVelocity();}
+    public double getPositionTicks() {
+        return cheeseTalon.getSensorCollection().getPulseWidthVelocity();
+    }
 
     @Override
-    protected void setPower(double pwr) { cheeseTalon.set(pwr); }
+    protected void setPower(double pwr) {
+        cheeseTalon.set(pwr);
+    }
 }
