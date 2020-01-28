@@ -20,34 +20,32 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.util.VisionUtil;
 
-public class VisionAimTurret extends CommandBase {
-    private final Turret turret;
+public class LedToggle extends InstantCommand {
 
-    public VisionAimTurret(Turret turret) {
-        this.turret = turret;
-        addRequirements(turret);
+    private int ledState;
+
+    public LedToggle() {
+        ledState = -1;
+    }
+
+    public LedToggle(boolean ledState) {
+        if (ledState)
+            this.ledState = 3;
+        else
+            this.ledState = 1;
     }
 
     @Override
     public void execute() {
-        double tv = VisionUtil.getLLValue("tv");
-        double tx = VisionUtil.getLLValue("tx");
-
-        if (tv == 1) {
-            double set = MathUtil.wrapToCircle(tx) + MathUtil.wrapToCircle(turret.getPosition());
-            turret.setTicksPosition(set * turret.getAnglesOrInchesToTicks());
-            SmartDashboard.putNumber("initset", set);
+        if (ledState >= 0) {
+            VisionUtil.LIMELIGHT.getEntry("ledMode").setNumber(ledState);
+        } else if(VisionUtil.LIMELIGHT.getEntry("ledMode").getDouble(2.) == (3.)) {
+            VisionUtil.LIMELIGHT.getEntry("ledMode").setNumber(1);
+        } else if(VisionUtil.LIMELIGHT.getEntry("ledMode").getDouble(2.) == (1.)) {
+            VisionUtil.LIMELIGHT.getEntry("ledMode").setNumber(3);
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

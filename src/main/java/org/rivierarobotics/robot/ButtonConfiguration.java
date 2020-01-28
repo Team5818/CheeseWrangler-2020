@@ -33,7 +33,7 @@ public class ButtonConfiguration {
         new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1)
                 .whenPressed(new SetTurretPosition(turret, 90));
         new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2)
-                .whenPressed(new SetTurretPosition(turret, 180));
+                .whenPressed(new SetTurretPosition(turret, 180)); /*
         new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
                 .whenPressed(new VisionAimTurret(Robot.runningRobot.turret));
         new JoystickButton(Robot.runningRobot.coDriverButtons, 12)
@@ -46,6 +46,10 @@ public class ButtonConfiguration {
         new JoystickButton(Robot.runningRobot.coDriverButtons, 10)
                 .whenPressed(new FlywheelSetSpeed(Robot.runningRobot.flywheel, 0.8));
         new JoystickButton(Robot.runningRobot.coDriverButtons, 9)
-                .whenPressed(new FlywheelSetSpeed(Robot.runningRobot.flywheel, 0));
+                .whenPressed(new FlywheelSetSpeed(Robot.runningRobot.flywheel, 0)); */
+        new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
+                .whenPressed(new LedToggle());
+        new JoystickButton(Robot.runningRobot.coDriverRightJs, 2)
+                .whenPressed(new LedToggle(false));
     }
 }

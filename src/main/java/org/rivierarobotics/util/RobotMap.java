@@ -24,16 +24,16 @@ public interface RobotMap {
     interface Controllers {
         int TURRET_TALON = 7;
         int HOOD_TALON = 11;
-        int FLYWHEEL_TALON = 13 ;
+        int FLYWHEEL_TALON = 13;
     }
 
     interface Joysticks {
         int DRIVER_LEFT_JS = 0;
         int DRIVER_RIGHT_JS = 1;
-        int DRIVER_BUTTONS = 4;
+        int DRIVER_BUTTONS = 5;
         int CODRIVER_LEFT_JS = 2;
         int CODRIVER_RIGHT_JS = 3;
-        int CODRIVER_BUTTONS = 5;
+        int CODRIVER_BUTTONS = 4;
     }
 
     class DriveTrain {
