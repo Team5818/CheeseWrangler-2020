@@ -33,7 +33,6 @@ public class Turret extends BasePID implements Subsystem {
     private static final double zeroticks = 1186;
 
     public Turret() {
-        //TODO tune Turret PID
         super(0.0015, 0.00002, 0.0, 0.5, 0.0, "Turret");
         turretTalon = new WPI_TalonSRX(RobotMap.Controllers.TURRET_TALON);
         turretTalon.configFactoryDefault();
@@ -46,7 +45,6 @@ public class Turret extends BasePID implements Subsystem {
 
     @Override
     public double getPositionTicks() {
-        //TODO ensure that this reports correctly: potential fix for digital encoder jumping issues, eliminates some high bits
         double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
         SmartDashboard.putNumber("Position", pos);
         SmartDashboard.putNumber("RisetoFall", turretTalon.getSensorCollection().getPulseWidthRiseToFallUs());
