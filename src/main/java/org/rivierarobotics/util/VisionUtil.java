@@ -21,6 +21,7 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class VisionUtil {
@@ -32,6 +33,16 @@ public class VisionUtil {
 
     public static double getLLValue(String key) {
         return LIMELIGHT.getEntry(key).getDouble(0);
+    }
+
+    public static void setLedState(boolean state) {
+        LIMELIGHT.getEntry("ledMode").setNumber(state ? 3 : 1);
+    }
+
+    public static void invertLedState() {
+        NetworkTableEntry led = LIMELIGHT.getEntry("ledMode");
+        double cs = (double) led.getNumber(1.0);
+        led.setNumber(cs == 1 ? 3 : 1);
     }
 
     public static double getDistanceToTarget() {

@@ -21,13 +21,16 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Hood;
 
+@GenerateCreator
 public class SetHoodAngle extends InstantCommand {
     private final Hood hood;
     private final double angle;
 
-    public SetHoodAngle(Hood hood, double angle) {
+    public SetHoodAngle(@Provided Hood hood, double angle) {
         this.hood = hood;
         this.angle = angle;
         addRequirements(hood);

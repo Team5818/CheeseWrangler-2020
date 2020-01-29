@@ -21,15 +21,17 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
 
+@GenerateCreator
 public class FlywheelSetVelocity extends InstantCommand {
     private final Flywheel flywheel;
     private final double velocity;
 
-    public FlywheelSetVelocity(double velocity) {
-        this.flywheel = Robot.runningRobot.flywheel;
+    public FlywheelSetVelocity(@Provided Flywheel flywheel, double velocity) {
+        this.flywheel = flywheel;
         this.velocity = velocity;
         addRequirements(flywheel);
     }

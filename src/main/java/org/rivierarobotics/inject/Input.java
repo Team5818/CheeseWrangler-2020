@@ -18,26 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.inject;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import javax.inject.Qualifier;
 
-@GenerateCreator
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
+@Qualifier
+public @interface Input {
+    Position value();
 
-    public SetTurretPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
-    }
-
-    @Override
-    public void execute() {
-        turret.setAbsoluteAngle(position);
+    enum Position {
+        DRIVER_LEFT, DRIVER_RIGHT, DRIVER_BUTTONS, CODRIVER_LEFT, CODRIVER_RIGHT, CODRIVER_BUTTONS
     }
 }

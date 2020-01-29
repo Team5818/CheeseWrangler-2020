@@ -22,18 +22,22 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
+
+import javax.inject.Inject;
 
 public class DriveControl extends CommandBase {
     private final DriveTrain driveTrain;
     private final Joystick leftJs, rightJs;
 
-    public DriveControl(DriveTrain driveTrain) {
-        this.driveTrain = driveTrain;
-        this.leftJs = Robot.runningRobot.driverLeftJs;
-        this.rightJs = Robot.runningRobot.driverRightJs;
+    @Inject
+    public DriveControl(DriveTrain dt, @Input(Input.Position.DRIVER_LEFT) Joystick left,
+                        @Input(Input.Position.DRIVER_RIGHT) Joystick right) {
+        this.driveTrain = dt;
+        this.leftJs = left;
+        this.rightJs = right;
         addRequirements(driveTrain);
     }
 

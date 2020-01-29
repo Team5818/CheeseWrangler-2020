@@ -20,21 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.Flywheel;
+import javax.inject.Inject;
 
-public class FlywheelSetSpeed extends InstantCommand {
-    private final Flywheel flywheel;
-    private final double speed;
+public class FlywheelCommands {
+    private FlywheelSetPowerCreator flywheelSetPowerCreator;
+    private FlywheelSetVelocityCreator flywheelSetVelocityCreator;
 
-    public FlywheelSetSpeed(Flywheel flywheel, double speed) {
-        this.flywheel = flywheel;
-        this.speed = speed;
-        addRequirements(flywheel);
+    @Inject
+    public FlywheelCommands(FlywheelSetPowerCreator flywheelSetPowerCreator,
+                            FlywheelSetVelocityCreator flywheelSetVelocityCreator) {
+        this.flywheelSetPowerCreator = flywheelSetPowerCreator;
+        this.flywheelSetVelocityCreator = flywheelSetVelocityCreator;
     }
 
-    @Override
-    public void execute() {
-        flywheel.setPower(speed);
+    public FlywheelSetPower setPower(double pwr) {
+        return flywheelSetPowerCreator.create(pwr);
+    }
+
+    public FlywheelSetVelocity setVelocity(double vel) {
+        return flywheelSetVelocityCreator.create(vel);
     }
 }

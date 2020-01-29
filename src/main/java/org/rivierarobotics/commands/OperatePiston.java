@@ -21,24 +21,26 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainSide;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Piston;
+import org.rivierarobotics.subsystems.PistonController;
 
-public class AutoDrive extends InstantCommand {
-    private final DriveTrain driveTrain;
-    private final double distance;
+@GenerateCreator
+public class OperatePiston extends InstantCommand {
+    private final PistonController controller;
+    private final Piston piston;
+    private final boolean state;
 
-    public AutoDrive(double inches) {
-        this.distance = inches;
-        this.driveTrain = Robot.runningRobot.driveTrain;
-        addRequirements(driveTrain);
+    public OperatePiston(@Provided PistonController pc, Piston piston, boolean state) {
+        this.piston = piston;
+        this.state = state;
+        this.controller = pc;
+        addRequirements(controller);
     }
 
     @Override
     public void execute() {
-        DriveTrainSide left = driveTrain.getLeft(), right = driveTrain.getRight();
-//        left.setPosition(left.getPosition() + distance);
-//        right.setPosition(right.getPosition() + distance);
+        controller.operatePiston(piston, state);
     }
 }

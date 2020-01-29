@@ -21,9 +21,15 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class PistonController {
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
+public class PistonController extends SubsystemBase {
+
+    @Inject
     public PistonController() {
     }
 

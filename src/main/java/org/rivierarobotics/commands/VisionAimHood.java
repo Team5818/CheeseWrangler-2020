@@ -21,17 +21,20 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.util.VisionUtil;
 
+@GenerateCreator
 public class VisionAimHood extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
 
-    public VisionAimHood(Hood hd, DriveTrain dt, Flywheel fly) {
+    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly) {
         this.hood = hd;
         this.driveTrain = dt;
         this.flywheel = fly;
@@ -41,16 +44,17 @@ public class VisionAimHood extends CommandBase {
     @Override
     public void execute() {
         double ty = VisionUtil.getLLValue("ty");
-        double dtVel = driveTrain.getAvgVelocity();
-        flywheel.getVelocity();
         double vy = 3.679;  //Vy constant
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal
         double m = 0.14;    //mass of ball
-        double dist = h/Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
-        double vxz = Math.sqrt(Math.pow((dist/t),2) + Math.pow(0,2));
-        double hoodAngle = Math.atan2(vy-((0.336*vxz+0.2)/m)*t,vxz);
-        new FlywheelSetVelocity(vxz/Math.cos(Math.toRadians(hoodAngle)/.0005)); //passes through value in ticks/100ms
+        double dist = h / Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
+        double vxz = Math.sqrt(Math.pow((dist / t), 2) + Math.pow(0, 2));
+        double hoodAngle = Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz);
+        double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle) / 0.0005); //passes through value in ticks/100ms
+
+        hood.setPosition(hoodAngle);
+        flywheel.setPositionTicks(flywheelVelocity);
     }
 
     @Override

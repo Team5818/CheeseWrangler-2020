@@ -22,15 +22,19 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
 
+@GenerateCreator
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final DriveTrain driveTrain;
-    public VisionAimTurret(Turret turret,DriveTrain dt) {
+
+    public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain dt) {
         this.turret = turret;
         this.driveTrain = dt;
         addRequirements(turret);
@@ -46,8 +50,8 @@ public class VisionAimTurret extends CommandBase {
         if (tv == 1) {
             double t = 0.375;   //time constant
             double h = 0.69;    //height of goal
-            double dist = h/Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
-            double turretAngle = -Math.atan2(0,dist/t);
+            double dist = h / Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
+            double turretAngle = -Math.atan2(0, dist / t);
             double set = MathUtil.wrapToCircle(tx - turretAngle) + MathUtil.wrapToCircle(turret.getPosition());
             turret.setPositionTicks(set * turret.getAnglesOrInchesToTicks());
             SmartDashboard.putNumber("initset", set);

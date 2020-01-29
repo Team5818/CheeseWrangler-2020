@@ -20,32 +20,31 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
-
 import javax.inject.Inject;
 
-public class TurretControl extends CommandBase {
-    private final Turret turret;
-    private final Joystick leftCoDriverJs;
+public class VisionCommands {
+    private VisionAimHoodCreator visionAimHoodCreator;
+    private VisionAimTurretCreator visionAimTurretCreator;
+    private LimelightLedToggleCreator limelightLedToggleCreator;
 
     @Inject
-    public TurretControl(Turret turret, @Input(Input.Position.CODRIVER_LEFT) Joystick js) {
-        this.turret = turret;
-        this.leftCoDriverJs = js;
-        addRequirements(turret);
+    public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
+                          VisionAimTurretCreator visionAimTurretCreator,
+                          LimelightLedToggleCreator limelightLedToggleCreator) {
+        this.visionAimHoodCreator = visionAimHoodCreator;
+        this.visionAimTurretCreator = visionAimTurretCreator;
+        this.limelightLedToggleCreator = limelightLedToggleCreator;
     }
 
-    @Override
-    public void execute() {
-        turret.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+    public VisionAimHood autoAimHood() {
+        return visionAimHoodCreator.create();
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
+    public VisionAimTurret autoAimTurret() {
+        return visionAimTurretCreator.create();
+    }
+
+    public LimelightLedToggle ledToggle(boolean state) {
+        return limelightLedToggleCreator.create(state);
     }
 }

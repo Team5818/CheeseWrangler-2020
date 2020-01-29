@@ -22,15 +22,13 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import org.rivierarobotics.util.RobotMap;
 
 public class Flywheel extends BasePIDSubsystem {
     private final WPI_TalonSRX flywheelTalon;
 
-    public Flywheel() {
+    public Flywheel(int id) {
         super(0.0004, 0.0, 0.0, 1.0);
-        flywheelTalon = new WPI_TalonSRX(RobotMap.Controllers.FLYWHEEL_TALON);
+        flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setNeutralMode(NeutralMode.Brake);
     }
@@ -43,14 +41,5 @@ public class Flywheel extends BasePIDSubsystem {
     @Override
     public void setPower(double pwr) {
         flywheelTalon.set(pwr);
-    }
-
-    public double getVelocity() {
-        return flywheelTalon.getSensorCollection().getQuadratureVelocity();
-    }
-
-    @Override
-    public void periodic() {
-        tickPid();
     }
 }

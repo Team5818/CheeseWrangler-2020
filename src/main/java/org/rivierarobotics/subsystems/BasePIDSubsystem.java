@@ -60,10 +60,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         return getPositionTicks() / anglesOrInchesToTicks;
     }
 
-    public void setPositionTicks(double position) {
-        pidController.setSetpoint(position);
-    }
-
     public void setPosition(double position) {
         pidController.setSetpoint(position * anglesOrInchesToTicks);
     }
@@ -75,5 +71,14 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     public abstract double getPositionTicks();
 
+    public void setPositionTicks(double position) {
+        pidController.setSetpoint(position);
+    }
+
     protected abstract void setPower(double pwr);
+
+    @Override
+    public void periodic() {
+        tickPid();
+    }
 }

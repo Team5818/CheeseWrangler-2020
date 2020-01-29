@@ -25,20 +25,21 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
-import org.rivierarobotics.util.RobotMap;
+
+import javax.inject.Provider;
 
 public class Turret extends BasePIDSubsystem {
-    private final WPI_TalonSRX turretTalon;
     private static final double zeroticks = 1186;
+    private final WPI_TalonSRX turretTalon;
 
-    public Turret() {
+    public Turret(int id, Provider<TurretControl> command) {
         super(0.0015, 0.00002, 0.0, 0.5);
-        turretTalon = new WPI_TalonSRX(RobotMap.Controllers.TURRET_TALON);
+        turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(true);
         turretTalon.setNeutralMode(NeutralMode.Brake);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        setDefaultCommand(new TurretControl(this));
+        setDefaultCommand(command.get());
 //        getPidController().enableContinuousInput(0, 4096);
     }
 

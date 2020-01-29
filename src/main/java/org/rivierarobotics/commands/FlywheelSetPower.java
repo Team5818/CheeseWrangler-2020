@@ -21,23 +21,23 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.Piston;
-import org.rivierarobotics.subsystems.PistonController;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Flywheel;
 
-public class PistonControl extends InstantCommand {
-    private final PistonController controller;
-    private final Piston piston;
-    private final boolean state;
+@GenerateCreator
+public class FlywheelSetPower extends InstantCommand {
+    private final Flywheel flywheel;
+    private final double speed;
 
-    public PistonControl(boolean state, Piston piston) {
-        this.piston = piston;
-        this.state = state;
-        this.controller = Robot.runningRobot.pistonController;
+    public FlywheelSetPower(@Provided Flywheel flywheel, double speed) {
+        this.flywheel = flywheel;
+        this.speed = speed;
+        addRequirements(flywheel);
     }
 
     @Override
     public void execute() {
-        controller.operatePiston(piston, state);
+        flywheel.setPower(speed);
     }
 }

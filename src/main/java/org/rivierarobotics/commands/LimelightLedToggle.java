@@ -22,22 +22,18 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
+public class LimelightLedToggle extends InstantCommand {
+    private boolean ledState;
 
-    public SetTurretPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
+    public LimelightLedToggle(boolean ledState) {
+        this.ledState = ledState;
     }
 
     @Override
     public void execute() {
-        turret.setAbsoluteAngle(position);
+        VisionUtil.setLedState(ledState);
     }
 }
