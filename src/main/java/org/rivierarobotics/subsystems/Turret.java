@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.util.RobotMap;
 
-public class Turret extends BasePID implements Subsystem {
+public class Turret extends BasePIDSubsystem {
     private final WPI_TalonSRX turretTalon;
     private static final double zeroticks = 1186;
 
@@ -47,8 +47,6 @@ public class Turret extends BasePID implements Subsystem {
     public double getPositionTicks() {
         double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
         SmartDashboard.putNumber("Position", pos);
-        SmartDashboard.putNumber("RisetoFall", turretTalon.getSensorCollection().getPulseWidthRiseToFallUs());
-        SmartDashboard.putNumber("Circle position", (pos % 4096));
         SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
         SmartDashboard.putNumber("setpoint", getPidController().getSetpoint());
         return pos;

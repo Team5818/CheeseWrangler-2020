@@ -25,7 +25,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.util.RobotMap;
 
-public class Flywheel extends BasePID implements Subsystem {
+public class Flywheel extends BasePIDSubsystem {
     private final WPI_TalonSRX flywheelTalon;
 
     public Flywheel() {
@@ -47,5 +47,10 @@ public class Flywheel extends BasePID implements Subsystem {
 
     public double getVelocity() {
         return flywheelTalon.getSensorCollection().getQuadratureVelocity();
+    }
+
+    @Override
+    public void periodic() {
+        tickPid();
     }
 }

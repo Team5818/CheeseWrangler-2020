@@ -23,19 +23,20 @@ package org.rivierarobotics.subsystems;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Reporting;
 
-public abstract class BasePID {
+public abstract class BasePIDSubsystem extends SubsystemBase {
     private final double pidRange, anglesOrInchesToTicks;
     private boolean manualOverride = false;
     private PIDController pidController;
 
-    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, String name) {
+    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, String name) {
         this(kP, kI, kD, pidRange, tolerance, 4096.0 / 360, name);
     }
 
-    public BasePID(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks, String name) {
+    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks, String name) {
         this.pidController = new PIDController(kP, kI, kD, 0.005);
         this.pidRange = pidRange;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;

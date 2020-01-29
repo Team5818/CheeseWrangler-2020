@@ -36,7 +36,6 @@ public class Robot extends TimedRobot {
     public final Flywheel flywheel;
     public final PistonController pistonController;
     public final Joystick driverLeftJs, driverRightJs, coDriverRightJs, coDriverLeftJs, coDriverButtons;
-    public boolean isArcade = true;
 
     public Robot() {
         runningRobot = this;
@@ -70,20 +69,8 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        selectiveTickPid(turret);
-        selectiveTickPid(hood);
-        selectiveTickPid(flywheel);
-        SmartDashboard.putNumber("left", driveTrain.getLeft().getPositionTicks());
-        SmartDashboard.putNumber("right", driveTrain.getRight().getPositionTicks());
-        SmartDashboard.putNumber("turret", turret.getPositionTicks());
         SmartDashboard.putNumber("tv", VisionUtil.getLLValue("tv"));
         SmartDashboard.putNumber("tx", VisionUtil.getLLValue("tx"));
         SmartDashboard.putNumber("ty", VisionUtil.getLLValue("ty"));
-    }
-
-    private void selectiveTickPid(BasePID subsystem) {
-        if (!isDisabled()) {
-            subsystem.tickPid();
-        }
     }
 }

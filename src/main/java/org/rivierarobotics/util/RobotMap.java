@@ -30,10 +30,10 @@ public interface RobotMap {
     interface Joysticks {
         int DRIVER_LEFT_JS = 0;
         int DRIVER_RIGHT_JS = 1;
-        int DRIVER_BUTTONS = 5;
+        int DRIVER_BUTTONS = 4;
         int CODRIVER_LEFT_JS = 2;
         int CODRIVER_RIGHT_JS = 3;
-        int CODRIVER_BUTTONS = 4;
+        int CODRIVER_BUTTONS = 5;
     }
 
     class DriveTrain {

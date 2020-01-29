@@ -39,37 +39,32 @@ public class DriveControl extends CommandBase {
 
     @Override
     public void execute() {
-        if (Robot.runningRobot.isArcade) {
-            double x = MathUtil.fitDeadband(rightJs.getX());
-            double y = MathUtil.fitDeadband(leftJs.getY());
-            double left, right;
+        double x = MathUtil.fitDeadband(rightJs.getX());
+        double y = MathUtil.fitDeadband(leftJs.getY());
+        double left, right;
 
-            double max = Math.max(Math.abs(x), Math.abs(y));
-            double diff = y - x;
-            double sum = y + x;
-            if (y > 0) {
-                if (x > 0) {
-                    left = max;
-                    right = diff;
-                } else {
-                    left = sum;
-                    right = max;
-                }
+        double max = Math.max(Math.abs(x), Math.abs(y));
+        double diff = y - x;
+        double sum = y + x;
+        if (y > 0) {
+            if (x > 0) {
+                left = max;
+                right = diff;
             } else {
-                if (x > 0) {
-                    left = sum;
-                    right = -max;
-                } else {
-                    left = -max;
-                    right = diff;
-                }
+                left = sum;
+                right = max;
             }
-
-            driveTrain.setPower(left, right);
         } else {
-            driveTrain.setPower(leftJs.getY(), rightJs.getY());
+            if (x > 0) {
+                left = sum;
+                right = -max;
+            } else {
+                left = -max;
+                right = diff;
+            }
         }
 
+        driveTrain.setPower(left, right);
     }
 
     @Override
