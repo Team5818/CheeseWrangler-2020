@@ -43,6 +43,18 @@ public class VisionAimHood extends CommandBase {
         double ty = VisionUtil.getLLValue("ty");
         double dtVel = driveTrain.getAvgVelocity();
         flywheel.getVelocity();
+        double vy = 3.679;  //Vy constant
+        double t = 0.375;   //time constant
+        double h = 0.69;    //height of goal
+        double m = 0.14;    //mass of ball
+        double dist = h/Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
+        double vxz = Math.sqrt(Math.pow((dist/t),2) + Math.pow(0,2));
+        double turretAngle = -Math.atan2(0,dist/t);
+        double hoodAngle = Math.atan2(vy-((0.336*vxz+0.2)/m)*t,vxz);
+        new FlywheelSetVelocity(vxz/Math.cos(Math.toRadians(hoodAngle)/.0005)); //passes through value in ticks/100ms
+
+
+
     }
 
     @Override
