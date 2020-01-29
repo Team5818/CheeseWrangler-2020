@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","url":"allpackages-index.html"},{"l":"org.rivierarobotics.commands"},{"l":"org.rivierarobotics.robot"},{"l":"org.rivierarobotics.subsystems"},{"l":"org.rivierarobotics.util"}]

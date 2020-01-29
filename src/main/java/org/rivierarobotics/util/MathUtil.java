@@ -47,7 +47,7 @@ public class MathUtil {
 
     public static double wrapToCircle(double angle) {
         if (angle < 0) {
-            angle += 720;
+            angle = 360 - (Math.abs(angle) % 360);
         }
         return angle % 360;
     }

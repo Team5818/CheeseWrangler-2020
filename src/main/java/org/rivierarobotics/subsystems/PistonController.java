@@ -28,10 +28,9 @@ public class PistonController {
     }
 
     private Solenoid pistonFor(Piston piston) {
-        if (piston == Piston.TEST) {
-            return null;
-        } else {
-            throw new IllegalArgumentException("Piston invalid");
+        switch (piston) {
+            case TEST: return null;
+            default: throw new IllegalArgumentException("Piston invalid");
         }
     }
 

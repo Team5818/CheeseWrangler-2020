@@ -36,6 +36,6 @@ public class FlywheelSetVelocity extends InstantCommand {
 
     @Override
     public void execute() {
-        flywheel.setTicksPosition(velocity);
+        flywheel.setPositionTicks(velocity);
     }
 }

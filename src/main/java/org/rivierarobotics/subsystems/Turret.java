@@ -24,7 +24,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.util.RobotMap;
 
@@ -33,7 +32,7 @@ public class Turret extends BasePIDSubsystem {
     private static final double zeroticks = 1186;
 
     public Turret() {
-        super(0.0015, 0.00002, 0.0, 0.5, 0.0, "Turret");
+        super(0.0015, 0.00002, 0.0, 0.5);
         turretTalon = new WPI_TalonSRX(RobotMap.Controllers.TURRET_TALON);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(true);
@@ -53,12 +52,11 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsoluteAngle(double angle) {
-        setTicksPosition((angle * getAnglesOrInchesToTicks()) + zeroticks);
+        setPositionTicks((angle * getAnglesOrInchesToTicks()) + zeroticks);
     }
 
     @Override
     public void setPower(double pwr) {
-        SmartDashboard.putNumber("power", pwr);
         turretTalon.set(pwr);
     }
 }

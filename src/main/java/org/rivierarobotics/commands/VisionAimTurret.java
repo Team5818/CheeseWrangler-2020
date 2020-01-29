@@ -49,7 +49,7 @@ public class VisionAimTurret extends CommandBase {
             double dist = h/Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
             double turretAngle = -Math.atan2(0,dist/t);
             double set = MathUtil.wrapToCircle(tx - turretAngle) + MathUtil.wrapToCircle(turret.getPosition());
-            turret.setTicksPosition(set * turret.getAnglesOrInchesToTicks());
+            turret.setPositionTicks(set * turret.getAnglesOrInchesToTicks());
             SmartDashboard.putNumber("initset", set);
         }
     }
