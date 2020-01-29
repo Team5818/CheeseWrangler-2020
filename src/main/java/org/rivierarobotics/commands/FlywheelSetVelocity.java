@@ -28,8 +28,8 @@ public class FlywheelSetVelocity extends InstantCommand {
     private final Flywheel flywheel;
     private final double velocity;
 
-    public FlywheelSetVelocity(Flywheel flywheel, double velocity) {
-        this.flywheel = flywheel;
+    public FlywheelSetVelocity(double velocity) {
+        this.flywheel = Robot.runningRobot.flywheel;
         this.velocity = velocity;
         addRequirements(flywheel);
     }
