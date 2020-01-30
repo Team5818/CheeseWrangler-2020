@@ -33,17 +33,19 @@ public class VisionAimHood extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
+    private final VisionUtil vision;
 
-    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly) {
+    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision) {
         this.hood = hd;
         this.driveTrain = dt;
         this.flywheel = fly;
+        this.vision = vision;
         addRequirements(hood, flywheel);
     }
 
     @Override
     public void execute() {
-        double ty = VisionUtil.getLLValue("ty");
+        double ty = vision.getLLValue("ty");
         double vy = 3.679;  //Vy constant
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal

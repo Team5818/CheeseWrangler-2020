@@ -22,18 +22,21 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
 public class LimelightLedToggle extends InstantCommand {
-    private boolean ledState;
+    private final VisionUtil vision;
+    private final boolean ledState;
 
-    public LimelightLedToggle(boolean ledState) {
+    public LimelightLedToggle(@Provided VisionUtil vision, boolean ledState) {
         this.ledState = ledState;
+        this.vision = vision;
     }
 
     @Override
     public void execute() {
-        VisionUtil.setLedState(ledState);
+        vision.setLedState(ledState);
     }
 }

@@ -22,15 +22,20 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.util.MathUtil;
+
+import javax.inject.Inject;
 
 public class HoodControl extends CommandBase {
     private final Hood hood;
     private final Joystick coDriverRightJs;
 
-    public HoodControl(Hood hood, @Input(Input.Position.CODRIVER_RIGHT) Joystick js) {
+    @Inject
+    public HoodControl(Hood hood,
+                       @Provided @Input(Input.Selector.CODRIVER_RIGHT) Joystick js) {
         this.hood = hood;
         this.coDriverRightJs = js;
         addRequirements(hood);

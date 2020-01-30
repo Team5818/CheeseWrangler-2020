@@ -33,18 +33,20 @@ import org.rivierarobotics.util.VisionUtil;
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final DriveTrain driveTrain;
+    private final VisionUtil vision;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain dt) {
+    public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain dt, @Provided VisionUtil vision) {
         this.turret = turret;
         this.driveTrain = dt;
+        this.vision = vision;
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        double tv = VisionUtil.getLLValue("tv");
-        double tx = VisionUtil.getLLValue("tx");
-        double ty = VisionUtil.getLLValue("ty");
+        double tv = vision.getLLValue("tv");
+        double tx = vision.getLLValue("tx");
+        double ty = vision.getLLValue("ty");
         double dtVel = driveTrain.getAvgVelocity();
 
         if (tv == 1) {

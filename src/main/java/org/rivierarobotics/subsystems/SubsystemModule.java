@@ -24,6 +24,7 @@ import dagger.Module;
 import dagger.Provides;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -34,8 +35,8 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 11;
     private static final int FLYWHEEL_TALON = 13;
     private static final int CHEESE_WHEEL_TALON = 10;
-    private static final DriveTrainSide.Motors DRIVETRAIN_LEFT_MOTORS = new DriveTrainSide.Motors(1, 2, 3),
-            DRIVETRAIN_RIGHT_MOTORS = new DriveTrainSide.Motors(4, 5, 6);
+    private static final DriveTrainSide.MotorIds DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
+            DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
 
     private SubsystemModule() {
     }
@@ -44,14 +45,14 @@ public class SubsystemModule {
     @Singleton
     @Sided(Sided.Side.LEFT)
     public static DriveTrainSide provideDriveSideLeft() {
-        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTORS, true);
+        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, true);
     }
 
     @Provides
     @Singleton
     @Sided(Sided.Side.RIGHT)
     public static DriveTrainSide provideDriveSideRight() {
-        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTORS, false);
+        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, false);
     }
 
     @Provides
@@ -76,5 +77,11 @@ public class SubsystemModule {
     @Singleton
     public static CheeseWheel provideCheeseWheel() {
         return new CheeseWheel(CHEESE_WHEEL_TALON);
+    }
+
+    @Provides
+    @Singleton
+    public static VisionUtil provideVisionUtil() {
+        return new VisionUtil();
     }
 }

@@ -23,10 +23,15 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class CheeseWheel extends BasePIDSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final double baseTicks = 0;
 
+    @Inject
     public CheeseWheel(int id) {
         super(0.0, 0.0, 0.0, 1.0);
         this.wheelTalon = new WPI_TalonSRX(id);

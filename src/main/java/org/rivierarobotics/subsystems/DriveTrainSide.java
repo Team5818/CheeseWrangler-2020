@@ -29,7 +29,7 @@ import org.rivierarobotics.util.NeutralIdleMode;
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
-    public DriveTrainSide(Motors motors, boolean invert) {
+    public DriveTrainSide(MotorIds motors, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
         this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -57,10 +57,10 @@ public class DriveTrainSide {
         return masterTalon.getSensorCollection().getQuadratureVelocity();
     }
 
-    public static class Motors {
+    public static class MotorIds {
         public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
 
-        public Motors(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
+        public MotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
             this.masterTalon = masterTalon;
             this.sparkSlaveOne = sparkSlaveOne;
             this.sparkSlaveTwo = sparkSlaveTwo;

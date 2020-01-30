@@ -42,42 +42,42 @@ public class ControlsModule {
 
     @Provides
     @Singleton
-    @Input(Input.Position.DRIVER_LEFT)
+    @Input(Input.Selector.DRIVER_LEFT)
     public static Joystick provideDriverJoystickLeft() {
         return new Joystick(DRIVER_LEFT_JS);
     }
 
     @Provides
     @Singleton
-    @Input(Input.Position.DRIVER_RIGHT)
+    @Input(Input.Selector.DRIVER_RIGHT)
     public static Joystick provideDriverJoystickRight() {
         return new Joystick(DRIVER_RIGHT_JS);
     }
 
     @Provides
     @Singleton
-    @Input(Input.Position.CODRIVER_LEFT)
+    @Input(Input.Selector.CODRIVER_LEFT)
     public static Joystick provideCoDriverJoystickLeft() {
         return new Joystick(CODRIVER_LEFT_JS);
     }
 
     @Provides
     @Singleton
-    @Input(Input.Position.CODRIVER_RIGHT)
+    @Input(Input.Selector.CODRIVER_RIGHT)
     public static Joystick provideCoDriverJoystickRight() {
         return new Joystick(CODRIVER_RIGHT_JS);
     }
 
     @Provides
     @Singleton
-    @Input(Input.Position.DRIVER_BUTTONS)
+    @Input(Input.Selector.DRIVER_BUTTONS)
     public static Joystick provideDriverButtons() {
         return new Joystick(DRIVER_BUTTONS);
     }
 
     @Provides
     @Singleton
-    @Input(Input.Position.CODRIVER_BUTTONS)
+    @Input(Input.Selector.CODRIVER_BUTTONS)
     public static Joystick provideCoDriverButtons() {
         return new Joystick(CODRIVER_BUTTONS);
     }

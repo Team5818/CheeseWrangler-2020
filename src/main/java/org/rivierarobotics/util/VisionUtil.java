@@ -25,31 +25,23 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class VisionUtil {
-    private static final double LLAngle = 0, LLHeight = 10, targetHeight = 20;
-    public static NetworkTable LIMELIGHT = NetworkTableInstance.getDefault().getTable("limelight");
+    private final NetworkTable limelight;
 
-    private VisionUtil() {
+    public VisionUtil() {
+        limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
-    public static double getLLValue(String key) {
-        return LIMELIGHT.getEntry(key).getDouble(0);
+    public final double getLLValue(String key) {
+        return limelight.getEntry(key).getDouble(0);
     }
 
-    public static void setLedState(boolean state) {
-        LIMELIGHT.getEntry("ledMode").setNumber(state ? 3 : 1);
+    public final void setLedState(boolean state) {
+        limelight.getEntry("ledMode").setNumber(state ? 3 : 1);
     }
 
-    public static void invertLedState() {
-        NetworkTableEntry led = LIMELIGHT.getEntry("ledMode");
+    public final void invertLedState() {
+        NetworkTableEntry led = limelight.getEntry("ledMode");
         double cs = (double) led.getNumber(1.0);
         led.setNumber(cs == 1 ? 3 : 1);
-    }
-
-    public static double getDistanceToTarget() {
-        if (getLLValue("tv") == 1) {
-            return (targetHeight - LLHeight) / Math.tan(LLAngle + getLLValue("ty"));
-        } else {
-            return -1;
-        }
     }
 }

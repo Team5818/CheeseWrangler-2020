@@ -22,6 +22,7 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
@@ -33,7 +34,8 @@ public class TurretControl extends CommandBase {
     private final Joystick leftCoDriverJs;
 
     @Inject
-    public TurretControl(Turret turret, @Input(Input.Position.CODRIVER_LEFT) Joystick js) {
+    public TurretControl(Turret turret,
+                         @Provided @Input(Input.Selector.CODRIVER_LEFT) Joystick js) {
         this.turret = turret;
         this.leftCoDriverJs = js;
         addRequirements(turret);

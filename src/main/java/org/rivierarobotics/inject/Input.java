@@ -24,9 +24,9 @@ import javax.inject.Qualifier;
 
 @Qualifier
 public @interface Input {
-    Position value();
+    Selector value();
 
-    enum Position {
+    enum Selector {
         DRIVER_LEFT, DRIVER_RIGHT, DRIVER_BUTTONS, CODRIVER_LEFT, CODRIVER_RIGHT, CODRIVER_BUTTONS
     }
 }

@@ -21,11 +21,10 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
-import org.rivierarobotics.commands.DriveControl;
+import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Singleton
@@ -35,10 +34,10 @@ public class DriveTrain implements Subsystem {
     @Inject
     public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
                       @Sided(Sided.Side.RIGHT) DriveTrainSide right,
-                      Provider<DriveControl> command) {
+                      DriveControlCreator controlCreator) {
         this.left = left;
         this.right = right;
-        setDefaultCommand(command.get());
+        setDefaultCommand(controlCreator.create(this));
     }
 
     public void setPower(double l, double r) {

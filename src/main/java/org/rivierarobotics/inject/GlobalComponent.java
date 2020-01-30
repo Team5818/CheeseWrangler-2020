@@ -25,6 +25,7 @@ import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
 import org.rivierarobotics.subsystems.*;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Singleton;
 
@@ -39,6 +40,7 @@ public abstract class GlobalComponent {
         getCheeseWheel();
         getPistonController();
         getButtonConfiguration();
+        getVisionUtil();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -55,5 +57,5 @@ public abstract class GlobalComponent {
 
     public abstract ButtonConfiguration getButtonConfiguration();
 
-
+    public abstract VisionUtil getVisionUtil();
 }

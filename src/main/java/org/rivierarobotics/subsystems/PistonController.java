@@ -35,8 +35,10 @@ public class PistonController extends SubsystemBase {
 
     private Solenoid pistonFor(Piston piston) {
         switch (piston) {
-            case TEST: return null;
-            default: throw new IllegalArgumentException("Piston invalid");
+            case TEST:
+                return null;
+            default:
+                throw new IllegalArgumentException("Piston invalid");
         }
     }
 
