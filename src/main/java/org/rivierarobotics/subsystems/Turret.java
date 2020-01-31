@@ -26,7 +26,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
 
-import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class Turret extends BasePIDSubsystem {
@@ -34,7 +33,6 @@ public class Turret extends BasePIDSubsystem {
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
 
-    @Inject
     public Turret(int id, Provider<TurretControl> command) {
         super(0.0015, 0.00002, 0.0, 0.5);
         this.command = command;
