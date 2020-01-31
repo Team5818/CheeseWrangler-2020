@@ -28,17 +28,14 @@ import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
 
-import javax.inject.Inject;
-
 @GenerateCreator
 public class DriveControl extends CommandBase {
     private final DriveTrain driveTrain;
     private final Joystick leftJs, rightJs;
 
-    @Inject
-    public DriveControl(DriveTrain dt,
-                        @Provided @Input(Input.Selector.DRIVER_LEFT) Joystick left,
-                        @Provided @Input(Input.Selector.DRIVER_RIGHT) Joystick right) {
+    public DriveControl(@Provided @Input(Input.Selector.DRIVER_LEFT) Joystick left,
+                        @Provided @Input(Input.Selector.DRIVER_RIGHT) Joystick right,
+                        DriveTrain dt) {
         this.driveTrain = dt;
         this.leftJs = left;
         this.rightJs = right;

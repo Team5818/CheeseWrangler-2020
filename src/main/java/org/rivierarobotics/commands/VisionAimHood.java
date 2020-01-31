@@ -21,21 +21,21 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.util.VisionUtil;
 
-@GenerateCreator
+import javax.inject.Inject;
+
 public class VisionAimHood extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
     private final VisionUtil vision;
 
-    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision) {
+    @Inject
+    public VisionAimHood(Hood hd, DriveTrain dt, Flywheel fly, VisionUtil vision) {
         this.hood = hd;
         this.driveTrain = dt;
         this.flywheel = fly;

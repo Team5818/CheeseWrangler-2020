@@ -25,9 +25,7 @@ import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
-@Singleton
 public class DriveTrain implements Subsystem {
     private final DriveTrainSide left, right;
 

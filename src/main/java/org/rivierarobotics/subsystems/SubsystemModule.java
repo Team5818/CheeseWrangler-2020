@@ -24,7 +24,6 @@ import dagger.Module;
 import dagger.Provides;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
-import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
@@ -35,7 +34,8 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 11;
     private static final int FLYWHEEL_TALON = 13;
     private static final int CHEESE_WHEEL_TALON = 10;
-    private static final DriveTrainSide.MotorIds DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
+    private static final DriveTrainSide.MotorIds
+            DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
             DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
 
     private SubsystemModule() {
@@ -81,7 +81,7 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static VisionUtil provideVisionUtil() {
-        return new VisionUtil();
+    public static PistonController providePistonController() {
+        return new PistonController();
     }
 }

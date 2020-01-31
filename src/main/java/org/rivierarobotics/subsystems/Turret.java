@@ -28,9 +28,7 @@ import org.rivierarobotics.commands.TurretControl;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
-import javax.inject.Singleton;
 
-@Singleton
 public class Turret extends BasePIDSubsystem {
     private static final double zeroticks = 1186;
     private final WPI_TalonSRX turretTalon;

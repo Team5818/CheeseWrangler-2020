@@ -21,27 +21,28 @@
 package org.rivierarobotics.commands;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class VisionCommands {
-    private VisionAimHoodCreator visionAimHoodCreator;
-    private VisionAimTurretCreator visionAimTurretCreator;
+    private Provider<VisionAimHood> visionAimHood;
+    private Provider<VisionAimTurret> visionAimTurret;
     private LimelightLedToggleCreator limelightLedToggleCreator;
 
     @Inject
-    public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
-                          VisionAimTurretCreator visionAimTurretCreator,
+    public VisionCommands(Provider<VisionAimHood> visionAimHood,
+                          Provider<VisionAimTurret> visionAimTurret,
                           LimelightLedToggleCreator limelightLedToggleCreator) {
-        this.visionAimHoodCreator = visionAimHoodCreator;
-        this.visionAimTurretCreator = visionAimTurretCreator;
+        this.visionAimHood = visionAimHood;
+        this.visionAimTurret = visionAimTurret;
         this.limelightLedToggleCreator = limelightLedToggleCreator;
     }
 
     public VisionAimHood autoAimHood() {
-        return visionAimHoodCreator.create();
+        return visionAimHood.get();
     }
 
     public VisionAimTurret autoAimTurret() {
-        return visionAimTurretCreator.create();
+        return visionAimTurret.get();
     }
 
     public LimelightLedToggle ledToggle(boolean state) {

@@ -24,9 +24,12 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
+import javax.inject.Inject;
+
 public class VisionUtil {
     private final NetworkTable limelight;
 
+    @Inject
     public VisionUtil() {
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }

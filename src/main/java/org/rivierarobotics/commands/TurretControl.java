@@ -34,8 +34,8 @@ public class TurretControl extends CommandBase {
     private final Joystick leftCoDriverJs;
 
     @Inject
-    public TurretControl(Turret turret,
-                         @Provided @Input(Input.Selector.CODRIVER_LEFT) Joystick js) {
+    public TurretControl(@Provided @Input(Input.Selector.CODRIVER_LEFT) Joystick js,
+                         Turret turret) {
         this.turret = turret;
         this.leftCoDriverJs = js;
         addRequirements(turret);

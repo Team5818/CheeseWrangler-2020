@@ -22,20 +22,20 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
 
-@GenerateCreator
+import javax.inject.Inject;
+
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final DriveTrain driveTrain;
     private final VisionUtil vision;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain dt, @Provided VisionUtil vision) {
+    @Inject
+    public VisionAimTurret(Turret turret, DriveTrain dt, VisionUtil vision) {
         this.turret = turret;
         this.driveTrain = dt;
         this.vision = vision;
