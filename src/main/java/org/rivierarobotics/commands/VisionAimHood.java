@@ -26,31 +26,37 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.util.VisionUtil;
 
+import javax.inject.Inject;
+
 public class VisionAimHood extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
+    private final VisionUtil vision;
 
-    public VisionAimHood(Hood hd, DriveTrain dt, Flywheel fly) {
+    @Inject
+    public VisionAimHood(Hood hd, DriveTrain dt, Flywheel fly, VisionUtil vision) {
         this.hood = hd;
         this.driveTrain = dt;
         this.flywheel = fly;
+        this.vision = vision;
         addRequirements(hood, flywheel);
     }
 
     @Override
     public void execute() {
-        double ty = VisionUtil.getLLValue("ty");
-        double dtVel = driveTrain.getAvgVelocity();
-        flywheel.getVelocity();
+        double ty = vision.getLLValue("ty");
         double vy = 3.679;  //Vy constant
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal
         double m = 0.14;    //mass of ball
-        double dist = h/Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
-        double vxz = Math.sqrt(Math.pow((dist/t),2) + Math.pow(0,2));
-        double hoodAngle = Math.atan2(vy-((0.336*vxz+0.2)/m)*t,vxz);
-        new FlywheelSetVelocity(vxz/Math.cos(Math.toRadians(hoodAngle)/.0005)); //passes through value in ticks/100ms
+        double dist = h / Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
+        double vxz = Math.sqrt(Math.pow((dist / t), 2) + Math.pow(0, 2));
+        double hoodAngle = Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz);
+        double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle) / 0.0005); //passes through value in ticks/100ms
+
+        hood.setPosition(hoodAngle);
+        flywheel.setPositionTicks(flywheelVelocity);
     }
 
     @Override

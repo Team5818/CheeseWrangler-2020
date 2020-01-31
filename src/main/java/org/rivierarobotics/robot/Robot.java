@@ -20,46 +20,39 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.subsystems.*;
-import org.rivierarobotics.util.RobotMap;
+import org.rivierarobotics.inject.DaggerGlobalComponent;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
-    public static Robot runningRobot;
-    public final DriveTrain driveTrain;
-    public final Turret turret;
-    public final Hood hood;
-    public final Flywheel flywheel;
-    public final PistonController pistonController;
-    public final Joystick driverLeftJs, driverRightJs, coDriverRightJs, coDriverLeftJs, coDriverButtons;
-
-    public Robot() {
-        runningRobot = this;
-
-        this.driverLeftJs = new Joystick(RobotMap.Joysticks.DRIVER_LEFT_JS);
-        this.driverRightJs = new Joystick(RobotMap.Joysticks.DRIVER_RIGHT_JS);
-        this.coDriverLeftJs = new Joystick(RobotMap.Joysticks.CODRIVER_LEFT_JS);
-        this.coDriverRightJs = new Joystick(RobotMap.Joysticks.CODRIVER_RIGHT_JS);
-        this.coDriverButtons = new Joystick(RobotMap.Joysticks.CODRIVER_BUTTONS);
-
-        this.driveTrain = new DriveTrain();
-        this.hood = new Hood();
-        this.flywheel = new Flywheel();
-        this.turret = new Turret();
-        this.pistonController = new PistonController();
-    }
+    private GlobalComponent globalComponent;
 
     @Override
     public void robotInit() {
-        ButtonConfiguration.init();
+        globalComponent = DaggerGlobalComponent.create();
+        globalComponent.robotInit();
+    }
+
+    @Override
+    public void robotPeriodic() {
+        displayShuffleboard();
+    }
+
+    @Override
+    public void autonomousInit() {
+    }
+
+    @Override
+    public void autonomousPeriodic() {
     }
 
     @Override
     public void teleopInit() {
+        globalComponent.getButtonConfiguration().initTeleop();
+        globalComponent.getVisionUtil().setLedState(true);
     }
 
     @Override
@@ -68,9 +61,18 @@ public class Robot extends TimedRobot {
     }
 
     @Override
-    public void robotPeriodic() {
-        SmartDashboard.putNumber("tv", VisionUtil.getLLValue("tv"));
-        SmartDashboard.putNumber("tx", VisionUtil.getLLValue("tx"));
-        SmartDashboard.putNumber("ty", VisionUtil.getLLValue("ty"));
+    public void disabledInit() {
+        globalComponent.getVisionUtil().setLedState(false);
+    }
+
+    @Override
+    public void disabledPeriodic() {
+    }
+
+    private void displayShuffleboard() {
+        VisionUtil vision = globalComponent.getVisionUtil();
+        SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
+        SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
+        SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
     }
 }

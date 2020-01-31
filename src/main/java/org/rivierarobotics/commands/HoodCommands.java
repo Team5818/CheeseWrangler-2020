@@ -20,32 +20,17 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.util.VisionUtil;
+import javax.inject.Inject;
 
-public class LedToggle extends InstantCommand {
+public class HoodCommands {
+    private SetHoodAngleCreator setHoodAngleCreator;
 
-    private int ledState;
-
-    public LedToggle() {
-        ledState = -1;
+    @Inject
+    public HoodCommands(SetHoodAngleCreator setHoodAngleCreator) {
+        this.setHoodAngleCreator = setHoodAngleCreator;
     }
 
-    public LedToggle(boolean ledState) {
-        if (ledState)
-            this.ledState = 3;
-        else
-            this.ledState = 1;
-    }
-
-    @Override
-    public void execute() {
-        if (ledState >= 0) {
-            VisionUtil.LIMELIGHT.getEntry("ledMode").setNumber(ledState);
-        } else if(VisionUtil.LIMELIGHT.getEntry("ledMode").getDouble(2.) == (3.)) {
-            VisionUtil.LIMELIGHT.getEntry("ledMode").setNumber(1);
-        } else if(VisionUtil.LIMELIGHT.getEntry("ledMode").getDouble(2.) == (1.)) {
-            VisionUtil.LIMELIGHT.getEntry("ledMode").setNumber(3);
-        }
+    public SetHoodAngle setAngle(double angle) {
+        return setHoodAngleCreator.create(angle);
     }
 }

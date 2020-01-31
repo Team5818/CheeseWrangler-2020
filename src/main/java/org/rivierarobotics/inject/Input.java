@@ -18,24 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.inject;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import javax.inject.Qualifier;
 
-public class Reporting {
-    private Reporting() {
-    }
+@Qualifier
+public @interface Input {
+    Selector value();
 
-    public static void setOutEntry(ShuffleboardTab tab, String key, double value) {
-        addEntry(tab, key).setDouble(value);
-    }
-
-    public static void setOutEntry(ShuffleboardTab tab, String key, boolean value) {
-        addEntry(tab, key).setBoolean(value);
-    }
-
-    private static NetworkTableEntry addEntry(ShuffleboardTab tab, String key) {
-        return tab.add(key, 0).getEntry();
+    enum Selector {
+        DRIVER_LEFT, DRIVER_RIGHT, DRIVER_BUTTONS, CODRIVER_LEFT, CODRIVER_RIGHT, CODRIVER_BUTTONS
     }
 }

@@ -22,18 +22,21 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
+
+import javax.inject.Inject;
 
 public class TurretControl extends CommandBase {
     private final Turret turret;
     private final Joystick leftCoDriverJs;
 
-    public TurretControl(Turret turret) {
+    @Inject
+    public TurretControl(@Input(Input.Selector.CODRIVER_LEFT) Joystick js,
+                         Turret turret) {
         this.turret = turret;
-        this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
+        this.leftCoDriverJs = js;
         addRequirements(turret);
     }
 

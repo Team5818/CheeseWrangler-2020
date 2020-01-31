@@ -20,24 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.Piston;
-import org.rivierarobotics.subsystems.PistonController;
+import javax.inject.Inject;
 
-public class PistonControl extends InstantCommand {
-    private final PistonController controller;
-    private final Piston piston;
-    private final boolean state;
+public class FlywheelCommands {
+    private FlywheelSetPowerCreator flywheelSetPowerCreator;
+    private FlywheelSetVelocityCreator flywheelSetVelocityCreator;
 
-    public PistonControl(boolean state, Piston piston) {
-        this.piston = piston;
-        this.state = state;
-        this.controller = Robot.runningRobot.pistonController;
+    @Inject
+    public FlywheelCommands(FlywheelSetPowerCreator flywheelSetPowerCreator,
+                            FlywheelSetVelocityCreator flywheelSetVelocityCreator) {
+        this.flywheelSetPowerCreator = flywheelSetPowerCreator;
+        this.flywheelSetVelocityCreator = flywheelSetVelocityCreator;
     }
 
-    @Override
-    public void execute() {
-        controller.operatePiston(piston, state);
+    public FlywheelSetPower setPower(double pwr) {
+        return flywheelSetPowerCreator.create(pwr);
+    }
+
+    public FlywheelSetVelocity setVelocity(double vel) {
+        return flywheelSetVelocityCreator.create(vel);
     }
 }

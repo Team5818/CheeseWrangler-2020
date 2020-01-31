@@ -23,21 +23,21 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.Flywheel;
 
 @GenerateCreator
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
+public class FlywheelSetPower extends InstantCommand {
+    private final Flywheel flywheel;
+    private final double speed;
 
-    public SetTurretPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
+    public FlywheelSetPower(@Provided Flywheel flywheel, double speed) {
+        this.flywheel = flywheel;
+        this.speed = speed;
+        addRequirements(flywheel);
     }
 
     @Override
     public void execute() {
-        turret.setAbsoluteAngle(position);
+        flywheel.setPower(speed);
     }
 }

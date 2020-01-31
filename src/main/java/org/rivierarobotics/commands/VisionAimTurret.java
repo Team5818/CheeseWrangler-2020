@@ -27,27 +27,33 @@ import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
 
+import javax.inject.Inject;
+
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final DriveTrain driveTrain;
-    public VisionAimTurret(Turret turret,DriveTrain dt) {
+    private final VisionUtil vision;
+
+    @Inject
+    public VisionAimTurret(Turret turret, DriveTrain dt, VisionUtil vision) {
         this.turret = turret;
         this.driveTrain = dt;
+        this.vision = vision;
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        double tv = VisionUtil.getLLValue("tv");
-        double tx = VisionUtil.getLLValue("tx");
-        double ty = VisionUtil.getLLValue("ty");
+        double tv = vision.getLLValue("tv");
+        double tx = vision.getLLValue("tx");
+        double ty = vision.getLLValue("ty");
         double dtVel = driveTrain.getAvgVelocity();
 
         if (tv == 1) {
             double t = 0.375;   //time constant
             double h = 0.69;    //height of goal
-            double dist = h/Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
-            double turretAngle = -Math.atan2(0,dist/t);
+            double dist = h / Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
+            double turretAngle = -Math.atan2(0, dist / t);
             double set = MathUtil.wrapToCircle(tx - turretAngle) + MathUtil.wrapToCircle(turret.getPosition());
             turret.setPositionTicks(set * turret.getAnglesOrInchesToTicks());
             SmartDashboard.putNumber("initset", set);

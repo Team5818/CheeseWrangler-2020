@@ -20,36 +20,38 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.*;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.Input;
+
+import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private ButtonConfiguration() {
+    private final Joystick driverLeft, driverRight, codriverLeft, codriverRight, driverButtons, codriverButtons;
+    private final CommandComponent cmds;
+
+    @Inject
+    public ButtonConfiguration(@Input(Input.Selector.DRIVER_LEFT) Joystick driverLeft,
+                               @Input(Input.Selector.DRIVER_RIGHT) Joystick driverRight,
+                               @Input(Input.Selector.CODRIVER_LEFT) Joystick codriverLeft,
+                               @Input(Input.Selector.CODRIVER_RIGHT) Joystick codriverRight,
+                               @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
+                               @Input(Input.Selector.CODRIVER_BUTTONS) Joystick codriverButtons,
+                               CommandComponent.Builder component) {
+        this.driverLeft = driverLeft;
+        this.driverRight = driverRight;
+        this.codriverLeft = codriverLeft;
+        this.codriverRight = codriverRight;
+        this.driverButtons = driverButtons;
+        this.codriverButtons = codriverButtons;
+        this.cmds = component.build();
     }
 
-    public static void init() {
-        Turret turret = Robot.runningRobot.turret;
-        new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1)
-                .whenPressed(new SetTurretPosition(turret, 90));
-        new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2)
-                .whenPressed(new SetTurretPosition(turret, 180)); /*
-        new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
-                .whenPressed(new VisionAimTurret(Robot.runningRobot.turret));
-        new JoystickButton(Robot.runningRobot.coDriverButtons, 12)
-                .whenPressed(new SetTurretPosition(turret, 185));
-        new JoystickButton(Robot.runningRobot.coDriverButtons, 11)
-                .whenPressed(new SetTurretPosition(turret, 175));
-        new JoystickButton(Robot.runningRobot.coDriverRightJs, 2)
-                .whenPressed(new VisionAimHood(Robot.runningRobot.hood,
-                        Robot.runningRobot.driveTrain, Robot.runningRobot.flywheel));
-        new JoystickButton(Robot.runningRobot.coDriverButtons, 10)
-                .whenPressed(new FlywheelSetSpeed(Robot.runningRobot.flywheel, 0.8));
-        new JoystickButton(Robot.runningRobot.coDriverButtons, 9)
-                .whenPressed(new FlywheelSetSpeed(Robot.runningRobot.flywheel, 0)); */
-        new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
-                .whenPressed(new LedToggle());
-        new JoystickButton(Robot.runningRobot.coDriverRightJs, 2)
-                .whenPressed(new LedToggle(false));
+    public void initTeleop() {
+        new JoystickButton(codriverRight, 1)
+                .whenPressed(cmds.vision().autoAimTurret());
+        new JoystickButton(codriverRight, 2)
+                .whenPressed(cmds.vision().autoAimHood());
     }
 }

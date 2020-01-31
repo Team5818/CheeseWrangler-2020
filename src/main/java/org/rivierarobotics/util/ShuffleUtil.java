@@ -20,37 +20,22 @@
 
 package org.rivierarobotics.util;
 
-public interface RobotMap {
-    interface Controllers {
-        int TURRET_TALON = 7;
-        int HOOD_TALON = 11;
-        int FLYWHEEL_TALON = 13;
-        int CHEESE_TALON = 10;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
+public class ShuffleUtil {
+    private ShuffleUtil() {
     }
 
-    interface Joysticks {
-        int DRIVER_LEFT_JS = 0;
-        int DRIVER_RIGHT_JS = 1;
-        int DRIVER_BUTTONS = 4;
-        int CODRIVER_LEFT_JS = 2;
-        int CODRIVER_RIGHT_JS = 3;
-        int CODRIVER_BUTTONS = 5;
+    public static void setOutEntry(ShuffleboardTab tab, String key, double value) {
+        addEntry(tab, key).setDouble(value);
     }
 
-    class DriveTrain {
-        public interface Left {
-            int LEFT_TALON_MASTER = 1;
-            int LEFT_SPARK_SLAVE_ONE = 2;
-            int LEFT_SPARK_SLAVE_TWO = 3;
-            boolean LEFT_INVERT = true;
-        }
-
-        public interface Right {
-            int RIGHT_TALON_MASTER = 4;
-            int RIGHT_SPARK_SLAVE_ONE = 5;
-            int RIGHT_SPARK_SLAVE_TWO = 6;
-            boolean RIGHT_INVERT = false;
-        }
+    public static void setOutEntry(ShuffleboardTab tab, String key, boolean value) {
+        addEntry(tab, key).setBoolean(value);
     }
 
+    private static NetworkTableEntry addEntry(ShuffleboardTab tab, String key) {
+        return tab.add(key, 0).getEntry();
+    }
 }

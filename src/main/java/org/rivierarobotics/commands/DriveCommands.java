@@ -20,24 +20,10 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import javax.inject.Inject;
 
-@GenerateCreator
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
-
-    public SetTurretPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
-    }
-
-    @Override
-    public void execute() {
-        turret.setAbsoluteAngle(position);
+public class DriveCommands {
+    @Inject
+    public DriveCommands() {
     }
 }

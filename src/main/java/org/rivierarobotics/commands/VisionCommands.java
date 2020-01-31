@@ -18,33 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
-
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
+package org.rivierarobotics.commands;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-public class VisionUtil {
-    private final NetworkTable limelight;
+public class VisionCommands {
+    private Provider<VisionAimHood> visionAimHood;
+    private Provider<VisionAimTurret> visionAimTurret;
+    private LimelightLedToggleCreator limelightLedToggleCreator;
 
     @Inject
-    public VisionUtil() {
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    public VisionCommands(Provider<VisionAimHood> visionAimHood,
+                          Provider<VisionAimTurret> visionAimTurret,
+                          LimelightLedToggleCreator limelightLedToggleCreator) {
+        this.visionAimHood = visionAimHood;
+        this.visionAimTurret = visionAimTurret;
+        this.limelightLedToggleCreator = limelightLedToggleCreator;
     }
 
-    public final double getLLValue(String key) {
-        return limelight.getEntry(key).getDouble(0);
+    public VisionAimHood autoAimHood() {
+        return visionAimHood.get();
     }
 
-    public final void setLedState(boolean state) {
-        limelight.getEntry("ledMode").setNumber(state ? 3 : 1);
+    public VisionAimTurret autoAimTurret() {
+        return visionAimTurret.get();
     }
 
-    public final void invertLedState() {
-        NetworkTableEntry led = limelight.getEntry("ledMode");
-        double cs = (double) led.getNumber(1.0);
-        led.setNumber(cs == 1 ? 3 : 1);
+    public LimelightLedToggle ledToggle(boolean state) {
+        return limelightLedToggleCreator.create(state);
     }
 }

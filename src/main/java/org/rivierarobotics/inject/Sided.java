@@ -18,27 +18,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.inject;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainSide;
+import javax.inject.Qualifier;
 
-public class AutoDrive extends InstantCommand {
-    private final DriveTrain driveTrain;
-    private final double distance;
+@Qualifier
+public @interface Sided {
+    Side value();
 
-    public AutoDrive(double inches) {
-        this.distance = inches;
-        this.driveTrain = Robot.runningRobot.driveTrain;
-        addRequirements(driveTrain);
-    }
-
-    @Override
-    public void execute() {
-        DriveTrainSide left = driveTrain.getLeft(), right = driveTrain.getRight();
-//        left.setPosition(left.getPosition() + distance);
-//        right.setPosition(right.getPosition() + distance);
+    enum Side {
+        LEFT, RIGHT
     }
 }

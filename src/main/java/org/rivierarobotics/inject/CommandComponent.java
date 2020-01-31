@@ -18,26 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.inject;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import dagger.Module;
+import dagger.Subcomponent;
+import org.rivierarobotics.commands.*;
 
-@GenerateCreator
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
+@Subcomponent
+public abstract class CommandComponent {
+    public abstract DriveCommands drive();
 
-    public SetTurretPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
+    public abstract PistonCommands piston();
+
+    public abstract HoodCommands hood();
+
+    public abstract TurretCommands turret();
+
+    public abstract FlywheelCommands flywheel();
+
+    public abstract VisionCommands vision();
+
+    public abstract CheeseWheelCommands cheeseWheel();
+
+    @Module(subcomponents = CommandComponent.class)
+    public interface CCModule {
     }
 
-    @Override
-    public void execute() {
-        turret.setAbsoluteAngle(position);
+    @Subcomponent.Builder
+    public interface Builder {
+        CommandComponent build();
     }
 }

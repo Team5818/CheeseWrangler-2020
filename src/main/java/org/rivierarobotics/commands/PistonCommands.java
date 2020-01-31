@@ -20,24 +20,19 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.Piston;
 
-@GenerateCreator
-public class SetTurretPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
+import javax.inject.Inject;
 
-    public SetTurretPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
+public class PistonCommands {
+    private OperatePistonCreator operatePistonCreator;
+
+    @Inject
+    public PistonCommands(OperatePistonCreator operatePistonCreator) {
+        this.operatePistonCreator = operatePistonCreator;
     }
 
-    @Override
-    public void execute() {
-        turret.setAbsoluteAngle(position);
+    public OperatePiston operate(Piston piston, boolean state) {
+        return operatePistonCreator.create(piston, state);
     }
 }

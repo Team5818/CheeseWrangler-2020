@@ -30,10 +30,10 @@ public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
 
-    public DriveTrainSide(int master, int slaveOne, int slaveTwo, boolean invert) {
-        this.masterTalon = new WPI_TalonSRX(master);
-        this.sparkSlaveOne = new CANSparkMax(slaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.sparkSlaveTwo = new CANSparkMax(slaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
+    public DriveTrainSide(MotorIds motors, boolean invert) {
+        this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
+        this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         masterTalon.configFactoryDefault();
         masterTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
@@ -56,5 +56,15 @@ public class DriveTrainSide {
 
     public double getVelocity() {
         return masterTalon.getSensorCollection().getQuadratureVelocity();
+    }
+
+    public static class MotorIds {
+        public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
+
+        public MotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
+            this.masterTalon = masterTalon;
+            this.sparkSlaveOne = sparkSlaveOne;
+            this.sparkSlaveTwo = sparkSlaveTwo;
+        }
     }
 }
