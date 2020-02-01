@@ -20,11 +20,9 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Inject;
@@ -44,19 +42,11 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
-        double tv = vision.getLLValue("tv");
         double tx = vision.getLLValue("tx");
-        double ty = vision.getLLValue("ty");
-        double dtVel = driveTrain.getAvgVelocity();
+        double tv = vision.getLLValue("tv");
 
         if (tv == 1) {
-            double t = 0.375;   //time constant
-            double h = 0.69;    //height of goal
-            double dist = h / Math.tan(Math.toRadians(ty)); //change 0's to VXrobot and VYrobot once available
-            double turretAngle = -Math.atan2(0, dist / t);
-            double set = MathUtil.wrapToCircle(tx - turretAngle) + MathUtil.wrapToCircle(turret.getPosition());
-            turret.setPositionTicks(set * turret.getAnglesOrInchesToTicks());
-            SmartDashboard.putNumber("initset", set);
+            turret.setPosition(turret.getPosition() + tx);
         }
     }
 

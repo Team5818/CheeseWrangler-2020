@@ -34,11 +34,11 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
 
     public Turret(int id, Provider<TurretControl> command) {
-        super(0.0015, 0.00002, 0.0, 0.5);
+        super(0.0015, 0.0, 0.0, 0.5);
         this.command = command;
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
-        turretTalon.setSensorPhase(true);
+        turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
 //        getPidController().enableContinuousInput(0, 4096);
