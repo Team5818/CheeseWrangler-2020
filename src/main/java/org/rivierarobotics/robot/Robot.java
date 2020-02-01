@@ -51,6 +51,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        globalComponent.getTurret().setPositionTicks(globalComponent.getTurret().getPositionTicks());
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(true);
     }

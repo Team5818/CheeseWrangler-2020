@@ -64,7 +64,10 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     public void setManualPower(double pwr) {
         manualOverride = (pwr != 0);
-        setPower(pwr);
+        if (pwr != 0) {
+            setPositionTicks(getPositionTicks());
+            setPower(pwr);
+        }
     }
 
     public abstract double getPositionTicks();
