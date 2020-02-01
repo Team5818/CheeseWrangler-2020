@@ -43,8 +43,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
         if (!manualOverride) {
             setPower(-pidPower);
-        } else {
-            setPositionTicks(getPositionTicks());
         }
     }
 

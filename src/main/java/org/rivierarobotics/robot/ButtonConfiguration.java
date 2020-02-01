@@ -53,5 +53,9 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.vision().autoAimTurret());
         new JoystickButton(codriverRight, 2)
                 .whenPressed(cmds.vision().autoAimHood());
+        new JoystickButton(codriverLeft, 1)
+                .whenPressed(cmds.turret().setPosition(0.0));
+        new JoystickButton(codriverLeft, 2)
+                .whenPressed(cmds.turret().setPosition(10.0));
     }
 }
