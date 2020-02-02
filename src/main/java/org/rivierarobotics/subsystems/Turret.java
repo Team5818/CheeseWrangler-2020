@@ -23,19 +23,25 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.robot.Robot;
 
 import javax.inject.Provider;
 
 public class Turret extends BasePIDSubsystem {
-    private static final double zeroticks = 1186;
+    private static final double zeroticks = 1383;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
+    private final PigeonIMU pigeon;
+    private double [] ypr = new double [3];
 
-    public Turret(int id, Provider<TurretControl> command) {
+    public Turret(int id, Provider<TurretControl> command, PigeonIMU pigeon1) {
         super(0.0005, 0.0045, 0.0, 1.0);
         this.command = command;
+        this.pigeon = pigeon1;
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
@@ -53,8 +59,15 @@ public class Turret extends BasePIDSubsystem {
         return pos;
     }
 
-    public void setAbsoluteAngle(double angle) {
-        setPositionTicks((angle * getAnglesOrInchesToTicks()) + zeroticks);
+    public double getYaw(){
+        pigeon.getYawPitchRoll(ypr);
+        return(ypr[0]);
+    }
+
+    public double getAbsoluteAngle(){ return ((getPositionTicks() - zeroticks)*360/4096)-getYaw();}
+
+    public void setAbsolutePosition(double angle){
+        setPositionTicks((angle - getAbsoluteAngle())*getAnglesOrInchesToTicks()+zeroticks);
     }
 
     @Override

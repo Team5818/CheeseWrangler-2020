@@ -38,6 +38,6 @@ public class SetTurretPosition extends InstantCommand {
 
     @Override
     public void execute() {
-        turret.setAbsoluteAngle(position);
+        turret.setAbsolutePosition(position);
     }
 }
