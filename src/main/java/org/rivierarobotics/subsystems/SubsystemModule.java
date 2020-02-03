@@ -20,11 +20,10 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.sensors.PigeonIMU;
 import dagger.Module;
 import dagger.Provides;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.TurretControl;
-import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.inject.Sided;
 
 import javax.inject.Provider;
@@ -60,14 +59,14 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static PigeonIMU providePigeonIMU(){
-        return new PigeonIMU(PIGEON_IMU);
+    public static PigeonGyro providePigeonIMU() {
+        return new PigeonGyro(PIGEON_IMU);
     }
 
     @Provides
     @Singleton
-    public static Turret provideTurret(Provider<TurretControl> command) {
-        return new Turret(TURRET_TALON, command,providePigeonIMU());
+    public static Turret provideTurret(Provider<TurretControl> command, @Provided PigeonGyro gyro) {
+        return new Turret(TURRET_TALON, command, gyro);
     }
 
     @Provides

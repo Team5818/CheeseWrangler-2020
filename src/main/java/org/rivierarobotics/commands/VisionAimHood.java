@@ -51,11 +51,10 @@ public class VisionAimHood extends CommandBase {
         double h = 0.69;    //height of goal
         double m = 0.14;    //mass of ball
         double dist = h / Math.tan(Math.toRadians(ty));
-        double vxz = Math.sqrt(Math.pow((dist/t-driveTrain.getYVelocity()), 2) + Math.pow(driveTrain.getXVelocity(), 2));
+        double vxz = Math.sqrt(Math.pow((dist / t - driveTrain.getYVelocity()), 2) + Math.pow(driveTrain.getXVelocity(), 2));
         double hoodAngle = Math.toDegrees(Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz)); //calculates hood angle
         double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)) / 0.0005; //passes through value in ticks/100ms
-        if (hoodAngle <= 40 && flywheelVelocity <= 12)
-        {
+        if (hoodAngle <= 40 && flywheelVelocity <= 12) {
             hood.setPosition(hoodAngle);
             flywheel.setPositionTicks(flywheelVelocity);
         }

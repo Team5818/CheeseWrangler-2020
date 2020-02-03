@@ -24,8 +24,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class CheeseWheel extends BasePIDSubsystem {
+    private static final int baseTicks = 0;
     private final WPI_TalonSRX wheelTalon;
-    private final double baseTicks = 0;
 
     public CheeseWheel(int id) {
         super(0.0, 0.0, 0.0, 1.0);
@@ -34,8 +34,8 @@ public class CheeseWheel extends BasePIDSubsystem {
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public void setIndex(int index, boolean side) {
-        super.setPositionTicks(((360.0 / 5) * index) + (baseTicks * ((side) ? -1 : 1)));
+    public void setIndex(CheeseWheelSlot index, boolean side) {
+        super.setPositionTicks(index.frTicks);
     }
 
     @Override
@@ -46,5 +46,17 @@ public class CheeseWheel extends BasePIDSubsystem {
     @Override
     protected void setPower(double pwr) {
         wheelTalon.set(pwr);
+    }
+
+    public enum CheeseWheelSlot {
+        ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5);
+
+        public final int frTicks, brTicks;
+
+        CheeseWheelSlot(int slotDiff) {
+            int dTicks = (int) ((4096.0 / 5) * slotDiff);
+            this.frTicks = baseTicks + dTicks;
+            this.brTicks = baseTicks - dTicks;
+        }
     }
 }

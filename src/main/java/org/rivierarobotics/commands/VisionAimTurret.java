@@ -47,14 +47,14 @@ public class VisionAimTurret extends CommandBase {
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal
         double dist = h / Math.tan(Math.toRadians(ty));
-        double vx = dist/t - driveTrain.getYVelocity();
+        double vx = dist / t - driveTrain.getYVelocity();
         double vz = driveTrain.getXVelocity();
         double tx = Math.toRadians(vision.getLLValue("tx"));
-        double turretAngle = Math.toDegrees(Math.atan2((dist*Math.tan(tx))-0.1905,dist)); //gets actual tx because camera is offset.
+        double turretAngle = Math.toDegrees(Math.atan2((dist * Math.tan(tx)) - 0.1905, dist)); //gets actual tx because camera is offset.
         double tv = vision.getLLValue("tv");
-        double offset = Math.toDegrees(Math.atan2(vz,vx));
+        double offset = Math.toDegrees(Math.atan2(vz, vx));
         if (tv == 1) {
-            turret.setAbsolutePosition(turretAngle-offset);
+            turret.setAbsolutePosition(turretAngle - offset);
             SmartDashboard.putNumber("setABS", turretAngle);
         }
     }

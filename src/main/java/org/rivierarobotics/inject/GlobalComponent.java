@@ -39,6 +39,7 @@ public abstract class GlobalComponent {
         getFlywheel();
         getCheeseWheel();
         getPistonController();
+        getPigeonGyro();
         getButtonConfiguration();
         getVisionUtil();
     }
@@ -54,6 +55,8 @@ public abstract class GlobalComponent {
     public abstract CheeseWheel getCheeseWheel();
 
     public abstract PistonController getPistonController();
+
+    public abstract PigeonGyro getPigeonGyro();
 
     public abstract ButtonConfiguration getButtonConfiguration();
 
