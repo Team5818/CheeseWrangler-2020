@@ -34,7 +34,7 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
 
     public Turret(int id, Provider<TurretControl> command) {
-        super(0.0005, 0.0045, 0.0, 1.0);
+        super(0.001, 0.0000751, 0.0, 1.0);
         this.command = command;
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
