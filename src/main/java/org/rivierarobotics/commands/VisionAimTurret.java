@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
@@ -42,11 +43,19 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
-        double tx = vision.getLLValue("tx");
+        double ty = vision.getLLValue("ty");
+        double t = 0.375;   //time constant
+        double h = 0.69;    //height of goal
+        double dist = h / Math.tan(Math.toRadians(ty));
+        double vx = dist/t - driveTrain.getYVelocity();
+        double vz = driveTrain.getXVelocity();
+        double tx = Math.toRadians(vision.getLLValue("tx"));
+        double turretAngle = Math.toDegrees(Math.atan2((dist*Math.tan(tx))-0.1905,dist)); //gets actual tx because camera is offset.
         double tv = vision.getLLValue("tv");
-
+        double offset = Math.toDegrees(Math.atan2(vz,vx));
         if (tv == 1) {
-            turret.setPosition(turret.getPosition() + tx);
+            turret.setAbsolutePosition(turretAngle-offset);
+            SmartDashboard.putNumber("setABS", turretAngle);
         }
     }
 

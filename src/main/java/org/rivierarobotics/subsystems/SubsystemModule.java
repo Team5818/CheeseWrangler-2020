@@ -20,9 +20,11 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.sensors.PigeonIMU;
 import dagger.Module;
 import dagger.Provides;
 import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.inject.Sided;
 
 import javax.inject.Provider;
@@ -37,6 +39,7 @@ public class SubsystemModule {
     private static final DriveTrainSide.MotorIds
             DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
             DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
+    private static final int PIGEON_IMU = 20;
 
     private SubsystemModule() {
     }
@@ -57,8 +60,14 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
+    public static PigeonIMU providePigeonIMU(){
+        return new PigeonIMU(PIGEON_IMU);
+    }
+
+    @Provides
+    @Singleton
     public static Turret provideTurret(Provider<TurretControl> command) {
-        return new Turret(TURRET_TALON, command);
+        return new Turret(TURRET_TALON, command,providePigeonIMU());
     }
 
     @Provides
