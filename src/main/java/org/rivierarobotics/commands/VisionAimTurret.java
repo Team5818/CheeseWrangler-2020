@@ -47,15 +47,15 @@ public class VisionAimTurret extends CommandBase {
         double ty = vision.getLLValue("ty");
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal
-        double dist = h / Math.tan(Math.toRadians(ty)) + 0.74295;
-        double vx = dist / t - driveTrain.getYVelocity();
-        double vz = driveTrain.getXVelocity();
-        double tx = Math.toRadians(vision.getLLValue("tx"));
-        double turretAngle = Math.toDegrees(Math.atan2((dist * Math.tan(tx)) - 0.1905, dist)); //gets actual tx because camera is offset.
+        double dist = h / Math.tan(Math.toRadians(ty)) + 0.74295; //gets distance to inner goal using LL
+        double tx = vision.getLLValue("tx") + Math.toRadians(turret.getAbsoluteAngle()); //allows our tx to be absolute field position using LL
+        double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //gets angle of turret to goal. essentially a better tx :)
+        double vx = dist * Math.cos(txTurret) / t - driveTrain.getYVelocity(); //splitting up vx and vz grants us an easier time getting absolute turret angle necessary for shot
+        double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
+        double turretAngle = Math.toDegrees(Math.atan2(vz,vx)); //nice and simple angle calculation
         double tv = vision.getLLValue("tv");
-        double offset = Math.toDegrees(Math.atan2(vz, vx));
         if (tv == 1) {
-            turret.setAbsolutePosition(turretAngle - offset);
+            turret.setAbsolutePosition(turretAngle);
             SmartDashboard.putNumber("setABS", turretAngle);
         }
     }

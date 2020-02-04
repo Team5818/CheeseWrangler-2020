@@ -56,13 +56,15 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * 360 / 4096.0);
+        return ((getPositionTicks() - zeroTicks) * 360 / 4096.0 + gyro.getYaw());
+    }
+
+    public double getAbsoluteTicks() {
+        return(getPositionTicks() - zeroTicks + gyro.getYaw());
     }
 
     public void setAbsolutePosition(double angle) {
-        setPositionTicks((angle + getAbsoluteAngle()) * getAnglesOrInchesToTicks() + zeroTicks);
-        SmartDashboard.putNumber("WOt", angle + getAbsoluteAngle());
-        SmartDashboard.putNumber("que", (angle + getAbsoluteAngle()) * getAnglesOrInchesToTicks());
+        setPositionTicks( getPositionTicks() + (( angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks() ));
     }
 
     @Override
