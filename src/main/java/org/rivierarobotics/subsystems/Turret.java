@@ -35,7 +35,7 @@ public class Turret extends BasePIDSubsystem {
     private final NavXGyro gyro;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro) {
-        super(0.001, 0.0000751, 0.0, 1.0);
+        super(0.0012, 0.0006, 0.0, 1.0);
         this.command = command;
         this.gyro = gyro;
 
@@ -56,11 +56,13 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * 360 / 4096.0) - gyro.getYaw();
+        return ((getPositionTicks() - zeroTicks) * 360 / 4096.0);
     }
 
     public void setAbsolutePosition(double angle) {
-        setPositionTicks(angle * getAnglesOrInchesToTicks() + zeroTicks);
+        setPositionTicks((angle + getAbsoluteAngle()) * getAnglesOrInchesToTicks() + zeroTicks);
+        SmartDashboard.putNumber("WOt", angle + getAbsoluteAngle());
+        SmartDashboard.putNumber("que", (angle + getAbsoluteAngle()) * getAnglesOrInchesToTicks());
     }
 
     @Override

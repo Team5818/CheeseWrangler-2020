@@ -29,7 +29,7 @@ import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Inject;
 
-public class VisionAimTurret extends InstantCommand {
+public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final DriveTrain driveTrain;
     private final VisionUtil vision;
@@ -58,5 +58,10 @@ public class VisionAimTurret extends InstantCommand {
             turret.setAbsolutePosition(turretAngle - offset);
             SmartDashboard.putNumber("setABS", turretAngle);
         }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }
