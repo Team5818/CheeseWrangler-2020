@@ -28,13 +28,13 @@ import javax.inject.Inject;
 
 public class DriveTrain implements Subsystem {
     private final DriveTrainSide left, right;
-    private final PigeonGyro gyro;
+    private final NavXGyro gyro;
     private final double wheelCircumference = 0.32; // meters
 
     @Inject
     public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
                       @Sided(Sided.Side.RIGHT) DriveTrainSide right,
-                      PigeonGyro gyro, DriveControlCreator controlCreator) {
+                      NavXGyro gyro, DriveControlCreator controlCreator) {
         this.gyro = gyro;
         this.left = left;
         this.right = right;

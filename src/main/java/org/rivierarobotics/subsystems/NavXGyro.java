@@ -19,24 +19,23 @@
  */
 
 package org.rivierarobotics.subsystems;
-
+import com.kauailabs.navx.frc.AHRS;
 import com.ctre.phoenix.sensors.PigeonIMU;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.SPI;
 
-public class PigeonGyro extends SubsystemBase {
-    private final PigeonIMU pigeon;
+public class NavXGyro extends SubsystemBase {
+    private final AHRS navX;
 
-    public PigeonGyro(int id) {
-        this.pigeon = new PigeonIMU(id);
+    public NavXGyro(int id) {
+        this.navX = new AHRS(SPI.Port.kMXP);
     }
 
     public double getYaw() {
-        double[] ypr = new double[3];
-        pigeon.getYawPitchRoll(ypr);
-        return (ypr[0]);
+        return navX.getAngle();
     }
 
     public void resetGyro() {
-        pigeon.setYaw(0);
+        navX.reset();
     }
 }

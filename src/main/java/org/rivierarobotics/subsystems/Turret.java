@@ -32,9 +32,9 @@ public class Turret extends BasePIDSubsystem {
     private static final double zeroTicks = 1383;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
-    private final PigeonGyro gyro;
+    private final NavXGyro gyro;
 
-    public Turret(int id, Provider<TurretControl> command, PigeonGyro gyro) {
+    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro) {
         super(0.001, 0.0000751, 0.0, 1.0);
         this.command = command;
         this.gyro = gyro;
@@ -60,7 +60,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsolutePosition(double angle) {
-        setPositionTicks((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks() + zeroTicks);
+        setPositionTicks(angle * getAnglesOrInchesToTicks() + zeroTicks);
     }
 
     @Override

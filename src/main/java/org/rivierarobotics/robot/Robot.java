@@ -20,12 +20,13 @@
 
 package org.rivierarobotics.robot;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.PigeonGyro;
+import org.rivierarobotics.subsystems.NavXGyro;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -56,7 +57,7 @@ public class Robot extends TimedRobot {
         globalComponent.getTurret().setPositionTicks(globalComponent.getTurret().getPositionTicks());
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(true);
-        globalComponent.getPigeonGyro().resetGyro();
+        globalComponent.getNavXGyro().resetGyro();
     }
 
     @Override
@@ -75,12 +76,12 @@ public class Robot extends TimedRobot {
 
     private void displayShuffleboard() {
         VisionUtil vision = globalComponent.getVisionUtil();
-        PigeonGyro gyro = globalComponent.getPigeonGyro();
+        NavXGyro navX = globalComponent.getNavXGyro();
         Turret tt = globalComponent.getTurret();
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
-        SmartDashboard.putNumber("yaw", gyro.getYaw());
+        SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
     }
 }

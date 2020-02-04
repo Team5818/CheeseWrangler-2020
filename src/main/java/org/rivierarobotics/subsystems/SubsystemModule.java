@@ -59,13 +59,13 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static PigeonGyro providePigeonIMU() {
-        return new PigeonGyro(PIGEON_IMU);
+    public static NavXGyro providePigeonIMU() {
+        return new NavXGyro(PIGEON_IMU);
     }
 
     @Provides
     @Singleton
-    public static Turret provideTurret(Provider<TurretControl> command, @Provided PigeonGyro gyro) {
+    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro) {
         return new Turret(TURRET_TALON, command, gyro);
     }
 

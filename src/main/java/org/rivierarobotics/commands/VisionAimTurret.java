@@ -22,13 +22,14 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Inject;
 
-public class VisionAimTurret extends CommandBase {
+public class VisionAimTurret extends InstantCommand {
     private final Turret turret;
     private final DriveTrain driveTrain;
     private final VisionUtil vision;
@@ -46,7 +47,7 @@ public class VisionAimTurret extends CommandBase {
         double ty = vision.getLLValue("ty");
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal
-        double dist = h / Math.tan(Math.toRadians(ty));
+        double dist = h / Math.tan(Math.toRadians(ty)) + 0.74295;
         double vx = dist / t - driveTrain.getYVelocity();
         double vz = driveTrain.getXVelocity();
         double tx = Math.toRadians(vision.getLLValue("tx"));
@@ -57,10 +58,5 @@ public class VisionAimTurret extends CommandBase {
             turret.setAbsolutePosition(turretAngle - offset);
             SmartDashboard.putNumber("setABS", turretAngle);
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }
