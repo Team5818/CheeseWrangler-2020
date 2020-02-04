@@ -52,7 +52,7 @@ public class VisionAimTurret extends CommandBase {
         double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //gets angle of turret to goal. essentially a better tx :)
         double vx = dist * Math.cos(txTurret) / t - driveTrain.getYVelocity(); //splitting up vx and vz grants us an easier time getting absolute turret angle necessary for shot
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
-        double turretAngle = Math.toDegrees(Math.atan2(vz,vx)); //nice and simple angle calculation
+        double turretAngle = Math.toDegrees(Math.atan2(vz, vx)); //nice and simple angle calculation
         double tv = vision.getLLValue("tv");
         if (tv == 1) {
             turret.setAbsolutePosition(turretAngle);

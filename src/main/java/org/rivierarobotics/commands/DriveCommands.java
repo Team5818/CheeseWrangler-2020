@@ -21,9 +21,18 @@
 package org.rivierarobotics.commands;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class DriveCommands {
+    //temporary until servos are tested
+    private Provider<ServoControl> servoControlProvider;
+
     @Inject
-    public DriveCommands() {
+    public DriveCommands(Provider<ServoControl> servoControlProvider) {
+        this.servoControlProvider = servoControlProvider;
+    }
+
+    public ServoControl controlServo() {
+        return servoControlProvider.get();
     }
 }

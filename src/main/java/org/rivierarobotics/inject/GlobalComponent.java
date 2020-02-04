@@ -25,6 +25,7 @@ import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
 import org.rivierarobotics.subsystems.*;
+import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Singleton;
@@ -37,6 +38,8 @@ public abstract class GlobalComponent {
         getTurret();
         getHood();
         getFlywheel();
+        getIntake();
+        getEjector();
         getCheeseWheel();
         getPistonController();
         getNavXGyro();
@@ -51,6 +54,10 @@ public abstract class GlobalComponent {
     public abstract Hood getHood();
 
     public abstract Flywheel getFlywheel();
+
+    public abstract Intake getIntake();
+
+    public abstract Ejector getEjector();
 
     public abstract CheeseWheel getCheeseWheel();
 

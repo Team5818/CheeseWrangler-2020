@@ -25,7 +25,9 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class VisionUtil {
     private final NetworkTable limelight;
 

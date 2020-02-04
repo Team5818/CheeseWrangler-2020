@@ -25,20 +25,18 @@ import dagger.Provides;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.NavXGyro;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 7;
-    private static final int HOOD_TALON = 11;
-    private static final int FLYWHEEL_TALON = 13;
-    private static final int CHEESE_WHEEL_TALON = 10;
+    private static final int TURRET_TALON = 7, HOOD_TALON = 11, FLYWHEEL_TALON = 13, CHEESE_WHEEL_TALON = 10,
+            EJECTOR_TALON = 17, INTAKE_LEFT_TALON = 18, INTAKE_RIGHT_TALON = 19;
     private static final DriveTrainSide.MotorIds
             DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
             DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
-    private static final int PIGEON_IMU = 20;
 
     private SubsystemModule() {
     }
@@ -59,12 +57,6 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static NavXGyro providePigeonIMU() {
-        return new NavXGyro(PIGEON_IMU);
-    }
-
-    @Provides
-    @Singleton
     public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro) {
         return new Turret(TURRET_TALON, command, gyro);
     }
@@ -77,8 +69,29 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
+    public static Ejector provideEjector() {
+        return new Ejector(EJECTOR_TALON);
+    }
+
+    @Provides
+    @Singleton
     public static Flywheel provideFlywheel() {
         return new Flywheel(FLYWHEEL_TALON);
+    }
+
+
+    @Provides
+    @Singleton
+    @Sided(Sided.Side.LEFT)
+    public static IntakeSide provideIntakeSideLeft() {
+        return new IntakeSide(INTAKE_LEFT_TALON, true);
+    }
+
+    @Provides
+    @Singleton
+    @Sided(Sided.Side.RIGHT)
+    public static IntakeSide provideIntakeSideRight() {
+        return new IntakeSide(INTAKE_RIGHT_TALON, false);
     }
 
     @Provides

@@ -19,23 +19,21 @@
  */
 
 package org.rivierarobotics.subsystems;
-import com.kauailabs.navx.frc.AHRS;
-import com.ctre.phoenix.sensors.PigeonIMU;
+
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.SPI;
 
-public class NavXGyro extends SubsystemBase {
-    private final AHRS navX;
+public class Ejector extends SubsystemBase {
+    private final WPI_TalonSRX ejectorTalon;
 
-    public NavXGyro(int id) {
-        this.navX = new AHRS(SPI.Port.kMXP);
+    public Ejector(int id) {
+        ejectorTalon = new WPI_TalonSRX(id);
+        ejectorTalon.configFactoryDefault();
+        ejectorTalon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public double getYaw() {
-        return navX.getAngle();
-    }
-
-    public void resetGyro() {
-        navX.reset();
+    public void setPower(double pwr) {
+        ejectorTalon.set(pwr);
     }
 }

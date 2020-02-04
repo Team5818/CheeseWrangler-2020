@@ -20,25 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
-public class CheeseWheelCommands {
-    private Provider<CWAdvanceIndex> advanceIndexProvider;
-    private CWSetPositionCreator setPositionCreator;
+@GenerateCreator
+public class CWSetPosition extends InstantCommand {
+    private final CheeseWheel cheeseWheel;
+    private final int ticks;
 
-    @Inject
-    public CheeseWheelCommands(Provider<CWAdvanceIndex> advanceIndexProvider,
-                               CWSetPositionCreator setPositionCreator) {
-        this.advanceIndexProvider = advanceIndexProvider;
-        this.setPositionCreator = setPositionCreator;
+    public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks) {
+        this.cheeseWheel = cheeseWheel;
+        this.ticks = ticks;
+        addRequirements(cheeseWheel);
     }
 
-    public CWAdvanceIndex advanceIndex() {
-        return advanceIndexProvider.get();
-    }
-
-    public CWSetPosition setPosition(int ticks) {
-        return setPositionCreator.create(ticks);
+    @Override
+    public void execute() {
+        cheeseWheel.setPositionTicks(ticks);
     }
 }

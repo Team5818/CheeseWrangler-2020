@@ -20,23 +20,27 @@
 
 package org.rivierarobotics.robot;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.NavXGyro;
+import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
+    private Command autonomousCommand;
+    private SendableChooser<Command> chooser;
 
     @Override
     public void robotInit() {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
+        chooser = new SendableChooser<>();
     }
 
     @Override
@@ -46,14 +50,23 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        autonomousCommand = chooser.getSelected();
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
+        }
     }
 
     @Override
     public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
     @Override
     public void teleopInit() {
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
+        }
+
         globalComponent.getTurret().setPositionTicks(globalComponent.getTurret().getPositionTicks());
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(true);

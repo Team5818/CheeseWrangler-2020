@@ -18,27 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
+import com.kauailabs.navx.frc.AHRS;
+import com.ctre.phoenix.sensors.PigeonIMU;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj.SPI;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
+import javax.inject.Singleton;
 
-public class CheeseWheelCommands {
-    private Provider<CWAdvanceIndex> advanceIndexProvider;
-    private CWSetPositionCreator setPositionCreator;
+@Singleton
+public class NavXGyro {
+    private final AHRS navX;
 
     @Inject
-    public CheeseWheelCommands(Provider<CWAdvanceIndex> advanceIndexProvider,
-                               CWSetPositionCreator setPositionCreator) {
-        this.advanceIndexProvider = advanceIndexProvider;
-        this.setPositionCreator = setPositionCreator;
+    public NavXGyro() {
+        this.navX = new AHRS(SPI.Port.kMXP);
     }
 
-    public CWAdvanceIndex advanceIndex() {
-        return advanceIndexProvider.get();
+    public double getYaw() {
+        return navX.getAngle();
     }
 
-    public CWSetPosition setPosition(int ticks) {
-        return setPositionCreator.create(ticks);
+    public void resetGyro() {
+        navX.reset();
     }
 }

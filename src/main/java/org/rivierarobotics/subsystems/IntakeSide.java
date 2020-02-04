@@ -18,27 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-public class CheeseWheelCommands {
-    private Provider<CWAdvanceIndex> advanceIndexProvider;
-    private CWSetPositionCreator setPositionCreator;
+public class IntakeSide {
+    private final WPI_TalonSRX intakeTalon;
 
-    @Inject
-    public CheeseWheelCommands(Provider<CWAdvanceIndex> advanceIndexProvider,
-                               CWSetPositionCreator setPositionCreator) {
-        this.advanceIndexProvider = advanceIndexProvider;
-        this.setPositionCreator = setPositionCreator;
+    public IntakeSide(int id, boolean invert) {
+        intakeTalon = new WPI_TalonSRX(id);
+        intakeTalon.configFactoryDefault();
+        intakeTalon.setNeutralMode(NeutralMode.Brake);
+        intakeTalon.setInverted(invert);
     }
 
-    public CWAdvanceIndex advanceIndex() {
-        return advanceIndexProvider.get();
-    }
-
-    public CWSetPosition setPosition(int ticks) {
-        return setPositionCreator.create(ticks);
+    public void setPower(double pwr) {
+        intakeTalon.set(pwr);
     }
 }

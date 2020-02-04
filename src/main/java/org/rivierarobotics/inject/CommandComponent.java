@@ -22,6 +22,7 @@ package org.rivierarobotics.inject;
 
 import dagger.Module;
 import dagger.Subcomponent;
+import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.commands.*;
 
 @Subcomponent
@@ -36,9 +37,15 @@ public abstract class CommandComponent {
 
     public abstract FlywheelCommands flywheel();
 
+    public abstract IntakeCommands intake();
+
+    public abstract EjectorCommands ejector();
+
     public abstract VisionCommands vision();
 
     public abstract CheeseWheelCommands cheeseWheel();
+
+    public abstract AutonomousCommands auto();
 
     @Module(subcomponents = CommandComponent.class)
     public interface CCModule {

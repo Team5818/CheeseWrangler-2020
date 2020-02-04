@@ -20,25 +20,32 @@
 
 package org.rivierarobotics.commands;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.util.MathUtil;
 
-public class CheeseWheelCommands {
-    private Provider<CWAdvanceIndex> advanceIndexProvider;
-    private CWSetPositionCreator setPositionCreator;
+import javax.inject.Inject;
+
+//temporary for testing camera servo
+public class ServoControl extends CommandBase {
+    private final Servo servo;
+    private final Joystick js;
 
     @Inject
-    public CheeseWheelCommands(Provider<CWAdvanceIndex> advanceIndexProvider,
-                               CWSetPositionCreator setPositionCreator) {
-        this.advanceIndexProvider = advanceIndexProvider;
-        this.setPositionCreator = setPositionCreator;
+    public ServoControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick js) {
+        this.servo = new Servo(0);
+        this.js = js;
     }
 
-    public CWAdvanceIndex advanceIndex() {
-        return advanceIndexProvider.get();
+    @Override
+    public void execute() {
+        servo.set(MathUtil.fitDeadband(js.getX()));
     }
 
-    public CWSetPosition setPosition(int ticks) {
-        return setPositionCreator.create(ticks);
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

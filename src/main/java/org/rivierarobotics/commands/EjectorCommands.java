@@ -21,24 +21,9 @@
 package org.rivierarobotics.commands;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class CheeseWheelCommands {
-    private Provider<CWAdvanceIndex> advanceIndexProvider;
-    private CWSetPositionCreator setPositionCreator;
-
+public class EjectorCommands {
     @Inject
-    public CheeseWheelCommands(Provider<CWAdvanceIndex> advanceIndexProvider,
-                               CWSetPositionCreator setPositionCreator) {
-        this.advanceIndexProvider = advanceIndexProvider;
-        this.setPositionCreator = setPositionCreator;
-    }
-
-    public CWAdvanceIndex advanceIndex() {
-        return advanceIndexProvider.get();
-    }
-
-    public CWSetPosition setPosition(int ticks) {
-        return setPositionCreator.create(ticks);
+    public EjectorCommands() {
     }
 }

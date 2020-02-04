@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.util.NavXGyro;
 
 import javax.inject.Provider;
 
@@ -60,7 +61,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteTicks() {
-        return(getPositionTicks() - zeroTicks + gyro.getYaw());
+        return (getPositionTicks() - zeroTicks + gyro.getYaw());
     }
 
     public void setAbsolutePosition(double angle) {
