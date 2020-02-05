@@ -22,7 +22,6 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.ForwardBackRoutine;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 
@@ -53,7 +52,7 @@ public class ButtonConfiguration {
         new JoystickButton(codriverRight, 1)
                 .whenPressed(cmds.vision().autoAimTurret());
         new JoystickButton(codriverRight, 2)
-                .whenPressed(cmds.vision().autoAimHood());
+                .whenPressed(cmds.auto().forwardBackRoutine());
         new JoystickButton(codriverLeft, 1)
                 .whenPressed(cmds.turret().setPosition(0));
         new JoystickButton(codriverLeft, 2)

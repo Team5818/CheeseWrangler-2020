@@ -18,21 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.subsystems;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class AutonomousCommands {
+public class IndexSensor extends SubsystemBase {
 
-    private Provider<AutonomousRoutine> forwardBackRoutine;
+    private final DigitalInput digitalInput;
 
-    @Inject
-    public AutonomousCommands(Provider<AutonomousRoutine> forwardBackRoutine) {
-        this.forwardBackRoutine = forwardBackRoutine;
+    public IndexSensor(int indexSensorChannel) {
+        digitalInput = new DigitalInput(indexSensorChannel);
     }
 
-    public AutonomousRoutine forwardBackRoutine() {
-        return forwardBackRoutine.get();
+    public boolean getState() {
+        return digitalInput.get();
     }
 }

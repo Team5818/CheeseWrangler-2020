@@ -68,4 +68,6 @@ public abstract class GlobalComponent {
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
+
+    public abstract IndexSensor getIndexSensor();
 }

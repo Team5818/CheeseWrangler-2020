@@ -20,16 +20,24 @@
 
 package org.rivierarobotics.autonomous;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
 import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.followers.EncoderFollower;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.DriveTrainSide;
 
-//TODO make this into a Command by extending CommandBase and putting this all into the structure appropriately
-//TODO add a @GenerateConstructor to this class and follow it with an entry in AutonomousCommands
-public class ForwardBackRoutine {
+import javax.inject.Inject;
+
+@GenerateCreator
+public class AutonomousRoutine extends CommandBase {
+    private DriveTrain driveTrain;
+    private Trajectory.Config configuration;
+    private Trajectory trajectory;
 
     //TODO make this command more generic and allow any path to be passed through so that it takes as many waypoints as
     // needed (you'd pass: Waypoint... points) and waypoint objects could be created and passed. Also make an enum to
@@ -39,25 +47,34 @@ public class ForwardBackRoutine {
             new Waypoint(2, 2, 0),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
             new Waypoint(0, 0, 0)                           // Waypoint @ x=0, y=0,   exit angle=0 radians
     };
-    Trajectory.Config config = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
-    Trajectory trajectory = Pathfinder.generate(points, config);
+
+    @Inject
+    public AutonomousRoutine(@Provided DriveTrain driveTrain) {
+        this.driveTrain = driveTrain;
+    }
+
+    @Inject
+    public AutonomousRoutine(@Provided DriveTrain driveTrain, WaypointConfigs configs) {
+        this.driveTrain = driveTrain;
+        buildRoutine(configs);
+    }
+
+    public void buildRoutine(WaypointConfigs configs) {
+        configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
+        trajectory = Pathfinder.generate(WaypointConfigs.CONFIG_ONE, configuration);
+    }
 
     public void run() {
-        //TODO use Dagger to inject drivetrain instead of making an object of it, use @Provided on the constructor
-        DriveTrainSide leftTrain = new DriveTrainSide(new DriveTrainSide.MotorIds(4, 5, 6), true);
-        DriveTrainSide rightTrain = new DriveTrainSide(new DriveTrainSide.MotorIds(1, 2, 3), false);
-
         EncoderFollower leftFollower = new EncoderFollower(trajectory);
         EncoderFollower rightFollower = new EncoderFollower(trajectory);
 
-        leftFollower.configureEncoder((int) leftTrain.getPositionTicks(), 4096, 0.15);
-        rightFollower.configureEncoder((int) rightTrain.getPositionTicks(), 4096, 0.15);
+        leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
+        rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), 4096, 0.10414);
 
-        //TODO fix integer divison --> 1/4 = 0
-        leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 4, 0);
-        rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 4, 0);
+        leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+        rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
 
-        leftTrain.setPower(leftFollower.calculate((int) leftTrain.getPositionTicks()));
-        rightTrain.setPower(rightFollower.calculate((int) rightTrain.getPositionTicks()));
+        driveTrain.setPower(leftFollower.calculate((int)driveTrain.getLeft().getPositionTicks()),
+                rightFollower.calculate((int)driveTrain.getRight().getPositionTicks()));
     }
 }
