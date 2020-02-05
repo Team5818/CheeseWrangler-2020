@@ -23,47 +23,31 @@ package org.rivierarobotics.autonomous;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.followers.EncoderFollower;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainSide;
-
-import javax.inject.Inject;
 
 @GenerateCreator
-public class AutonomousRoutine extends CommandBase {
+public class DriveTrainRoutine extends CommandBase {
     private DriveTrain driveTrain;
     private Trajectory.Config configuration;
     private Trajectory trajectory;
 
-    //TODO make this command more generic and allow any path to be passed through so that it takes as many waypoints as
-    // needed (you'd pass: Waypoint... points) and waypoint objects could be created and passed. Also make an enum to
-    // store those waypoint configurations so there's a selection choice for the high-level command
-    // (overloaded constructor with an enum pointing to the Waypoint... points)
-    Waypoint[] points = new Waypoint[] {      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-            new Waypoint(2, 2, 0),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
-            new Waypoint(0, 0, 0)                           // Waypoint @ x=0, y=0,   exit angle=0 radians
-    };
-
-    @Inject
-    public AutonomousRoutine(@Provided DriveTrain driveTrain) {
+    //TODO note: @Provided & @GenerateCreator are better than @Inject here because we want set different configs
+    public DriveTrainRoutine(@Provided DriveTrain driveTrain, WaypointConfig config) {
         this.driveTrain = driveTrain;
+        buildRoutine(config);
     }
 
-    @Inject
-    public AutonomousRoutine(@Provided DriveTrain driveTrain, WaypointConfigs configs) {
-        this.driveTrain = driveTrain;
-        buildRoutine(configs);
-    }
-
-    public void buildRoutine(WaypointConfigs configs) {
+    //TODO note: an enum can store a value in a field, for example .waypoints -- an enum cannot take the place of a different type
+    public void buildRoutine(WaypointConfig config) {
         configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
-        trajectory = Pathfinder.generate(WaypointConfigs.CONFIG_ONE, configuration);
+        trajectory = Pathfinder.generate(config.waypoints, configuration);
     }
 
+    //TODO make this into execute() with @Override and pull the EncoderFollowers out to fields.
+    // Make an isFinished method that returns true if both followers are finished (follower.isFinished())
     public void run() {
         EncoderFollower leftFollower = new EncoderFollower(trajectory);
         EncoderFollower rightFollower = new EncoderFollower(trajectory);
@@ -74,7 +58,7 @@ public class AutonomousRoutine extends CommandBase {
         leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
         rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
 
-        driveTrain.setPower(leftFollower.calculate((int)driveTrain.getLeft().getPositionTicks()),
-                rightFollower.calculate((int)driveTrain.getRight().getPositionTicks()));
+        driveTrain.setPower(leftFollower.calculate((int) driveTrain.getLeft().getPositionTicks()),
+                rightFollower.calculate((int) driveTrain.getRight().getPositionTicks()));
     }
 }
