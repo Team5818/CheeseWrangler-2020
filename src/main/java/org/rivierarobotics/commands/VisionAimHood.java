@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
@@ -54,7 +55,7 @@ public class  VisionAimHood extends CommandBase {
         double h = 0.69;    //height of goal
         double m = 0.14;    //mass of ball
         double dist = h / Math.tan(Math.toRadians(ty)) + 0.74295;
-        double tx = Math.atan2(0.1905, dist) + Math.toRadians(turret.getAbsoluteAngle()); //returns actual tx using rotation of robot
+        double tx = vision.getLLValue("tx") + Math.toRadians(turret.getAbsoluteAngle()); //returns actual tx using rotation of robot
         double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
         double vx = dist * Math.cos(txTurret) / t - driveTrain.getYVelocity(); //by splitting up our values in the x and y coordinates there has to be new velocities that go with it
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
@@ -62,8 +63,11 @@ public class  VisionAimHood extends CommandBase {
         double hoodAngle = Math.toDegrees(Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz)); //calculates hood angle with the Magnus Effect
         double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)) / 0.0005; //passes through value in ticks/100ms
         if (hoodAngle <= 40 && flywheelVelocity <= 12) {
-            hood.setPosition(hoodAngle);
-            flywheel.setPositionTicks(flywheelVelocity);
+            SmartDashboard.putNumber("hoodAngleSetpoint", hoodAngle);
+            SmartDashboard.putNumber("hoodAnglePosition", hood.getPositionTicks());
+            SmartDashboard.putNumber("flywheelVelocity", flywheelVelocity);
+            //hood.setPosition(hoodAngle);
+            //flywheel.setPositionTicks(flywheelVelocity);
         }
     }
 
