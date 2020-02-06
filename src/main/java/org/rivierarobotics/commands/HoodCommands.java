@@ -23,14 +23,22 @@ package org.rivierarobotics.commands;
 import javax.inject.Inject;
 
 public class HoodCommands {
-    private SetHoodAngleCreator setHoodAngleCreator;
+    private HoodSetAngleCreator hoodSetAngleCreator;
+    private HoodAlignQuadratureCreator hoodAlignQuadratureCreator;
 
     @Inject
-    public HoodCommands(SetHoodAngleCreator setHoodAngleCreator) {
-        this.setHoodAngleCreator = setHoodAngleCreator;
+    public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator,
+                        HoodAlignQuadratureCreator hoodAlignQuadratureCreator) {
+        this.hoodSetAngleCreator = hoodSetAngleCreator;
+        this.hoodAlignQuadratureCreator = hoodAlignQuadratureCreator;
     }
 
-    public SetHoodAngle setAngle(double angle) {
-        return setHoodAngleCreator.create(angle);
+    public HoodSetAngle setAngle(double angle) {
+        return hoodSetAngleCreator.create(angle);
     }
+
+    public HoodAlignQuadrature alignQuadrature() {
+        return hoodAlignQuadratureCreator.create();
+    }
+
 }

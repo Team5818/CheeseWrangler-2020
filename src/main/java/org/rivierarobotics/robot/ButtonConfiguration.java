@@ -57,5 +57,7 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.turret().setPosition(0));
         new JoystickButton(codriverLeft, 2)
                 .whenPressed(cmds.turret().setPosition(45.0));
+        new JoystickButton(codriverButtons, 12)
+                .whenPressed(cmds.hood().alignQuadrature());
     }
 }

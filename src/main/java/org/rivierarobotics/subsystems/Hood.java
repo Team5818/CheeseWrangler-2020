@@ -33,6 +33,10 @@ public class Hood extends BasePIDSubsystem {
         hoodTalon.setNeutralMode(NeutralMode.Brake);
     }
 
+    public WPI_TalonSRX getHoodTalon() {
+        return hoodTalon;
+    }
+
     @Override
     public double getPositionTicks() {
         return hoodTalon.getSensorCollection().getPulseWidthPosition();
