@@ -21,8 +21,25 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.MathUtil;
 
-public class EjectorEjectCheese extends InstantCommand {
-    //TODO finish this?
+import javax.inject.Inject;
 
+public class CWSetClosestHalfIndex extends InstantCommand {
+    private final CheeseWheel cheeseWheel;
+
+    @Inject
+    public CWSetClosestHalfIndex(CheeseWheel cheeseWheel) {
+        this.cheeseWheel = cheeseWheel;
+        addRequirements(cheeseWheel);
+    }
+
+    @Override
+    public void execute() {
+        double closestIndexPos = cheeseWheel.getIndexPosition((int) Math.round(cheeseWheel.getRelativeIndex()));
+        double diffTicks = cheeseWheel.getPositionTicks() - closestIndexPos;
+        double halfIndexDiff = MathUtil.minAbsCompare(diffTicks - (cheeseWheel.diff / 2), diffTicks + (cheeseWheel.diff / 2));
+        cheeseWheel.setPositionTicks(cheeseWheel.getPositionTicks() + halfIndexDiff);
+    }
 }

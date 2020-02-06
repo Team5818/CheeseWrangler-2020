@@ -73,6 +73,7 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(true);
         globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 
     @Override

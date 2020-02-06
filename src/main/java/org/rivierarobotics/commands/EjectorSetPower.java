@@ -21,21 +21,25 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Ejector;
 
 import javax.inject.Inject;
 
-public class CWAdvanceIndex extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
+@GenerateCreator
+public class EjectorSetPower extends InstantCommand {
+    private final Ejector ejector;
+    private final double power;
 
-    @Inject
-    public CWAdvanceIndex(CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
+    public EjectorSetPower(@Provided Ejector ejector, double power) {
+        this.ejector = ejector;
+        this.power = power;
+        addRequirements(ejector);
     }
 
     @Override
     public void execute() {
-        cheeseWheel.advanceCurrentIndex();
+        ejector.setPower(power);
     }
 }

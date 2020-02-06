@@ -18,18 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands;
 
-import jaci.pathfinder.Waypoint;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
-public enum WaypointConfig {
-    CONFIG_ONE(new Waypoint(2, 2, 0),
-            new Waypoint(0, 0, 0));
+import javax.inject.Inject;
 
-    public final Waypoint[] waypoints;
+public class CWIncrementIndex extends InstantCommand {
+    private final CheeseWheel cheeseWheel;
 
-    //TODO note: the ... indicates any number of arguments, automatically turned into an array of that type
-    WaypointConfig(Waypoint... points) {
-        this.waypoints = points;
+    @Inject
+    public CWIncrementIndex(CheeseWheel cheeseWheel) {
+        this.cheeseWheel = cheeseWheel;
+        addRequirements(cheeseWheel);
+    }
+
+    @Override
+    public void execute() {
+        cheeseWheel.currentIndex += 1;
+        cheeseWheel.currentIndex %= 5;
+        cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
     }
 }

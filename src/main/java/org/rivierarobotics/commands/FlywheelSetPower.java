@@ -28,16 +28,16 @@ import org.rivierarobotics.subsystems.Flywheel;
 @GenerateCreator
 public class FlywheelSetPower extends InstantCommand {
     private final Flywheel flywheel;
-    private final double speed;
+    private final double power;
 
-    public FlywheelSetPower(@Provided Flywheel flywheel, double speed) {
+    public FlywheelSetPower(@Provided Flywheel flywheel, double power) {
         this.flywheel = flywheel;
-        this.speed = speed;
+        this.power = power;
         addRequirements(flywheel);
     }
 
     @Override
     public void execute() {
-        flywheel.setPower(speed);
+        flywheel.setPower(power);
     }
 }

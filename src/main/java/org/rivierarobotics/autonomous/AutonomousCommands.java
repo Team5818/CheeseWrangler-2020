@@ -25,7 +25,11 @@ import javax.inject.Provider;
 
 public class AutonomousCommands {
     //TODO switch this to a DriveTrainRoutineCreator and use .create() -- actually give parameters
-    private Provider<DriveTrainRoutine> forwardBackRoutine;
+    @Inject
+    public AutonomousCommands() {
+
+    }
+    /*private Provider<DriveTrainRoutine> forwardBackRoutine;
 
     @Inject
     public AutonomousCommands(Provider<DriveTrainRoutine> forwardBackRoutine) {
@@ -34,5 +38,5 @@ public class AutonomousCommands {
 
     public DriveTrainRoutine forwardBackRoutine() {
         return forwardBackRoutine.get();
-    }
+    }*/
 }

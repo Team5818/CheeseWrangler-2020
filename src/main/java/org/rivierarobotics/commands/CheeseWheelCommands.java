@@ -24,18 +24,32 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class CheeseWheelCommands {
-    private Provider<CWAdvanceIndex> advanceIndexProvider;
+    private Provider<CWIncrementIndex> advanceIndexProvider;
+    private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
+    private Provider<CWShootAll> shootAllProvider;
     private CWSetPositionCreator setPositionCreator;
 
     @Inject
-    public CheeseWheelCommands(Provider<CWAdvanceIndex> advanceIndexProvider,
+    public CheeseWheelCommands(Provider<CWIncrementIndex> advanceIndexProvider,
+                               Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
+                               Provider<CWShootAll> shootAllProvider,
                                CWSetPositionCreator setPositionCreator) {
         this.advanceIndexProvider = advanceIndexProvider;
+        this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
+        this.shootAllProvider = shootAllProvider;
         this.setPositionCreator = setPositionCreator;
     }
 
-    public CWAdvanceIndex advanceIndex() {
+    public CWIncrementIndex advanceIndex() {
         return advanceIndexProvider.get();
+    }
+
+    public CWSetClosestHalfIndex setClosestHalfIndex() {
+        return setClosestHalfIndexProvider.get();
+    }
+
+    public CWShootAll shootAll() {
+        return shootAllProvider.get();
     }
 
     public CWSetPosition setPosition(int ticks) {

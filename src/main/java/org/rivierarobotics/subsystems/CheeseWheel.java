@@ -27,14 +27,22 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final WPI_TalonSRX wheelTalon;
     //TODO change baseTicks
     private int baseTicks = 0;
-    private final double diff = 4096.0 / 5;
-    private int currentIndex = 0;
+    public int currentIndex = 0;
+    public final double diff = 4096.0 / 5;
 
     public CheeseWheel(int id) {
         super(0.0, 0.0, 0.0, 1.0);
         this.wheelTalon = new WPI_TalonSRX(id);
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public double getIndexPosition(int index) {
+        return baseTicks + (index * diff);
+    }
+
+    public double getRelativeIndex() {
+        return (getPositionTicks() - baseTicks) / diff;
     }
 
     @Override
@@ -45,15 +53,5 @@ public class CheeseWheel extends BasePIDSubsystem {
     @Override
     protected void setPower(double pwr) {
         wheelTalon.set(pwr);
-    }
-
-    public void setToIndex(int index, boolean front) {
-        super.setPositionTicks(front ? baseTicks + (index * diff) : baseTicks - (index * diff));
-    }
-
-    public void advanceCurrentIndex() {
-        currentIndex += 1;
-        currentIndex %= 5;
-        setToIndex(currentIndex, true);
     }
 }
