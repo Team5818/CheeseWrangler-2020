@@ -18,28 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+@GenerateCreator
+public class CWSetShootMode extends InstantCommand {
+    private final CheeseWheel cheeseWheel;
+    private final boolean shootMode;
 
-@Singleton
-public class NavXGyro {
-    private final AHRS navX;
-
-    @Inject
-    public NavXGyro() {
-        this.navX = new AHRS(SPI.Port.kMXP);
+    public CWSetShootMode(@Provided CheeseWheel cheeseWheel, boolean shootMode) {
+        this.cheeseWheel = cheeseWheel;
+        this.shootMode = shootMode;
+        addRequirements(cheeseWheel);
     }
 
-    public double getYaw() {
-        return navX.getAngle();
-    }
-
-    public void resetGyro() {
-        navX.reset();
+    @Override
+    public void execute() {
+        cheeseWheel.shootMode = this.shootMode;
     }
 }

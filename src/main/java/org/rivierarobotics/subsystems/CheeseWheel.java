@@ -22,27 +22,40 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class CheeseWheel extends BasePIDSubsystem {
-    private final WPI_TalonSRX wheelTalon;
-    //TODO change baseTicks
-    private int baseTicks = 0;
-    public int currentIndex = 0;
     public final double diff = 4096.0 / 5;
+    private final WPI_TalonSRX wheelTalon;
+    private final DigitalInput intakeSensor, outputSensor;
+    //TODO change baseTicks
+    public int currentIndex = 0;
+    public boolean shootMode = false;
+    private int baseTicks = 0, shootOffset = 0;
 
-    public CheeseWheel(int id) {
+    public CheeseWheel(int motor, int sensorOne, int sensorTwo) {
         super(0.0, 0.0, 0.0, 1.0);
-        this.wheelTalon = new WPI_TalonSRX(id);
+        this.wheelTalon = new WPI_TalonSRX(motor);
+        this.intakeSensor = new DigitalInput(sensorOne);
+        this.outputSensor = new DigitalInput(sensorTwo);
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
 
+    public boolean getIntakeSensorState() {
+        return intakeSensor.get();
+    }
+
+    public boolean getOutputSensorState() {
+        return outputSensor.get();
+    }
+
     public double getIndexPosition(int index) {
-        return baseTicks + (index * diff);
+        return baseTicks + ((shootMode) ? shootOffset : 0) + (index * diff);
     }
 
     public double getRelativeIndex() {
-        return (getPositionTicks() - baseTicks) / diff;
+        return (getPositionTicks() - baseTicks - ((shootMode) ? shootOffset : 0)) / diff;
     }
 
     @Override

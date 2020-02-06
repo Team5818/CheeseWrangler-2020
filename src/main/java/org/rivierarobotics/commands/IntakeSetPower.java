@@ -18,28 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Intake;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+@GenerateCreator
+public class IntakeSetPower extends InstantCommand {
+    private final Intake intake;
+    private final double power;
 
-@Singleton
-public class NavXGyro {
-    private final AHRS navX;
-
-    @Inject
-    public NavXGyro() {
-        this.navX = new AHRS(SPI.Port.kMXP);
+    public IntakeSetPower(@Provided Intake intake, double power) {
+        this.intake = intake;
+        this.power = power;
+        addRequirements(intake);
     }
 
-    public double getYaw() {
-        return navX.getAngle();
-    }
-
-    public void resetGyro() {
-        navX.reset();
+    @Override
+    public void execute() {
+        intake.setPower(power);
     }
 }

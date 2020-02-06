@@ -18,20 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
-public class IndexSensor extends SubsystemBase {
+import javax.inject.Inject;
 
-    private final DigitalInput digitalInput;
-
-    public IndexSensor(int indexSensorChannel) {
-        digitalInput = new DigitalInput(indexSensorChannel);
-    }
-
-    public boolean getState() {
-        return digitalInput.get();
+public class CWShootIndividual extends SequentialCommandGroup {
+    @Inject
+    public CWShootIndividual(CheeseWheelCommands cheeseCommands, FlywheelCommands flywheelCommands, EjectorCommands ejectorCommands) {
+        addCommands(
+                cheeseCommands.setShootMode(true),
+                cheeseCommands.setClosestHalfIndex(),
+                flywheelCommands.setPower(1.0),
+                ejectorCommands.setPower(1.0),
+                new WaitCommand(0.5),
+                cheeseCommands.incrementIndex(),
+                new WaitCommand(0.5),
+                cheeseCommands.setShootMode(false),
+                cheeseCommands.incrementIndex()
+        );
     }
 }

@@ -65,7 +65,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsolutePosition(double angle) {
-        setPositionTicks( getPositionTicks() + (( angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks() ));
+        setPositionTicks(getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks()));
     }
 
     @Override

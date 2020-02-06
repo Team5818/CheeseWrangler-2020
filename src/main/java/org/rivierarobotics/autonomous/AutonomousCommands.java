@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class AutonomousCommands {
     //TODO switch this to a DriveTrainRoutineCreator and use .create() -- actually give parameters

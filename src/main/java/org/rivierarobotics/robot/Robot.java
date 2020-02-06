@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,9 +27,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.IndexSensor;
-import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
@@ -94,12 +93,12 @@ public class Robot extends TimedRobot {
         VisionUtil vision = globalComponent.getVisionUtil();
         NavXGyro navX = globalComponent.getNavXGyro();
         Turret tt = globalComponent.getTurret();
-        IndexSensor in = globalComponent.getIndexSensor();
+        CheeseWheel in = globalComponent.getCheeseWheel();
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
-        SmartDashboard.putBoolean("State", in.getState());
+        SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
     }
 }

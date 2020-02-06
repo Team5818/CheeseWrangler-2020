@@ -22,42 +22,29 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Ejector;
-import org.rivierarobotics.subsystems.Flywheel;
 
 import javax.inject.Inject;
 
 public class CWShootAll extends SequentialCommandGroup {
-    private final Flywheel flywheel;
-    private final CheeseWheelCommands cheeseCommands;
-    private final Ejector ejector;
-
     @Inject
-    public CWShootAll(CheeseWheelCommands cheeseCommands, Ejector ejector, Flywheel flywheel) {
-        this.flywheel = flywheel;
-        this.cheeseCommands = cheeseCommands;
-        this.ejector = ejector;
-        addRequirements(flywheel, ejector);
+    public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands, FlywheelCommands flywheelCommands) {
+        addCommands(
+                cheeseCommands.setShootMode(true),
+                cheeseCommands.setClosestHalfIndex(),
+                ejectorCommands.setPower(1.0),
+                flywheelCommands.setPower(1.0)
+        );
 
         for (int i = 0; i < 5; i++) {
-            addCommands(cheeseCommands.advanceIndex(), new WaitCommand(1));
+            addCommands(cheeseCommands.incrementIndex(), new WaitCommand(1));
         }
-    }
 
-    @Override
-    public void initialize() {
-        addCommands(cheeseCommands.setClosestHalfIndex());
-        ejector.setPower(1.0);
-        flywheel.setPower(1.0);
-        super.initialize();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        ejector.setPower(0.0);
-        flywheel.setPower(0.0);
-        super.end(interrupted);
+        addCommands(
+                ejectorCommands.setPower(0.0),
+                flywheelCommands.setPower(0.0),
+                cheeseCommands.setShootMode(false),
+                cheeseCommands.incrementIndex()
+        );
     }
 
     @Override

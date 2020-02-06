@@ -30,7 +30,7 @@ import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Inject;
 
-public class  VisionAimHood extends CommandBase {
+public class VisionAimHood extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;

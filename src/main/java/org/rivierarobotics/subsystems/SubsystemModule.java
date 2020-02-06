@@ -33,7 +33,7 @@ import javax.inject.Singleton;
 @Module
 public class SubsystemModule {
     private static final int TURRET_TALON = 7, HOOD_TALON = 10, FLYWHEEL_TALON = 11, CHEESE_WHEEL_TALON = 13,
-            EJECTOR_TALON = 17, INTAKE_LEFT_TALON = 18, INTAKE_RIGHT_TALON = 19, INDEX_SENSOR = 9;
+            EJECTOR_TALON = 17, INTAKE_LEFT_TALON = 18, INTAKE_RIGHT_TALON = 19, INDEX_SENSOR_INTAKE = 9, INDEX_SENSOR_OUTPUT = 10;
     private static final DriveTrainSide.MotorIds
             DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
             DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
@@ -97,18 +97,12 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static CheeseWheel provideCheeseWheel() {
-        return new CheeseWheel(CHEESE_WHEEL_TALON);
+        return new CheeseWheel(CHEESE_WHEEL_TALON, INDEX_SENSOR_INTAKE, INDEX_SENSOR_OUTPUT);
     }
 
     @Provides
     @Singleton
     public static PistonController providePistonController() {
         return new PistonController();
-    }
-
-    @Provides
-    @Singleton
-    public static IndexSensor provideIndexSensor() {
-        return new IndexSensor(INDEX_SENSOR);
     }
 }

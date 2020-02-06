@@ -25,8 +25,6 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Ejector;
 
-import javax.inject.Inject;
-
 @GenerateCreator
 public class EjectorSetPower extends InstantCommand {
     private final Ejector ejector;

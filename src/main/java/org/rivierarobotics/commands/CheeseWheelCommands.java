@@ -27,20 +27,26 @@ public class CheeseWheelCommands {
     private Provider<CWIncrementIndex> advanceIndexProvider;
     private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
     private Provider<CWShootAll> shootAllProvider;
+    private Provider<CWShootIndividual> shootIndividualProvider;
     private CWSetPositionCreator setPositionCreator;
+    private CWSetShootModeCreator setShootModeCreator;
 
     @Inject
     public CheeseWheelCommands(Provider<CWIncrementIndex> advanceIndexProvider,
                                Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
                                Provider<CWShootAll> shootAllProvider,
-                               CWSetPositionCreator setPositionCreator) {
+                               Provider<CWShootIndividual> shootIndividualProvider,
+                               CWSetPositionCreator setPositionCreator,
+                               CWSetShootModeCreator setShootModeCreator) {
         this.advanceIndexProvider = advanceIndexProvider;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
         this.shootAllProvider = shootAllProvider;
+        this.shootIndividualProvider = shootIndividualProvider;
         this.setPositionCreator = setPositionCreator;
+        this.setShootModeCreator = setShootModeCreator;
     }
 
-    public CWIncrementIndex advanceIndex() {
+    public CWIncrementIndex incrementIndex() {
         return advanceIndexProvider.get();
     }
 
@@ -52,7 +58,15 @@ public class CheeseWheelCommands {
         return shootAllProvider.get();
     }
 
+    public CWShootIndividual shootNext() {
+        return shootIndividualProvider.get();
+    }
+
     public CWSetPosition setPosition(int ticks) {
         return setPositionCreator.create(ticks);
+    }
+
+    public CWSetShootMode setShootMode(boolean shootMode) {
+        return setShootModeCreator.create(shootMode);
     }
 }
