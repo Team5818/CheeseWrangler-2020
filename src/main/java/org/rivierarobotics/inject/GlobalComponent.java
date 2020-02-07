@@ -26,7 +26,6 @@ import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
 import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Singleton;
@@ -46,7 +45,6 @@ public abstract class GlobalComponent {
         getNavXGyro();
         getButtonConfiguration();
         getVisionUtil();
-        getPositionTracker();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -70,6 +68,4 @@ public abstract class GlobalComponent {
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
-
-    public abstract PositionTracker getPositionTracker();
 }

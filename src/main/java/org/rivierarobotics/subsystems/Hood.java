@@ -22,15 +22,22 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class Hood extends BasePIDSubsystem {
     private final WPI_TalonSRX hoodTalon;
+    public final DigitalInput di;
 
     public Hood(int id) {
-        super(0.0004, 0, 0.0001, 0.4);
+        super(0.0004, 0.0, 0.0, 1.0 );
         hoodTalon = new WPI_TalonSRX(id);
+        di = new DigitalInput(4);
         hoodTalon.configFactoryDefault();
         hoodTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public WPI_TalonSRX getHoodTalon() {
+        return hoodTalon;
     }
 
     @Override

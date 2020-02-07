@@ -64,10 +64,6 @@ public class DriveTrain implements Subsystem {
         return (10 * tickV * (1 / 4096.0) * wheelCircumference);
     }
 
-    public double getDistanceTicks(){
-        return ( left.getPositionTicks() + right.getPositionTicks() ) / 2;
-    }
-
 
     public DriveTrainSide getLeft() {
         return left;

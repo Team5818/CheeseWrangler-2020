@@ -25,17 +25,19 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 
 import javax.inject.Inject;
 
-public class CWAdvanceIndex extends InstantCommand {
+public class CWIncrementIndex extends InstantCommand {
     private final CheeseWheel cheeseWheel;
 
     @Inject
-    public CWAdvanceIndex(CheeseWheel cheeseWheel) {
+    public CWIncrementIndex(CheeseWheel cheeseWheel) {
         this.cheeseWheel = cheeseWheel;
         addRequirements(cheeseWheel);
     }
 
     @Override
     public void execute() {
-        cheeseWheel.advanceCurrentIndex();
+        cheeseWheel.currentIndex += 1;
+        cheeseWheel.currentIndex %= 5;
+        cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
     }
 }

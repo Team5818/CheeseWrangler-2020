@@ -28,7 +28,7 @@ import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
-//temporary for testing camera servo
+//TODO remove after testing servos
 public class ServoControl extends CommandBase {
     private final Servo servo;
     private final Joystick js;

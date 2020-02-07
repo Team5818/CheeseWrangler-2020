@@ -23,7 +23,14 @@ package org.rivierarobotics.commands;
 import javax.inject.Inject;
 
 public class EjectorCommands {
+    private final EjectorSetPowerCreator ejectorSetPowerCreator;
+
     @Inject
-    public EjectorCommands() {
+    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator) {
+        this.ejectorSetPowerCreator = ejectorSetPowerCreator;
+    }
+
+    public EjectorSetPower setPower(double power) {
+        return ejectorSetPowerCreator.create(power);
     }
 }

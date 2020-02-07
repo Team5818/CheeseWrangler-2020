@@ -20,23 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import jaci.pathfinder.followers.EncoderFollower;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
-public class SideBasedPathfinder extends CommandBase {
-    public EncoderFollower left;
-    protected EncoderFollower right;
-    private double wheelDiameter = 4.0;
+@GenerateCreator
+public class CWSetShootMode extends InstantCommand {
+    private final CheeseWheel cheeseWheel;
+    private final boolean shootMode;
 
-    public SideBasedPathfinder(@Provided EncoderFollower left, @Provided EncoderFollower right, @Provided DriveTrain dt) {
-        this.left = left;
-        this.right = right;
-        //TODO put everything in this command, including making the encoderfollowers and waypoints.
-        // Ideally drivetrain should just have set/get methods and everything else can be done higher up.
-        // Also using @Provided for EncoderFollowers isn't going to work.
-        //left.configureEncoder();
+    public CWSetShootMode(@Provided CheeseWheel cheeseWheel, boolean shootMode) {
+        this.cheeseWheel = cheeseWheel;
+        this.shootMode = shootMode;
+        addRequirements(cheeseWheel);
+    }
+
+    @Override
+    public void execute() {
+        cheeseWheel.shootMode = this.shootMode;
     }
 }
-

@@ -23,14 +23,14 @@ package org.rivierarobotics.commands;
 import javax.inject.Inject;
 
 public class TurretCommands {
-    private SetTurretPositionCreator setTurretPositionCreator;
+    private TurretSetPositionCreator turretSetPositionCreator;
 
     @Inject
-    public TurretCommands(SetTurretPositionCreator setTurretPositionCreator) {
-        this.setTurretPositionCreator = setTurretPositionCreator;
+    public TurretCommands(TurretSetPositionCreator turretSetPositionCreator) {
+        this.turretSetPositionCreator = turretSetPositionCreator;
     }
 
-    public SetTurretPosition setPosition(double pos) {
-        return setTurretPositionCreator.create(pos);
+    public TurretSetPosition setPosition(double pos) {
+        return turretSetPositionCreator.create(pos);
     }
 }

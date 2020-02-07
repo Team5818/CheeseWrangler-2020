@@ -22,7 +22,6 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.ForwardBackRoutine;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 
@@ -52,11 +51,13 @@ public class ButtonConfiguration {
     public void initTeleop() {
         new JoystickButton(codriverRight, 1)
                 .whenPressed(cmds.vision().autoAimTurret());
-        new JoystickButton(codriverRight, 2)
-                .whenPressed(cmds.vision().autoAimHood());
+        new JoystickButton(codriverRight, 2);
+//                .whenPressed(cmds.auto().forwardBackRoutine());
         new JoystickButton(codriverLeft, 1)
-                .whenPressed(cmds.turret().setPosition(0));
+                .whenPressed(cmds.hood().setAngle(0));
         new JoystickButton(codriverLeft, 2)
-                .whenPressed(cmds.turret().setPosition(45.0));
+                .whenPressed(cmds.hood().setAngle(45));
+        new JoystickButton(codriverButtons, 12)
+                .whenPressed(cmds.hood().alignQuadrature());
     }
 }

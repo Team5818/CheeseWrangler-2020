@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class DriveCommands {
-    //temporary until servos are tested
+    //TODO remove after servos are tested
     private Provider<ServoControl> servoControlProvider;
 
     @Inject

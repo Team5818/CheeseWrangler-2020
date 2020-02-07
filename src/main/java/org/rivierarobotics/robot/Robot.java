@@ -27,9 +27,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
@@ -72,11 +72,11 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(true);
         globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 
     @Override
     public void teleopPeriodic() {
-        globalComponent.getPositionTracker().TrackPosition();
         CommandScheduler.getInstance().run();
     }
 
@@ -93,10 +93,12 @@ public class Robot extends TimedRobot {
         VisionUtil vision = globalComponent.getVisionUtil();
         NavXGyro navX = globalComponent.getNavXGyro();
         Turret tt = globalComponent.getTurret();
+        CheeseWheel in = globalComponent.getCheeseWheel();
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
+        SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
     }
 }

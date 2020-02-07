@@ -19,9 +19,8 @@
  */
 
 package org.rivierarobotics.util;
+
 import com.kauailabs.navx.frc.AHRS;
-import com.ctre.phoenix.sensors.PigeonIMU;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.SPI;
 
 import javax.inject.Inject;

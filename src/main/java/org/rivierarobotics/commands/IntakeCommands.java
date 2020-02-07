@@ -23,7 +23,14 @@ package org.rivierarobotics.commands;
 import javax.inject.Inject;
 
 public class IntakeCommands {
+    private IntakeSetPowerCreator intakeSetPowerCreator;
+
     @Inject
-    public IntakeCommands() {
+    public IntakeCommands(IntakeSetPowerCreator intakeSetPowerCreator) {
+        this.intakeSetPowerCreator = intakeSetPowerCreator;
+    }
+
+    public IntakeSetPower setPower(double power) {
+        return intakeSetPowerCreator.create(power);
     }
 }

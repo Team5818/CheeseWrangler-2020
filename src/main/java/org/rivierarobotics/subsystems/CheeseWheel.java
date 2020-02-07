@@ -22,19 +22,40 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public class CheeseWheel extends BasePIDSubsystem {
+    public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
+    private final DigitalInput intakeSensor, outputSensor;
     //TODO change baseTicks
-    private int baseTicks = 0;
-    private final double diff = 4096.0 / 5;
-    private int currentIndex = 0;
+    public int currentIndex = 0;
+    public boolean shootMode = false;
+    private int baseTicks = 0, shootOffset = 0;
 
-    public CheeseWheel(int id) {
+    public CheeseWheel(int motor, int sensorOne, int sensorTwo) {
         super(0.0, 0.0, 0.0, 1.0);
-        this.wheelTalon = new WPI_TalonSRX(id);
+        this.wheelTalon = new WPI_TalonSRX(motor);
+        this.intakeSensor = new DigitalInput(sensorOne);
+        this.outputSensor = new DigitalInput(sensorTwo);
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public boolean getIntakeSensorState() {
+        return intakeSensor.get();
+    }
+
+    public boolean getOutputSensorState() {
+        return outputSensor.get();
+    }
+
+    public double getIndexPosition(int index) {
+        return baseTicks + ((shootMode) ? shootOffset : 0) + (index * diff);
+    }
+
+    public double getRelativeIndex() {
+        return (getPositionTicks() - baseTicks - ((shootMode) ? shootOffset : 0)) / diff;
     }
 
     @Override
@@ -45,15 +66,5 @@ public class CheeseWheel extends BasePIDSubsystem {
     @Override
     protected void setPower(double pwr) {
         wheelTalon.set(pwr);
-    }
-
-    public void setToIndex(int index, boolean front) {
-        super.setPositionTicks(front ? baseTicks + (index * diff) : baseTicks - (index * diff));
-    }
-
-    public void advanceCurrentIndex() {
-        currentIndex += 1;
-        currentIndex %= 5;
-        setToIndex(currentIndex, true);
     }
 }
