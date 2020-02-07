@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.commands;
 
+import org.rivierarobotics.subsystems.CheeseWheelMode;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -29,7 +31,7 @@ public class CheeseWheelCommands {
     private Provider<CWShootAll> shootAllProvider;
     private Provider<CWShootIndividual> shootIndividualProvider;
     private CWSetPositionCreator setPositionCreator;
-    private CWSetShootModeCreator setShootModeCreator;
+    private CWSetModeCreator setModeCreator;
 
     @Inject
     public CheeseWheelCommands(Provider<CWIncrementIndex> advanceIndexProvider,
@@ -37,13 +39,13 @@ public class CheeseWheelCommands {
                                Provider<CWShootAll> shootAllProvider,
                                Provider<CWShootIndividual> shootIndividualProvider,
                                CWSetPositionCreator setPositionCreator,
-                               CWSetShootModeCreator setShootModeCreator) {
+                               CWSetModeCreator setModeCreator) {
         this.advanceIndexProvider = advanceIndexProvider;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
         this.shootAllProvider = shootAllProvider;
         this.shootIndividualProvider = shootIndividualProvider;
         this.setPositionCreator = setPositionCreator;
-        this.setShootModeCreator = setShootModeCreator;
+        this.setModeCreator = setModeCreator;
     }
 
     public CWIncrementIndex incrementIndex() {
@@ -66,7 +68,7 @@ public class CheeseWheelCommands {
         return setPositionCreator.create(ticks);
     }
 
-    public CWSetShootMode setShootMode(boolean shootMode) {
-        return setShootModeCreator.create(shootMode);
+    public CWSetMode setMode(CheeseWheelMode mode) {
+        return setModeCreator.create(mode);
     }
 }

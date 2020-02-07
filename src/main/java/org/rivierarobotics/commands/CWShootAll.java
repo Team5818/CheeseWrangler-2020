@@ -22,6 +22,7 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.subsystems.CheeseWheelMode;
 
 import javax.inject.Inject;
 
@@ -29,7 +30,7 @@ public class CWShootAll extends SequentialCommandGroup {
     @Inject
     public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands, FlywheelCommands flywheelCommands) {
         addCommands(
-                cheeseCommands.setShootMode(true),
+                cheeseCommands.setMode(CheeseWheelMode.SHOOTING),
                 cheeseCommands.setClosestHalfIndex(),
                 ejectorCommands.setPower(1.0),
                 flywheelCommands.setPower(1.0)
@@ -42,7 +43,7 @@ public class CWShootAll extends SequentialCommandGroup {
         addCommands(
                 ejectorCommands.setPower(0.0),
                 flywheelCommands.setPower(0.0),
-                cheeseCommands.setShootMode(false),
+                cheeseCommands.setMode(CheeseWheelMode.LAST),
                 cheeseCommands.incrementIndex()
         );
     }

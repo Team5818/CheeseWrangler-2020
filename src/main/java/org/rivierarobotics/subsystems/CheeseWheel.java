@@ -28,10 +28,8 @@ public class CheeseWheel extends BasePIDSubsystem {
     public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final DigitalInput intakeSensor, outputSensor;
-    //TODO change baseTicks
     public int currentIndex = 0;
-    public boolean shootMode = false;
-    private int baseTicks = 0, shootOffset = 0;
+    public CheeseWheelMode mode, lastMode = CheeseWheelMode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, int sensorOne, int sensorTwo) {
         super(0.0, 0.0, 0.0, 1.0);
@@ -50,12 +48,21 @@ public class CheeseWheel extends BasePIDSubsystem {
         return outputSensor.get();
     }
 
+    public void setMode(CheeseWheelMode mode) {
+        if (mode == CheeseWheelMode.LAST) {
+            this.mode = lastMode;
+        } else {
+            this.lastMode = this.mode;
+            this.mode = mode;
+        }
+    }
+
     public double getIndexPosition(int index) {
-        return baseTicks + ((shootMode) ? shootOffset : 0) + (index * diff);
+        return mode.offset + (index * diff);
     }
 
     public double getRelativeIndex() {
-        return (getPositionTicks() - baseTicks - ((shootMode) ? shootOffset : 0)) / diff;
+        return (getPositionTicks() - mode.offset) / diff;
     }
 
     @Override
