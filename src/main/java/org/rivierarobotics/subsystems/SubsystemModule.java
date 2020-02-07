@@ -32,7 +32,7 @@ import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 7, HOOD_TALON = 10, FLYWHEEL_TALON = 11, CHEESE_WHEEL_TALON = 13,
+    private static final int TURRET_TALON = 7, HOOD_TALON = 13, FLYWHEEL_TALON = 11, CHEESE_WHEEL_TALON = 10,
             EJECTOR_TALON = 17, INTAKE_LEFT_TALON = 18, INTAKE_RIGHT_TALON = 19, INDEX_SENSOR_INTAKE = 9, INDEX_SENSOR_OUTPUT = 10;
     private static final DriveTrainSide.MotorIds
             DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),

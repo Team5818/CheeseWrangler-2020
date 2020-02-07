@@ -13,7 +13,7 @@ public class HoodAlignQuadrature extends CommandBase {
 
     public HoodAlignQuadrature(@Provided Hood hood) {
         this.hood = hood;
-        this.limit = new DigitalInput(0);
+        this.limit = hood.di;
         addRequirements(hood);
     }
 
