@@ -29,6 +29,7 @@ import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
@@ -75,6 +76,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        globalComponent.getPositionTracker().TrackPosition();
         CommandScheduler.getInstance().run();
     }
 
