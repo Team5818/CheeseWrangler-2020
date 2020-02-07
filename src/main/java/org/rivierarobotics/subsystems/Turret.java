@@ -67,10 +67,10 @@ public class Turret extends BasePIDSubsystem {
     public void setAbsolutePosition(double angle) {
         setPositionTicks(getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks()));
     }
-    public boolean turretSaftey(){
-        if( -150 < getAbsoluteAngle() && 150 > getAbsoluteAngle()){
+    public boolean turretSafety() {
+        if ( -150 < getAbsoluteAngle() && 150 > getAbsoluteAngle()) {
             return true;
-        }else{
+        } else {
             setAbsolutePosition(getAbsoluteAngle());
             return false;
         }
@@ -82,9 +82,9 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if(turretSaftey()){
+        if (turretSafety()) {
             super.setManualPower(pwr);
-        }else{
+        } else {
             super.setManualPower(0.0);
         }
     }
