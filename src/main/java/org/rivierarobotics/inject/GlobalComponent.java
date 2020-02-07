@@ -26,6 +26,7 @@ import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
 import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Singleton;
@@ -69,5 +70,5 @@ public abstract class GlobalComponent {
 
     public abstract VisionUtil getVisionUtil();
 
-    public abstract LimelightServo getLimelightServo();
+    public abstract PositionTracker getPositionTracker();
 }
