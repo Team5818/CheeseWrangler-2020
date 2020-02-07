@@ -23,11 +23,16 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.commands.EjectorControl;
+
+import javax.inject.Provider;
 
 public class Ejector extends SubsystemBase {
     private final WPI_TalonSRX ejectorTalon;
+    private final Provider<EjectorControl> command;
 
-    public Ejector(int id) {
+    public Ejector(int id, Provider<EjectorControl> command) {
+        this.command = command;
         ejectorTalon = new WPI_TalonSRX(id);
         ejectorTalon.configFactoryDefault();
         ejectorTalon.setNeutralMode(NeutralMode.Brake);
@@ -35,5 +40,13 @@ public class Ejector extends SubsystemBase {
 
     public void setPower(double pwr) {
         ejectorTalon.set(pwr);
+    }
+
+    @Override
+    public void periodic() {
+        if (getDefaultCommand() == null) {
+            setDefaultCommand(command.get());
+        }
+        super.periodic();
     }
 }

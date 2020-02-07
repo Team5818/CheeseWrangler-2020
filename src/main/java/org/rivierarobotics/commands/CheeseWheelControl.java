@@ -20,33 +20,33 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.MathUtil;
 
-@GenerateCreator
-public class HoodAlignQuadrature extends CommandBase {
-    private final Hood hood;
+import javax.inject.Inject;
 
-    public HoodAlignQuadrature(@Provided Hood hood) {
-        this.hood = hood;
-        addRequirements(hood);
+public class CheeseWheelControl extends CommandBase {
+    private final CheeseWheel cheeseWheel;
+    private final Joystick coDriverLeftJs;
+
+    @Inject
+    public CheeseWheelControl(@Input(Input.Selector.CODRIVER_LEFT) Joystick coDriverLeftJs,
+                              CheeseWheel cheeseWheel) {
+        this.cheeseWheel = cheeseWheel;
+        this.coDriverLeftJs = coDriverLeftJs;
+        addRequirements(cheeseWheel);
     }
 
     @Override
     public void execute() {
-        hood.setPower(-0.25);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        hood.setPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 10);
+        cheeseWheel.setManualPower(MathUtil.fitDeadband(coDriverLeftJs.getY()));
     }
 
     @Override
     public boolean isFinished() {
-        return !hood.getLimit().get();
+        return false;
     }
 }

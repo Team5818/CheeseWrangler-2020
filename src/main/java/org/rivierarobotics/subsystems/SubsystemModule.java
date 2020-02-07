@@ -23,6 +23,9 @@ package org.rivierarobotics.subsystems;
 import dagger.Module;
 import dagger.Provides;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.CheeseWheelControl;
+import org.rivierarobotics.commands.EjectorControl;
+import org.rivierarobotics.commands.HoodControl;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
@@ -32,8 +35,19 @@ import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 7, HOOD_TALON = 13, FLYWHEEL_TALON = 11, CHEESE_WHEEL_TALON = 10,
-            EJECTOR_TALON = 17, INTAKE_LEFT_TALON = 18, INTAKE_RIGHT_TALON = 19, INDEX_SENSOR_INTAKE = 9, INDEX_SENSOR_OUTPUT = 10;
+    private static final int TURRET_TALON = 7;
+    private static final int HOOD_TALON = 13;
+    private static final int FLYWHEEL_TALON = 11;
+    private static final int CHEESE_WHEEL_TALON = 10;
+    private static final int EJECTOR_TALON = 17;
+    private static final int INTAKE_LEFT_TALON = 18;
+    private static final int INTAKE_RIGHT_TALON = 19;
+
+    private static final int HOOD_LIMIT_SWITCH = 0;
+    private static final int INDEX_SENSOR_INTAKE = 9;
+    private static final int INDEX_SENSOR_OUTPUT = 10;
+    private static final int LIMELIGHT_SERVO = 0;
+
     private static final DriveTrainSide.MotorIds
             DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
             DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
@@ -63,14 +77,14 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Hood provideHood() {
-        return new Hood(HOOD_TALON);
+    public static Hood provideHood(Provider<HoodControl> command) {
+        return new Hood(HOOD_TALON, HOOD_LIMIT_SWITCH, command);
     }
 
     @Provides
     @Singleton
-    public static Ejector provideEjector() {
-        return new Ejector(EJECTOR_TALON);
+    public static Ejector provideEjector(Provider<EjectorControl> command) {
+        return new Ejector(EJECTOR_TALON, command);
     }
 
     @Provides
@@ -96,13 +110,19 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel() {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, INDEX_SENSOR_INTAKE, INDEX_SENSOR_OUTPUT);
+    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, INDEX_SENSOR_INTAKE, INDEX_SENSOR_OUTPUT, command);
     }
 
     @Provides
     @Singleton
     public static PistonController providePistonController() {
         return new PistonController();
+    }
+
+    @Provides
+    @Singleton
+    public static LimelightServo provideLimelightServo() {
+        return new LimelightServo(LIMELIGHT_SERVO);
     }
 }

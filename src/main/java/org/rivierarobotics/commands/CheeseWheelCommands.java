@@ -26,30 +26,40 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class CheeseWheelCommands {
-    private Provider<CWIncrementIndex> advanceIndexProvider;
+    private Provider<CWIncrementIndex> incrementIndexProvider;
+    private Provider<CWDecrementIndex> decrementIndexProvider;
     private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
     private Provider<CWShootAll> shootAllProvider;
     private Provider<CWShootIndividual> shootIndividualProvider;
     private CWSetPositionCreator setPositionCreator;
     private CWSetModeCreator setModeCreator;
+    private CWInvertModeCreator invertModeCreator;
 
     @Inject
-    public CheeseWheelCommands(Provider<CWIncrementIndex> advanceIndexProvider,
+    public CheeseWheelCommands(Provider<CWIncrementIndex> incrementIndexProvider,
+                               Provider<CWDecrementIndex> decrementIndexProvider,
                                Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
                                Provider<CWShootAll> shootAllProvider,
                                Provider<CWShootIndividual> shootIndividualProvider,
                                CWSetPositionCreator setPositionCreator,
-                               CWSetModeCreator setModeCreator) {
-        this.advanceIndexProvider = advanceIndexProvider;
+                               CWSetModeCreator setModeCreator,
+                               CWInvertModeCreator invertModeCreator) {
+        this.incrementIndexProvider = incrementIndexProvider;
+        this.decrementIndexProvider = decrementIndexProvider;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
         this.shootAllProvider = shootAllProvider;
         this.shootIndividualProvider = shootIndividualProvider;
         this.setPositionCreator = setPositionCreator;
         this.setModeCreator = setModeCreator;
+        this.invertModeCreator = invertModeCreator;
     }
 
     public CWIncrementIndex incrementIndex() {
-        return advanceIndexProvider.get();
+        return incrementIndexProvider.get();
+    }
+
+    public CWDecrementIndex decrementIndex() {
+        return decrementIndexProvider.get();
     }
 
     public CWSetClosestHalfIndex setClosestHalfIndex() {
@@ -70,5 +80,9 @@ public class CheeseWheelCommands {
 
     public CWSetMode setMode(CheeseWheelMode mode) {
         return setModeCreator.create(mode);
+    }
+
+    public CWInvertMode invertMode(CheeseWheelMode mode) {
+        return invertModeCreator.create(mode);
     }
 }

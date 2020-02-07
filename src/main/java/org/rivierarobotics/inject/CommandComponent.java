@@ -47,6 +47,10 @@ public abstract class CommandComponent {
 
     public abstract AutonomousCommands auto();
 
+    public abstract LimelightServoCommands cameraServo();
+
+    public abstract ClimbCommands climb();
+
     @Module(subcomponents = CommandComponent.class)
     public interface CCModule {
     }

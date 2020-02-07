@@ -51,7 +51,6 @@ public class DriveTrain implements Subsystem {
         return (left.getVelocity() + right.getVelocity()) / 2;
     }
 
-
     //TODO this can be done without repeating anything, just pull in the yaw and determine sin/cos based on something.
     // The same thing is done to both components, so logically we can make one method for that part.
     public double getXVelocity() {
@@ -64,6 +63,10 @@ public class DriveTrain implements Subsystem {
         return (10 * tickV * (1 / 4096.0) * wheelCircumference);
     }
 
+    public void setGear(Gear gear) {
+        left.setGear(gear);
+        right.setGear(gear);
+    }
 
     public DriveTrainSide getLeft() {
         return left;
@@ -71,5 +74,9 @@ public class DriveTrain implements Subsystem {
 
     public DriveTrainSide getRight() {
         return right;
+    }
+
+    public enum Gear {
+        LOW, HIGH, HYBRID;
     }
 }

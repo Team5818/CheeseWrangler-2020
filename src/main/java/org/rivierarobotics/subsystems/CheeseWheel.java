@@ -23,19 +23,24 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import org.rivierarobotics.commands.CheeseWheelControl;
+
+import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
-    public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final DigitalInput intakeSensor, outputSensor;
+    private final Provider<CheeseWheelControl> command;
+    public final double diff = 4096.0 / 5;
     public int currentIndex = 0;
     public CheeseWheelMode mode, lastMode = CheeseWheelMode.COLLECT_FRONT;
 
-    public CheeseWheel(int motor, int sensorOne, int sensorTwo) {
+    public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
         super(0.0, 0.0, 0.0, 1.0);
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.intakeSensor = new DigitalInput(sensorOne);
         this.outputSensor = new DigitalInput(sensorTwo);
+        this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
@@ -73,5 +78,13 @@ public class CheeseWheel extends BasePIDSubsystem {
     @Override
     protected void setPower(double pwr) {
         wheelTalon.set(pwr);
+    }
+
+    @Override
+    public void periodic() {
+        if (getDefaultCommand() == null) {
+            setDefaultCommand(command.get());
+        }
+        super.periodic();
     }
 }

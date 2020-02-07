@@ -18,35 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Hood;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-@GenerateCreator
-public class HoodAlignQuadrature extends CommandBase {
-    private final Hood hood;
+import javax.inject.Inject;
 
-    public HoodAlignQuadrature(@Provided Hood hood) {
-        this.hood = hood;
-        addRequirements(hood);
+public class LimelightServo extends SubsystemBase {
+    private final Servo servo;
+
+    @Inject
+    public LimelightServo(int id) {
+        this.servo = new Servo(id);
     }
 
-    @Override
-    public void execute() {
-        hood.setPower(-0.25);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        hood.setPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 10);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return !hood.getLimit().get();
+    public Servo getServo() {
+        return servo;
     }
 }

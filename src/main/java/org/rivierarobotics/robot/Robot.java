@@ -68,8 +68,9 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
-        globalComponent.getTurret().setPositionTicks(globalComponent.getTurret().getPositionTicks());
         globalComponent.getButtonConfiguration().initTeleop();
+        globalComponent.getTurret().setPositionTicks(globalComponent.getTurret().getPositionTicks());
+        globalComponent.getHood().setPositionTicks(globalComponent.getHood().getPositionTicks());
         globalComponent.getVisionUtil().setLedState(true);
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));

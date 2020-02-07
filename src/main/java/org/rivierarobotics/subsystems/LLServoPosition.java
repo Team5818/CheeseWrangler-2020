@@ -18,34 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.Servo;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.util.MathUtil;
+public enum LLServoPosition {
+    FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
 
-import javax.inject.Inject;
+    public final int angle;
 
-//TODO remove after testing servos
-public class ServoControl extends CommandBase {
-    private final Servo servo;
-    private final Joystick js;
-
-    @Inject
-    public ServoControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick js) {
-        this.servo = new Servo(0);
-        this.js = js;
-    }
-
-    @Override
-    public void execute() {
-        servo.set(MathUtil.fitDeadband(js.getX()));
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
+    LLServoPosition(int angle) {
+        this.angle = angle;
     }
 }

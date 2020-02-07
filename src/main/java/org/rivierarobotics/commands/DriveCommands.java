@@ -20,19 +20,19 @@
 
 package org.rivierarobotics.commands;
 
+import org.rivierarobotics.subsystems.DriveTrain;
+
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class DriveCommands {
-    //TODO remove after servos are tested
-    private Provider<ServoControl> servoControlProvider;
+    private DriveTrainChangeGearCreator driveTrainChangeGearCreator;
 
     @Inject
-    public DriveCommands(Provider<ServoControl> servoControlProvider) {
-        this.servoControlProvider = servoControlProvider;
+    public DriveCommands(DriveTrainChangeGearCreator driveTrainChangeGearCreator) {
+        this.driveTrainChangeGearCreator = driveTrainChangeGearCreator;
     }
 
-    public ServoControl controlServo() {
-        return servoControlProvider.get();
+    public DriveTrainChangeGear changeGear(DriveTrain.Gear gear) {
+        return driveTrainChangeGearCreator.create(gear);
     }
 }

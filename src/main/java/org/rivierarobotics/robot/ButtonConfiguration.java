@@ -24,40 +24,85 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.LLServoPosition;
 
 import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private final Joystick driverLeft, driverRight, codriverLeft, codriverRight, driverButtons, codriverButtons;
+    private final Joystick driverLeft, driverRight, coDriverLeft, coDriverRight, driverButtons, coDriverButtons;
     private final CommandComponent cmds;
 
     @Inject
     public ButtonConfiguration(@Input(Input.Selector.DRIVER_LEFT) Joystick driverLeft,
                                @Input(Input.Selector.DRIVER_RIGHT) Joystick driverRight,
-                               @Input(Input.Selector.CODRIVER_LEFT) Joystick codriverLeft,
-                               @Input(Input.Selector.CODRIVER_RIGHT) Joystick codriverRight,
+                               @Input(Input.Selector.CODRIVER_LEFT) Joystick coDriverLeft,
+                               @Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRight,
                                @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
-                               @Input(Input.Selector.CODRIVER_BUTTONS) Joystick codriverButtons,
+                               @Input(Input.Selector.CODRIVER_BUTTONS) Joystick coDriverButtons,
                                CommandComponent.Builder component) {
         this.driverLeft = driverLeft;
         this.driverRight = driverRight;
-        this.codriverLeft = codriverLeft;
-        this.codriverRight = codriverRight;
+        this.coDriverLeft = coDriverLeft;
+        this.coDriverRight = coDriverRight;
         this.driverButtons = driverButtons;
-        this.codriverButtons = codriverButtons;
+        this.coDriverButtons = coDriverButtons;
         this.cmds = component.build();
     }
 
     public void initTeleop() {
-        new JoystickButton(codriverRight, 1)
+        new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.vision().autoAimTurret());
-        new JoystickButton(codriverRight, 2);
+        new JoystickButton(coDriverRight, 2);
 //                .whenPressed(cmds.auto().forwardBackRoutine());
-        new JoystickButton(codriverLeft, 1)
+        new JoystickButton(coDriverLeft, 1)
                 .whenPressed(cmds.hood().setAngle(0));
-        new JoystickButton(codriverLeft, 2)
+        new JoystickButton(coDriverLeft, 2)
                 .whenPressed(cmds.hood().setAngle(45));
-        new JoystickButton(codriverButtons, 12)
+        new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.hood().alignQuadrature());
+
+        // Competition Robot Button Map
+        /*new JoystickButton(driverLeft, 1)
+                .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
+        new JoystickButton(driverLeft, 2)
+                .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));
+        new JoystickButton(driverRight, 1)
+                .whenPressed(cmds.intake().setPower(1.0));
+        new JoystickButton(driverRight, 2)
+                .whenPressed(cmds.intake().setPower(-1.0));
+        new JoystickButton(driverButtons, 6)
+                .whenPressed();
+
+        new JoystickButton(coDriverButtons, 12)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 10)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 8)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 11)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 9)
+                .whenPressed();
+        new JoystickButton(coDriverLeft, 1)
+                .whenPressed();
+        new JoystickButton(coDriverLeft, 2)
+                .whenPressed();
+        new JoystickButton(coDriverRight, 1)
+                .whenPressed(cmds.cheeseWheel().shootNext());
+        new JoystickButton(coDriverRight, 2)
+                .whenPressed(cmds.cheeseWheel().shootAll());
+        new JoystickButton(coDriverButtons, 6)
+                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
+        new JoystickButton(coDriverButtons, 5)
+                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.CLIMB));
+        new JoystickButton(coDriverButtons, 4)
+                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
+        new JoystickButton(coDriverButtons, 3)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 2)
+                .whenPressed(cmds.cheeseWheel().incrementIndex());
+        new JoystickButton(coDriverButtons, 1)
+                .whenPressed(cmds.cheeseWheel().decrementIndex());*/
     }
 }

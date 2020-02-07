@@ -67,14 +67,16 @@ public class Turret extends BasePIDSubsystem {
     public void setAbsolutePosition(double angle) {
         setPositionTicks(getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks()));
     }
+
     public boolean turretSafety() {
-        if ( -150 < getAbsoluteAngle() && 150 > getAbsoluteAngle()) {
+        if (-150 < getAbsoluteAngle() && 150 > getAbsoluteAngle()) {
             return true;
         } else {
             setAbsolutePosition(getAbsoluteAngle());
             return false;
         }
     }
+
     @Override
     public void setPower(double pwr) {
         turretTalon.set(pwr);

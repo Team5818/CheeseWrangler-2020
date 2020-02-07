@@ -30,19 +30,19 @@ import javax.inject.Inject;
 
 public class TurretControl extends CommandBase {
     private final Turret turret;
-    private final Joystick leftCoDriverJs;
+    private final Joystick coDriverRightJs;
 
     @Inject
-    public TurretControl(@Input(Input.Selector.CODRIVER_LEFT) Joystick js,
+    public TurretControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
                          Turret turret) {
         this.turret = turret;
-        this.leftCoDriverJs = js;
+        this.coDriverRightJs = coDriverRightJs;
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        turret.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
+        turret.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getX()));
     }
 
     @Override

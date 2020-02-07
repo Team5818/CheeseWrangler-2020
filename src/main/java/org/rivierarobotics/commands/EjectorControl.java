@@ -20,33 +20,33 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.Ejector;
+import org.rivierarobotics.util.MathUtil;
 
-@GenerateCreator
-public class HoodAlignQuadrature extends CommandBase {
-    private final Hood hood;
+import javax.inject.Inject;
 
-    public HoodAlignQuadrature(@Provided Hood hood) {
-        this.hood = hood;
-        addRequirements(hood);
+public class EjectorControl extends CommandBase {
+    private final Ejector ejector;
+    private final Joystick coDriverLeftJs;
+
+    @Inject
+    public EjectorControl(@Input(Input.Selector.CODRIVER_LEFT) Joystick coDriverLeftJs,
+                         Ejector ejector) {
+        this.ejector = ejector;
+        this.coDriverLeftJs = coDriverLeftJs;
+        addRequirements(ejector);
     }
 
     @Override
     public void execute() {
-        hood.setPower(-0.25);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        hood.setPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 10);
+        ejector.setPower(MathUtil.fitDeadband(coDriverLeftJs.getX()));
     }
 
     @Override
     public boolean isFinished() {
-        return !hood.getLimit().get();
+        return false;
     }
 }

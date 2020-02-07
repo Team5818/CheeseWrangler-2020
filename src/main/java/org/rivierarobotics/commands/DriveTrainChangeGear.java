@@ -20,33 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.DriveTrain;
 
 @GenerateCreator
-public class HoodAlignQuadrature extends CommandBase {
-    private final Hood hood;
+public class DriveTrainChangeGear extends InstantCommand {
+    private final DriveTrain driveTrain;
+    private final DriveTrain.Gear gear;
 
-    public HoodAlignQuadrature(@Provided Hood hood) {
-        this.hood = hood;
-        addRequirements(hood);
+    public DriveTrainChangeGear(@Provided DriveTrain driveTrain, DriveTrain.Gear gear) {
+        this.driveTrain = driveTrain;
+        this.gear = gear;
+        addRequirements(driveTrain);
     }
 
     @Override
     public void execute() {
-        hood.setPower(-0.25);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        hood.setPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 10);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return !hood.getLimit().get();
+        driveTrain.setGear(gear);
     }
 }

@@ -23,16 +23,22 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import org.rivierarobotics.commands.HoodControl;
+
+import javax.inject.Provider;
 
 public class Hood extends BasePIDSubsystem {
     private final WPI_TalonSRX hoodTalon;
-    public final DigitalInput di;
+    private final Provider<HoodControl> command;
+    private final DigitalInput limit;
 
-    public Hood(int id) {
-        super(0.0004, 0.0, 0.0, 1.0 );
-        hoodTalon = new WPI_TalonSRX(id);
-        di = new DigitalInput(4);
+    public Hood(int motorId, int limitId, Provider<HoodControl> command) {
+        super(0.0004, 0.0, 0.0, 1.0);
+        this.command = command;
+        hoodTalon = new WPI_TalonSRX(motorId);
+        limit = new DigitalInput(limitId);
         hoodTalon.configFactoryDefault();
+        hoodTalon.setSensorPhase(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -42,11 +48,23 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return hoodTalon.getSensorCollection().getPulseWidthPosition();
+        return hoodTalon.getSensorCollection().getQuadraturePosition();
     }
 
     @Override
     public void setPower(double pwr) {
         hoodTalon.set(pwr);
+    }
+
+    @Override
+    public void periodic() {
+        if (getDefaultCommand() == null) {
+            setDefaultCommand(command.get());
+        }
+        super.periodic();
+    }
+
+    public DigitalInput getLimit() {
+        return limit;
     }
 }
