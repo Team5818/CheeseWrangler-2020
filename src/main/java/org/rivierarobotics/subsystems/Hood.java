@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.HoodControl;
 
 import javax.inject.Provider;
@@ -31,7 +32,7 @@ public class Hood extends BasePIDSubsystem {
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
     private final DigitalInput limit;
-    private static final double zeroTicks = 0;
+    private static final double zeroTicks = -2334;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
         super(0.0004, 0.0, 0.0, 1.0);
@@ -58,9 +59,14 @@ public class Hood extends BasePIDSubsystem {
     }
 
     public void setAbsolutePosition(double angle) {
-        if(  -45 <= angle && angle <= 40) {
+        SmartDashboard.putNumber("SetHoodAngle", angle);
+        if ( angle >= -20 && angle <= 40) {
             setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
         }
+    }
+
+    public double getAbsolutePosition() {
+        return (zeroTicks - getPositionTicks()) * 360 / 4096;
     }
 
     @Override
