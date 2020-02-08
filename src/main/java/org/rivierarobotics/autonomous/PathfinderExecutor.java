@@ -36,13 +36,13 @@ public class PathfinderExecutor extends CommandBase {
     private EncoderFollower leftFollower;
     private EncoderFollower rightFollower;
 
-    public PathfinderExecutor(@Provided DriveTrain driveTrain, WaypointConfig config) {
+    public PathfinderExecutor(@Provided DriveTrain driveTrain, AutonomousPath path) {
         this.driveTrain = driveTrain;
         leftFollower = new EncoderFollower(trajectory);
         rightFollower = new EncoderFollower(trajectory);
         configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
 
-        trajectory = Pathfinder.generate(config.waypoints, configuration);
+        trajectory = Pathfinder.generate(path.getPath(), configuration);
 
         leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
         rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), 4096, 0.10414);
