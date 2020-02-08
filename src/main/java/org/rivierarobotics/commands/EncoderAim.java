@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;

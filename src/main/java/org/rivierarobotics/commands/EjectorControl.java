@@ -34,7 +34,7 @@ public class EjectorControl extends CommandBase {
 
     @Inject
     public EjectorControl(@Input(Input.Selector.CODRIVER_LEFT) Joystick coDriverLeftJs,
-                         Ejector ejector) {
+                          Ejector ejector) {
         this.ejector = ejector;
         this.coDriverLeftJs = coDriverLeftJs;
         addRequirements(ejector);

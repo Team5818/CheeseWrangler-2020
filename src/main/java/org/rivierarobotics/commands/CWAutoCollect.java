@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.CheeseWheelMode;
 import org.rivierarobotics.subsystems.Intake;
 
 @GenerateCreator
@@ -41,7 +42,7 @@ public class CWAutoCollect extends CommandBase {
 
     @Override
     public void initialize() {
-        cheeseWheel.setMode(front ? CheeseWheel.Mode.COLLECT_FRONT : CheeseWheel.Mode.COLLECT_BACK);
+        cheeseWheel.setMode(front ? CheeseWheelMode.COLLECT_FRONT : CheeseWheelMode.COLLECT_BACK);
     }
 
     @Override

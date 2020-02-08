@@ -32,7 +32,7 @@ public class DriveTrainSide {
     private DriveTrain.Gear currentGear;
 
     //TODO transition to four-talon setup for comp bot (wait for mechanical)
-    public DriveTrainSide(MotorIds motors, boolean invert) {
+    public DriveTrainSide(DriveTrainMotorIds motors, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
         this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -67,15 +67,5 @@ public class DriveTrainSide {
 
     public void setNeutralIdle(NeutralIdleMode mode) {
         mode.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
-    }
-
-    public static class MotorIds {
-        public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
-
-        public MotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
-            this.masterTalon = masterTalon;
-            this.sparkSlaveOne = sparkSlaveOne;
-            this.sparkSlaveTwo = sparkSlaveTwo;
-        }
     }
 }

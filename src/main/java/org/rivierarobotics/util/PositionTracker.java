@@ -26,7 +26,6 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
 public class PositionTracker {
     private final Timer time;

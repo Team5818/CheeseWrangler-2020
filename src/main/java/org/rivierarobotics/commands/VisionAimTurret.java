@@ -34,15 +34,16 @@ public class VisionAimTurret extends CommandBase {
     private final VisionUtil vision;
 
     @Inject
-    public VisionAimTurret(Turret turret, DriveTrain dt, VisionUtil vision) {
+    public VisionAimTurret(Turret turret, DriveTrain driveTrain, VisionUtil vision) {
         this.turret = turret;
-        this.driveTrain = dt;
+        this.driveTrain = driveTrain;
         this.vision = vision;
-        addRequirements(turret);
+        addRequirements(turret, driveTrain);
     }
 
     @Override
     public void execute() {
+        //TODO change to
         double ty = vision.getLLValue("ty");
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal

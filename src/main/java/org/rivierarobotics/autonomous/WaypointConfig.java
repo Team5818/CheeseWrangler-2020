@@ -25,7 +25,7 @@ import jaci.pathfinder.Waypoint;
 public enum WaypointConfig {
     CONFIG_ONE();
 
-    public final Waypoint[] waypoints = new Waypoint[] {
+    public final Waypoint[] waypoints = new Waypoint[]{
             new Waypoint(2, 2, 0),
             new Waypoint(0, 0, 0)
     };

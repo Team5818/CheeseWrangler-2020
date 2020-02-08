@@ -36,10 +36,10 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
+    public TurretAimMode mode = TurretAimMode.ENCODER;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-//        super(0.0025, 0.000, 0.0, 1.0);
-        super(0.05, 0.0, 0.0, 0.2);
+        super(0.0025, 0.000, 0.0, 1.0);
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -53,8 +53,10 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-//        double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
-        double pos = -vision.getLLValue("tx");
+        double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
+        if (mode == TurretAimMode.VISION) {
+            pos = -vision.getLLValue("tx") * getAnglesOrInchesToTicks();
+        }
         SmartDashboard.putNumber("Position", pos);
         SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
         SmartDashboard.putNumber("setpoint", getPidController().getSetpoint());
@@ -80,7 +82,7 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (((getPositionTicks()  < -150 * getAnglesOrInchesToTicks() && pwr < 0)
+        if (((getPositionTicks() < -150 * getAnglesOrInchesToTicks() && pwr < 0)
                 || (getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks() && pwr > 0))) {
             pwr = 0;
         }

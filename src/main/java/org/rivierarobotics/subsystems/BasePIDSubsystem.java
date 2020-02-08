@@ -28,10 +28,10 @@ import org.rivierarobotics.util.ShuffleUtil;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
     private final double pidRange, anglesOrInchesToTicks;
+    private final double kP, kI, kD;
     private boolean manualOverride = false;
     private PIDController pidController;
     private ShuffleboardTab dash;
-    private final double kP, kI, kD;
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange) {
         this(kP, kI, kD, pidRange, 0.0, 4096.0 / 360);
@@ -39,13 +39,13 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
         this.pidController = new PIDController(kP, kI, kD, 0.005);
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
         this.pidRange = pidRange;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
         pidController.setTolerance(tolerance);
         this.dash = Shuffleboard.getTab(getName());
+        this.kP = kP;
+        this.kI = kI;
+        this.kD = kD;
     }
 
     private void tickPid() {

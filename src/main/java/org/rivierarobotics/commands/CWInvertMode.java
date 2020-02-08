@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.CheeseWheelMode;
 
 @GenerateCreator
 public class CWInvertMode extends InstantCommand {
@@ -37,9 +38,14 @@ public class CWInvertMode extends InstantCommand {
     @Override
     public void execute() {
         switch (cheeseWheel.mode) {
-            case COLLECT_FRONT: cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_BACK); break;
-            case COLLECT_BACK: cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_FRONT); break;
-            default: throw new IllegalArgumentException("Invalid Cheese Wheel mode");
+            case COLLECT_FRONT:
+                cheeseWheel.setMode(CheeseWheelMode.COLLECT_BACK);
+                break;
+            case COLLECT_BACK:
+                cheeseWheel.setMode(CheeseWheelMode.COLLECT_FRONT);
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid Cheese Wheel mode");
         }
     }
 }

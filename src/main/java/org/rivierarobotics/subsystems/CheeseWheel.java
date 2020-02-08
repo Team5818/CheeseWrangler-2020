@@ -28,12 +28,12 @@ import org.rivierarobotics.commands.CheeseWheelControl;
 import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
+    public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final DigitalInput intakeSensor, outputSensor;
     private final Provider<CheeseWheelControl> command;
-    public final double diff = 4096.0 / 5;
     public int currentIndex = 0;
-    public Mode mode, lastMode = Mode.COLLECT_FRONT;
+    public CheeseWheelMode mode = CheeseWheelMode.COLLECT_FRONT, lastMode = CheeseWheelMode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
         super(0.0, 0.0, 0.0, 1.0);
@@ -53,8 +53,8 @@ public class CheeseWheel extends BasePIDSubsystem {
         return outputSensor.get();
     }
 
-    public void setMode(Mode mode) {
-        if (mode == Mode.LAST) {
+    public void setMode(CheeseWheelMode mode) {
+        if (mode == CheeseWheelMode.LAST) {
             this.mode = lastMode;
         } else {
             this.lastMode = this.mode;
@@ -88,13 +88,4 @@ public class CheeseWheel extends BasePIDSubsystem {
         super.periodic();
     }
 
-    public enum Mode {
-        SHOOTING(0), COLLECT_FRONT(0), COLLECT_BACK(0), CLIMB(0), LAST(0);
-
-        public final int offset;
-
-        Mode(int offset) {
-            this.offset = offset;
-        }
-    }
 }

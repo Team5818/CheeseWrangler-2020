@@ -18,27 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.CheeseWheelMode;
+public class DriveTrainMotorIds {
+    public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
 
-@GenerateCreator
-public class CWSetMode extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-    private final CheeseWheelMode mode;
-
-    public CWSetMode(@Provided CheeseWheel cheeseWheel, CheeseWheelMode mode) {
-        this.cheeseWheel = cheeseWheel;
-        this.mode = mode;
-        addRequirements(cheeseWheel);
-    }
-
-    @Override
-    public void execute() {
-        cheeseWheel.mode = this.mode;
+    public DriveTrainMotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
+        this.masterTalon = masterTalon;
+        this.sparkSlaveOne = sparkSlaveOne;
+        this.sparkSlaveTwo = sparkSlaveTwo;
     }
 }
