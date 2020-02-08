@@ -38,6 +38,6 @@ public class HoodSetAngle extends InstantCommand {
 
     @Override
     public void execute() {
-        hood.setPosition(angle);
+        hood.setAbsolutePosition(angle);
     }
 }

@@ -43,7 +43,6 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
-        //TODO change to
         double ty = vision.getLLValue("ty");
         double t = 0.375;   //time constant
         double h = 0.69;    //height of goal

@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
@@ -67,13 +68,13 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        var commandComponent = globalComponent.getCommandComponentBuilder().build();
+        CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
 
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getTurret().setPositionTicks(globalComponent.getTurret().getPositionTicks());
-        globalComponent.getHood().setPositionTicks(globalComponent.getHood().getPositionTicks());
         globalComponent.getVisionUtil().setLedState(true);
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
@@ -98,11 +99,15 @@ public class Robot extends TimedRobot {
         NavXGyro navX = globalComponent.getNavXGyro();
         Turret tt = globalComponent.getTurret();
         CheeseWheel in = globalComponent.getCheeseWheel();
+        Hood h = globalComponent.getHood();
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
+        SmartDashboard.putNumber("hoodPosition", h.getPositionTicks());
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
+        SmartDashboard.putBoolean("Limit", h.isAtEnd());
+        SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
     }
 }
