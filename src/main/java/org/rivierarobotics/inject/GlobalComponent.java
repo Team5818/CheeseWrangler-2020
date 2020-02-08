@@ -42,10 +42,13 @@ public abstract class GlobalComponent {
         getIntake();
         getEjector();
         getCheeseWheel();
+        getClimb();
         getPistonController();
         getNavXGyro();
         getButtonConfiguration();
         getVisionUtil();
+        getLimelightServo();
+        getPositionTracker();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -62,6 +65,8 @@ public abstract class GlobalComponent {
 
     public abstract CheeseWheel getCheeseWheel();
 
+    public abstract Climb getClimb();
+
     public abstract PistonController getPistonController();
 
     public abstract NavXGyro getNavXGyro();
@@ -69,6 +74,8 @@ public abstract class GlobalComponent {
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
+
+    public abstract LimelightServo getLimelightServo();
 
     public abstract PositionTracker getPositionTracker();
 }

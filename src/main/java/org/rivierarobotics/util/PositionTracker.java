@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 public class PositionTracker {
-
     private final Timer time;
     private final NavXGyro gyro;
     private final DriveTrain driveTrain;
@@ -69,20 +68,13 @@ public class PositionTracker {
 
         if (txTurret >= 0) {
             pos[0] = -dist * Math.sin(txTurret) + fieldWidthLeftWallToGoal;
-        }
-        else {
+        } else {
             pos[0] = dist * Math.sin(txTurret) + fieldWidthLeftWallToGoal;
         }
         pos[1] = -dist * Math.cos(txTurret) + fieldLength;
     }
 
-
-
     public double[] getPosition() {
         return pos;
     }
-
-
-
-
 }

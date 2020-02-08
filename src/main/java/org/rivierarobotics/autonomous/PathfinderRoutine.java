@@ -29,13 +29,13 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 @GenerateCreator
-public class DriveTrainRoutine extends CommandBase {
+public class PathfinderRoutine extends CommandBase {
     private DriveTrain driveTrain;
     private Trajectory.Config configuration;
     private Trajectory trajectory;
 
     //TODO note: @Provided & @GenerateCreator are better than @Inject here because we want set different configs
-    public DriveTrainRoutine(@Provided DriveTrain driveTrain, WaypointConfig config) {
+    public PathfinderRoutine(@Provided DriveTrain driveTrain, WaypointConfig config) {
         this.driveTrain = driveTrain;
         buildRoutine(config);
     }
