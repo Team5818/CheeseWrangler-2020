@@ -78,4 +78,6 @@ public abstract class GlobalComponent {
     public abstract LimelightServo getLimelightServo();
 
     public abstract PositionTracker getPositionTracker();
+
+    public abstract CommandComponent.Builder getCommandComponentBuilder();
 }

@@ -29,7 +29,7 @@ import org.rivierarobotics.util.ShuffleUtil;
 public abstract class BasePIDSubsystem extends SubsystemBase {
     private final double pidRange, anglesOrInchesToTicks;
     private final double kP, kI, kD;
-    private boolean manualOverride = false;
+    private boolean pidEnabled = false;
     private PIDController pidController;
     private ShuffleboardTab dash;
 
@@ -50,7 +50,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     private void tickPid() {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
-        if (!manualOverride) {
+        if (pidEnabled) {
             setPower(-pidPower);
         }
     }
@@ -72,17 +72,15 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     public void setManualPower(double pwr) {
-        manualOverride = (pwr != 0);
-        if (pwr != 0) {
-            setPositionTicks(getPositionTicks());
-            setPower(pwr);
-        }
+        pidEnabled = false;
+        setPower(pwr);
     }
 
     public abstract double getPositionTicks();
 
     public void setPositionTicks(double position) {
         pidController.setSetpoint(position);
+        pidEnabled = true;
     }
 
     protected abstract void setPower(double pwr);
@@ -92,7 +90,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         ShuffleUtil.setOutEntry(dash, "Position Ticks", getPositionTicks());
         ShuffleUtil.setOutEntry(dash, "Setpoint", pidController.getSetpoint());
         ShuffleUtil.setOutEntry(dash, "At Setpoint", pidController.atSetpoint());
-        ShuffleUtil.setOutEntry(dash, "Manual Override", manualOverride);
+        ShuffleUtil.setOutEntry(dash, "Manual Override", pidEnabled);
     }
 
     public void resetPidConstants() {

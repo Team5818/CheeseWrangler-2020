@@ -36,17 +36,20 @@ public class HoodAlignQuadrature extends CommandBase {
 
     @Override
     public void execute() {
-        hood.setPower(-0.25);
+        if (isFinished()) {
+            return;
+        }
+        hood.setManualPower(0.05);
     }
 
     @Override
     public void end(boolean interrupted) {
-        hood.setPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 10);
+        hood.setManualPower(0.0);
+        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 100);
     }
 
     @Override
     public boolean isFinished() {
-        return !hood.getLimit().get();
+        return hood.isAtEnd();
     }
 }

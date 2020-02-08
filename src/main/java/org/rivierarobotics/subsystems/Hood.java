@@ -71,7 +71,8 @@ public class Hood extends BasePIDSubsystem {
         super.periodic();
     }
 
-    public DigitalInput getLimit() {
-        return limit;
+    public boolean isAtEnd() {
+        // switch is false when triggered
+        return !limit.get();
     }
 }
