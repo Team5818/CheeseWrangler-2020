@@ -82,9 +82,13 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (((getPositionTicks() < -150 * getAnglesOrInchesToTicks() && pwr < 0)
+        if (((getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks() && pwr < 0)
                 || (getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks() && pwr > 0))) {
             pwr = 0;
+        } else if (getPositionTicks() - zeroTicks < (-150 * getAnglesOrInchesToTicks()) ||
+                getPositionTicks() - zeroTicks > (150 * getAnglesOrInchesToTicks())) {
+            pwr = 0;
+            setAbsolutePosition(0.0);
         }
         SmartDashboard.putNumber("turretpwr", pwr);
         super.setManualPower(pwr);
