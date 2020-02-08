@@ -61,20 +61,11 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteTicks() {
-        return (getPositionTicks() - zeroTicks + gyro.getYaw());
+        return getPositionTicks() - zeroTicks + (gyro.getYaw() * getAnglesOrInchesToTicks());
     }
 
     public void setAbsolutePosition(double angle) {
         setPositionTicks(getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks()));
-    }
-
-    public boolean turretSafety() {
-        if (-150 < getAbsoluteAngle() && 150 > getAbsoluteAngle()) {
-            return true;
-        } else {
-            setAbsolutePosition(getAbsoluteAngle());
-            return false;
-        }
     }
 
     @Override
@@ -84,11 +75,11 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (turretSafety()) {
-            super.setManualPower(pwr);
-        } else {
-            super.setManualPower(0.0);
+        if (((getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks() && pwr < 0)
+                || (getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks() && pwr > 0))) {
+            pwr = 0;
         }
+        super.setManualPower(pwr);
     }
 
     @Override

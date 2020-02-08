@@ -42,6 +42,7 @@ public class SubsystemModule {
     private static final int EJECTOR_TALON = 17;
     private static final int INTAKE_LEFT_TALON = 18;
     private static final int INTAKE_RIGHT_TALON = 19;
+    private static final int CLIMB_TALON = 20;
 
     private static final int HOOD_LIMIT_SWITCH = 0;
     private static final int INDEX_SENSOR_INTAKE = 9;
@@ -124,5 +125,11 @@ public class SubsystemModule {
     @Singleton
     public static LimelightServo provideLimelightServo() {
         return new LimelightServo(LIMELIGHT_SERVO);
+    }
+
+    @Provides
+    @Singleton
+    public static Climb provideClimb() {
+        return new Climb(CLIMB_TALON);
     }
 }

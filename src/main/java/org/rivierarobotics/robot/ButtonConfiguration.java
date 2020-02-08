@@ -72,10 +72,10 @@ public class ButtonConfiguration {
         new JoystickButton(driverRight, 2)
                 .whenPressed(cmds.intake().setPower(-1.0));
         new JoystickButton(driverButtons, 6)
-                .whenPressed();
+                .whenPressed(cmds.cheeseWheel().invertMode());
 
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed();
+                .whenPressed(cmds.climb().setPosition());
         new JoystickButton(coDriverButtons, 10)
                 .whenPressed();
         new JoystickButton(coDriverButtons, 8)

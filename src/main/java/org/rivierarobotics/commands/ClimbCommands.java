@@ -20,13 +20,24 @@
 
 package org.rivierarobotics.commands;
 
+import org.rivierarobotics.subsystems.Climb;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 import javax.inject.Inject;
 
 public class ClimbCommands {
+    private final ClimbSetPositionCreator climbSetPositionCreator;
 
     @Inject
-    public ClimbCommands() {
+    public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator) {
+        this.climbSetPositionCreator = climbSetPositionCreator;
+    }
+
+    public ClimbSetPosition setPosition(double position) {
+        return climbSetPositionCreator.create(position);
+    }
+
+    public ClimbSetPosition setPosition(Climb.Height height) {
+        return climbSetPositionCreator.create(height.position);
     }
 }

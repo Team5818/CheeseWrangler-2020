@@ -33,7 +33,7 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final Provider<CheeseWheelControl> command;
     public final double diff = 4096.0 / 5;
     public int currentIndex = 0;
-    public CheeseWheelMode mode, lastMode = CheeseWheelMode.COLLECT_FRONT;
+    public Mode mode, lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
         super(0.0, 0.0, 0.0, 1.0);
@@ -53,8 +53,8 @@ public class CheeseWheel extends BasePIDSubsystem {
         return outputSensor.get();
     }
 
-    public void setMode(CheeseWheelMode mode) {
-        if (mode == CheeseWheelMode.LAST) {
+    public void setMode(Mode mode) {
+        if (mode == Mode.LAST) {
             this.mode = lastMode;
         } else {
             this.lastMode = this.mode;
@@ -86,5 +86,15 @@ public class CheeseWheel extends BasePIDSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
+    }
+
+    public enum Mode {
+        SHOOTING(0), COLLECT_FRONT(0), COLLECT_BACK(0), CLIMB(0), LAST(0);
+
+        public final int offset;
+
+        Mode(int offset) {
+            this.offset = offset;
+        }
     }
 }

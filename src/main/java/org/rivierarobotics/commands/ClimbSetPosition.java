@@ -18,14 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands;
 
-public enum CheeseWheelMode {
-    SHOOTING(0), COLLECT_FRONT(0), COLLECT_BACK(0), CLIMB(0), LAST(0);
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Climb;
 
-    public final int offset;
+@GenerateCreator
+public class ClimbSetPosition extends InstantCommand {
+    private final Climb climb;
+    private final double position;
 
-    CheeseWheelMode(int offset) {
-        this.offset = offset;
+    public ClimbSetPosition(@Provided Climb climb, double position) {
+        this.climb = climb;
+        this.position = position;
+        addRequirements(climb);
+    }
+
+    @Override
+    public void execute() {
+        climb.setPosition(position);
     }
 }

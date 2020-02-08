@@ -21,12 +21,16 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.util.ShuffleUtil;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
     private final double pidRange, anglesOrInchesToTicks;
     private boolean manualOverride = false;
     private PIDController pidController;
+    private ShuffleboardTab dash;
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange) {
         this(kP, kI, kD, pidRange, 0.0, 4096.0 / 360);
@@ -37,9 +41,10 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this.pidRange = pidRange;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
         pidController.setTolerance(tolerance);
+        this.dash = Shuffleboard.getTab(getName());
     }
 
-    public void tickPid() {
+    private void tickPid() {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
         if (!manualOverride) {
             setPower(-pidPower);
@@ -78,8 +83,17 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     protected abstract void setPower(double pwr);
 
+    private void displayShuffleboard() {
+        ShuffleUtil.setOutEntry(dash, "Position", getPosition());
+        ShuffleUtil.setOutEntry(dash, "Position Ticks", getPositionTicks());
+        ShuffleUtil.setOutEntry(dash, "Setpoint", pidController.getSetpoint());
+        ShuffleUtil.setOutEntry(dash, "At Setpoint", pidController.atSetpoint());
+        ShuffleUtil.setOutEntry(dash, "Manual Override", manualOverride);
+    }
+
     @Override
     public void periodic() {
         tickPid();
+        displayShuffleboard();
     }
 }

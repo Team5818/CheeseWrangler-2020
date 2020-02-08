@@ -18,28 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
-@GenerateCreator
-public class CWInvertMode extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
+public class Climb extends BasePIDSubsystem {
+    private final WPI_TalonSRX climbTalon;
 
-    public CWInvertMode(@Provided CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
+    public Climb(int id) {
+        super(0.0, 0.0, 0.0, 1.0, 0, 0.0);
+        this.climbTalon = new WPI_TalonSRX(id);
+        climbTalon.configFactoryDefault();
+        climbTalon.setSensorPhase(true);
+        climbTalon.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
-    public void execute() {
-        switch (cheeseWheel.mode) {
-            case COLLECT_FRONT: cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_BACK); break;
-            case COLLECT_BACK: cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_FRONT); break;
-            default: throw new IllegalArgumentException("Invalid Cheese Wheel mode");
+    public double getPositionTicks() {
+        return climbTalon.getSensorCollection().getPulseWidthPosition();
+    }
+
+    @Override
+    protected void setPower(double pwr) {
+        climbTalon.set(pwr);
+    }
+
+    public enum Height {
+        FORTY_FIVE(0), SIXTY(0), SEVENTY_TWO(0);
+
+        public final int position;
+
+        Height(int position) {
+            this.position = position;
         }
     }
 }
