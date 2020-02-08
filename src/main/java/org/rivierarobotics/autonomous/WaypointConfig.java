@@ -23,13 +23,10 @@ package org.rivierarobotics.autonomous;
 import jaci.pathfinder.Waypoint;
 
 public enum WaypointConfig {
-    CONFIG_ONE(new Waypoint(2, 2, 0),
-            new Waypoint(0, 0, 0));
+    CONFIG_ONE();
 
-    public final Waypoint[] waypoints;
-
-    //TODO note: the ... indicates any number of arguments, automatically turned into an array of that type
-    WaypointConfig(Waypoint... points) {
-        this.waypoints = points;
-    }
+    public final Waypoint[] waypoints = new Waypoint[] {
+            new Waypoint(2, 2, 0),
+            new Waypoint(0, 0, 0)
+    };
 }

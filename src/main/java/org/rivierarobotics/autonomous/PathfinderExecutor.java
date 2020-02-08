@@ -40,8 +40,8 @@ public class PathfinderExecutor extends CommandBase {
         this.driveTrain = driveTrain;
         leftFollower = new EncoderFollower(trajectory);
         rightFollower = new EncoderFollower(trajectory);
-
         configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
+
         trajectory = Pathfinder.generate(config.waypoints, configuration);
 
         leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
