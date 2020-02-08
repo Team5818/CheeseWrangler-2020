@@ -65,6 +65,10 @@ public class DriveTrainSide {
         this.currentGear = gear;
     }
 
+    public void setNeutralIdle(NeutralIdleMode mode) {
+        mode.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
+    }
+
     public static class MotorIds {
         public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
 

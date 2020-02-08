@@ -20,27 +20,24 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.NeutralIdleMode;
 
-import javax.inject.Inject;
+@GenerateCreator
+public class DriveChangeGear extends InstantCommand {
+    private final DriveTrain driveTrain;
+    private final DriveTrain.Gear gear;
 
-public class DriveCommands {
-    private DriveChangeGearCreator driveChangeGearCreator;
-    private DriveSetNeutralIdleCreator driveSetNeutralIdleCreator;
-
-    @Inject
-    public DriveCommands(DriveChangeGearCreator driveChangeGearCreator,
-                         DriveSetNeutralIdleCreator driveSetNeutralIdleCreator) {
-        this.driveChangeGearCreator = driveChangeGearCreator;
-        this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
+    public DriveChangeGear(@Provided DriveTrain driveTrain, DriveTrain.Gear gear) {
+        this.driveTrain = driveTrain;
+        this.gear = gear;
+        addRequirements(driveTrain);
     }
 
-    public DriveChangeGear changeGear(DriveTrain.Gear gear) {
-        return driveChangeGearCreator.create(gear);
-    }
-
-    public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {
-        return driveSetNeutralIdleCreator.create(mode);
+    @Override
+    public void execute() {
+        driveTrain.setGear(gear);
     }
 }

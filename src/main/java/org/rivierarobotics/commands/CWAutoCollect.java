@@ -30,22 +30,21 @@ import org.rivierarobotics.subsystems.Intake;
 public class CWAutoCollect extends CommandBase {
     private final CheeseWheel cheeseWheel;
     private final Intake intake;
-    private final boolean side;
+    private final boolean front;
 
-    public CWAutoCollect(@Provided CheeseWheel cheeseWheel, @Provided Intake intake, boolean side) {
+    public CWAutoCollect(@Provided CheeseWheel cheeseWheel, @Provided Intake intake, boolean front) {
         this.cheeseWheel = cheeseWheel;
         this.intake = intake;
-        this.side = side;
+        this.front = front;
         addRequirements(cheeseWheel, intake);
     }
 
     @Override
     public void initialize() {
-
+        cheeseWheel.setMode(front ? CheeseWheel.Mode.COLLECT_FRONT : CheeseWheel.Mode.COLLECT_BACK);
     }
 
     @Override
     public void execute() {
-
     }
 }

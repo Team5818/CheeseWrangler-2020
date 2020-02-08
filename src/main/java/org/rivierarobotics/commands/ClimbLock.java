@@ -20,27 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.NeutralIdleMode;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Climb;
 
-import javax.inject.Inject;
+@GenerateCreator
+public class ClimbLock extends InstantCommand {
+    private final Climb climb;
+    private final boolean lock;
 
-public class DriveCommands {
-    private DriveChangeGearCreator driveChangeGearCreator;
-    private DriveSetNeutralIdleCreator driveSetNeutralIdleCreator;
-
-    @Inject
-    public DriveCommands(DriveChangeGearCreator driveChangeGearCreator,
-                         DriveSetNeutralIdleCreator driveSetNeutralIdleCreator) {
-        this.driveChangeGearCreator = driveChangeGearCreator;
-        this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
+    public ClimbLock(@Provided Climb climb, boolean lock) {
+        this.climb = climb;
+        this.lock = lock;
+        addRequirements(climb);
     }
 
-    public DriveChangeGear changeGear(DriveTrain.Gear gear) {
-        return driveChangeGearCreator.create(gear);
-    }
-
-    public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {
-        return driveSetNeutralIdleCreator.create(mode);
+    @Override
+    public void execute() {
+        //TODO implement "climb locking", whatever that means
     }
 }

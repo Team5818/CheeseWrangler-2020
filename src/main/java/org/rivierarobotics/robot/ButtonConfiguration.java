@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.Climb;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.LLServoPosition;
 
@@ -51,7 +52,7 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-        new JoystickButton(coDriverRight, 1)
+        /*new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.vision().autoAimTurret());
         new JoystickButton(coDriverRight, 2);
 //                .whenPressed(cmds.auto().forwardBackRoutine());
@@ -63,7 +64,7 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.hood().alignQuadrature());
 
         // Competition Robot Button Map
-        /*new JoystickButton(driverLeft, 1)
+        new JoystickButton(driverLeft, 1)
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
         new JoystickButton(driverLeft, 2)
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));
@@ -75,15 +76,15 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.cheeseWheel().invertMode());
 
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.climb().setPosition());
+                .whenPressed(cmds.climb().setPosition(Climb.Height.FORTY_FIVE));
         new JoystickButton(coDriverButtons, 10)
-                .whenPressed();
+                .whenPressed(cmds.climb().setPosition(Climb.Height.SIXTY));
         new JoystickButton(coDriverButtons, 8)
-                .whenPressed();
+                .whenPressed(cmds.climb().setPosition(Climb.Height.SEVENTY_TWO));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed();
         new JoystickButton(coDriverButtons, 9)
-                .whenPressed();
+                .whenPressed(cmds.climb().lock());
         new JoystickButton(coDriverLeft, 1)
                 .whenPressed();
         new JoystickButton(coDriverLeft, 2)

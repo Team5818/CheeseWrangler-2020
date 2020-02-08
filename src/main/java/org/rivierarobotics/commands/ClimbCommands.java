@@ -27,10 +27,16 @@ import javax.inject.Inject;
 
 public class ClimbCommands {
     private final ClimbSetPositionCreator climbSetPositionCreator;
+    private final ClimbLockCreator climbLockCreator;
+    private final ClimbSetPowerCreator climbSetPowerCreator;
 
     @Inject
-    public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator) {
+    public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
+                         ClimbLockCreator climbLockCreator,
+                         ClimbSetPowerCreator climbSetPowerCreator) {
         this.climbSetPositionCreator = climbSetPositionCreator;
+        this.climbLockCreator = climbLockCreator;
+        this.climbSetPowerCreator = climbSetPowerCreator;
     }
 
     public ClimbSetPosition setPosition(double position) {
@@ -39,5 +45,21 @@ public class ClimbCommands {
 
     public ClimbSetPosition setPosition(Climb.Height height) {
         return climbSetPositionCreator.create(height.position);
+    }
+
+    public ClimbLock lock() {
+        return climbLockCreator.create(true);
+    }
+
+    public ClimbLock unlock() {
+        return climbLockCreator.create(false);
+    }
+
+    public ClimbLock setLock(boolean lock) {
+        return climbLockCreator.create(lock);
+    }
+
+    public ClimbSetPower setPower(double power) {
+        return climbSetPowerCreator.create(power);
     }
 }

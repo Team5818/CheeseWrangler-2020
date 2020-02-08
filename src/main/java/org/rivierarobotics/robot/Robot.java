@@ -47,6 +47,9 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         displayShuffleboard();
+        if (isEnabled()) {
+            globalComponent.getPositionTracker().trackPosition();
+        }
     }
 
     @Override
