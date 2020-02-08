@@ -79,8 +79,8 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     public abstract double getPositionTicks();
 
     public void setPositionTicks(double position) {
-        pidController.setSetpoint(position);
         pidEnabled = true;
+        pidController.setSetpoint(position);
     }
 
     protected abstract void setPower(double pwr);

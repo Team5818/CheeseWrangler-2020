@@ -66,7 +66,7 @@ public class Hood extends BasePIDSubsystem {
     }
 
     public double getAbsolutePosition() {
-        return (zeroTicks - getPositionTicks()) * 360 / 4096;
+        return (zeroTicks - getPositionTicks()) / 5 * 360 / 4096;
     }
 
     @Override
