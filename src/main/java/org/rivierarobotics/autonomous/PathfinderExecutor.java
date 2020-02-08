@@ -29,36 +29,42 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 
 @GenerateCreator
-public class PathfinderRoutine extends CommandBase {
+public class PathfinderExecutor extends CommandBase {
     private DriveTrain driveTrain;
     private Trajectory.Config configuration;
     private Trajectory trajectory;
+    private EncoderFollower leftFollower;
+    private EncoderFollower rightFollower;
 
-    //TODO note: @Provided & @GenerateCreator are better than @Inject here because we want set different configs
-    public PathfinderRoutine(@Provided DriveTrain driveTrain, WaypointConfig config) {
+    public PathfinderExecutor(@Provided DriveTrain driveTrain, WaypointConfig config) {
         this.driveTrain = driveTrain;
-        buildRoutine(config);
-    }
+        leftFollower = new EncoderFollower(trajectory);
+        rightFollower = new EncoderFollower(trajectory);
 
-    //TODO note: an enum can store a value in a field, for example .waypoints -- an enum cannot take the place of a different type
-    public void buildRoutine(WaypointConfig config) {
         configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
         trajectory = Pathfinder.generate(config.waypoints, configuration);
-    }
-
-    //TODO make this into execute() with @Override and pull the EncoderFollowers out to fields.
-    // Make an isFinished method that returns true if both followers are finished (follower.isFinished())
-    public void run() {
-        EncoderFollower leftFollower = new EncoderFollower(trajectory);
-        EncoderFollower rightFollower = new EncoderFollower(trajectory);
 
         leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
         rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), 4096, 0.10414);
 
         leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
         rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+    }
 
+    //TODO note: an enum can store a value in a field, for example .waypoints -- an enum cannot take the place of a different type
+    //TODO Make an isFinished method that returns true if both followers are finished (follower.isFinished())
+    @Override
+    public void execute() {
         driveTrain.setPower(leftFollower.calculate((int) driveTrain.getLeft().getPositionTicks()),
                 rightFollower.calculate((int) driveTrain.getRight().getPositionTicks()));
+    }
+
+    @Override
+    public boolean isFinished() {
+        if (leftFollower.isFinished() && rightFollower.isFinished()) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
