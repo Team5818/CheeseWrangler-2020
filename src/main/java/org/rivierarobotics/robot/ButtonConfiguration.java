@@ -56,9 +56,9 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverRight, 2);
 //                .whenPressed(cmds.auto().forwardBackRoutine());
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.hood().setAngle(0));
+                .whenPressed(cmds.turret().setPosition(0));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.hood().setAngle(45));
+                .whenPressed(cmds.turret().setPosition(45));
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.hood().alignQuadrature());
 

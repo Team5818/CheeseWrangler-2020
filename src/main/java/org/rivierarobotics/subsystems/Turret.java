@@ -26,6 +26,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
@@ -34,11 +35,14 @@ public class Turret extends BasePIDSubsystem {
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
+    private final VisionUtil vision;
 
-    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro) {
-        super(0.0012, 0.0006, 0.0, 1.0);
+    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
+//        super(0.0025, 0.000, 0.0, 1.0);
+        super(0.05, 0.0, 0.0, 0.2);
         this.command = command;
         this.gyro = gyro;
+        this.vision = vision;
 
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
@@ -49,7 +53,8 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
+//        double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
+        double pos = -vision.getLLValue("tx");
         SmartDashboard.putNumber("Position", pos);
         SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
         SmartDashboard.putNumber("setpoint", getPidController().getSetpoint());
@@ -75,10 +80,11 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (((getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks() && pwr < 0)
+        if (((getPositionTicks()  < -150 * getAnglesOrInchesToTicks() && pwr < 0)
                 || (getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks() && pwr > 0))) {
             pwr = 0;
         }
+        SmartDashboard.putNumber("turretpwr", pwr);
         super.setManualPower(pwr);
     }
 

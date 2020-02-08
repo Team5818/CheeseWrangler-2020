@@ -38,6 +38,7 @@ public class HoodCommands {
     }
 
     public HoodAlignQuadrature alignQuadrature() {
+
         return hoodAlignQuadratureCreator.create();
     }
 

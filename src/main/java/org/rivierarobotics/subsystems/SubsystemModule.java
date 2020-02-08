@@ -29,16 +29,17 @@ import org.rivierarobotics.commands.HoodControl;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 7;
-    private static final int HOOD_TALON = 13;
+    private static final int TURRET_TALON = 13;
+    private static final int HOOD_TALON = 10;
     private static final int FLYWHEEL_TALON = 11;
-    private static final int CHEESE_WHEEL_TALON = 10;
+    private static final int CHEESE_WHEEL_TALON = 7;
     private static final int EJECTOR_TALON = 17;
     private static final int INTAKE_LEFT_TALON = 18;
     private static final int INTAKE_RIGHT_TALON = 19;
@@ -72,8 +73,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro) {
-        return new Turret(TURRET_TALON, command, gyro);
+    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision) {
+        return new Turret(TURRET_TALON, command, gyro, vision);
     }
 
     @Provides
