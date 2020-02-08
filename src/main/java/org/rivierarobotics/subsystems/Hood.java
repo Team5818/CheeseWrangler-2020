@@ -31,6 +31,7 @@ public class Hood extends BasePIDSubsystem {
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
     private final DigitalInput limit;
+    private static final double zeroTicks = 0;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
         super(0.0004, 0.0, 0.0, 1.0);
@@ -54,6 +55,12 @@ public class Hood extends BasePIDSubsystem {
     @Override
     public void setPower(double pwr) {
         hoodTalon.set(pwr);
+    }
+
+    public void setAbsolutePosition(double angle) {
+        if(  -45 <= angle && angle <= 40) {
+            setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
+        }
     }
 
     @Override

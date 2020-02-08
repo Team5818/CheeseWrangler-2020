@@ -66,7 +66,7 @@ public class VisionAimHood extends CommandBase {
             SmartDashboard.putNumber("hoodAngleSetpoint", hoodAngle);
             SmartDashboard.putNumber("hoodAnglePosition", hood.getPositionTicks());
             SmartDashboard.putNumber("flywheelVelocity", flywheelVelocity);
-            //hood.setPosition(hoodAngle);
+            //hood.setAbsolutePosition(hoodAngle);
             //flywheel.setPositionTicks(flywheelVelocity);
         }
     }
