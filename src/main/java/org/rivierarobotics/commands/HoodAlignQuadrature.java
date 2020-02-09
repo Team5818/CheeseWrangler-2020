@@ -39,7 +39,7 @@ public class HoodAlignQuadrature extends CommandBase {
         if (isFinished()) {
             return;
         }
-        hood.setManualPower(0.05);
+        hood.setManualPower(0.15);
     }
 
     @Override

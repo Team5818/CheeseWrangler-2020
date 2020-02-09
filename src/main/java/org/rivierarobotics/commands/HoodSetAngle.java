@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
@@ -45,9 +46,11 @@ public class HoodSetAngle extends CommandBase {
     @Override
     public boolean isFinished() {
         double err = Math.abs(hood.getAbsolutePosition() - angle);
-        if (err < 20) {
+        if (err < 0.15) {
+            SmartDashboard.putBoolean("isWithinError", true);
             return true;
         } else {
+            SmartDashboard.putBoolean("isWithinError", false);
             return false;
         }
     }
