@@ -51,7 +51,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     private void tickPid() {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
-            setPower(-pidPower);
+            setPower(pidPower);
         }
     }
 
@@ -68,6 +68,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double position) {
+        pidEnabled = true;
         pidController.setSetpoint(position * anglesOrInchesToTicks);
     }
 

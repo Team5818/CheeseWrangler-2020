@@ -20,13 +20,14 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Hood;
 
 @GenerateCreator
-public class HoodSetAngle extends InstantCommand {
+public class HoodSetAngle extends CommandBase {
     private final Hood hood;
     private final double angle;
 
@@ -39,5 +40,15 @@ public class HoodSetAngle extends InstantCommand {
     @Override
     public void execute() {
         hood.setAbsolutePosition(angle);
+    }
+
+    @Override
+    public boolean isFinished() {
+        double err = Math.abs(hood.getAbsolutePosition() - angle);
+        if (err < 20) {
+            return true;
+        } else {
+            return false;
+        }
     }
 }
