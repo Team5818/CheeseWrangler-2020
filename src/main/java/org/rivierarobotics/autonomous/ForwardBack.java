@@ -25,7 +25,7 @@ import jaci.pathfinder.Waypoint;
 public class ForwardBack extends AutonomousPath {
 
     public ForwardBack() {
-        new AutonomousPath().setPath(forwardBack);
+        setPath(forwardBack);
     }
 
     private Waypoint[] forwardBack = new Waypoint[] {

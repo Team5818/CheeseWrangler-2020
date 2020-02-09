@@ -85,7 +85,7 @@ public class Turret extends BasePIDSubsystem {
         if (pwr >= 0 && getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks()) {
             pwr = 0;
         }
-        else if (pwr < 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()){
+        else if (pwr < 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("turretpwr", pwr);
