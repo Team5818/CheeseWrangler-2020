@@ -20,24 +20,14 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
 @GenerateCreator
-public class CWSetPosition extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-    private final int ticks;
-
+public class CWSetPosition extends BasePIDSetPosition<CheeseWheel> {
     public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks) {
-        this.cheeseWheel = cheeseWheel;
-        this.ticks = ticks;
-        addRequirements(cheeseWheel);
-    }
-
-    @Override
-    public void execute() {
-        cheeseWheel.setPositionTicks(ticks);
+        //TODO set allowable error in ticks
+        super(cheeseWheel, 20, ticks);
     }
 }

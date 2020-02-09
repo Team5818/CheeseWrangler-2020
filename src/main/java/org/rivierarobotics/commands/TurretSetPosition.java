@@ -20,24 +20,14 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
-public class TurretSetPosition extends InstantCommand {
-    private final Turret turret;
-    private final double position;
-
+public class TurretSetPosition extends BasePIDSetPosition<Turret> {
     public TurretSetPosition(@Provided Turret turret, double position) {
-        this.turret = turret;
-        this.position = position;
-        addRequirements(turret);
-    }
-
-    @Override
-    public void execute() {
-        turret.setAbsolutePosition(position);
+        //TODO set allowable error in ticks
+        super(turret, 20, position);
     }
 }
