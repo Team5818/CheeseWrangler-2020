@@ -20,38 +20,13 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Hood;
 
 @GenerateCreator
-public class HoodSetAngle extends CommandBase {
-    private final Hood hood;
-    private final double angle;
-
+public class HoodSetAngle extends BasePIDSetPosition {
     public HoodSetAngle(@Provided Hood hood, double angle) {
-        this.hood = hood;
-        this.angle = angle;
-        addRequirements(hood);
-    }
-
-    @Override
-    public void execute() {
-        hood.setAbsolutePosition(angle);
-    }
-
-    @Override
-    public boolean isFinished() {
-        double err = Math.abs(hood.getAbsolutePosition() - angle);
-        if (err < 0.15) {
-            SmartDashboard.putBoolean("isWithinError", true);
-            return true;
-        } else {
-            SmartDashboard.putBoolean("isWithinError", false);
-            return false;
-        }
+        super(hood, hood::getAbsolutePosition, hood::setAbsolutePosition, 0.15, angle);
     }
 }
