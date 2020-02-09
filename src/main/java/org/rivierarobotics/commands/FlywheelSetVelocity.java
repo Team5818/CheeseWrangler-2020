@@ -20,24 +20,14 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
 
 @GenerateCreator
-public class FlywheelSetVelocity extends InstantCommand {
-    private final Flywheel flywheel;
-    private final double velocity;
-
+public class FlywheelSetVelocity extends BasePIDSetPosition<Flywheel> {
     public FlywheelSetVelocity(@Provided Flywheel flywheel, double velocity) {
-        this.flywheel = flywheel;
-        this.velocity = velocity;
-        addRequirements(flywheel);
-    }
-
-    @Override
-    public void execute() {
-        flywheel.setPositionTicks(velocity);
+        //TODO set allowable error in ticks
+        super(flywheel, 20, velocity);
     }
 }

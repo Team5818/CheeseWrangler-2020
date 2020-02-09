@@ -22,29 +22,29 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.subsystems.BasePIDSubsystem;
 
 public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase {
     protected final T subsystem;
-    protected final double position, maxError;
+    protected final double positionTicks, maxErrorTicks;
 
-    public BasePIDSetPosition(T subsystem, double maxError, double position) {
+    // Measurements do not need to be in ticks if get/set methods are overridden, but are in ticks by default
+    public BasePIDSetPosition(T subsystem, double maxErrorTicks, double positionTicks) {
         this.subsystem = subsystem;
-        this.maxError = maxError;
-        this.position = position;
+        this.maxErrorTicks = maxErrorTicks;
+        this.positionTicks = positionTicks;
         addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
-        setPositionTicks(position);
+        setPositionTicks(positionTicks);
     }
 
     @Override
     public boolean isFinished() {
-        double err = Math.abs(getPositionTicks() - position);
-        boolean isInError = err < maxError;
+        double err = Math.abs(getPositionTicks() - positionTicks);
+        boolean isInError = err < maxErrorTicks;
         SmartDashboard.putBoolean(subsystem.getName() + " isWithinError", isInError);
         return isInError;
     }

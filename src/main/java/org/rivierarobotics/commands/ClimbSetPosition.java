@@ -20,24 +20,13 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Climb;
 
 @GenerateCreator
-public class ClimbSetPosition extends InstantCommand {
-    private final Climb climb;
-    private final double position;
-
+public class ClimbSetPosition extends BasePIDSetPosition<Climb> {
     public ClimbSetPosition(@Provided Climb climb, double position) {
-        this.climb = climb;
-        this.position = position;
-        addRequirements(climb);
-    }
-
-    @Override
-    public void execute() {
-        climb.setPosition(position);
+        super(climb, 20, position);
     }
 }
