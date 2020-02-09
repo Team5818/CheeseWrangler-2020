@@ -25,8 +25,18 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Hood;
 
 @GenerateCreator
-public class HoodSetAngle extends BasePIDSetPosition {
+public class HoodSetAngle extends BasePIDSetPosition<Hood> {
     public HoodSetAngle(@Provided Hood hood, double angle) {
-        super(hood, hood::getAbsolutePosition, hood::setAbsolutePosition, 0.15, angle);
+        super(hood,0.15, angle);
+    }
+
+    @Override
+    protected double getPositionTicks() {
+        return super.subsystem.getAbsolutePosition();
+    }
+
+    @Override
+    protected void setPositionTicks(double position) {
+        super.setPositionTicks(position);
     }
 }

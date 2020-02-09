@@ -22,40 +22,38 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import org.rivierarobotics.subsystems.BasePIDSubsystem;
 
-import java.util.function.DoubleConsumer;
-import java.util.function.DoubleSupplier;
+public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase {
+    protected final T subsystem;
+    protected final double position, maxError;
 
-public class BasePIDSetPosition extends CommandBase {
-    private final BasePIDSubsystem subsystem;
-    private final DoubleSupplier getPosition;
-    private final DoubleConsumer setPosition;
-    private final double position, maxError;
-
-    public BasePIDSetPosition(BasePIDSubsystem subsystem, double maxError, double position) {
-        this(subsystem, subsystem::getPosition, subsystem::setPosition, maxError, position);
-    }
-
-    public BasePIDSetPosition(BasePIDSubsystem subsystem, DoubleSupplier getPosition, DoubleConsumer setPosition, double maxError, double position) {
+    public BasePIDSetPosition(T subsystem, double maxError, double position) {
         this.subsystem = subsystem;
-        this.getPosition = getPosition;
-        this.setPosition = setPosition;
         this.maxError = maxError;
         this.position = position;
         addRequirements(subsystem);
     }
 
     @Override
-    public void execute() {
-        setPosition.accept(position);
+    public void initialize() {
+        setPositionTicks(position);
     }
 
     @Override
     public boolean isFinished() {
-        double err = Math.abs(getPosition.getAsDouble() - position);
+        double err = Math.abs(getPositionTicks() - position);
         boolean isInError = err < maxError;
         SmartDashboard.putBoolean(subsystem.getName() + " isWithinError", isInError);
         return isInError;
+    }
+
+    protected double getPositionTicks() {
+        return subsystem.getPositionTicks();
+    }
+
+    protected void setPositionTicks(double position) {
+        subsystem.setPositionTicks(position);
     }
 }
