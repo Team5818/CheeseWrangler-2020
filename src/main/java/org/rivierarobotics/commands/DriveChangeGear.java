@@ -24,14 +24,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainGear;
 
 @GenerateCreator
 public class DriveChangeGear extends InstantCommand {
     private final DriveTrain driveTrain;
-    private final DriveTrainGear gear;
+    private final DriveTrain.Gear gear;
 
-    public DriveChangeGear(@Provided DriveTrain driveTrain, DriveTrainGear gear) {
+    public DriveChangeGear(@Provided DriveTrain driveTrain, DriveTrain.Gear gear) {
         this.driveTrain = driveTrain;
         this.gear = gear;
         addRequirements(driveTrain);

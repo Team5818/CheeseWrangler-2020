@@ -24,14 +24,13 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.CheeseWheelMode;
 
 @GenerateCreator
 public class CWSetMode extends InstantCommand {
     private final CheeseWheel cheeseWheel;
-    private final CheeseWheelMode mode;
+    private final CheeseWheel.Mode mode;
 
-    public CWSetMode(@Provided CheeseWheel cheeseWheel, CheeseWheelMode mode) {
+    public CWSetMode(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode) {
         this.cheeseWheel = cheeseWheel;
         this.mode = mode;
         addRequirements(cheeseWheel);

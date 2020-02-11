@@ -50,9 +50,9 @@ public class SubsystemModule {
     private static final int INDEX_SENSOR_OUTPUT = 10;
     private static final int LIMELIGHT_SERVO = 0;
 
-    private static final DriveTrainMotorIds
-            DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainMotorIds(1, 2, 3),
-            DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainMotorIds(4, 5, 6);
+    private static final DriveTrainSide.MotorIds
+            DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
+            DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
 
     private SubsystemModule() {
     }

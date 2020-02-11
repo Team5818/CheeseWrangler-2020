@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands;
 
-import org.rivierarobotics.subsystems.CheeseWheelMode;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -81,7 +81,7 @@ public class CheeseWheelCommands {
         return setPositionCreator.create(ticks);
     }
 
-    public CWSetMode setMode(CheeseWheelMode mode) {
+    public CWSetMode setMode(CheeseWheel.Mode mode) {
         return setModeCreator.create(mode);
     }
 

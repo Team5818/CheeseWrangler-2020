@@ -31,8 +31,8 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getVisionUtil().setLedState(true);
+        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
@@ -90,7 +90,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        globalComponent.getVisionUtil().setLedState(false);
+        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_OFF);
     }
 
     @Override
@@ -114,6 +114,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
-        SmartDashboard.putNumber("Flywheel Velocity" , fly.getPositionTicks());
+        SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
     }
 }

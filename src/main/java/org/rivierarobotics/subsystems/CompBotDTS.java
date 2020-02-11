@@ -27,19 +27,19 @@ import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class CompBotDTS {
+    //TODO change values of threshold to realistic values
+    private final double lowHybridThreshold = 100, highHybridThreshold = 200;
     private WPI_TalonFX tl, tr, bl, br;
     private Encoder shaftEncoder;
-    private DriveTrainGear currentGear;
+    private DriveTrain.Gear currentGear;
     private EncoderFollower follower;
-    //TODO change values of threshold to realistic values
-    private double lowHybridThreshold = 100, highHybridThreshold = 200;
 
-    public CompBotDTS(CompBotDTSMotorIds motors, boolean invert) {
+    public CompBotDTS(MotorIds motors, boolean invert) {
         this.tl = new WPI_TalonFX(motors.tl);
         this.tr = new WPI_TalonFX(motors.tr);
         this.bl = new WPI_TalonFX(motors.bl);
         this.br = new WPI_TalonFX(motors.br);
-        this.currentGear = DriveTrainGear.HYBRID;
+        this.currentGear = DriveTrain.Gear.HYBRID;
 
         setupMotors(tl, tr, bl, br);
         NeutralIdleMode.BRAKE.applyTo(tl, tr, bl, br);
@@ -64,7 +64,7 @@ public class CompBotDTS {
 
     //TODO check the math on this
     public void setPower(double pwr) {
-        double vel = getVelocity();
+        double vel = getMotorVelocityAverage();
         switch (currentGear) {
             case HYBRID:
                 if (vel < lowHybridThreshold) {
@@ -108,11 +108,26 @@ public class CompBotDTS {
         return shaftEncoder.getRate();
     }
 
-    public void setGear(DriveTrainGear gear) {
+    public double getMotorPositionAverage() {
+        return (tl.getSensorCollection().getIntegratedSensorPosition() +
+                tr.getSensorCollection().getIntegratedSensorPosition() +
+                bl.getSensorCollection().getIntegratedSensorPosition() +
+                br.getSensorCollection().getIntegratedSensorPosition()) / 4;
+    }
+
+    public double getMotorVelocityAverage() {
+        return (tl.getSensorCollection().getIntegratedSensorVelocity() +
+                tr.getSensorCollection().getIntegratedSensorVelocity() +
+                bl.getSensorCollection().getIntegratedSensorVelocity() +
+                br.getSensorCollection().getIntegratedSensorVelocity()) / 4;
+    }
+
+    public void setGear(DriveTrain.Gear gear) {
         this.currentGear = gear;
         switch (gear) {
             case HYBRID:
                 NeutralIdleMode.BRAKE.applyTo(bl, br, tl, tr);
+                break;
             case LOW:
                 NeutralIdleMode.BRAKE.applyTo(bl, br);
                 NeutralIdleMode.COAST.applyTo(tl, tr);
@@ -126,5 +141,18 @@ public class CompBotDTS {
 
     public EncoderFollower getEncoderFollower() {
         return follower;
+    }
+
+    public static class MotorIds {
+        public final int tl, tr, bl, br, encA, encB;
+
+        public MotorIds(int tl, int tr, int bl, int br, int encA, int encB) {
+            this.tl = tl;
+            this.tr = tr;
+            this.bl = bl;
+            this.br = br;
+            this.encA = encA;
+            this.encB = encB;
+        }
     }
 }

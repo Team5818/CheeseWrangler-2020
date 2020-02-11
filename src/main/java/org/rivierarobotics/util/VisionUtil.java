@@ -40,8 +40,8 @@ public class VisionUtil {
         return limelight.getEntry(key).getDouble(0);
     }
 
-    public final void setLedState(boolean state) {
-        limelight.getEntry("ledMode").setNumber(state ? 3 : 1);
+    public final void setLedState(LimelightLedState state) {
+        limelight.getEntry("ledMode").setNumber(state.set);
     }
 
     public final void invertLedState() {
@@ -49,4 +49,5 @@ public class VisionUtil {
         double cs = (double) led.getNumber(1.0);
         led.setNumber(cs == 1 ? 3 : 1);
     }
+
 }

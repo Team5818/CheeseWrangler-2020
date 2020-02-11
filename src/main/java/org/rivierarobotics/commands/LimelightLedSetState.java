@@ -18,14 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands;
 
-public enum LLServoPosition {
-    FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.VisionUtil;
 
-    public final int angle;
+@GenerateCreator
+public class LimelightLedSetState extends InstantCommand {
+    private final VisionUtil vision;
+    private final LimelightLedState ledState;
 
-    LLServoPosition(int angle) {
-        this.angle = angle;
+    public LimelightLedSetState(@Provided VisionUtil vision, LimelightLedState ledState) {
+        this.ledState = ledState;
+        this.vision = vision;
+    }
+
+    @Override
+    public void execute() {
+        vision.setLedState(ledState);
     }
 }

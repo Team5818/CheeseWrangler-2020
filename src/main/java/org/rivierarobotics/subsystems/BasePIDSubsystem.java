@@ -27,10 +27,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.ShuffleUtil;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
-    private final double pidRange, anglesOrInchesToTicks;
-    private final double kP, kI, kD;
+    private final double pidRange, anglesOrInchesToTicks, kP, kI, kD;
+    private final PIDController pidController;
     private boolean pidEnabled = false;
-    private PIDController pidController;
     private ShuffleboardTab dash;
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange) {

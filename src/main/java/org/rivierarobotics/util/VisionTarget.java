@@ -18,14 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.util;
 
-public class DriveTrainMotorIds {
-    public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
-
-    public DriveTrainMotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
-        this.masterTalon = masterTalon;
-        this.sparkSlaveOne = sparkSlaveOne;
-        this.sparkSlaveTwo = sparkSlaveTwo;
-    }
+public enum VisionTarget {
+    BOTTOM, TOP, INNER;
 }

@@ -23,7 +23,8 @@ package org.rivierarobotics.subsystems;
 public enum EncoderType {
     REV_THROUGH_BORE(2048),
     ARMABOT_RS7(12),
-    CTRE_MAGENCODER(4096);
+    CTRE_MAGENCODER(4096),
+    FALCON_CPR(2048);
 
     public final int ticksPerRev;
 

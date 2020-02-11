@@ -39,21 +39,20 @@ public class Flywheel extends BasePIDSubsystem {
     public boolean readyToShoot() {
         if (Math.abs(getPositionTicks() - position) <= 5) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
+    }
+
+    @Override
+    public double getPositionTicks() {
+        return flywheelTalon.getSensorCollection().getQuadratureVelocity();
     }
 
     @Override
     public void setPositionTicks(double pos) {
         this.position = pos;
         super.setPositionTicks(pos);
-    }
-
-    @Override
-    public double getPositionTicks() {
-        return flywheelTalon.getSensorCollection().getQuadratureVelocity();
     }
 
     @Override

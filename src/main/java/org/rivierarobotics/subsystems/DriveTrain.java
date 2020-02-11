@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
@@ -62,7 +61,7 @@ public class DriveTrain extends SubsystemBase {
         return (10 * tickV * (1 / 4096.0) * wheelCircumference);
     }
 
-    public void setGear(DriveTrainGear gear) {
+    public void setGear(Gear gear) {
         left.setGear(gear);
         right.setGear(gear);
     }
@@ -77,5 +76,9 @@ public class DriveTrain extends SubsystemBase {
 
     public NavXGyro getGyro() {
         return gyro;
+    }
+
+    public enum Gear {
+        LOW, HIGH, HYBRID;
     }
 }

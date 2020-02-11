@@ -20,20 +20,22 @@
 
 package org.rivierarobotics.autonomous;
 
-import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
 public enum WaypointPath {
+    //Add another enum entry for each path desired to enter, and a series of Waypoint objects as the points
+    //Distances are in meters, x and y ordered, and angles are exit angles in radians
+
     PROVIDED_PATH(
-            new Waypoint(-4, -1, Pathfinder.d2r(-45)),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
-            new Waypoint(-2, -2, 0),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
+            new Waypoint(-4, -1, Math.toRadians(-45)),
+            new Waypoint(-2, -2, 0),
             new Waypoint(0, 0, 0)
     ),
     SQUARE(
-            new Waypoint(0, 4, Pathfinder.d2r(90)),
-            new Waypoint(4, 4, Pathfinder.d2r(180)),
-            new Waypoint(4, 0, Pathfinder.d2r(270)),
-            new Waypoint(0, 0, Pathfinder.d2r(0))
+            new Waypoint(0, 4, Math.toRadians(90)),
+            new Waypoint(4, 4, Math.toRadians(180)),
+            new Waypoint(4, 0, Math.toRadians(270)),
+            new Waypoint(0, 0, Math.toRadians(0))
     );
 
     public final Waypoint[] pointMap;

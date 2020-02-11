@@ -36,4 +36,14 @@ public class LimelightServo extends SubsystemBase {
     public Servo getServo() {
         return servo;
     }
+
+    public enum Position {
+        FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
+
+        public final int angle;
+
+        Position(int angle) {
+            this.angle = angle;
+        }
+    }
 }

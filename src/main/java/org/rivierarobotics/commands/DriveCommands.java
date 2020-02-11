@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands;
 
-import org.rivierarobotics.subsystems.DriveTrainGear;
+import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 import javax.inject.Inject;
@@ -36,7 +36,7 @@ public class DriveCommands {
         this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
     }
 
-    public DriveChangeGear changeGear(DriveTrainGear gear) {
+    public DriveChangeGear changeGear(DriveTrain.Gear gear) {
         return driveChangeGearCreator.create(gear);
     }
 

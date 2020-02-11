@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.CheeseWheelMode;
 import org.rivierarobotics.subsystems.Intake;
 
 @GenerateCreator
@@ -42,10 +41,17 @@ public class CWAutoCollect extends CommandBase {
 
     @Override
     public void initialize() {
-        cheeseWheel.setMode(front ? CheeseWheelMode.COLLECT_FRONT : CheeseWheelMode.COLLECT_BACK);
+        cheeseWheel.setMode(front ? CheeseWheel.Mode.COLLECT_FRONT : CheeseWheel.Mode.COLLECT_BACK);
     }
 
     @Override
     public void execute() {
+        if (cheeseWheel.getIntakeSensorState()) {
+            //TODO move this to the incrementIndex command
+            cheeseWheel.currentIndex += 1;
+            cheeseWheel.currentIndex %= 5;
+            cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
+            //TODO add detection/wait for wood b/n index slots
+        }
     }
 }

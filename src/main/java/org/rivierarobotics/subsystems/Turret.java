@@ -36,8 +36,8 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
+    public AimMode mode = AimMode.ENCODER;
     private double angle;
-    public TurretAimMode mode = TurretAimMode.ENCODER;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
@@ -57,7 +57,7 @@ public class Turret extends BasePIDSubsystem {
     @Override
     public double getPositionTicks() {
         double pos = turretTalon.getSensorCollection().getPulseWidthPosition();
-        if (mode == TurretAimMode.VISION) {
+        if (mode == AimMode.VISION) {
             pos = -vision.getLLValue("tx") * getAnglesOrInchesToTicks();
         }
         SmartDashboard.putNumber("Position", pos);
@@ -80,13 +80,11 @@ public class Turret extends BasePIDSubsystem {
         SmartDashboard.putNumber("turretset", position);
         if (position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
             setPositionTicks(position);
-        }
-        else {
+        } else {
             position = position - 4096;
             if (position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
                 setPositionTicks(position);
-            }
-            else {
+            } else {
                 return;
             }
         }
@@ -96,8 +94,7 @@ public class Turret extends BasePIDSubsystem {
     public boolean readyToShoot() {
         if (Math.abs(getAbsoluteAngle() - angle) <= 0.5) {
             return true;
-        }
-        else {
+        } else {
             return false;
         }
     }
@@ -111,8 +108,7 @@ public class Turret extends BasePIDSubsystem {
     public void setManualPower(double pwr) {
         if (pwr >= 0 && getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks()) {
             pwr = 0;
-        }
-        else if (pwr < 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()) {
+        } else if (pwr < 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("turretpwr", pwr);
@@ -125,5 +121,9 @@ public class Turret extends BasePIDSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
+    }
+
+    public enum AimMode {
+        VISION, ENCODER;
     }
 }

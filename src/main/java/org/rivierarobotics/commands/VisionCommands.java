@@ -20,8 +20,10 @@
 
 package org.rivierarobotics.commands;
 
+import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.VisionTarget;
+
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class VisionCommands {
     private VisionAimHoodCreator visionAimHoodCreator;
@@ -48,11 +50,11 @@ public class VisionCommands {
         return visionAimTurretCreator.create(extraDistance, height);
     }
 
-    public VisionAim visionAim(int target) {
+    public VisionAim visionAim(VisionTarget target) {
         return visionAimCreator.create(target);
     }
 
-    public LimelightLedToggle ledToggle(boolean state) {
+    public LimelightLedSetState limelightSetState(LimelightLedState state) {
         return limelightLedToggleCreator.create(state);
     }
 }

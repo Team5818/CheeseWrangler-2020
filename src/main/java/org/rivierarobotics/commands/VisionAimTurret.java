@@ -21,15 +21,12 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionUtil;
-
-import javax.inject.Inject;
 
 @GenerateCreator
 public class VisionAimTurret extends InstantCommand {
@@ -39,6 +36,7 @@ public class VisionAimTurret extends InstantCommand {
     private final double extraDistance;
     private final double height;
 
+    //TODO remove parameters you don't want to set with this command and addRequirements() the ones you want to move with this command
     public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain driveTrain, @Provided VisionUtil vision, double extraDistance, double height) {
         this.turret = turret;
         this.driveTrain = driveTrain;
@@ -56,7 +54,7 @@ public class VisionAimTurret extends InstantCommand {
         double dist = h / Math.tan(Math.toRadians(ty)); //gets distance to inner goal using LL
         double tx = Math.toRadians(vision.getLLValue("tx") + Math.toRadians(turret.getAbsoluteAngle())); //allows our tx to be absolute field position using LL
         double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //gets angle of turret to goal. essentially a better tx :)
-        double vx = ( dist * Math.cos(txTurret) + extraDistance ) / t - driveTrain.getYVelocity(); //splitting up vx and vz grants us an easier time getting absolute turret angle necessary for shot
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity(); //splitting up vx and vz grants us an easier time getting absolute turret angle necessary for shot
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx)); //nice and simple angle calculation
         double tv = vision.getLLValue("tv");
