@@ -33,6 +33,7 @@ public class Hood extends BasePIDSubsystem {
     private final Provider<HoodControl> command;
     private final DigitalInput limit;
     private static final double zeroTicks = -2334;
+    private double angle;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
         super(0.0016 , 0.0, 0.0, 1.0);
@@ -72,9 +73,19 @@ public class Hood extends BasePIDSubsystem {
 
     public void setAbsolutePosition(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
+        this.angle = angle;
         if ( angle >= -20 && angle <= 40) {
             SmartDashboard.putNumber("Hood SetTicks", zeroTicks + angle * getAnglesOrInchesToTicks() * -5);
             setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
+        }
+    }
+
+    public boolean readyToShoot() {
+        if (Math.abs(getAbsolutePosition() - angle) < 1) {
+            return true;
+        }
+        else {
+            return false;
         }
     }
 

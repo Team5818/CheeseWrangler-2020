@@ -32,6 +32,7 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
@@ -83,6 +84,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
+        globalComponent.getPositionTracker().trackPosition();
         CommandScheduler.getInstance().run();
     }
 

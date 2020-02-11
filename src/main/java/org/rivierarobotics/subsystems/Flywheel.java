@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class Flywheel extends BasePIDSubsystem {
     private final WPI_TalonSRX flywheelTalon;
+    private double position;
 
     public Flywheel(int id) {
         //TODO ryan help
@@ -33,6 +34,21 @@ public class Flywheel extends BasePIDSubsystem {
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setInverted(true);
         flywheelTalon.setNeutralMode(NeutralMode.Coast);
+    }
+
+    public boolean readyToShoot() {
+        if (Math.abs(getPositionTicks() - position) <= 5) {
+            return true;
+        }
+        else {
+            return false;
+        }
+    }
+
+    @Override
+    public void setPositionTicks(double pos) {
+        this.position = pos;
+        super.setPositionTicks(pos);
     }
 
     @Override

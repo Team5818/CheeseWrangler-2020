@@ -24,25 +24,32 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class VisionCommands {
-    private Provider<VisionAimHood> visionAimHood;
-    private Provider<VisionAimTurret> visionAimTurret;
+    private VisionAimHoodCreator visionAimHoodCreator;
+    private VisionAimTurretCreator visionAimTurretCreator;
     private LimelightLedToggleCreator limelightLedToggleCreator;
+    private VisionAimCreator visionAimCreator;
 
     @Inject
-    public VisionCommands(Provider<VisionAimHood> visionAimHood,
-                          Provider<VisionAimTurret> visionAimTurret,
-                          LimelightLedToggleCreator limelightLedToggleCreator) {
-        this.visionAimHood = visionAimHood;
-        this.visionAimTurret = visionAimTurret;
+    public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
+                          VisionAimTurretCreator visionAimTurretCreator,
+                          LimelightLedToggleCreator limelightLedToggleCreator,
+                          VisionAimCreator visionAimCreator) {
+        this.visionAimHoodCreator = visionAimHoodCreator;
+        this.visionAimCreator = visionAimCreator;
+        this.visionAimTurretCreator = visionAimTurretCreator;
         this.limelightLedToggleCreator = limelightLedToggleCreator;
     }
 
-    public VisionAimHood autoAimHood() {
-        return visionAimHood.get();
+    public VisionAimHood autoAimHood(double extraDistance, double height) {
+        return visionAimHoodCreator.create(extraDistance, height);
     }
 
-    public VisionAimTurret autoAimTurret() {
-        return visionAimTurret.get();
+    public VisionAimTurret autoAimTurret(double extraDistance, double height) {
+        return visionAimTurretCreator.create(extraDistance, height);
+    }
+
+    public VisionAim visionAim(int target) {
+        return visionAimCreator.create(target);
     }
 
     public LimelightLedToggle ledToggle(boolean state) {

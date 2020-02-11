@@ -20,26 +20,43 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
-public class TurretSetAngle extends BasePIDSetPosition<Turret> {
-    public TurretSetAngle(@Provided Turret turret, double angle) {
-        //TODO set allowable error in degrees
-        super(turret, 1, angle);
+public class VisionAim extends CommandBase {
+
+    private final int target;
+    private final VisionCommands vision;
+
+    public VisionAim (int target, @Provided VisionCommands vision) {
+        //Target = 1 for Bottom, Target = 2 for Top, Target = 3 for inner
+        this.target = target;
+        this.vision = vision;
     }
 
     @Override
-    protected double getPositionTicks() {
-        return this.subsystem.getAbsoluteAngle();
+    public void execute() {
+        //TODO: we need to get our heights to match the actual heights of the goal. extraDistance should be correct.
+        if (target == 1) {
+            vision.autoAimHood(0, .2);
+            vision.autoAimTurret(0, .2);
+        }
+        else {
+            if (target == 2) {
+            vision.autoAimHood(0, 0.69);
+            vision.autoAimTurret(0, .69);
+            }
+            else {
+            vision.autoAimHood(0.74295,  0.69);
+            vision.autoAimTurret(0.74295,  0.69);
+            }
+        }
     }
 
     @Override
-    protected void setPositionTicks(double angle) {
-        SmartDashboard.putNumber("angle", angle);
-        this.subsystem.setAbsolutePosition(angle);
+    public boolean isFinished() {
+        return false;
     }
 }

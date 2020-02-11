@@ -36,6 +36,7 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
+    private double angle;
     public TurretAimMode mode = TurretAimMode.ENCODER;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
@@ -74,14 +75,15 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsolutePosition(double angle) {
+        this.angle = angle;
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
-        if(position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
+        if (position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
             setPositionTicks(position);
         }
         else {
             position = position - 4096;
-            if(position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
+            if (position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
                 setPositionTicks(position);
             }
             else {
@@ -89,6 +91,15 @@ public class Turret extends BasePIDSubsystem {
             }
         }
 
+    }
+
+    public boolean readyToShoot() {
+        if (Math.abs(getAbsoluteAngle() - angle) <= 0.5) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override
