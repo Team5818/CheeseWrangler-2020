@@ -18,22 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.subsystems;
 
-import jaci.pathfinder.Waypoint;
+public enum EncoderType {
+    REV_THROUGH_BORE(2048),
+    ARMABOT_RS7(12),
+    CTRE_MAGENCODER(4096);
 
-public class AutonomousPath {
+    public final int ticksPerRev;
 
-    private Waypoint[] path;
-
-    public AutonomousPath() {
-    }
-
-    public void setPath(Waypoint[] path) {
-        this.path = path;
-    }
-
-    public Waypoint[] getPath() {
-        return path;
+    EncoderType(int ticksPerRev) {
+        this.ticksPerRev = ticksPerRev;
     }
 }

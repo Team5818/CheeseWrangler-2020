@@ -27,44 +27,58 @@ import jaci.pathfinder.followers.EncoderFollower;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.DriveTrainSide;
+import org.rivierarobotics.subsystems.EncoderType;
+import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
 public class PathfinderExecutor extends CommandBase {
     private DriveTrain driveTrain;
-    private Trajectory.Config configuration;
-    private Trajectory trajectory;
-    private EncoderFollower leftFollower;
-    private EncoderFollower rightFollower;
+    private NavXGyro gyro;
+    private EncoderFollower leftFollower, rightFollower;
 
-    public PathfinderExecutor(@Provided DriveTrain driveTrain, AutonomousPath path) {
+    public PathfinderExecutor(@Provided DriveTrain driveTrain, WaypointPath path) {
         this.driveTrain = driveTrain;
-        leftFollower = new EncoderFollower(trajectory);
-        rightFollower = new EncoderFollower(trajectory);
-        configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
+        this.gyro = driveTrain.getGyro();
+        this.leftFollower = driveTrain.getLeft().getEncoderFollower();
+        this.rightFollower = driveTrain.getRight().getEncoderFollower();
 
-        trajectory = Pathfinder.generate(path.getPath(), configuration);
+        Trajectory.Config configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
+        Trajectory trajectory = Pathfinder.generate(path.pointMap, configuration);
 
-        leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
-        rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), 4096, 0.10414);
+        leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
+        rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
 
-        leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
-        rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+        leftFollower.setTrajectory(trajectory);
+        rightFollower.setTrajectory(trajectory);
     }
 
-    //TODO note: an enum can store a value in a field, for example .waypoints -- an enum cannot take the place of a different type
-    //TODO Make an isFinished method that returns true if both followers are finished (follower.isFinished())
     @Override
     public void execute() {
-        driveTrain.setPower(leftFollower.calculate((int) driveTrain.getLeft().getPositionTicks()),
-                rightFollower.calculate((int) driveTrain.getRight().getPositionTicks()));
+        driveTrain.setPower(
+                determineSideSpeed(leftFollower, true),
+                determineSideSpeed(rightFollower, false)
+        );
+    }
+
+    public double determineSideSpeed(EncoderFollower follower, boolean isLeft) {
+        DriveTrainSide dts = isLeft ? driveTrain.getLeft() : driveTrain.getRight();
+        double base = follower.calculate((int) dts.getPositionTicks());
+
+        // This allows the angle difference to respect 'wrapping', where 360 and 0 are the same value
+        double angleDifference = Pathfinder.boundHalfDegrees(Pathfinder.r2d(follower.getHeading()) - gyro.getYaw());
+        angleDifference = angleDifference % 360.0;
+        if (Math.abs(angleDifference) > 180.0) {
+            angleDifference = (angleDifference > 0) ? angleDifference - 360 : angleDifference + 360;
+        }
+
+        //TODO revise this to reflect our robot
+        double turn = 0.8 * (-1.0 / 80.0) * angleDifference;
+        return base + (turn * (isLeft ? 1 : -1));
     }
 
     @Override
     public boolean isFinished() {
-        if (leftFollower.isFinished() && rightFollower.isFinished()) {
-            return true;
-        } else {
-            return false;
-        }
+        return leftFollower.isFinished() && rightFollower.isFinished();
     }
 }

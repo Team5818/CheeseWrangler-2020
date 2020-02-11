@@ -20,16 +20,25 @@
 
 package org.rivierarobotics.autonomous;
 
+import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Waypoint;
 
-public class ForwardBack extends AutonomousPath {
-
-    public ForwardBack() {
-        setPath(forwardBack);
-    }
-
-    private Waypoint[] forwardBack = new Waypoint[] {
-            new Waypoint(2, 2, 0),
+public enum WaypointPath {
+    PROVIDED_PATH(
+            new Waypoint(-4, -1, Pathfinder.d2r(-45)),      // Waypoint @ x=-4, y=-1, exit angle=-45 degrees
+            new Waypoint(-2, -2, 0),                        // Waypoint @ x=-2, y=-2, exit angle=0 radians
             new Waypoint(0, 0, 0)
-    };
+    ),
+    SQUARE(
+            new Waypoint(0, 4, Pathfinder.d2r(90)),
+            new Waypoint(4, 4, Pathfinder.d2r(180)),
+            new Waypoint(4, 0, Pathfinder.d2r(270)),
+            new Waypoint(0, 0, Pathfinder.d2r(0))
+    );
+
+    public final Waypoint[] pointMap;
+
+    WaypointPath(Waypoint... pointMap) {
+        this.pointMap = pointMap;
+    }
 }

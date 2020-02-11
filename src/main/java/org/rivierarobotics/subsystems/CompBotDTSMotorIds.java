@@ -18,27 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainGear;
+public class CompBotDTSMotorIds {
+    public final int tl, tr, bl, br, encA, encB;
 
-@GenerateCreator
-public class DriveChangeGear extends InstantCommand {
-    private final DriveTrain driveTrain;
-    private final DriveTrainGear gear;
-
-    public DriveChangeGear(@Provided DriveTrain driveTrain, DriveTrainGear gear) {
-        this.driveTrain = driveTrain;
-        this.gear = gear;
-        addRequirements(driveTrain);
-    }
-
-    @Override
-    public void execute() {
-        driveTrain.setGear(gear);
+    public CompBotDTSMotorIds(int tl, int tr, int bl, int br, int encA, int encB) {
+        this.tl = tl;
+        this.tr = tr;
+        this.bl = bl;
+        this.br = br;
+        this.encA = encA;
+        this.encB = encB;
     }
 }

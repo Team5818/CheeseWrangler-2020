@@ -24,14 +24,16 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import jaci.pathfinder.followers.EncoderFollower;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
-    private DriveTrain.Gear currentGear;
+    private DriveTrainGear currentGear;
+    private EncoderFollower follower;
 
-    //TODO transition to four-talon setup for comp bot (wait for mechanical)
+    //TODO remove when new drivetrain is implemented
     public DriveTrainSide(DriveTrainMotorIds motors, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
         this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
@@ -44,6 +46,10 @@ public class DriveTrainSide {
         masterTalon.setInverted(invert);
         sparkSlaveOne.setInverted(!invert);
         sparkSlaveTwo.setInverted(!invert);
+
+        this.follower = new EncoderFollower();
+        follower.configureEncoder((int) getPositionTicks(), 4096, 0.10414);
+        follower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
     }
 
     public void setPower(double pwr) {
@@ -60,12 +66,15 @@ public class DriveTrainSide {
         return masterTalon.getSensorCollection().getQuadratureVelocity();
     }
 
-    //TODO implement motor choosing based on gear (wait for mechanical)
-    public void setGear(DriveTrain.Gear gear) {
+    public void setGear(DriveTrainGear gear) {
         this.currentGear = gear;
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {
         mode.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
+    }
+
+    public EncoderFollower getEncoderFollower() {
+        return follower;
     }
 }

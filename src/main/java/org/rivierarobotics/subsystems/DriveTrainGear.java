@@ -18,15 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.subsystems;
 
-import jaci.pathfinder.Waypoint;
-
-public enum WaypointConfig {
-    CONFIG_ONE();
-
-    public final Waypoint[] waypoints = new Waypoint[]{
-            new Waypoint(2, 2, 0),
-            new Waypoint(0, 0, 0)
-    };
+public enum DriveTrainGear {
+    LOW, HIGH, HYBRID;
 }

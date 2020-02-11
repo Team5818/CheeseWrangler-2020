@@ -23,19 +23,14 @@ package org.rivierarobotics.autonomous;
 import javax.inject.Inject;
 
 public class AutonomousCommands {
-    //TODO switch this to a DriveTrainRoutineCreator and use .create() -- actually give parameters
-    @Inject
-    public AutonomousCommands() {
-
-    }
-    /*private Provider<DriveTrainRoutine> forwardBackRoutine;
+    private PathfinderExecutorCreator pathfinderExecutorCreator;
 
     @Inject
-    public AutonomousCommands(Provider<DriveTrainRoutine> forwardBackRoutine) {
-        this.forwardBackRoutine = forwardBackRoutine;
+    public AutonomousCommands(PathfinderExecutorCreator pathfinderExecutorCreator) {
+        this.pathfinderExecutorCreator = pathfinderExecutorCreator;
     }
 
-    public DriveTrainRoutine forwardBackRoutine() {
-        return forwardBackRoutine.get();
-    }*/
+    public PathfinderExecutor pathfinder(WaypointPath path) {
+        return pathfinderExecutorCreator.create(path);
+    }
 }

@@ -21,13 +21,14 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
 
 import javax.inject.Inject;
 
-public class DriveTrain implements Subsystem {
+public class DriveTrain extends SubsystemBase {
     private final DriveTrainSide left, right;
     private final NavXGyro gyro;
     private final double wheelCircumference = 0.32; // meters
@@ -51,8 +52,6 @@ public class DriveTrain implements Subsystem {
         return (left.getVelocity() + right.getVelocity()) / 2;
     }
 
-    //TODO this can be done without repeating anything, just pull in the yaw and determine sin/cos based on something.
-    // The same thing is done to both components, so logically we can make one method for that part.
     public double getXVelocity() {
         double tickV = (getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw())));
         return (10 * tickV * (1 / 4096.0) * wheelCircumference);
@@ -63,7 +62,7 @@ public class DriveTrain implements Subsystem {
         return (10 * tickV * (1 / 4096.0) * wheelCircumference);
     }
 
-    public void setGear(Gear gear) {
+    public void setGear(DriveTrainGear gear) {
         left.setGear(gear);
         right.setGear(gear);
     }
@@ -76,7 +75,7 @@ public class DriveTrain implements Subsystem {
         return right;
     }
 
-    public enum Gear {
-        LOW, HIGH, HYBRID;
+    public NavXGyro getGyro() {
+        return gyro;
     }
 }
