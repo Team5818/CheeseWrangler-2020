@@ -27,10 +27,12 @@ public class Flywheel extends BasePIDSubsystem {
     private final WPI_TalonSRX flywheelTalon;
 
     public Flywheel(int id) {
-        super(0.0004, 0.0, 0.0, 1.0);
+        //TODO ryan help
+        super(0.02, 0.0, 0.0, 1.0);
         flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
-        flywheelTalon.setNeutralMode(NeutralMode.Brake);
+        flywheelTalon.setInverted(true);
+        flywheelTalon.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override

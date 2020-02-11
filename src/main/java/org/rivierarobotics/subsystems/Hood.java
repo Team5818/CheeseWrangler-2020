@@ -58,6 +58,18 @@ public class Hood extends BasePIDSubsystem {
         hoodTalon.set(pwr);
     }
 
+    @Override
+    public void setManualPower(double pwr) {
+        if (pwr >= 0 && getPositionTicks() > 0 ) {
+            pwr = 0;
+        }
+        else if ( pwr < 0 && getPositionTicks() < -4000 ) {
+            pwr = 0;
+        }
+        SmartDashboard.putNumber("HoodPower", pwr);
+        super.setManualPower(pwr);
+    }
+
     public void setAbsolutePosition(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
         if ( angle >= -20 && angle <= 40) {

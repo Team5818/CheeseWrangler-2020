@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
@@ -100,6 +101,7 @@ public class Robot extends TimedRobot {
         Turret tt = globalComponent.getTurret();
         CheeseWheel in = globalComponent.getCheeseWheel();
         Hood h = globalComponent.getHood();
+        Flywheel fly = globalComponent.getFlywheel();
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
@@ -109,5 +111,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
+        SmartDashboard.putNumber("Flywheel Velocity" , fly.getPositionTicks());
     }
 }

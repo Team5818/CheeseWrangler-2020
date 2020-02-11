@@ -28,11 +28,10 @@ import javax.inject.Inject;
 
 public class CWShootIndividual extends SequentialCommandGroup {
     @Inject
-    public CWShootIndividual(CheeseWheelCommands cheeseCommands, FlywheelCommands flywheelCommands, EjectorCommands ejectorCommands) {
+    public CWShootIndividual(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
                 cheeseCommands.setMode(CheeseWheelMode.SHOOTING),
                 cheeseCommands.setClosestHalfIndex(),
-                flywheelCommands.setPower(1.0),
                 ejectorCommands.setPower(1.0),
                 new WaitCommand(0.5),
                 cheeseCommands.incrementIndex(),

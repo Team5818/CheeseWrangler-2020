@@ -61,13 +61,14 @@ public class VisionAimHood extends CommandBase {
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)); // pythag for final velocity in the goal's direction
         double hoodAngle = Math.toDegrees(Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz)); //calculates hood angle with the Magnus Effect
-        double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)) / 0.0005; //passes through value in ticks/100ms
+        double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)); //VALUE IN METERS / SECOND
+        double encoderVelocity = ( (flywheelVelocity - 0.86)/.003 ) * (1/600) * 4.4 * 12;
         if (hoodAngle <= 40 && flywheelVelocity <= 12) {
             SmartDashboard.putNumber("hoodAngleSetpoint", hoodAngle);
             SmartDashboard.putNumber("hoodAnglePosition", hood.getPositionTicks());
             SmartDashboard.putNumber("flywheelVelocity", flywheelVelocity);
             //hood.setAbsolutePosition(hoodAngle);
-            //flywheel.setPositionTicks(flywheelVelocity);
+            //flywheel.setPositionTicks(encoderVelocity);
         }
     }
 

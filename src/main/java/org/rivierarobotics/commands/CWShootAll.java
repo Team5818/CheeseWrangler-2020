@@ -28,12 +28,11 @@ import javax.inject.Inject;
 
 public class CWShootAll extends SequentialCommandGroup {
     @Inject
-    public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands, FlywheelCommands flywheelCommands) {
+    public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
                 cheeseCommands.setMode(CheeseWheelMode.SHOOTING),
                 cheeseCommands.setClosestHalfIndex(),
-                ejectorCommands.setPower(1.0),
-                flywheelCommands.setPower(1.0)
+                ejectorCommands.setPower(1.0)
         );
 
         for (int i = 0; i < 5; i++) {
@@ -42,7 +41,6 @@ public class CWShootAll extends SequentialCommandGroup {
 
         addCommands(
                 ejectorCommands.setPower(0.0),
-                flywheelCommands.setPower(0.0),
                 cheeseCommands.setMode(CheeseWheelMode.LAST),
                 cheeseCommands.incrementIndex()
         );
