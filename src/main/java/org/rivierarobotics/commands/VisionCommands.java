@@ -28,18 +28,18 @@ import javax.inject.Inject;
 public class VisionCommands {
     private VisionAimHoodCreator visionAimHoodCreator;
     private VisionAimTurretCreator visionAimTurretCreator;
-    private LimelightLedToggleCreator limelightLedToggleCreator;
+    private LimelightLedSetStateCreator limelightLedSetStateCreator;
     private VisionAimCreator visionAimCreator;
 
     @Inject
     public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
                           VisionAimTurretCreator visionAimTurretCreator,
-                          LimelightLedToggleCreator limelightLedToggleCreator,
+                          LimelightLedSetStateCreator limelightLedSetStateCreator,
                           VisionAimCreator visionAimCreator) {
         this.visionAimHoodCreator = visionAimHoodCreator;
         this.visionAimCreator = visionAimCreator;
         this.visionAimTurretCreator = visionAimTurretCreator;
-        this.limelightLedToggleCreator = limelightLedToggleCreator;
+        this.limelightLedSetStateCreator = limelightLedSetStateCreator;
     }
 
     public VisionAimHood autoAimHood(double extraDistance, double height) {
@@ -55,6 +55,6 @@ public class VisionCommands {
     }
 
     public LimelightLedSetState limelightSetState(LimelightLedState state) {
-        return limelightLedToggleCreator.create(state);
+        return limelightLedSetStateCreator.create(state);
     }
 }
