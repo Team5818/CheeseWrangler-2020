@@ -64,7 +64,7 @@ public class EncoderAim extends InstantCommand {
         double hoodAngle = Math.toDegrees(Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz)); //calculates hood angle with the Magnus Effect
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx)); //nice and simple angle calculation
         double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)); //VALUE IN METERS / SECOND
-        double encoderVelocity = ( (flywheelVelocity - 0.86)/.003 ) * (1/600) * 4.4 * 12;
+        double encoderVelocity = ( (flywheelVelocity - 0.86) / .003 ) * ( 1 / 600 ) * 4.4 * 12;
         if (hoodAngle <= 40 && flywheelVelocity <= 12) {
             hood.setAbsolutePosition(hoodAngle);
             flywheel.setPositionTicks(encoderVelocity);
