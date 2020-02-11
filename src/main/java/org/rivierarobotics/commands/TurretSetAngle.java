@@ -20,14 +20,26 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
-public class TurretSetPosition extends BasePIDSetPosition<Turret> {
-    public TurretSetPosition(@Provided Turret turret, double position) {
+public class TurretSetAngle extends BasePIDSetPosition<Turret> {
+    public TurretSetAngle(@Provided Turret turret, double angle) {
         //TODO set allowable error in ticks
-        super(turret, 20, position);
+        super(turret, 3, angle);
+    }
+
+    @Override
+    protected double getPositionTicks() {
+        return this.subsystem.getAbsoluteAngle();
+    }
+
+    @Override
+    protected void setPositionTicks(double angle) {
+        SmartDashboard.putNumber("angle", angle);
+        this.subsystem.setAbsolutePosition(angle);
     }
 }

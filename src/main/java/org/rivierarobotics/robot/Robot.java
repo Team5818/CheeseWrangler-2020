@@ -108,6 +108,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("hoodPosition", h.getPositionTicks());
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
+        SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
         SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putBoolean("InState", in.getIntakeSensorState());

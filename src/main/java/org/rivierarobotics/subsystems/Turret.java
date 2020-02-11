@@ -39,7 +39,8 @@ public class Turret extends BasePIDSubsystem {
     public TurretAimMode mode = TurretAimMode.ENCODER;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-        super(0.0025, 0.000, 0.0, 1.0);
+        //TODO: more tuning :):):):):):)
+        super(0.0012, 0.0006, 0.0, 1.0);
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -47,6 +48,7 @@ public class Turret extends BasePIDSubsystem {
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
+        turretTalon.setInverted(true);
         turretTalon.setNeutralMode(NeutralMode.Brake);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
@@ -72,7 +74,21 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsolutePosition(double angle) {
-        setPositionTicks(getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks()));
+        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
+        SmartDashboard.putNumber("turretset", position);
+        if(position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
+            setPositionTicks(position);
+        }
+        else {
+            position = position - 4096;
+            if(position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
+                setPositionTicks(position);
+            }
+            else {
+                return;
+            }
+        }
+
     }
 
     @Override
