@@ -29,8 +29,7 @@ import org.rivierarobotics.subsystems.Turret;
 public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     public TurretSetAngle(@Provided Turret turret, double angle) {
         //TODO set allowable error in degrees
-        super(turret, 1, angle);
-    }
+        super(turret, 1, angle);    }
 
     @Override
     protected double getPositionTicks() {

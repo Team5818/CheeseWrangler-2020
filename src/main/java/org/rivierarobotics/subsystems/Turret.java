@@ -70,8 +70,8 @@ public class Turret extends BasePIDSubsystem {
         return ((getPositionTicks() - zeroTicks) * 360 / 4096.0 + gyro.getYaw());
     }
 
-    public double getAbsoluteTicks() {
-        return getPositionTicks() - zeroTicks + (gyro.getYaw() * getAnglesOrInchesToTicks());
+    public double getAngle() {
+        return (getPositionTicks() - zeroTicks) * 360 / 4096.0;
     }
 
     public void setAbsolutePosition(double angle) {
@@ -106,9 +106,9 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (pwr >= 0 && getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks()) {
+        if (pwr <= 0 && getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks()) {
             pwr = 0;
-        } else if (pwr < 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("turretpwr", pwr);
