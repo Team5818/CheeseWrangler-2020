@@ -29,7 +29,7 @@ public class Flywheel extends BasePIDSubsystem {
 
     public Flywheel(int id) {
         //TODO ryan help
-        super(0.02, 0.0, 0.0, 1.0);
+        super(0.00075, 0.075, 0.0, 1.0);
         flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setInverted(true);

@@ -29,7 +29,7 @@ import org.rivierarobotics.subsystems.Flywheel;
 public class FlywheelSetVelocity extends BasePIDSetPosition<Flywheel> {
     public FlywheelSetVelocity(@Provided Flywheel flywheel, double velocity) {
         //TODO set allowable error in ticks
-        super(flywheel, 0.25, velocity);
+        super(flywheel, 8, velocity);
     }
 
     @Override
