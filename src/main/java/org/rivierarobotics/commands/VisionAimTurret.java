@@ -21,15 +21,17 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
-public class VisionAimTurret extends InstantCommand {
+public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final DriveTrain driveTrain;
     private final VisionUtil vision;
@@ -51,10 +53,14 @@ public class VisionAimTurret extends InstantCommand {
         double ty = vision.getLLValue("ty");
         double t = 0.375;   //time constant
         double h = height;    //height of goal (0.69 for practice atm)
-        double dist = h / Math.tan(Math.toRadians(ty)); //gets distance to inner goal using LL
-        double tx = Math.toRadians(vision.getLLValue("tx") + Math.toRadians(turret.getAbsoluteAngle())); //allows our tx to be absolute field position using LL
-        double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //gets angle of turret to goal. essentially a better tx :)
-        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity(); //splitting up vx and vz grants us an easier time getting absolute turret angle necessary for shot
+        double dist = h / Math.tan(Math.toRadians(ty));
+        SmartDashboard.putNumber("distancetotarget", dist);
+        double tx = vision.getLLValue("tx") + turret.getAbsoluteAngle();
+        tx = Math.toRadians(tx);
+        SmartDashboard.putNumber("modifiedtx", Math.toDegrees(tx));
+        double txTurret = Math.atan2(dist * Math.sin(tx) - 0.21, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
+        SmartDashboard.putNumber("turrettx", Math.toDegrees(txTurret));
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity(); //by splitting up our values in the x and y coordinates there has to be new velocities that go with it
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx)); //nice and simple angle calculation
         double tv = vision.getLLValue("tv");

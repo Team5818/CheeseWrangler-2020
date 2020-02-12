@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -31,7 +32,7 @@ import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
-public class VisionAimHood extends InstantCommand {
+public class VisionAimHood extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
@@ -60,21 +61,29 @@ public class VisionAimHood extends InstantCommand {
         double h = height;    //height of goal (0.69)
         double m = 0.14;    //mass of ball
         double dist = h / Math.tan(Math.toRadians(ty));
-        double tx = Math.toRadians(vision.getLLValue("tx") + Math.toRadians(turret.getAbsoluteAngle())); //returns actual tx using rotation of robot
-        double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
+        SmartDashboard.putNumber("distancetotarget", dist);
+        double tx = vision.getLLValue("tx") + turret.getAbsoluteAngle();
+        tx = Math.toRadians(tx);
+        SmartDashboard.putNumber("modifiedtx", Math.toDegrees(tx));
+        double txTurret = Math.atan2(dist * Math.sin(tx) - 0.21, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
+        SmartDashboard.putNumber("turrettx", Math.toDegrees(txTurret));
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity(); //by splitting up our values in the x and y coordinates there has to be new velocities that go with it
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)); // pythag for final velocity in the goal's direction
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz)); //calculates hood angle with the Magnus Effect
         double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)); //VALUE IN METERS / SECOND
         double encoderVelocity = ((flywheelVelocity - 0.86) / .003) * (1 / 600.0) * 4.4 * 12;
+        SmartDashboard.putNumber("hoodAngleSetpoint", hoodAngle);
+        SmartDashboard.putNumber("EncoderVelocity", encoderVelocity);
+        SmartDashboard.putNumber("flywheelVelocity", flywheelVelocity);
         if (hoodAngle <= 40 && flywheelVelocity <= 12) {
-            SmartDashboard.putNumber("hoodAngleSetpoint", hoodAngle);
-            SmartDashboard.putNumber("hoodAnglePosition", hood.getPositionTicks());
-            SmartDashboard.putNumber("flywheelVelocity", flywheelVelocity);
-            //hood.setAbsolutePosition(hoodAngle);
-            //flywheel.setPositionTicks(encoderVelocity);
+            hood.setAbsolutePosition(hoodAngle + 2);
+            flywheel.setPositionTicks(encoderVelocity + 10);
         }
     }
 
+    @Override
+    public boolean isFinished() {
+        return false;
+    }
 }

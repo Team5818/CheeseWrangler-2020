@@ -21,23 +21,27 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
-public class VisionAim extends CommandBase {
-    private final VisionTarget target;
-    private final VisionCommands vision;
+public class VisionAim extends ParallelCommandGroup {
 
     public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
-        this.target = target;
-        this.vision = vision;
+        addCommands(
+                vision.autoAimHood(0, 0.7),
+                vision.autoAimTurret(0, 0.7)
+        );
+
     }
 
+    /*
     @Override
     public void execute() {
         //TODO: we need to get our heights to match the actual heights of the goal. extraDistance should be correct.
+
         if (target == VisionTarget.BOTTOM) {
             vision.autoAimHood(0, 0.2);
             vision.autoAimTurret(0, 0.2);
@@ -49,9 +53,5 @@ public class VisionAim extends CommandBase {
             vision.autoAimTurret(0.74295, 0.69);
         }
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+*/
 }

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
@@ -50,13 +51,13 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.flywheel().setVelocity(0));
+                .whenPressed(cmds.vision().autoAimHood(0, 0.69));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.flywheel().setVelocity(50));
+                .whenPressed(cmds.vision().autoAimTurret(0, 0.69));
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.hood().setAngle(-20));
+                .whenPressed(cmds.vision().visionAim(VisionTarget.TOP));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.flywheel().setVelocity(125));
+                .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.hood().alignQuadrature());
 /*
