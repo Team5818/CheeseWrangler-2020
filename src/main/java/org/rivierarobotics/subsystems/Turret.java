@@ -38,6 +38,7 @@ public class Turret extends BasePIDSubsystem {
     private final VisionUtil vision;
     public AimMode mode = AimMode.ENCODER;
     private double angle;
+    private static final double maxRotation = 150;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
@@ -67,28 +68,27 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * 360 / 4096.0 + gyro.getYaw());
+        return ((getPositionTicks() - zeroTicks) * getTicksToAngles() + gyro.getYaw());
     }
 
     public double getAngle() {
-        return (getPositionTicks() - zeroTicks) * 360 / 4096.0;
+        return (getPositionTicks() - zeroTicks) * getTicksToAngles();
     }
 
     public void setAbsolutePosition(double angle) {
         this.angle = angle;
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
-        if (position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
+        if (position < zeroTicks + maxRotation * getAnglesOrInchesToTicks() && position > zeroTicks - maxRotation * getAnglesOrInchesToTicks()) {
             setPositionTicks(position);
         } else {
             position = position - 4096;
-            if (position < zeroTicks + 150 * getAnglesOrInchesToTicks() && position > zeroTicks - 150 * getAnglesOrInchesToTicks()) {
+            if (position < zeroTicks + maxRotation * getAnglesOrInchesToTicks() && position > zeroTicks - maxRotation * getAnglesOrInchesToTicks()) {
                 setPositionTicks(position);
             } else {
                 return;
             }
         }
-
     }
 
     public boolean readyToShoot() {
@@ -106,9 +106,9 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - zeroTicks < -150 * getAnglesOrInchesToTicks()) {
+        if (pwr <= 0 && getPositionTicks() - zeroTicks < -maxRotation * getAnglesOrInchesToTicks()) {
             pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > 150 * getAnglesOrInchesToTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - zeroTicks > maxRotation * getAnglesOrInchesToTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("turretpwr", pwr);

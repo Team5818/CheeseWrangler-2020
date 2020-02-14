@@ -51,13 +51,13 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.vision().autoAimHood(0, 0.69));
+                .whenPressed(cmds.turret().setAngle(270));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.vision().autoAimTurret(0, 0.69));
+                .whenPressed(cmds.turret().setAngle(180));
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.TOP));
+                .whenPressed(cmds.turret().setAngle(90));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
+                .whenPressed(cmds.turret().setAngle(0));
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.hood().alignQuadrature());
 /*

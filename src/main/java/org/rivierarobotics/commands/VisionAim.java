@@ -30,28 +30,17 @@ import org.rivierarobotics.util.VisionTarget;
 public class VisionAim extends ParallelCommandGroup {
 
     public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
-        addCommands(
-                vision.autoAimHood(0, 0.7),
-                vision.autoAimTurret(0, 0.7)
-        );
-
-    }
-
-    /*
-    @Override
-    public void execute() {
         //TODO: we need to get our heights to match the actual heights of the goal. extraDistance should be correct.
-
         if (target == VisionTarget.BOTTOM) {
-            vision.autoAimHood(0, 0.2);
-            vision.autoAimTurret(0, 0.2);
-        } else if (target == VisionTarget.TOP) {
-            vision.autoAimHood(0, 0.69);
-            vision.autoAimTurret(0, .69);
+            addCommands( vision.autoAimHood(0, 0.2) , vision.autoAimTurret(0, 0.2));
         } else {
-            vision.autoAimHood(0.74295, 0.69);
-            vision.autoAimTurret(0.74295, 0.69);
+            if (target == VisionTarget.TOP) {
+                addCommands(vision.autoAimHood(0, 0.7), vision.autoAimTurret(0, 0.7));
+            } else {
+                addCommands(vision.autoAimHood(0.74295, 0.7), vision.autoAimTurret(0.74295, 0.7));
+            }
         }
+
     }
-*/
+
 }
