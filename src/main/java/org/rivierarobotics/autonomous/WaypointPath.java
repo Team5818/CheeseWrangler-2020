@@ -36,6 +36,12 @@ public enum WaypointPath {
             new Waypoint(4, 4, Math.toRadians(180)),
             new Waypoint(4, 0, Math.toRadians(270)),
             new Waypoint(0, 0, Math.toRadians(0))
+    ),
+
+    TRIANGLE(
+            new Waypoint(0, 4, Math.toRadians(90)),
+            new Waypoint(4, 0, Math.toRadians(45)),
+            new Waypoint(0,0, Math.toRadians(0))
     );
 
     public final Waypoint[] pointMap;
