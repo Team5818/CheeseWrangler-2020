@@ -38,7 +38,7 @@ public class Turret extends BasePIDSubsystem {
     private final VisionUtil vision;
     public AimMode mode = AimMode.ENCODER;
     private double angle;
-    private static final double maxRotation = 150;
+    private static final double maxAngle = 150;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
@@ -79,16 +79,20 @@ public class Turret extends BasePIDSubsystem {
         this.angle = angle;
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
-        if (position < zeroTicks + maxRotation * getAnglesOrInchesToTicks() && position > zeroTicks - maxRotation * getAnglesOrInchesToTicks()) {
+        if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
             setPositionTicks(position);
         } else {
             position = position - 4096;
-            if (position < zeroTicks + maxRotation * getAnglesOrInchesToTicks() && position > zeroTicks - maxRotation * getAnglesOrInchesToTicks()) {
+            if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
                 setPositionTicks(position);
             } else {
                 return;
             }
         }
+    }
+
+    public double getMaxAngleInTicks() {
+        return 150 * getAnglesOrInchesToTicks();
     }
 
     public boolean readyToShoot() {
@@ -106,9 +110,9 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - zeroTicks < -maxRotation * getAnglesOrInchesToTicks()) {
+        if (pwr <= 0 && getPositionTicks() - zeroTicks < -getMaxAngleInTicks()) {
             pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > maxRotation * getAnglesOrInchesToTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - zeroTicks > maxAngle * getMaxAngleInTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("turretpwr", pwr);

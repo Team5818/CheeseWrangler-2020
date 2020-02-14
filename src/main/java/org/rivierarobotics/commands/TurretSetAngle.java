@@ -42,15 +42,20 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     protected void setPositionTicks(double angle) {
         position = turret.getPositionTicks() + ((angle - turret.getAbsoluteAngle()) * turret.getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
-        if (position >= zeroTicks + 150 * turret.getAnglesOrInchesToTicks() || position <= zeroTicks - 150 * turret.getAnglesOrInchesToTicks()) {
+        if (isInvalidPosition()) {
             position = position - 4096;
         }
         super.setPositionTicks(position);
     }
 
+    private boolean isInvalidPosition() {
+        return position >= zeroTicks + turret.getMaxAngleInTicks() || position <= zeroTicks - turret.getMaxAngleInTicks();
+    }
+
+
     @Override
     public boolean isFinished() {
-        if (position < zeroTicks + 150 * turret.getAnglesOrInchesToTicks() && position > zeroTicks - 150 * turret.getAnglesOrInchesToTicks()) {
+        if (!isInvalidPosition()) {
             return super.isFinished();
         } else {
             return true;
