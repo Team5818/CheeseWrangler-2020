@@ -39,28 +39,19 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     }
 
     @Override
-    protected double getPositionTicks() {
-        return this.subsystem.getAbsoluteAngle();
-    }
-
-    @Override
     protected void setPositionTicks(double angle) {
         position = turret.getPositionTicks() + ((angle - turret.getAbsoluteAngle()) * turret.getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
-        if (!(position < zeroTicks + 150 * turret.getAnglesOrInchesToTicks()) || !(position > zeroTicks - 150 * turret.getAnglesOrInchesToTicks())) {
+        if (position >= zeroTicks + 150 * turret.getAnglesOrInchesToTicks() || position <= zeroTicks - 150 * turret.getAnglesOrInchesToTicks()) {
             position = position - 4096;
         }
-        setPositionTicks(position);
-
+        super.setPositionTicks(position);
     }
 
     @Override
     public boolean isFinished() {
         if (position < zeroTicks + 150 * turret.getAnglesOrInchesToTicks() && position > zeroTicks - 150 * turret.getAnglesOrInchesToTicks()) {
-            double err = Math.abs(getPositionTicks() - positionTicks);
-            boolean isInError = err < maxErrorTicks;
-            SmartDashboard.putBoolean(subsystem.getName() + " isWithinError", isInError);
-            return isInError;
+            return super.isFinished();
         } else {
             return true;
         }
