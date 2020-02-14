@@ -92,7 +92,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getMaxAngleInTicks() {
-        return 150 * getAnglesOrInchesToTicks();
+        return maxAngle * getAnglesOrInchesToTicks();
     }
 
     public boolean readyToShoot() {
@@ -112,7 +112,7 @@ public class Turret extends BasePIDSubsystem {
     public void setManualPower(double pwr) {
         if (pwr <= 0 && getPositionTicks() - zeroTicks < -getMaxAngleInTicks()) {
             pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > maxAngle * getMaxAngleInTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("turretpwr", pwr);
