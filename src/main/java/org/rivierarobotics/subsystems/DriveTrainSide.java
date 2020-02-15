@@ -40,7 +40,7 @@ public class DriveTrainSide {
         this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
 
         masterTalon.configFactoryDefault();
-        masterTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        masterTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 
         NeutralIdleMode.BRAKE.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
         masterTalon.setInverted(invert);
@@ -48,7 +48,7 @@ public class DriveTrainSide {
         sparkSlaveTwo.setInverted(!invert);
 
         this.follower = new EncoderFollower();
-        follower.configureEncoder((int) getPositionTicks(), 4096, 0.10414);
+        follower.configureEncoder((int) getPositionTicks(), 600, 0.10414);
         follower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
     }
 
@@ -59,7 +59,7 @@ public class DriveTrainSide {
     }
 
     public double getPositionTicks() {
-        return masterTalon.getSensorCollection().getPulseWidthPosition();
+        return masterTalon.getSensorCollection().getQuadraturePosition();
     }
 
     public double getVelocity() {

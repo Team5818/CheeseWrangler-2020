@@ -27,20 +27,19 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.ShuffleUtil;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
-    private final double pidRange, anglesOrInchesToTicks, kP, kI, kD, ticksToAngles;
+    private final double pidRange, anglesOrInchesToTicks, kP, kI, kD;
     private final PIDController pidController;
     private boolean pidEnabled = false;
     private ShuffleboardTab dash;
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange) {
-        this(kP, kI, kD, pidRange, 0.0, 4096.0 / 360, 360 / 4096.0);
+        this(kP, kI, kD, pidRange, 0.0, 4096.0 / 360);
     }
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks, double ticksToAngles) {
+    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
         this.pidController = new PIDController(kP, kI, kD, 0.005);
         this.pidRange = pidRange;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
-        this.ticksToAngles = ticksToAngles;
         pidController.setTolerance(tolerance);
         this.dash = Shuffleboard.getTab(getName());
         this.kP = kP;
@@ -64,7 +63,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     public double getTicksToAngles() {
-        return ticksToAngles;
+        return 1 / getAnglesOrInchesToTicks();
     }
 
     public double getPosition() {

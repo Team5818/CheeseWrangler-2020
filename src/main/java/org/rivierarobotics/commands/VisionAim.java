@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
@@ -32,12 +33,12 @@ public class VisionAim extends ParallelCommandGroup {
     public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
         //TODO: we need to get our heights to match the actual heights of the goal. extraDistance should be correct.
         if (target == VisionTarget.BOTTOM) {
-            addCommands( vision.autoAimHood(0, 0.2) , vision.autoAimTurret(0, 0.2));
+            addCommands( vision.autoAimHood(0, 0.2) , vision.autoAimTurret(0, 1));
         } else {
             if (target == VisionTarget.TOP) {
-                addCommands(vision.autoAimHood(0, 0.7), vision.autoAimTurret(0, 0.7));
+                addCommands(vision.autoAimHood(0, ShooterUtil.getTopHeight()), vision.autoAimTurret(0, ShooterUtil.getTopHeight()));
             } else {
-                addCommands(vision.autoAimHood(0.74295, 0.7), vision.autoAimTurret(0.74295, 0.7));
+                addCommands(vision.autoAimHood(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()), vision.autoAimTurret(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()));
             }
         }
 

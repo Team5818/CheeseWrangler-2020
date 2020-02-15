@@ -34,8 +34,9 @@ public class PositionTracker {
     private final double wheelCircumference = 0.32; // meters
     private final VisionUtil vision;
     private final Turret turret;
-    double[] pos = new double[2];
-    double t = 0;
+    static double[] pos = new double[2];
+    static double beforeT = 0;
+    double t;
 
     @Inject
     public PositionTracker(DriveTrain dt, NavXGyro gyro, VisionUtil vision, Turret turret) {
@@ -47,30 +48,29 @@ public class PositionTracker {
     }
 
     public void trackPosition() {
-        t = time.get() - t;
-        double distanceTravelled = driveTrain.getAvgVelocity() * t;
-        pos[0] = pos[0] + Math.sin(Math.toRadians(gyro.getYaw())) * distanceTravelled;
-        pos[1] = pos[1] + Math.cos(Math.toRadians(gyro.getYaw())) * distanceTravelled;
+        SmartDashboard.putNumber("before", beforeT);
+        t = Timer.getFPGATimestamp();
+        double timeDifference = (t - beforeT);
+        SmartDashboard.putNumber("change in time", t - beforeT);
+        beforeT = Timer.getFPGATimestamp();
+        pos[0] = pos[0] + driveTrain.getXVelocity() * timeDifference;
+        pos[1] = pos[1] + driveTrain.getYVelocity() * timeDifference;
         SmartDashboard.putNumber("EncoderX", pos[0]);
         SmartDashboard.putNumber("EncoderY", pos[1]);
     }
 
     public void correctPosition() {
         //TODO: get field length and the distance from the left side of the field to the scoring goal
-        double fieldLength = 20; // add in actual measurements in meters
-        double fieldWidthLeftWallToGoal = 10; // add in actual measurements in meters
-        double ty = vision.getLLValue("ty");
-        double h = 0.69;    //height of goal in meters
-        double dist = h / Math.tan(Math.toRadians(ty)) + 0.74295;
-        double tx = vision.getLLValue("tx") + Math.toRadians(turret.getAbsoluteAngle()); //returns actual tx using rotation of robot
-        double txTurret = Math.atan2(dist * Math.sin(tx) + 0.1905, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
-
+        double fieldLength = ShooterUtil.getFieldLength();
+        double fieldWidthLeftWallToGoal = ShooterUtil.getLeftFieldToGoal();
+        double dist = ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty")));
+        double txTurret = turret.getTxTurret(dist,0); //returns turret tx as it is offset from the camera.
         if (txTurret >= 0) {
-            pos[0] = -dist * Math.sin(txTurret) + fieldWidthLeftWallToGoal;
+            pos[0] = fieldWidthLeftWallToGoal - dist * Math.sin(txTurret);
         } else {
             pos[0] = dist * Math.sin(txTurret) + fieldWidthLeftWallToGoal;
         }
-        pos[1] = -dist * Math.cos(txTurret) + fieldLength;
+        pos[1] = (fieldLength) - dist * Math.cos(txTurret);
     }
 
     public double[] getPosition() {

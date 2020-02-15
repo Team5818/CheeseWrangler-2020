@@ -27,10 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Flywheel;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
@@ -104,16 +101,15 @@ public class Robot extends TimedRobot {
         CheeseWheel in = globalComponent.getCheeseWheel();
         Hood h = globalComponent.getHood();
         Flywheel fly = globalComponent.getFlywheel();
+        DriveTrainSide left = globalComponent.getDriveTrain().getLeft();
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
-        SmartDashboard.putNumber("hoodPosition", h.getPositionTicks());
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
-        SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
-        SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
-        SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
         SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
+        SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
+
     }
 }

@@ -20,16 +20,21 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Inject;
 
+@GenerateCreator
 public class EncoderAim extends InstantCommand {
     private final Hood hood;
     private final DriveTrain driveTrain;
@@ -37,40 +42,74 @@ public class EncoderAim extends InstantCommand {
     private final VisionUtil vision;
     private final Turret turret;
     private final PositionTracker tracker;
+    private final double extraDistance;
 
-    @Inject
-    public EncoderAim(Hood hood, DriveTrain dt, Flywheel flywheel, VisionUtil vision, Turret turret, PositionTracker tracker) {
+    public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel, @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker, double extraDistance) {
         this.hood = hood;
         this.driveTrain = dt;
         this.flywheel = flywheel;
         this.vision = vision;
         this.turret = turret;
         this.tracker = tracker;
+        this.extraDistance = extraDistance;
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
-        //TODO: measure values
-        double fieldLength = 20; // add in actual measurements in meters
-        double fieldWidthLeftWallToGoal = 10; // add in actual measurements in meters
+
         double pos[] = tracker.getPosition();
-        double vy = 3.679;  //Vy constant
-        double t = 0.375;   //time constant
-        double m = 0.14;    //mass of ball
-        double vx = fieldLength - pos[1] / t - driveTrain.getYVelocity(); //by splitting up our values in the x and y coordinates there has to be new velocities that go with it
-        double vz = fieldWidthLeftWallToGoal - pos[0] / t - driveTrain.getXVelocity();
-        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)); // pythag for final velocity in the goal's direction
-        double hoodAngle = Math.toDegrees(Math.atan2(vy - ((0.336 * vxz + 0.2) / m) * t, vxz)); //calculates hood angle with the Magnus Effect
-        double turretAngle = Math.toDegrees(Math.atan2(vz, vx)); //nice and simple angle calculation
-        double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)); //VALUE IN METERS / SECOND
-        double encoderVelocity = ((flywheelVelocity - 0.86) / .003) * (1 / 600) * 4.4 * 12;
-        if (hoodAngle <= 40 && flywheelVelocity <= 12) {
+        double xFromGoal = ShooterUtil.getFieldLength() - pos[0];
+        double zFromGoal = ShooterUtil.getLeftFieldToGoal() - pos[1];
+        double dist = Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2));
+        double t = ShooterUtil.getTConstant();
+        double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
+        double vz = zFromGoal / t - driveTrain.getXVelocity();
+        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
+        double hoodAngle = Math.toDegrees(Math.atan2(ShooterUtil.getYVelocityConstant(), vxz));
+        double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
+        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
+        double encoderVelocity = ShooterUtil.VelocityToTicks(ballVel);
+
+
+        double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
+        double dist2 = ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty")));
+        double txTurret = turret.getTxTurret(dist, extraDistance);
+        double vx2 = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity();
+        double vz2 = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
+        double vxz2 = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
+        double hoodAngle2 = Math.toDegrees(Math.atan2(vy, vxz));
+        double ballVel2 = vxz / Math.cos(Math.toRadians(hoodAngle));
+        double encoderVelocity2 = ShooterUtil.VelocityToTicks(ballVel);
+
+
+
+        SmartDashboard.putNumber("VisionVel", ballVel);
+        SmartDashboard.putNumber("VisionFlyVel", encoderVelocity);
+        SmartDashboard.putNumber("HoodAngleVis",hoodAngle);
+        SmartDashboard.putNumber("TurretAngleVis",turretAngle);
+
+        SmartDashboard.putNumber("BallVel", ballVel2);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity2);
+        SmartDashboard.putNumber("HoodAngleMath",hoodAngle2);
+
+        /*
+        turret.setAbsolutePosition(turretAngle);
+        if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity() && vision.getLLValue("tv") == 1) {
             hood.setAbsolutePosition(hoodAngle);
             flywheel.setPositionTicks(encoderVelocity);
-            turret.setAbsolutePosition(turretAngle);
-        }
+        } else {
+            if (dist < 1 && vision.getLLValue("tv") == 1) {
+                hood.setAbsolutePosition(ShooterUtil.getMaxHoodAngle());
+                flywheel.setPositionTicks(120);
+            } else {
+                if (dist > 1 && vision.getLLValue("tv") == 1) {
+                    hood.setAbsolutePosition(hoodAngle);
+                    flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
+                }
+            }
+        } */
+    }
 
 
     }
-}
