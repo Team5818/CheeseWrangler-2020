@@ -19,11 +19,11 @@ public class ColorWheelSetColor extends InstantCommand {
 
     @Override
     public void execute(){
-
+        if (colorWheel.getColor() != color){
+           colorWheel.setManualPower(0.2);
+        }
 
     }
     //TODO be able to rotate wheel until it reaches certain color
-
-
 
 }
