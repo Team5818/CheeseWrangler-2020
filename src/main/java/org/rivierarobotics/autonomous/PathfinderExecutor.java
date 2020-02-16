@@ -23,12 +23,14 @@ package org.rivierarobotics.autonomous;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.followers.EncoderFollower;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.DriveTrainSide;
 import org.rivierarobotics.subsystems.EncoderType;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
@@ -36,21 +38,33 @@ public class PathfinderExecutor extends CommandBase {
     private DriveTrain driveTrain;
     private NavXGyro gyro;
     private EncoderFollower leftFollower, rightFollower;
+    /*private Waypoint[] waypoints = {
+            new Waypoint(MathUtil.feetToMeters(1), MathUtil.feetToMeters(0), Math.toRadians(0)),
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), Math.toRadians(0))
+    };*/
 
     public PathfinderExecutor(@Provided DriveTrain driveTrain, WaypointPath path) {
         this.driveTrain = driveTrain;
         this.gyro = driveTrain.getGyro();
-        this.leftFollower = driveTrain.getLeft().getEncoderFollower();
-        this.rightFollower = driveTrain.getRight().getEncoderFollower();
 
-        Trajectory.Config configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
-        Trajectory trajectory = Pathfinder.generate(path.pointMap, configuration);
+        //this.leftFollower = driveTrain.getLeft().getEncoderFollower();
+        //this.rightFollower = driveTrain.getRight().getEncoderFollower();
 
-        leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
-        rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
+        Trajectory.Config configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05, 1.7, 2.0, 10.0);
+        Trajectory trajectory = Pathfinder.generate(WaypointPath.FORWARD_BACK.getPointMap(), configuration);
 
-        leftFollower.setTrajectory(trajectory);
-        rightFollower.setTrajectory(trajectory);
+        leftFollower = new EncoderFollower(trajectory);
+        leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
+        leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+
+        rightFollower = new EncoderFollower(trajectory);
+        rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), 4096, 0.10414);
+        rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+
+        //leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
+        //rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
+
+        addRequirements(driveTrain);
     }
 
     @Override

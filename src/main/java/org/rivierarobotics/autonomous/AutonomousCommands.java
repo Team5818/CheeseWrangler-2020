@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.autonomous;
 
+import jaci.pathfinder.Waypoint;
+
 import javax.inject.Inject;
 
 public class AutonomousCommands {

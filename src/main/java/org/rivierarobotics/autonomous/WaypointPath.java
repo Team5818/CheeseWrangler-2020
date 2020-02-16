@@ -32,6 +32,12 @@ public enum WaypointPath {
             new Waypoint(MathUtil.feetToMeters(-2), MathUtil.feetToMeters(-2), 0),
             new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), 0)
     ),
+
+    FORWARD_BACK(
+            new Waypoint(MathUtil.feetToMeters(1), MathUtil.feetToMeters(0), Math.toRadians(0)),
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), Math.toRadians(0))
+    ),
+
     SQUARE(
             new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(4), Math.toRadians(90)),
             new Waypoint(MathUtil.feetToMeters(4), MathUtil.feetToMeters(4), Math.toRadians(180)),
@@ -45,9 +51,13 @@ public enum WaypointPath {
             new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), Math.toRadians(0))
     );
 
-    public final Waypoint[] pointMap;
+    private Waypoint[] pointMap;
 
     WaypointPath(Waypoint... pointMap) {
         this.pointMap = pointMap;
+    }
+
+    public Waypoint[] getPointMap() {
+        return pointMap;
     }
 }
