@@ -49,10 +49,6 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public double getAvgVelocity() {
-        SmartDashboard.putNumber("velocity",( left.getVelocity() - right.getVelocity()) / 2);
-        SmartDashboard.putNumber("LeftVel", left.getVelocity());
-        SmartDashboard.putNumber("RightVel", right.getVelocity());
-
         return (left.getVelocity() - right.getVelocity()) / 2;
     }
 
@@ -63,7 +59,7 @@ public class DriveTrain extends SubsystemBase {
 
     public double getYVelocity() {
         double tickV = (getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw())));
-        SmartDashboard.putNumber("YVELOCITY",10 * tickV * (1 / 600.0) * wheelCircumference);
+        SmartDashboard.putNumber("YVELOCITY", 10 * tickV * (1 / 600.0) * wheelCircumference);
         return (10 * tickV * (1 / 2400.0) * wheelCircumference);
     }
 

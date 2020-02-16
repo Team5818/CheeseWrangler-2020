@@ -22,7 +22,6 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
@@ -66,16 +65,15 @@ public class VisionAimHood extends CommandBase {
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.VelocityToTicks(ballVel) + 10;
-
+        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel) + 10;
         SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity);
-        SmartDashboard.putNumber("HoodAngleMath",hoodAngle);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
+        SmartDashboard.putNumber("HoodAngleMath", hoodAngle + 3);
 
-
+        if (flywheel.getPidController().atSetpoint()) {
         if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity() && vision.getLLValue("tv") == 1) {
-            hood.setAbsolutePosition(hoodAngle);
-            flywheel.setPositionTicks(encoderVelocity);
+            hood.setAbsolutePosition(hoodAngle + 3);
+            flywheel.setPositionTicks(encoderVelocity + 10);
         } else {
             if (dist < 1 && vision.getLLValue("tv") == 1) {
                 hood.setAbsolutePosition(ShooterUtil.getMaxHoodAngle());
@@ -86,7 +84,7 @@ public class VisionAimHood extends CommandBase {
                     flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
                 }
             }
-
+        }
 
         }
     }

@@ -20,9 +20,11 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
@@ -59,12 +61,8 @@ public class VisionAimTurret extends CommandBase {
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
         double tv = vision.getLLValue("tv");
-
-        SmartDashboard.putNumber("TurretAngleMath",turretAngle);
-
-        if (tv == 1) {
+        if (tv == 1 && turret.getPidController().atSetpoint()) {
             turret.setAbsolutePosition(turretAngle);
         }
     }
-
 }

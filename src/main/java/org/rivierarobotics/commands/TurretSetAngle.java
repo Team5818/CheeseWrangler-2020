@@ -34,7 +34,7 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
 
 
     public TurretSetAngle(@Provided Turret turret, double angle) {
-        super(turret, 0.3, angle);
+        super(turret, 0.5, angle);
         this.turret = turret;
     }
 
@@ -48,10 +48,13 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
         super.setPositionTicks(position);
     }
 
+    protected double getPositionTicks() {
+        return subsystem.getAbsoluteAngle();
+    }
+
     private boolean isInvalidPosition() {
         return position >= zeroTicks + turret.getMaxAngleInTicks() || position <= zeroTicks - turret.getMaxAngleInTicks();
     }
-
 
     @Override
     public boolean isFinished() {

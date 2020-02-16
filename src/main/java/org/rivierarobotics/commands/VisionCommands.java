@@ -59,7 +59,8 @@ public class VisionCommands {
         return visionAimCreator.create(target);
     }
 
-    public EncoderAim encoderAim(double extraDistance) { return encoderAimCreator.create(extraDistance); }
+    public EncoderAim encoderAim(double extraDistance) {
+        return encoderAimCreator.create(extraDistance); }
 
     public CorrectPosition correctPosition() {
         return correctPositionProvider.get();

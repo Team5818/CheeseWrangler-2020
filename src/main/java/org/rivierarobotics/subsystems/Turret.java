@@ -42,7 +42,7 @@ public class Turret extends BasePIDSubsystem {
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
-        super(0.0012, 0.00012, 0.0, 0.8);
+        super(0.00075, 0.0080, 0.00000155, 1, 20, 4096.0 / 360);
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -77,7 +77,7 @@ public class Turret extends BasePIDSubsystem {
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx") + getAbsoluteAngle());
-        double txTurret = Math.atan2(distance * Math.sin(tx) - 0.19, distance * Math.cos(tx) + extraDistance);
+        double txTurret = Math.atan2(distance * Math.sin(tx) - 0.18, distance * Math.cos(tx) + extraDistance);
         SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
         SmartDashboard.putNumber("txTurret", Math.toDegrees(txTurret));
         return txTurret;
