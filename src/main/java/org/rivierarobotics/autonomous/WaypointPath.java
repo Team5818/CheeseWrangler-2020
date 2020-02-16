@@ -21,27 +21,28 @@
 package org.rivierarobotics.autonomous;
 
 import jaci.pathfinder.Waypoint;
+import org.rivierarobotics.util.MathUtil;
 
 public enum WaypointPath {
     //Add another enum entry for each path desired to enter, and a series of Waypoint objects as the points
     //Distances are in meters, x and y ordered, and angles are exit angles in radians
 
     PROVIDED_PATH(
-            new Waypoint(-4, -1, Math.toRadians(-45)),
-            new Waypoint(-2, -2, 0),
-            new Waypoint(0, 0, 0)
+            new Waypoint(MathUtil.feetToMeters(-4), MathUtil.feetToMeters(-1), Math.toRadians(-45)),
+            new Waypoint(MathUtil.feetToMeters(-2), MathUtil.feetToMeters(-2), 0),
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), 0)
     ),
     SQUARE(
-            new Waypoint(0, 4, Math.toRadians(90)),
-            new Waypoint(4, 4, Math.toRadians(180)),
-            new Waypoint(4, 0, Math.toRadians(270)),
-            new Waypoint(0, 0, Math.toRadians(0))
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(4), Math.toRadians(90)),
+            new Waypoint(MathUtil.feetToMeters(4), MathUtil.feetToMeters(4), Math.toRadians(180)),
+            new Waypoint(MathUtil.feetToMeters(4), MathUtil.feetToMeters(0), Math.toRadians(270)),
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), Math.toRadians(0))
     ),
 
     TRIANGLE(
-            new Waypoint(0, 4, Math.toRadians(90)),
-            new Waypoint(4, 0, Math.toRadians(45)),
-            new Waypoint(0,0, Math.toRadians(0))
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(4), Math.toRadians(90)),
+            new Waypoint(MathUtil.feetToMeters(4), MathUtil.feetToMeters(0), Math.toRadians(45)),
+            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), Math.toRadians(0))
     );
 
     public final Waypoint[] pointMap;
