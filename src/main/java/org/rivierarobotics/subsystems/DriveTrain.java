@@ -79,6 +79,10 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public enum Gear {
-        LOW, HIGH, HYBRID;
+        LOW, HIGH, HYBRID
+    }
+
+    public enum HybridGear {
+        LOW, NORMAL, HIGH;
     }
 }

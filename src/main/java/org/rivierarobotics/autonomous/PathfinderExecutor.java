@@ -23,6 +23,7 @@ package org.rivierarobotics.autonomous;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import jaci.pathfinder.Pathfinder;
 import jaci.pathfinder.Trajectory;
+import jaci.pathfinder.Waypoint;
 import jaci.pathfinder.followers.EncoderFollower;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -44,7 +45,7 @@ public class PathfinderExecutor extends CommandBase {
         this.rightFollower = driveTrain.getRight().getEncoderFollower();
 
         Trajectory.Config configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_HIGH, 0.05, 1.7, 2.0, 60.0);
-        Trajectory trajectory = Pathfinder.generate(path.pointMap, configuration);
+        Trajectory trajectory = Pathfinder.generate(WaypointPath.PROVIDED_PATH.pointMap, configuration);
 
         leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
         rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);

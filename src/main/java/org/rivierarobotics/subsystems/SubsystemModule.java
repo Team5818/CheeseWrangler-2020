@@ -36,8 +36,8 @@ import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 13;
-    private static final int HOOD_TALON = 10;
+    private static final int TURRET_TALON = 22;
+    private static final int HOOD_TALON = 25;
     private static final int FLYWHEEL_TALON = 11;
     private static final int CHEESE_WHEEL_TALON = 7;
     private static final int EJECTOR_TALON = 17;
@@ -45,14 +45,14 @@ public class SubsystemModule {
     private static final int INTAKE_RIGHT_TALON = 19;
     private static final int CLIMB_TALON = 20;
 
-    private static final int HOOD_LIMIT_SWITCH = 0;
+    private static final int HOOD_LIMIT_SWITCH = 6;
     private static final int INDEX_SENSOR_INTAKE = 9;
     private static final int INDEX_SENSOR_OUTPUT = 10;
     private static final int LIMELIGHT_SERVO = 0;
 
     private static final DriveTrainSide.MotorIds
-            DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
-            DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
+            DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 0, 3, 2,0 , 1),
+            DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(13, 12, 15, 14, 2, 3);
 
     private SubsystemModule() {
     }
@@ -61,14 +61,14 @@ public class SubsystemModule {
     @Singleton
     @Sided(Sided.Side.LEFT)
     public static DriveTrainSide provideDriveSideLeft() {
-        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, true);
+        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, false);
     }
 
     @Provides
     @Singleton
     @Sided(Sided.Side.RIGHT)
     public static DriveTrainSide provideDriveSideRight() {
-        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, false);
+        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, true);
     }
 
     @Provides
