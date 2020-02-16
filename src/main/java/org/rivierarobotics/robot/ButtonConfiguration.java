@@ -22,7 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.WaypointPath;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.util.VisionTarget;
@@ -56,11 +56,11 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverRight, 2)
                 .whenPressed(cmds.vision().autoAimTurret(0, 0.69));
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.auto().pathfinder(WaypointPath.FORWARD_BACK));
+                .whenPressed(cmds.auto().pathfinder(Pose2dPath.FORWARD_BACK));
         new JoystickButton(coDriverLeft, 2)
                 .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.auto().pathfinder(WaypointPath.SQUARE));
+                .whenPressed(cmds.auto().pathfinder(Pose2dPath.SQUARE));
 /*
         // Competition Robot Button Map
         new JoystickButton(driverLeft, 1)

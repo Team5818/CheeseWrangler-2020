@@ -20,79 +20,62 @@
 
 package org.rivierarobotics.autonomous;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import jaci.pathfinder.Pathfinder;
-import jaci.pathfinder.Trajectory;
-import jaci.pathfinder.Waypoint;
-import jaci.pathfinder.followers.EncoderFollower;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.DriveTrainSide;
-import org.rivierarobotics.subsystems.EncoderType;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
 public class PathfinderExecutor extends CommandBase {
-    private DriveTrain driveTrain;
-    private NavXGyro gyro;
-    private EncoderFollower leftFollower, rightFollower;
-    /*private Waypoint[] waypoints = {
-            new Waypoint(MathUtil.feetToMeters(1), MathUtil.feetToMeters(0), Math.toRadians(0)),
-            new Waypoint(MathUtil.feetToMeters(0), MathUtil.feetToMeters(0), Math.toRadians(0))
-    };*/
 
-    public PathfinderExecutor(@Provided DriveTrain driveTrain, WaypointPath path) {
+    private static Trajectory generateTrajectory(Pose2dPath path) {
+        var configuration = new TrajectoryConfig(1.7, 2.0);
+        return TrajectoryGenerator.generateTrajectory(path.pointMap, configuration);
+    }
+
+    private final DriveTrain driveTrain;
+    private final NavXGyro gyro;
+    private final RamseteController controller;
+    private final Trajectory trajectory;
+    private double startTimestamp;
+    private Translation2d startingPoint;
+
+    public PathfinderExecutor(@Provided DriveTrain driveTrain, Pose2dPath path) {
         this.driveTrain = driveTrain;
         this.gyro = driveTrain.getGyro();
-
-        //this.leftFollower = driveTrain.getLeft().getEncoderFollower();
-        //this.rightFollower = driveTrain.getRight().getEncoderFollower();
-
-        Trajectory.Config configuration = new Trajectory.Config(Trajectory.FitMethod.HERMITE_CUBIC, Trajectory.Config.SAMPLES_FAST, 0.05, 1.7, 2.0, 10.0);
-        Trajectory trajectory = Pathfinder.generate(WaypointPath.FORWARD_BACK.getPointMap(), configuration);
-
-        leftFollower = new EncoderFollower(trajectory);
-        leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), 4096, 0.10414);
-        leftFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
-
-        rightFollower = new EncoderFollower(trajectory);
-        rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), 4096, 0.10414);
-        rightFollower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
-
-        //leftFollower.configureEncoder((int) driveTrain.getLeft().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
-        //rightFollower.configureEncoder((int) driveTrain.getRight().getPositionTicks(), EncoderType.REV_THROUGH_BORE.ticksPerRev, 0.10414);
+        this.controller = new RamseteController();
+        this.trajectory = generateTrajectory(path);
 
         addRequirements(driveTrain);
     }
 
     @Override
-    public void execute() {
-        driveTrain.setPower(
-                determineSideSpeed(leftFollower, true),
-                determineSideSpeed(rightFollower, false)
+    public void initialize() {
+        startTimestamp = Timer.getFPGATimestamp();
+        startingPoint = new Translation2d(
+            driveTrain.getLeft().getPositionTicks(),
+            driveTrain.getRight().getPositionTicks()
         );
     }
 
-    public double determineSideSpeed(EncoderFollower follower, boolean isLeft) {
-        DriveTrainSide dts = isLeft ? driveTrain.getLeft() : driveTrain.getRight();
-        double base = follower.calculate((int) dts.getPositionTicks());
-
-        // This allows the angle difference to respect 'wrapping', where 360 and 0 are the same value
-        double angleDifference = Pathfinder.boundHalfDegrees(Pathfinder.r2d(follower.getHeading()) - gyro.getYaw());
-        angleDifference = angleDifference % 360.0;
-        if (Math.abs(angleDifference) > 180.0) {
-            angleDifference = (angleDifference > 0) ? angleDifference - 360 : angleDifference + 360;
-        }
-
-        //TODO revise this to reflect our robot
-        double turn = 0.8 * (-1.0 / 80.0) * angleDifference;
-        return base + (turn * (isLeft ? 1 : -1));
+    @Override
+    public void execute() {
+        var current = new Pose2d();
+        var goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
+        var adjustedSpeeds = controller.calculate(current, goal);
+        // TODO finish out
     }
 
     @Override
     public boolean isFinished() {
-        return leftFollower.isFinished() && rightFollower.isFinished();
+        return trajectory.getTotalTimeSeconds() >= (Timer.getFPGATimestamp() - startTimestamp);
     }
 }

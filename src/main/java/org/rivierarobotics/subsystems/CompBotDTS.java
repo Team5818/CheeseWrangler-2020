@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
-import jaci.pathfinder.followers.EncoderFollower;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NeutralIdleMode;
 
@@ -32,7 +31,6 @@ public class CompBotDTS {
     private WPI_TalonFX tl, tr, bl, br;
     private Encoder shaftEncoder;
     private DriveTrain.Gear currentGear;
-    private EncoderFollower follower;
 
     public CompBotDTS(MotorIds motors, boolean invert) {
         this.tl = new WPI_TalonFX(motors.tl);
@@ -50,9 +48,6 @@ public class CompBotDTS {
         br.setInverted(invert);
 
         this.shaftEncoder = new Encoder(motors.encA, motors.encB);
-
-        this.follower = new EncoderFollower();
-        follower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
     }
 
     private void setupMotors(WPI_TalonFX... motors) {
@@ -137,10 +132,6 @@ public class CompBotDTS {
                 NeutralIdleMode.COAST.applyTo(bl, br);
                 break;
         }
-    }
-
-    public EncoderFollower getEncoderFollower() {
-        return follower;
     }
 
     public static class MotorIds {

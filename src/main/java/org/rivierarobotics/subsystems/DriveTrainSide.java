@@ -24,14 +24,12 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import jaci.pathfinder.followers.EncoderFollower;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
     private DriveTrain.Gear currentGear;
-    private EncoderFollower follower;
 
     //TODO remove when new drivetrain is implemented
     public DriveTrainSide(MotorIds motors, boolean invert) {
@@ -46,10 +44,6 @@ public class DriveTrainSide {
         masterTalon.setInverted(invert);
         sparkSlaveOne.setInverted(!invert);
         sparkSlaveTwo.setInverted(!invert);
-
-        this.follower = new EncoderFollower();
-        follower.configureEncoder((int) getPositionTicks(), 4096, 0.10414);
-        follower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
     }
 
     public void setPower(double pwr) {
@@ -58,11 +52,11 @@ public class DriveTrainSide {
         sparkSlaveTwo.set(pwr);
     }
 
-    public double getPositionTicks() {
+    public int getPositionTicks() {
         return masterTalon.getSensorCollection().getPulseWidthPosition();
     }
 
-    public double getVelocity() {
+    public int getVelocity() {
         return masterTalon.getSensorCollection().getQuadratureVelocity();
     }
 
@@ -72,10 +66,6 @@ public class DriveTrainSide {
 
     public void setNeutralIdle(NeutralIdleMode mode) {
         mode.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
-    }
-
-    public EncoderFollower getEncoderFollower() {
-        return follower;
     }
 
     public static class MotorIds {

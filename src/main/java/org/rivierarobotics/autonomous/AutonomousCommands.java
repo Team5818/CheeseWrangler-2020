@@ -20,8 +20,6 @@
 
 package org.rivierarobotics.autonomous;
 
-import jaci.pathfinder.Waypoint;
-
 import javax.inject.Inject;
 
 public class AutonomousCommands {
@@ -32,7 +30,7 @@ public class AutonomousCommands {
         this.pathfinderExecutorCreator = pathfinderExecutorCreator;
     }
 
-    public PathfinderExecutor pathfinder(WaypointPath path) {
+    public PathfinderExecutor pathfinder(Pose2dPath path) {
         return pathfinderExecutorCreator.create(path);
     }
 }
