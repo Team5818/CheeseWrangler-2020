@@ -91,6 +91,10 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         ShuffleUtil.setOutEntry(dash, "Setpoint", pidController.getSetpoint());
         ShuffleUtil.setOutEntry(dash, "At Setpoint", pidController.atSetpoint());
         ShuffleUtil.setOutEntry(dash, "Manual Override", pidEnabled);
+        ShuffleUtil.setOutEntry(dash, "kP", kP);
+        ShuffleUtil.setOutEntry(dash, "kI", kI);
+        ShuffleUtil.setOutEntry(dash, "kD", kD);
+        ShuffleUtil.setOutEntry(dash, "Error", pidController.getSetpoint() - Math.abs(getPosition()));
     }
 
     public void resetPidConstants() {
