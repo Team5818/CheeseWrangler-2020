@@ -42,11 +42,10 @@ public class Turret extends BasePIDSubsystem {
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
-        super(0.00075, 0.0080, 0.00000155, 1, 20, 4096.0 / 360);
+        super(new PidConfig(0.00075,0.008,0.00000155,0.05,1,20));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
-
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
@@ -91,7 +90,7 @@ public class Turret extends BasePIDSubsystem {
         if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
             setPositionTicks(position);
         } else {
-            position = position - 4096;
+            position -= 4096;
             if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
                 setPositionTicks(position);
             } else {

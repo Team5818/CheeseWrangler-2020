@@ -36,7 +36,7 @@ public class Hood extends BasePIDSubsystem {
     private double angle;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
-        super(0.001, 0.0001, 0.0, 0.4, 10, 4096 / 360.0);
+        super(new PidConfig(0.001, 0.0001, 0.0, 0.3, 10, 1.0), 4096 / 360.0);
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         limit = new DigitalInput(limitId);
