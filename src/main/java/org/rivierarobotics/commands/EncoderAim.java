@@ -42,7 +42,9 @@ public class EncoderAim extends CommandBase {
     private final PositionTracker tracker;
     private final double extraDistance;
 
-    public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel, @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker, double extraDistance) {
+    public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
+                      @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
+                      double extraDistance) {
         this.hood = hood;
         this.driveTrain = dt;
         this.flywheel = flywheel;

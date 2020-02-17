@@ -26,8 +26,7 @@ public class ShooterUtil {
     }
 
     public static double getTopHeight() {
-        //meters
-        return 1.63; //diff between robot height and top goal
+        return 1.63; //diff between robot height and top goal meters
     }
 
     public static double getDistanceFromOuterToInnerTarget() {
@@ -36,28 +35,23 @@ public class ShooterUtil {
     }
 
     public static double getYVelocityConstant() {
-        //  meters/second
-        return Math.sqrt(getTopHeight() * 2 * 10);
+        return Math.sqrt(getTopHeight() * 2 * 10); //  meters/second
     }
 
     public static double getBallMass() {
-        //KG
-        return 0.14;
+        return 0.14; //KG
     }
 
     public static double getTConstant() {
-        //seconds
-        return getYVelocityConstant() / 9.81;
+        return getYVelocityConstant() / 9.81; //seconds
     }
 
     public static double getMaxFlywheelVelocity() {
-        //encoder value
-        return 350;
+        return 350; //encoder value
     }
 
     public static double getMaxHoodAngle() {
-        //degrees
-        return 42;
+        return 42; //degrees
     }
 
     public static double velocityToTicks(double vel) {

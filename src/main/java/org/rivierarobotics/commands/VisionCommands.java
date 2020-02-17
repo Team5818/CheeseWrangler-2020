@@ -38,7 +38,9 @@ public class VisionCommands {
     public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
                           VisionAimTurretCreator visionAimTurretCreator,
                           LimelightLedSetStateCreator limelightLedSetStateCreator,
-                          VisionAimCreator visionAimCreator, Provider<CorrectPosition> correctPositionProvider, EncoderAimCreator encoderAimCreator) {
+                          VisionAimCreator visionAimCreator,
+                          Provider<CorrectPosition> correctPositionProvider,
+                          EncoderAimCreator encoderAimCreator) {
         this.visionAimHoodCreator = visionAimHoodCreator;
         this.visionAimCreator = visionAimCreator;
         this.visionAimTurretCreator = visionAimTurretCreator;

@@ -51,8 +51,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     private void tickPid() {
         double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
-            SmartDashboard.putNumber(getName() + "pid", pidPower);
-            SmartDashboard.putBoolean(getName() + "pidenabled", pidEnabled);
             setPower(pidPower);
         }
     }
@@ -63,10 +61,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     public double getAnglesOrInchesToTicks() {
         return anglesOrInchesToTicks;
-    }
-
-    public double getTicksToAngles() {
-        return 1 / getAnglesOrInchesToTicks();
     }
 
     public double getPosition() {

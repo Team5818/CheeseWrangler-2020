@@ -77,8 +77,8 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
-        CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
-        CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(90));
+        //CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
+        //CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(90));
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 

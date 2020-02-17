@@ -27,11 +27,9 @@ import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
 public class TurretSetAngle extends BasePIDSetPosition<Turret> {
-
     private static final double zeroTicks = 1383;
     private final Turret turret;
     private double position;
-
 
     public TurretSetAngle(@Provided Turret turret, double angle) {
         super(turret, 0.5, angle);
@@ -43,7 +41,7 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
         position = turret.getPositionTicks() + ((angle - turret.getAbsoluteAngle()) * turret.getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
         if (isInvalidPosition()) {
-            position = position - 4096;
+            position -= 4096;
         }
         super.setPositionTicks(position);
     }
@@ -53,7 +51,8 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     }
 
     private boolean isInvalidPosition() {
-        return position >= zeroTicks + turret.getMaxAngleInTicks() || position <= zeroTicks - turret.getMaxAngleInTicks();
+        return (position >= zeroTicks + turret.getMaxAngleInTicks()
+                || position <= zeroTicks - turret.getMaxAngleInTicks());
     }
 
     @Override
