@@ -42,7 +42,7 @@ public class Turret extends BasePIDSubsystem {
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
-        super(new PidConfig(0.00075, 0.008, 0.00000155, 0.05, 1, 20));
+        super(new PIDConfig(0.00075, 0.008, 0.00000155, 0.05, 1, 20));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -101,14 +101,6 @@ public class Turret extends BasePIDSubsystem {
 
     public double getMaxAngleInTicks() {
         return maxAngle * getAnglesOrInchesToTicks();
-    }
-
-    public boolean readyToShoot() {
-        if (Math.abs(getAbsoluteAngle() - angle) <= 0.5) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override

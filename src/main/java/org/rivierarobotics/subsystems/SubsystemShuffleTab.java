@@ -18,24 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-public class ShuffleUtil {
-    private ShuffleUtil() {
+import java.util.HashMap;
+import java.util.Map;
+
+public class SubsystemShuffleTab {
+    private Map<String, NetworkTableEntry> entryMap;
+    private ShuffleboardTab tab;
+
+    public SubsystemShuffleTab(String name) {
+        this.tab = Shuffleboard.getTab(name);
+        this.entryMap = new HashMap<>();
     }
 
-    public static void setOutEntry(ShuffleboardTab tab, String key, double value) {
-        addEntry(tab, key).setDouble(value);
+    public void setEntry(String key, Object value) {
+        NetworkTableEntry entry = entryMap.get(key);
+        if (entry == null) {
+            entry = addEntry(key);
+        }
+        assert entry != null;
+        entry.setValue(value);
     }
 
-    public static void setOutEntry(ShuffleboardTab tab, String key, boolean value) {
-        addEntry(tab, key).setBoolean(value);
-    }
-
-    private static NetworkTableEntry addEntry(ShuffleboardTab tab, String key) {
-        return tab.add(key, 0).getEntry();
+    public NetworkTableEntry addEntry(String key) {
+        NetworkTableEntry entry = tab.add(key, 0).getEntry();
+        entryMap.put(key, entry);
+        return entry;
     }
 }

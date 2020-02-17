@@ -30,20 +30,12 @@ public class Flywheel extends BasePIDSubsystem {
 
     public Flywheel(int id) {
         //TODO ryan help
-        super(new PidConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
+        super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
         flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setInverted(true);
         flywheelTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         flywheelTalon.setNeutralMode(NeutralMode.Coast);
-    }
-
-    public boolean readyToShoot() {
-        if (Math.abs(getPositionTicks() - position) <= 5) {
-            return true;
-        } else {
-            return false;
-        }
     }
 
     @Override

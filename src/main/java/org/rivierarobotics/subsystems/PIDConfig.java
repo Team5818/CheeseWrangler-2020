@@ -20,15 +20,10 @@
 
 package org.rivierarobotics.subsystems;
 
-public class PidConfig {
-    private final double kP;
-    private final double kI;
-    private final double kD;
-    private final double kF;
-    private final double tolerance;
-    private final double pidRange;
+public class PIDConfig {
+    private final double kP, kI, kD, kF, tolerance, pidRange;
 
-    public PidConfig(double kP, double kI, double kD, double kF, double tolerance, double pidRange) {
+    public PIDConfig(double kP, double kI, double kD, double kF, double tolerance, double pidRange) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
@@ -37,7 +32,7 @@ public class PidConfig {
         this.pidRange = pidRange;
     }
 
-    public PidConfig(double kP, double kI, double kD, double pidRange) {
+    public PIDConfig(double kP, double kI, double kD, double pidRange) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
@@ -46,19 +41,19 @@ public class PidConfig {
         this.pidRange = pidRange;
     }
 
-    public double getKP() {
+    public double getP() {
         return kP;
     }
 
-    public double getKI() {
+    public double getI() {
         return kI;
     }
 
-    public double getKD() {
+    public double getD() {
         return kD;
     }
 
-    public double getKF() {
+    public double getF() {
         return kF;
     }
 
@@ -66,10 +61,7 @@ public class PidConfig {
         return tolerance;
     }
 
-    public double getPidRange() {
+    public double getRange() {
         return pidRange;
     }
-
-
-
 }

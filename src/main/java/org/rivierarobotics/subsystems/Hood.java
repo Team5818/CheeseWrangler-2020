@@ -36,7 +36,7 @@ public class Hood extends BasePIDSubsystem {
     private double angle;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
-        super(new PidConfig(0.001, 0.0001, 0.0, 0.3, 10, 1.0), 4096 / 360.0);
+        super(new PIDConfig(0.001, 0.0001, 0.0, 0.3, 10, 1.0), 4096 / 360.0);
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         limit = new DigitalInput(limitId);
@@ -45,8 +45,12 @@ public class Hood extends BasePIDSubsystem {
         hoodTalon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public WPI_TalonSRX getHoodTalon() {
+    public final WPI_TalonSRX getHoodTalon() {
         return hoodTalon;
+    }
+
+    public final DigitalInput getLimit() {
+        return limit;
     }
 
     @Override
@@ -70,18 +74,11 @@ public class Hood extends BasePIDSubsystem {
         super.setManualPower(pwr);
     }
 
-    public boolean readyToShoot() {
-        if (Math.abs(getAbsolutePosition() - angle) < 1) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public double getAbsolutePosition() {
         return (zeroTicks - getPositionTicks()) / 5 * 360 / 4096;
     }
 
+    //TODO attempt to eliminate field "angle" as it appears to not be needed
     public void setAbsolutePosition(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
         this.angle = angle;
@@ -97,10 +94,5 @@ public class Hood extends BasePIDSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
-    }
-
-    public boolean isAtEnd() {
-        // switch is false when triggered
-        return !limit.get();
     }
 }

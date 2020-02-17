@@ -27,7 +27,7 @@ public class Climb extends BasePIDSubsystem {
     private final WPI_TalonSRX climbTalon;
 
     public Climb(int id) {
-        super(new PidConfig(0, 0, 0, 1));
+        super(new PIDConfig(0, 0, 0, 1));
         this.climbTalon = new WPI_TalonSRX(id);
         climbTalon.configFactoryDefault();
         climbTalon.setSensorPhase(true);

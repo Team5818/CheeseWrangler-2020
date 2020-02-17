@@ -36,7 +36,7 @@ public class CheeseWheel extends BasePIDSubsystem {
     public Mode mode = Mode.COLLECT_FRONT, lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
-        super(new PidConfig(0, 0, 0, 1));
+        super(new PIDConfig(0, 0, 0, 1));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.intakeSensor = new DigitalInput(sensorOne);
         this.outputSensor = new DigitalInput(sensorTwo);
