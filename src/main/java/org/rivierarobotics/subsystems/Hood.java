@@ -36,7 +36,7 @@ public class Hood extends BasePIDSubsystem {
     private double angle;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
-        super(0.001, 0.0001, 0.0, 0.4);
+        super(0.001, 0.0001, 0.0, 0.4, 10, 4096 / 360.0);
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         limit = new DigitalInput(limitId);
@@ -85,7 +85,7 @@ public class Hood extends BasePIDSubsystem {
     public void setAbsolutePosition(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
         this.angle = angle;
-        if (angle >= -20 && angle <= 40) {
+        if (angle >= -20 && angle <= 42) {
             SmartDashboard.putNumber("Hood SetTicks", zeroTicks + angle * getAnglesOrInchesToTicks() * -5);
             setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
         }

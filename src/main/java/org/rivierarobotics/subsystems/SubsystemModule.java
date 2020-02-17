@@ -48,7 +48,7 @@ public class SubsystemModule {
     private static final int HOOD_LIMIT_SWITCH = 0;
     private static final int INDEX_SENSOR_INTAKE = 9;
     private static final int INDEX_SENSOR_OUTPUT = 10;
-    private static final int LIMELIGHT_SERVO = 0;
+    private static final int LIMELIGHT_SERVO = 1;
 
     private static final DriveTrainSide.MotorIds
             DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),

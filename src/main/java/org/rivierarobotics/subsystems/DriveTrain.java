@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
@@ -48,17 +49,18 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public double getAvgVelocity() {
-        return (left.getVelocity() + right.getVelocity()) / 2;
+        return (left.getVelocity() - right.getVelocity()) / 2;
     }
 
     public double getXVelocity() {
         double tickV = (getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 4096.0) * wheelCircumference);
+        return (10 * tickV * (1 / 2400.0) * wheelCircumference);
     }
 
     public double getYVelocity() {
         double tickV = (getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 4096.0) * wheelCircumference);
+        SmartDashboard.putNumber("YVELOCITY", 10 * tickV * (1 / 600.0) * wheelCircumference);
+        return (10 * tickV * (1 / 2400.0) * wheelCircumference);
     }
 
     public void setGear(Gear gear) {

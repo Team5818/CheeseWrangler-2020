@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
@@ -51,18 +52,20 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.vision().autoAimHood(0, 0.69));
+                .whenPressed(cmds.turret().setAngle(0));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.vision().autoAimTurret(0, 0.69));
+                .whenPressed(cmds.turret().setAngle(90));
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.TOP));
+                .whenPressed(cmds.vision().encoderAim(0));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
+                .whenPressed(cmds.vision().correctPosition());
+        new JoystickButton(coDriverButtons, 12)
+                .whenPressed(cmds.turret().setAngle(90));
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.hood().alignQuadrature());
 /*
-        // Competition Robot Button Map
         new JoystickButton(driverLeft, 1)
+        // Competition Robot Button Map
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
         new JoystickButton(driverLeft, 2)
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));

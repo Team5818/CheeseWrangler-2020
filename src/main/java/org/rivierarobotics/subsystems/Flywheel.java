@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
@@ -29,10 +30,11 @@ public class Flywheel extends BasePIDSubsystem {
 
     public Flywheel(int id) {
         //TODO ryan help
-        super(0.00075, 0.075, 0.0, 1.0);
+        super(0.00075, 0.075, 0.0, 1.0, 10, 600.0 / 360);
         flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setInverted(true);
+        flywheelTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         flywheelTalon.setNeutralMode(NeutralMode.Coast);
     }
 
