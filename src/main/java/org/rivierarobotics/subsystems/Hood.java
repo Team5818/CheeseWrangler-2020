@@ -36,11 +36,7 @@ public class Hood extends BasePIDSubsystem {
     private double angle;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
-<<<<<<< HEAD
         super(new PIDConfig(0.001, 0.0001, 0.0, 0.3, 10, 1.0), 4096 / 360.0);
-=======
-        super(new PidConfig(0.001, 0.000001, 0.0, 0.03, 10, 0.6), 4096 / 360.0);
->>>>>>> Captain Kalbag Command ready for testing in new CalcAim command, also encoder aim working much better
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         limit = new DigitalInput(limitId);

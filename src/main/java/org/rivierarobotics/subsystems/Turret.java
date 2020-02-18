@@ -42,11 +42,7 @@ public class Turret extends BasePIDSubsystem {
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
-<<<<<<< HEAD
-        super(new PIDConfig(0.00075, 0.008, 0.00000155, 0.05, 1, 20));
-=======
-        super(new PidConfig(0.0008, 0.0000015, 0.00000, 0.035, 15, 1.0));
->>>>>>> Captain Kalbag Command ready for testing in new CalcAim command, also encoder aim working much better
+        super(new PIDConfig(0.0008, 0.0000015, 0.00000, 0.035, 15, 1.0));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -71,7 +67,7 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        if(mode == AimMode.MOVING) {
+        if (mode == AimMode.MOVING) {
             return turretTalon.getSensorCollection().getPulseWidthVelocity();
         } else {
             return turretTalon.getSensorCollection().getPulseWidthPosition();

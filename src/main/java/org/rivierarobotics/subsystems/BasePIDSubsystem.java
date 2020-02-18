@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
@@ -44,37 +45,25 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     private void tickPid() {
-<<<<<<< HEAD
         double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
-        if (pidEnabled) {
-            if (pidPower == 0) {
-                setPower(pidPower);
-            } else {
-                setPower(pidPower + pidConfig.getF());
-            }
-        }
-=======
-        double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
             if (pidEnabled) {
-                if(pidController.atSetpoint())
-                {
+                if (pidController.atSetpoint()) {
                     return;
                 }
                 SmartDashboard.putNumber("InitPID", pidPower);
-                if (Math.abs(pidPower) < kF && pidPower != 0) {
+                if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0) {
                     if (pidPower < 0) {
-                        SmartDashboard.putNumber("pid1", - kF);
-                        setPower(-kF);
+                        SmartDashboard.putNumber("pid1", - pidConfig.getF());
+                        setPower(-pidConfig.getF());
                     } else if (pidPower > 0) {
-                        SmartDashboard.putNumber("pid2", kF);
-                        setPower(kF);
+                        SmartDashboard.putNumber("pid2", pidConfig.getF());
+                        setPower(pidConfig.getF());
                     }
                 } else {
                     SmartDashboard.putNumber("pid3", pidPower);
                     setPower(pidPower);
                 }
             }
->>>>>>> Captain Kalbag Command ready for testing in new CalcAim command, also encoder aim working much better
     }
 
     public final PIDController getPidController() {
@@ -111,10 +100,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     protected abstract void setPower(double pwr);
-
-    public PidConfig getPidConfig() {
-        return pidConfig;
-    }
 
     private void displayShuffleboard() {
         shuffleTab.setEntry("Position", getPosition());

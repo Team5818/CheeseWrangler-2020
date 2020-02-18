@@ -115,7 +115,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
         SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
         SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
-        SmartDashboard.putNumber("TurretAbsAngle",tt.getAbsoluteAngle());
+        SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
 
 
     }
