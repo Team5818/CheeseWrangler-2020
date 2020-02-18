@@ -21,18 +21,21 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import jaci.pathfinder.followers.EncoderFollower;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     //TODO change values of threshold to realistic values
-    private final double lowHybridThreshold = 100, highHybridThreshold = 200;
+    private final double lowBoundLow = 5000 / 2.0, highBoundLow = 6000 / 2.0,
+            lowBoundHigh = lowBoundLow / 2.5, highBoundHigh = (highBoundLow / 2.5);
+    private final boolean invert;
     private WPI_TalonFX tl, tr, bl, br;
     private Encoder shaftEncoder;
     private DriveTrain.Gear currentGear;
-    private DriveTrain.HybridGear lastHybridGear;
     private EncoderFollower follower;
 
     public DriveTrainSide(MotorIds motors, boolean invert) {
@@ -40,15 +43,11 @@ public class DriveTrainSide {
         this.tr = new WPI_TalonFX(motors.tr);
         this.bl = new WPI_TalonFX(motors.bl);
         this.br = new WPI_TalonFX(motors.br);
-        this.currentGear = DriveTrain.Gear.LOW;
+        this.currentGear = DriveTrain.Gear.HYBRID;
+        this.invert = invert;
 
         setupMotors(tl, tr, bl, br);
         NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
-        //TODO determine inversion states of different motors
-        tl.setInverted(invert);
-        tr.setInverted(invert);
-        bl.setInverted(invert);
-        br.setInverted(invert);
 
         this.shaftEncoder = new Encoder(motors.encA, motors.encB);
 
@@ -59,24 +58,14 @@ public class DriveTrainSide {
     private void setupMotors(WPI_TalonFX... motors) {
         for (WPI_TalonFX motor : motors) {
             motor.configFactoryDefault();
-            //TODO add more motor configuration
+            motor.setInverted(invert);
         }
     }
 
-    //TODO check the math on this
-    public void setPower(double pwr) {
-        double vel = getVelocity();
+    public void setPower(double pwr, double highRPM, double lowRPM) {
         switch (currentGear) {
             case HYBRID:
-                if (vel < lowHybridThreshold) {
-                    setLowHybridPower(pwr);
-                } else if (vel < highHybridThreshold) {
-                    double pwrHigh = MathUtil.limit(((highHybridThreshold - vel) / 100) * pwr, 1.0);
-                    double pwrLow = MathUtil.limit(((vel - lowHybridThreshold) / 100) * pwr, 1.0);
-                    setNormalHybridPower(pwrLow, pwrHigh);
-                } else {
-                    setHighHybridPower(pwr);
-                }
+                hybridSetPower(pwr, highRPM, lowRPM);
                 break;
             case LOW:
                 bl.set(pwr);
@@ -89,38 +78,27 @@ public class DriveTrainSide {
         }
     }
 
-    private void setHighHybridPower(double pwr) {
-        if (lastHybridGear != DriveTrain.HybridGear.HIGH) {
-            NeutralIdleMode.BRAKE.applyTo(tl, tr);
-            NeutralIdleMode.COAST.applyTo(bl, br);
+    private void hybridSetPower(double pwr, double highRPM, double lowRPM) {
+        if (pwr > 0.95) {
+            pwr = 1.0;
+        } else if (pwr < -0.95) {
+            pwr = -1.0;
         }
-        lastHybridGear = DriveTrain.HybridGear.HIGH;
-
-        tl.set(pwr);
-        tr.set(pwr);
-    }
-
-    private void setLowHybridPower(double pwr) {
-        if (lastHybridGear != DriveTrain.HybridGear.LOW) {
-            NeutralIdleMode.BRAKE.applyTo(bl, br);
-            NeutralIdleMode.COAST.applyTo(tl, tr);
+        double highPower = 0;
+        if ((highRPM > lowBoundHigh && highRPM < highBoundHigh)) {
+            highPower = ((highBoundHigh - highRPM) / (highBoundHigh - lowBoundHigh)) * pwr;
+        } else if (highRPM > highBoundHigh) {
+            highPower = pwr;
         }
-        lastHybridGear = DriveTrain.HybridGear.LOW;
+        tl.set(highPower);
+        tr.set(highPower);
 
-        bl.set(pwr);
-        br.set(pwr);
-    }
-
-    private void setNormalHybridPower(double pwrLow, double pwrHigh) {
-        if (lastHybridGear != DriveTrain.HybridGear.NORMAL) {
-            NeutralIdleMode.BRAKE.applyTo(bl, br, tl, tr);
+        double lowPower = 0;
+        if (lowRPM < lowBoundLow) {
+            lowPower = pwr;
         }
-        lastHybridGear = DriveTrain.HybridGear.NORMAL;
-
-        bl.set(pwrLow);
-        br.set(pwrLow);
-        tl.set(pwrHigh);
-        tl.set(pwrHigh);
+        bl.set(lowPower);
+        br.set(lowPower);
     }
 
     public double getPositionTicks() {
@@ -137,33 +115,20 @@ public class DriveTrainSide {
         return shaftEncoder.getRate();
     }
 
-    public double getMotorPositionAverage() {
-        return (tl.getSensorCollection().getIntegratedSensorPosition() +
-                tr.getSensorCollection().getIntegratedSensorPosition() +
-                bl.getSensorCollection().getIntegratedSensorPosition() +
-                br.getSensorCollection().getIntegratedSensorPosition()) / 4;
+    public double getMotorRPM(WPI_TalonFX motor) {
+        return motor.getSensorCollection().getIntegratedSensorVelocity() * (600.0 / 2048);
     }
 
-    public double getMotorVelocityAverage() {
-        return (tl.getSensorCollection().getIntegratedSensorVelocity() +
-                tr.getSensorCollection().getIntegratedSensorVelocity() +
-                bl.getSensorCollection().getIntegratedSensorVelocity() +
-                br.getSensorCollection().getIntegratedSensorVelocity()) / 4;
+    public double getRPMHigh() {
+        return Math.abs(getMotorRPM(tl));
+    }
+
+    public double getRPMLow() {
+        return Math.abs(getMotorRPM(bl));
     }
 
     public void setGear(DriveTrain.Gear gear) {
         this.currentGear = gear;
-        NeutralIdleMode.COAST.applyTo(tl, tr, br, bl);
-        /*switch (gear) {
-            case LOW:
-                NeutralIdleMode.BRAKE.applyTo(bl, br);
-                NeutralIdleMode.COAST.applyTo(tl, tr);
-                break;
-            case HIGH:
-                NeutralIdleMode.BRAKE.applyTo(tl, tr);
-                NeutralIdleMode.COAST.applyTo(bl, br);
-                break;
-        }*/
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {

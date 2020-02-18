@@ -21,16 +21,14 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.util.ShuffleUtil;
+import org.rivierarobotics.util.SubsystemShuffleTab;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
     private final double pidRange, anglesOrInchesToTicks, kP, kI, kD;
     private final PIDController pidController;
     private boolean pidEnabled = false;
-    private ShuffleboardTab dash;
+    private SubsystemShuffleTab shuffTab;
 
     public BasePIDSubsystem(double kP, double kI, double kD, double pidRange) {
         this(kP, kI, kD, pidRange, 0.0, 4096.0 / 360);
@@ -40,8 +38,8 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this.pidController = new PIDController(kP, kI, kD, 0.005);
         this.pidRange = pidRange;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
+        this.shuffTab = new SubsystemShuffleTab(getName());
         pidController.setTolerance(tolerance);
-        this.dash = Shuffleboard.getTab(getName());
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
@@ -86,11 +84,11 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     protected abstract void setPower(double pwr);
 
     private void displayShuffleboard() {
-        ShuffleUtil.setOutEntry(dash, "Position", getPosition());
-        ShuffleUtil.setOutEntry(dash, "Position Ticks", getPositionTicks());
-        ShuffleUtil.setOutEntry(dash, "Setpoint", pidController.getSetpoint());
-        ShuffleUtil.setOutEntry(dash, "At Setpoint", pidController.atSetpoint());
-        ShuffleUtil.setOutEntry(dash, "Manual Override", pidEnabled);
+        shuffTab.setEntry("Position", getPosition());
+        shuffTab.setEntry("Position Ticks", getPositionTicks());
+        shuffTab.setEntry("Setpoint", pidController.getSetpoint());
+        shuffTab.setEntry("At Setpoint", pidController.atSetpoint());
+        shuffTab.setEntry("PID Enabled", pidEnabled);
     }
 
     public void resetPidConstants() {
@@ -102,6 +100,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         tickPid();
-//        displayShuffleboard();
+        displayShuffleboard();
     }
 }

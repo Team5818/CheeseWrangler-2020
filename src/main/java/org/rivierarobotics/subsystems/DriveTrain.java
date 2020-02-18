@@ -43,8 +43,10 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setPower(double l, double r) {
-        left.setPower(l);
-        right.setPower(r);
+        double rpmHighAvg = (left.getRPMHigh() + right.getRPMHigh()) / 2;
+        double rpmLowAvg = (left.getRPMLow() + right.getRPMLow()) / 2;
+        left.setPower(l, rpmHighAvg, rpmLowAvg);
+        right.setPower(r, rpmHighAvg, rpmLowAvg);
     }
 
     public double getAvgVelocity() {
@@ -80,9 +82,5 @@ public class DriveTrain extends SubsystemBase {
 
     public enum Gear {
         LOW, HIGH, HYBRID
-    }
-
-    public enum HybridGear {
-        LOW, NORMAL, HIGH;
     }
 }
