@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
@@ -76,6 +77,10 @@ public class DriveTrain extends SubsystemBase {
 
     public NavXGyro getGyro() {
         return gyro;
+    }
+
+    public Pose2d getAvgPos(){
+        return
     }
 
     public enum Gear {
