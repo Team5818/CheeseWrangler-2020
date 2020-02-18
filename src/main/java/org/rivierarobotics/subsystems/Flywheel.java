@@ -30,7 +30,11 @@ public class Flywheel extends BasePIDSubsystem {
 
     public Flywheel(int id) {
         //TODO ryan help
+<<<<<<< HEAD
         super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
+=======
+        super(new PidConfig(0.00075, 0.075, 0.0, 1.0), 600.0 / 360);
+>>>>>>> Captain Kalbag Command ready for testing in new CalcAim command, also encoder aim working much better
         flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
         flywheelTalon.setInverted(true);

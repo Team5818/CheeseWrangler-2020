@@ -70,7 +70,6 @@ public class VisionAimHood extends CommandBase {
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle + 3);
 
-        if (flywheel.getPidController().atSetpoint()) {
         if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity() && vision.getLLValue("tv") == 1) {
             hood.setAbsolutePosition(hoodAngle + 3);
             flywheel.setPositionTicks(encoderVelocity + 10);
@@ -86,7 +85,7 @@ public class VisionAimHood extends CommandBase {
             }
         }
 
-        }
+
     }
 
     @Override

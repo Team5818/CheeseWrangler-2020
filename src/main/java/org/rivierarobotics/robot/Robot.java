@@ -77,8 +77,7 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
-        //CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
-        //CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(90));
+        CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(90));
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 
@@ -106,7 +105,7 @@ public class Robot extends TimedRobot {
         Flywheel fly = globalComponent.getFlywheel();
         DriveTrainSide left = globalComponent.getDriveTrain().getLeft();
         Servo servo = globalComponent.getLimelightServo().getServo();
-        /*
+
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
@@ -115,8 +114,9 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
         SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
+        SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
         SmartDashboard.putNumber("TurretAbsAngle",tt.getAbsoluteAngle());
-        */
+
 
     }
 }

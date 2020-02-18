@@ -44,6 +44,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     private void tickPid() {
+<<<<<<< HEAD
         double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
             if (pidPower == 0) {
@@ -52,6 +53,28 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
                 setPower(pidPower + pidConfig.getF());
             }
         }
+=======
+        double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
+            if (pidEnabled) {
+                if(pidController.atSetpoint())
+                {
+                    return;
+                }
+                SmartDashboard.putNumber("InitPID", pidPower);
+                if (Math.abs(pidPower) < kF && pidPower != 0) {
+                    if (pidPower < 0) {
+                        SmartDashboard.putNumber("pid1", - kF);
+                        setPower(-kF);
+                    } else if (pidPower > 0) {
+                        SmartDashboard.putNumber("pid2", kF);
+                        setPower(kF);
+                    }
+                } else {
+                    SmartDashboard.putNumber("pid3", pidPower);
+                    setPower(pidPower);
+                }
+            }
+>>>>>>> Captain Kalbag Command ready for testing in new CalcAim command, also encoder aim working much better
     }
 
     public final PIDController getPidController() {
@@ -88,6 +111,10 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     protected abstract void setPower(double pwr);
+
+    public PidConfig getPidConfig() {
+        return pidConfig;
+    }
 
     private void displayShuffleboard() {
         shuffleTab.setEntry("Position", getPosition());

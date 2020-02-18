@@ -61,7 +61,8 @@ public class VisionAimTurret extends CommandBase {
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
         double tv = vision.getLLValue("tv");
-        if (tv == 1 && turret.getPidController().atSetpoint()) {
+
+        if (tv == 1){
             turret.setAbsolutePosition(turretAngle);
         }
     }

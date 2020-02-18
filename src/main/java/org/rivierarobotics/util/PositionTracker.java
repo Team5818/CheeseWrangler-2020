@@ -64,7 +64,6 @@ public class PositionTracker {
         double fieldLength = ShooterUtil.getFieldLength();
         double fieldWidthLeftWallToGoal = ShooterUtil.getLeftFieldToGoal();
         double dist = ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty")));
-        SmartDashboard.putNumber("dist", dist);
         double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
         if (txTurret >= 0) {
             pos[0] = fieldWidthLeftWallToGoal - dist * Math.sin(txTurret);
