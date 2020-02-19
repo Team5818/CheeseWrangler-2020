@@ -23,14 +23,14 @@ package org.rivierarobotics.autonomous;
 import javax.inject.Inject;
 
 public class AutonomousCommands {
-    private PathfinderExecutorCreator pathfinderExecutorCreator;
+    private PathweaverExecutorCreator pathweaverExecutorCreator;
 
     @Inject
-    public AutonomousCommands(PathfinderExecutorCreator pathfinderExecutorCreator) {
-        this.pathfinderExecutorCreator = pathfinderExecutorCreator;
+    public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator) {
+        this.pathweaverExecutorCreator = pathweaverExecutorCreator;
     }
 
-    public PathfinderExecutor pathfinder(Pose2dPath path) {
-        return pathfinderExecutorCreator.create(path);
+    public PathweaverExecutor pathweaver(Pose2dPath path) {
+        return pathweaverExecutorCreator.create(path);
     }
 }

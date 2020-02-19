@@ -24,6 +24,8 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -34,21 +36,15 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
-public class PathfinderExecutor extends CommandBase {
-
-    private static Trajectory generateTrajectory(Pose2dPath path) {
-        var configuration = new TrajectoryConfig(1.7, 2.0);
-        return TrajectoryGenerator.generateTrajectory(path.pointMap, configuration);
-    }
-
+public class PathweaverExecutor extends CommandBase {
     private final DriveTrain driveTrain;
     private final NavXGyro gyro;
     private final RamseteController controller;
     private final Trajectory trajectory;
-    private double startTimestamp;
     private Translation2d startingPoint;
+    private double startTimestamp;
 
-    public PathfinderExecutor(@Provided DriveTrain driveTrain, Pose2dPath path) {
+    public PathweaverExecutor(@Provided DriveTrain driveTrain, Pose2dPath path) {
         this.driveTrain = driveTrain;
         this.gyro = driveTrain.getGyro();
         this.controller = new RamseteController();
@@ -57,21 +53,27 @@ public class PathfinderExecutor extends CommandBase {
         addRequirements(driveTrain);
     }
 
+    private static Trajectory generateTrajectory(Pose2dPath path) {
+        var configuration = new TrajectoryConfig(1.7, 2.0);
+        return TrajectoryGenerator.generateTrajectory(path.pointMap, configuration);
+    }
+
     @Override
     public void initialize() {
         startTimestamp = Timer.getFPGATimestamp();
         startingPoint = new Translation2d(
-            driveTrain.getLeft().getPositionTicks(),
-            driveTrain.getRight().getPositionTicks()
+            driveTrain.getLeft().getPosition(),
+            driveTrain.getRight().getPosition()
         );
     }
 
     @Override
     public void execute() {
-        var current = new Pose2d();
-        var goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
-        var adjustedSpeeds = controller.calculate(current, goal);
-        // TODO finish out
+        Pose2d current = driveTrain.getPose();
+        Trajectory.State goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
+        ChassisSpeeds adjustedSpeeds = controller.calculate(current, goal);
+        DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.getKinematics().toWheelSpeeds(adjustedSpeeds);
+        driveTrain.setVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
     }
 
     @Override

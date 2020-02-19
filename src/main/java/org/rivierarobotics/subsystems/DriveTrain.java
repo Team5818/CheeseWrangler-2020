@@ -21,6 +21,9 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
@@ -31,7 +34,9 @@ import javax.inject.Inject;
 public class DriveTrain extends SubsystemBase {
     private final DriveTrainSide left, right;
     private final NavXGyro gyro;
-    private final double wheelCircumference = 0.32; // meters
+    private final double wheelCircumference = 0.32, trackwidth = 0.7366; // meters
+    private final DifferentialDriveKinematics kinematics;
+    private final DifferentialDriveOdometry odometry;
 
     @Inject
     public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
@@ -40,6 +45,8 @@ public class DriveTrain extends SubsystemBase {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
+        this.kinematics = new DifferentialDriveKinematics(trackwidth);
+        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }
 
@@ -49,7 +56,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public double getAvgVelocity() {
-        return (left.getVelocity() + right.getVelocity()) / 2;
+        return (left.getVelocity() + right.getVelocity()) / 2.0;
     }
 
     public double getXVelocity() {
@@ -79,8 +86,27 @@ public class DriveTrain extends SubsystemBase {
         return gyro;
     }
 
-    public Pose2d getAvgPos(){
-        return
+    public void setVelocity(double l, double r) {
+        left.setVelocity(l);
+        right.setVelocity(r);
+    }
+
+    public DifferentialDriveKinematics getKinematics() {
+        return kinematics;
+    }
+
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    @Override
+    public void periodic() {
+        left.setPidPower();
+        right.setPidPower();
+        odometry.update(
+                Rotation2d.fromDegrees(gyro.getYaw()),
+                left.getPosition(),
+                right.getPosition());
     }
 
     public enum Gear {

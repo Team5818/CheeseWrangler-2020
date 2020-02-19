@@ -24,18 +24,24 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
     private DriveTrain.Gear currentGear;
+    private PIDController pidController;
+    private boolean pidEnabled = false;
+    //TODO find actual ticks to inches
+    private final double ticksToMeters = 1 / 1;
 
     //TODO remove when new drivetrain is implemented
     public DriveTrainSide(MotorIds motors, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
         this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.pidController = new PIDController(0.002, 0.0, 0.0, 0.005);
 
         masterTalon.configFactoryDefault();
         masterTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
@@ -47,12 +53,13 @@ public class DriveTrainSide {
     }
 
     public void setPower(double pwr) {
+        pidEnabled = false;
         masterTalon.set(pwr);
         sparkSlaveOne.set(pwr);
         sparkSlaveTwo.set(pwr);
     }
 
-    public int getPositionTicks() {
+    public double getPositionTicks() {
         return masterTalon.getSensorCollection().getPulseWidthPosition();
     }
 
@@ -66,6 +73,24 @@ public class DriveTrainSide {
 
     public void setNeutralIdle(NeutralIdleMode mode) {
         mode.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
+    }
+
+    public void setVelocity(double vel) {
+        pidEnabled = true;
+        pidController.setSetpoint(vel);
+    }
+
+    public void setPidPower() {
+        if (pidEnabled) {
+            double power = pidController.calculate(getVelocity());
+            masterTalon.set(power);
+            sparkSlaveOne.set(power);
+            sparkSlaveTwo.set(power);
+        }
+    }
+
+    public double getPosition() {
+        return getPositionTicks() / ticksToMeters;
     }
 
     public static class MotorIds {
