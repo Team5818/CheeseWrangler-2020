@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -42,7 +43,7 @@ public class Turret extends BasePIDSubsystem {
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
-        super(new PIDConfig(0.0008, 0.0, 0.00000, 0.04, 15, 1.0));
+        super(new PIDConfig(0.001, 0.0, 0.00000, 0.0, 15, 1.0));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -70,6 +71,7 @@ public class Turret extends BasePIDSubsystem {
         if (mode == AimMode.MOVING) {
             return turretTalon.getSensorCollection().getPulseWidthVelocity();
         } else {
+
             return turretTalon.getSensorCollection().getPulseWidthPosition();
         }
 
@@ -77,7 +79,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + gyro.getYaw());
+        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + MathUtil.wrapToCircle(gyro.getYaw()));
     }
 
     public double getAngle() {

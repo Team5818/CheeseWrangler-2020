@@ -51,16 +51,13 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
                     return;
                 }
                 SmartDashboard.putNumber("InitPID", pidPower);
-                if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0) {
+                if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0 && pidConfig.getF() != 0) {
                     if (pidPower < 0) {
-                        SmartDashboard.putNumber("pid1", - pidConfig.getF());
                         setPower(-pidConfig.getF());
                     } else if (pidPower > 0) {
-                        SmartDashboard.putNumber("pid2", pidConfig.getF());
                         setPower(pidConfig.getF());
                     }
                 } else {
-                    SmartDashboard.putNumber("pid3", pidPower);
                     setPower(pidPower);
                 }
             }

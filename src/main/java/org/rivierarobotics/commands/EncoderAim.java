@@ -76,6 +76,13 @@ public class EncoderAim extends CommandBase {
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
         turret.changeAimMode(Turret.AimMode.STILL);
+
+        if(Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
+            turret.getPidController().setP(0.004);
+        } else {
+            turret.getPidController().setP(0.001);
+        }
+
         turret.setAbsolutePosition(turretAngle);
 
         if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity()) {

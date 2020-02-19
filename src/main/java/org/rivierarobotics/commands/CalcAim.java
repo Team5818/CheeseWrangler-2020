@@ -24,10 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.Flywheel;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -71,17 +68,18 @@ public class CalcAim extends CommandBase {
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
-        double captainKalbag = captainKalbag(xFromGoal, zFromGoal);
+        double captainKalbag = Math.toDegrees(captainKalbag(xFromGoal, zFromGoal));
 
         SmartDashboard.putNumber("changeInAngle", captainKalbag);
-        SmartDashboard.putNumber("changeInAngleDegrees", Math.toDegrees(captainKalbag));
         SmartDashboard.putNumber("BallVel", ballVel);
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
 
-        if (driveTrain.getAvgVelocity() > 60) {
+
+        if (Math.abs(driveTrain.getAvgVelocity()) > 20) {
+            SmartDashboard.putNumber("turretvel",captainKalbag * turret.getAnglesOrInchesToTicks() / 10);
             turret.changeAimMode(Turret.AimMode.MOVING);
-            turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10);
+            turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10 + 5);
         } else {
             turret.changeAimMode(Turret.AimMode.STILL);
             turret.setAbsolutePosition(turretAngle);
@@ -102,7 +100,7 @@ public class CalcAim extends CommandBase {
         }
     }
 
-    public double captainKalbag(double xFromGoal, double zFromGoal) {
+    private double captainKalbag(double xFromGoal, double zFromGoal) {
         double epicTime = 0.1;
         double xDist = xFromGoal - driveTrain.getYVelocity() * epicTime;
         double zDist = zFromGoal - driveTrain.getXVelocity() * epicTime;

@@ -23,6 +23,7 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.PIDConfig;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
@@ -32,13 +33,23 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     private double position;
 
     public TurretSetAngle(@Provided Turret turret, double angle) {
-        super(turret, 0.05, angle);
+        super(turret, 1, angle);
         this.turret = turret;
     }
 
     @Override
     protected void setPositionTicks(double angle) {
+        turret.changeAimMode(Turret.AimMode.STILL);
         position = turret.getPositionTicks() + ((angle - turret.getAbsoluteAngle()) * turret.getAnglesOrInchesToTicks());
+        if(Math.abs(position - turret.getPositionTicks()) < 3 * turret.getAnglesOrInchesToTicks()) {
+            turret.getPidController().setP(0.002);
+        } else {
+            turret.getPidController().setP(0.001);
+        }
+
+
+
+
         SmartDashboard.putNumber("turretset", position);
         if (isInvalidPosition()) {
             position -= 4096;

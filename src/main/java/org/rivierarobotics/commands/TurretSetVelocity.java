@@ -20,25 +20,34 @@
 
 package org.rivierarobotics.commands;
 
-import javax.inject.Inject;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.PIDConfig;
+import org.rivierarobotics.subsystems.Turret;
 
-public class TurretCommands {
-    private TurretSetAngleCreator turretSetAngleCreator;
-    private TurretSetVelocityCreator turretSetVelocityCreator;
+@GenerateCreator
+public class TurretSetVelocity extends BasePIDSetPosition{
+    private final Turret turret;
+    private final double velocity;
 
-    @Inject
-    public TurretCommands(TurretSetAngleCreator turretSetPositionCreator, TurretSetVelocityCreator turretSetVelocityCreator) {
-        this.turretSetAngleCreator = turretSetPositionCreator;
-        this.turretSetVelocityCreator = turretSetVelocityCreator;
+    public TurretSetVelocity(@Provided Turret turret, double velocity) {
+        super(turret,3,velocity);
+        this.turret = turret;
+        this.velocity = velocity;
     }
 
-    public TurretSetAngle setAngle(double pos) {
-        return turretSetAngleCreator.create(pos);
+    @Override
+    protected void setPositionTicks(double velocity) {
+        turret.changeAimMode(Turret.AimMode.MOVING);
+        super.setPositionTicks(velocity);
     }
 
-    public TurretSetVelocity setVelocity(double velocity) {
-        return turretSetVelocityCreator.create(velocity);
+    @Override
+    public void execute() {
+        super.execute();
     }
+
 
 
 }
