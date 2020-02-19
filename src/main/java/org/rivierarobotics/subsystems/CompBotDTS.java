@@ -28,8 +28,12 @@ import org.rivierarobotics.util.NeutralIdleMode;
 
 public class CompBotDTS {
     //TODO change values of threshold to realistic values
-    private final double lowHybridThreshold = 100, highHybridThreshold = 200;
-    private WPI_TalonFX tl, tr, bl, br;
+    private final double lowHybridThreshold = 100;
+    private final double highHybridThreshold = 200;
+    private WPI_TalonFX tl;
+    private WPI_TalonFX tr;
+    private WPI_TalonFX bl;
+    private WPI_TalonFX br;
     private Encoder shaftEncoder;
     private DriveTrain.Gear currentGear;
     private EncoderFollower follower;
@@ -91,6 +95,8 @@ public class CompBotDTS {
                 tl.set(pwr);
                 tr.set(pwr);
                 break;
+            default:
+                throw new IllegalStateException("Unknown Gear: " + currentGear);
         }
     }
 
@@ -109,17 +115,17 @@ public class CompBotDTS {
     }
 
     public double getMotorPositionAverage() {
-        return (tl.getSensorCollection().getIntegratedSensorPosition() +
-                tr.getSensorCollection().getIntegratedSensorPosition() +
-                bl.getSensorCollection().getIntegratedSensorPosition() +
-                br.getSensorCollection().getIntegratedSensorPosition()) / 4;
+        return (tl.getSensorCollection().getIntegratedSensorPosition()
+            + tr.getSensorCollection().getIntegratedSensorPosition()
+            + bl.getSensorCollection().getIntegratedSensorPosition()
+            + br.getSensorCollection().getIntegratedSensorPosition()) / 4;
     }
 
     public double getMotorVelocityAverage() {
-        return (tl.getSensorCollection().getIntegratedSensorVelocity() +
-                tr.getSensorCollection().getIntegratedSensorVelocity() +
-                bl.getSensorCollection().getIntegratedSensorVelocity() +
-                br.getSensorCollection().getIntegratedSensorVelocity()) / 4;
+        return (tl.getSensorCollection().getIntegratedSensorVelocity()
+            + tr.getSensorCollection().getIntegratedSensorVelocity()
+            + bl.getSensorCollection().getIntegratedSensorVelocity()
+            + br.getSensorCollection().getIntegratedSensorVelocity()) / 4;
     }
 
     public void setGear(DriveTrain.Gear gear) {
@@ -136,6 +142,8 @@ public class CompBotDTS {
                 NeutralIdleMode.BRAKE.applyTo(tl, tr);
                 NeutralIdleMode.COAST.applyTo(bl, br);
                 break;
+            default:
+                throw new IllegalStateException("Unknown Gear: " + currentGear);
         }
     }
 
@@ -144,7 +152,12 @@ public class CompBotDTS {
     }
 
     public static class MotorIds {
-        public final int tl, tr, bl, br, encA, encB;
+        public final int tl;
+        public final int tr;
+        public final int bl;
+        public final int br;
+        public final int encA;
+        public final int encB;
 
         public MotorIds(int tl, int tr, int bl, int br, int encA, int encB) {
             this.tl = tl;

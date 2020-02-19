@@ -26,7 +26,8 @@ import org.rivierarobotics.inject.Sided;
 import javax.inject.Inject;
 
 public class Intake extends SubsystemBase {
-    private final IntakeSide left, right;
+    private final IntakeSide left;
+    private final IntakeSide right;
 
     @Inject
     public Intake(@Sided(Sided.Side.LEFT) IntakeSide left,

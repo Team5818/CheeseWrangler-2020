@@ -29,7 +29,8 @@ import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
-    private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
+    private final CANSparkMax sparkSlaveOne;
+    private final CANSparkMax sparkSlaveTwo;
     private DriveTrain.Gear currentGear;
     private EncoderFollower follower;
 
@@ -79,7 +80,9 @@ public class DriveTrainSide {
     }
 
     public static class MotorIds {
-        public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
+        public final int masterTalon;
+        public final int sparkSlaveOne;
+        public final int sparkSlaveTwo;
 
         public MotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
             this.masterTalon = masterTalon;

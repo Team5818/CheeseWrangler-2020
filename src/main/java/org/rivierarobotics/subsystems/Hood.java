@@ -85,8 +85,7 @@ public class Hood extends BasePIDSubsystem {
         if (angle >= -20 && angle <= 42) {
             SmartDashboard.putNumber("Hood SetTicks", zeroTicks + angle * getAnglesOrInchesToTicks() * -5);
             setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
-        }
-        else {
+        } else {
             setPositionTicks(0);
         }
     }

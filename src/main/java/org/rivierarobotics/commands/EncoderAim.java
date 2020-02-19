@@ -57,8 +57,7 @@ public class EncoderAim extends CommandBase {
 
     @Override
     public void execute() {
-        double y = ShooterUtil.getYVelocityConstant();
-        double [] pos = tracker.getPosition();
+        double[] pos = tracker.getPosition();
         double xFromGoal = ShooterUtil.getFieldLength() - pos[1];
         double zFromGoal = ShooterUtil.getLeftFieldToGoal() - pos[0];
         double dist = Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2));
@@ -66,18 +65,10 @@ public class EncoderAim extends CommandBase {
         double t = ShooterUtil.getTConstant();
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
         double vz = zFromGoal / t - driveTrain.getXVelocity();
-        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
-        double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
-        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
-
-        SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
-        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
         turret.changeAimMode(Turret.AimMode.STILL);
 
-        if(Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
+        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
             turret.getPidController().setP(0.004);
         } else {
             turret.getPidController().setP(0.001);
@@ -85,6 +76,15 @@ public class EncoderAim extends CommandBase {
 
         turret.setAbsolutePosition(turretAngle);
 
+        double y = ShooterUtil.getYVelocityConstant();
+        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
+        double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
+        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
+        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+
+        SmartDashboard.putNumber("BallVel", ballVel);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
+        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
         if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity()) {
             hood.setAbsolutePosition(hoodAngle + 3.5);
             flywheel.setPositionTicks(encoderVelocity + 10);

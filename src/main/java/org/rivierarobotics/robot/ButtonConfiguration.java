@@ -24,13 +24,16 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.util.ShooterUtil;
-import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private final Joystick driverLeft, driverRight, coDriverLeft, coDriverRight, driverButtons, coDriverButtons;
+    private final Joystick driverLeft;
+    private final Joystick driverRight;
+    private final Joystick coDriverLeft;
+    private final Joystick coDriverRight;
+    private final Joystick driverButtons;
+    private final Joystick coDriverButtons;
     private final CommandComponent cmds;
 
     @Inject
@@ -52,18 +55,18 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.turret().setVelocity(0));
+            .whenPressed(cmds.turret().setVelocity(0));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.turret().setVelocity(20));
+            .whenPressed(cmds.turret().setVelocity(20));
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.vision().encoderAim(0));
+            .whenPressed(cmds.vision().encoderAim(0));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.vision().correctPosition());
+            .whenPressed(cmds.vision().correctPosition());
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.turret().setAngle(20));
+            .whenPressed(cmds.turret().setAngle(20));
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.hood().alignQuadrature());
-/*
+            .whenPressed(cmds.hood().alignQuadrature());
+        /*
         new JoystickButton(driverLeft, 1)
         // Competition Robot Button Map
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));

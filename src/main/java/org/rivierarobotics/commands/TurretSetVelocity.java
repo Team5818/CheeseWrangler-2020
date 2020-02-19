@@ -20,19 +20,17 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.PIDConfig;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
-public class TurretSetVelocity extends BasePIDSetPosition{
+public class TurretSetVelocity extends BasePIDSetPosition<Turret> {
     private final Turret turret;
     private final double velocity;
 
     public TurretSetVelocity(@Provided Turret turret, double velocity) {
-        super(turret,3,velocity);
+        super(turret, 3, velocity);
         this.turret = turret;
         this.velocity = velocity;
     }
@@ -47,7 +45,6 @@ public class TurretSetVelocity extends BasePIDSetPosition{
     public void execute() {
         super.execute();
     }
-
 
 
 }

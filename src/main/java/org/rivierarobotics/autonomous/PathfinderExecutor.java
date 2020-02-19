@@ -35,7 +35,8 @@ import org.rivierarobotics.util.NavXGyro;
 public class PathfinderExecutor extends CommandBase {
     private DriveTrain driveTrain;
     private NavXGyro gyro;
-    private EncoderFollower leftFollower, rightFollower;
+    private EncoderFollower leftFollower;
+    private EncoderFollower rightFollower;
 
     public PathfinderExecutor(@Provided DriveTrain driveTrain, WaypointPath path) {
         this.driveTrain = driveTrain;
@@ -56,8 +57,8 @@ public class PathfinderExecutor extends CommandBase {
     @Override
     public void execute() {
         driveTrain.setPower(
-                determineSideSpeed(leftFollower, true),
-                determineSideSpeed(rightFollower, false)
+            determineSideSpeed(leftFollower, true),
+            determineSideSpeed(rightFollower, false)
         );
     }
 

@@ -31,7 +31,8 @@ import org.rivierarobotics.util.MathUtil;
 @GenerateCreator
 public class DriveControl extends CommandBase {
     private final DriveTrain driveTrain;
-    private final Joystick leftJs, rightJs;
+    private final Joystick leftJs;
+    private final Joystick rightJs;
 
     public DriveControl(@Provided @Input(Input.Selector.DRIVER_LEFT) Joystick left,
                         @Provided @Input(Input.Selector.DRIVER_RIGHT) Joystick right,
@@ -46,7 +47,8 @@ public class DriveControl extends CommandBase {
     public void execute() {
         double x = MathUtil.fitDeadband(rightJs.getX());
         double y = MathUtil.fitDeadband(leftJs.getY());
-        double left, right;
+        double left;
+        double right;
 
         double max = Math.max(Math.abs(x), Math.abs(y));
         double diff = y - x;

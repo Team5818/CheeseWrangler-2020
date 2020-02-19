@@ -29,7 +29,8 @@ import org.rivierarobotics.util.NavXGyro;
 import javax.inject.Inject;
 
 public class DriveTrain extends SubsystemBase {
-    private final DriveTrainSide left, right;
+    private final DriveTrainSide left;
+    private final DriveTrainSide right;
     private final NavXGyro gyro;
     private final double wheelCircumference = 0.32; // meters
 
