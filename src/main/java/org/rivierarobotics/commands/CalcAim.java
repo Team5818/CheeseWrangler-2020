@@ -24,7 +24,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.*;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -54,8 +57,7 @@ public class CalcAim extends CommandBase {
 
     @Override
     public void execute() {
-        double y = ShooterUtil.getYVelocityConstant();
-        double [] pos = tracker.getPosition();
+        double[] pos = tracker.getPosition();
         double xFromGoal = ShooterUtil.getFieldLength() - pos[1];
         double zFromGoal = ShooterUtil.getLeftFieldToGoal() - pos[0];
         double dist = Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2));
@@ -64,26 +66,28 @@ public class CalcAim extends CommandBase {
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
         double vz = zFromGoal / t - driveTrain.getXVelocity();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
-        double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
-        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
         double captainKalbag = Math.toDegrees(captainKalbag(xFromGoal, zFromGoal));
 
         SmartDashboard.putNumber("changeInAngle", captainKalbag);
-        SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
-        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
 
 
         if (Math.abs(driveTrain.getAvgVelocity()) > 20) {
-            SmartDashboard.putNumber("turretvel",captainKalbag * turret.getAnglesOrInchesToTicks() / 10);
+            SmartDashboard.putNumber("turretvel", captainKalbag * turret.getAnglesOrInchesToTicks() / 10);
             turret.changeAimMode(Turret.AimMode.MOVING);
             turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10 + 5);
         } else {
             turret.changeAimMode(Turret.AimMode.STILL);
             turret.setAbsolutePosition(turretAngle);
         }
+
+        double y = ShooterUtil.getYVelocityConstant();
+        double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
+        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
+        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+        SmartDashboard.putNumber("BallVel", ballVel);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
+        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
         if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity()) {
             hood.setAbsolutePosition(hoodAngle + 3.5);
             flywheel.setPositionTicks(encoderVelocity + 10);
@@ -104,8 +108,8 @@ public class CalcAim extends CommandBase {
         double epicTime = 0.1;
         double xDist = xFromGoal - driveTrain.getYVelocity() * epicTime;
         double zDist = zFromGoal - driveTrain.getXVelocity() * epicTime;
-        return ( 1 / (Math.pow((zDist / xDist), 2) + 1) ) * ( (-driveTrain.getXVelocity() * xDist)
-                - (-driveTrain.getYVelocity() * xDist) ) / Math.pow(xDist, 2);
+        return (1 / (Math.pow((zDist / xDist), 2) + 1)) * ((-driveTrain.getXVelocity() * xDist)
+            - (-driveTrain.getYVelocity() * xDist)) / Math.pow(xDist, 2);
     }
 
     @Override

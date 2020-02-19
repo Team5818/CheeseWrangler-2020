@@ -27,15 +27,15 @@ public enum WaypointPath {
     //Distances are in meters, x and y ordered, and angles are exit angles in radians
 
     PROVIDED_PATH(
-            new Waypoint(-4, -1, Math.toRadians(-45)),
-            new Waypoint(-2, -2, 0),
-            new Waypoint(0, 0, 0)
+        new Waypoint(-4, -1, Math.toRadians(-45)),
+        new Waypoint(-2, -2, 0),
+        new Waypoint(0, 0, 0)
     ),
     SQUARE(
-            new Waypoint(0, 4, Math.toRadians(90)),
-            new Waypoint(4, 4, Math.toRadians(180)),
-            new Waypoint(4, 0, Math.toRadians(270)),
-            new Waypoint(0, 0, Math.toRadians(0))
+        new Waypoint(0, 4, Math.toRadians(90)),
+        new Waypoint(4, 4, Math.toRadians(180)),
+        new Waypoint(4, 0, Math.toRadians(270)),
+        new Waypoint(0, 0, Math.toRadians(0))
     );
 
     public final Waypoint[] pointMap;

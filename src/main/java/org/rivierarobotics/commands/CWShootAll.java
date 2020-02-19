@@ -30,9 +30,9 @@ public class CWShootAll extends SequentialCommandGroup {
     @Inject
     public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
-                cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
-                cheeseCommands.setClosestHalfIndex(),
-                ejectorCommands.setPower(1.0)
+            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
+            cheeseCommands.setClosestHalfIndex(),
+            ejectorCommands.setPower(1.0)
         );
 
         for (int i = 0; i < 5; i++) {
@@ -40,9 +40,9 @@ public class CWShootAll extends SequentialCommandGroup {
         }
 
         addCommands(
-                ejectorCommands.setPower(0.0),
-                cheeseCommands.setMode(CheeseWheel.Mode.LAST),
-                cheeseCommands.incrementIndex()
+            ejectorCommands.setPower(0.0),
+            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
+            cheeseCommands.incrementIndex()
         );
     }
 

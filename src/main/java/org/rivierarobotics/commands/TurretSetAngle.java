@@ -41,7 +41,7 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     protected void setPositionTicks(double angle) {
         turret.changeAimMode(Turret.AimMode.STILL);
         position = turret.getPositionTicks() + ((angle - turret.getAbsoluteAngle()) * turret.getAnglesOrInchesToTicks());
-        if(Math.abs(position - turret.getPositionTicks()) < 3 * turret.getAnglesOrInchesToTicks()) {
+        if (Math.abs(position - turret.getPositionTicks()) < 3 * turret.getAnglesOrInchesToTicks()) {
             turret.getPidController().setP(0.002);
         } else {
             turret.getPidController().setP(0.001);
@@ -63,7 +63,7 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
 
     private boolean isInvalidPosition() {
         return (position >= zeroTicks + turret.getMaxAngleInTicks()
-                || position <= zeroTicks - turret.getMaxAngleInTicks());
+            || position <= zeroTicks - turret.getMaxAngleInTicks());
     }
 
     @Override
