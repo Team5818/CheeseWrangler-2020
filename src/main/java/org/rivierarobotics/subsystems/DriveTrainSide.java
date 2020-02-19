@@ -34,7 +34,7 @@ public class DriveTrainSide {
     private PIDController pidController;
     private boolean pidEnabled = false;
     //TODO find actual ticks to inches
-    private final double initialPosition;
+    private double initialPosition;
     private final double ticksToInches = 1 / 1;
 
     //TODO remove when new drivetrain is implemented
@@ -52,7 +52,7 @@ public class DriveTrainSide {
         sparkSlaveOne.setInverted(!invert);
         sparkSlaveTwo.setInverted(!invert);
 
-        initialPosition = getPositionTicks() / ticksToInches;
+        initialPosition = getPositionTicks();
     }
 
     public void setPower(double pwr) {
@@ -93,7 +93,15 @@ public class DriveTrainSide {
     }
 
     public double getPosition() {
-        return (getPositionTicks() / ticksToInches) - initialPosition;
+        return getPositionTicks() / ticksToInches;
+    }
+
+    public double getOffsetPosition() {
+        return (getPositionTicks() - initialPosition) / ticksToInches;
+    }
+
+    public void resetPose() {
+        initialPosition = getPositionTicks();
     }
 
     public static class MotorIds {

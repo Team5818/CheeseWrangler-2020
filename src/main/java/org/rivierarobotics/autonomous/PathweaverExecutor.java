@@ -61,10 +61,7 @@ public class PathweaverExecutor extends CommandBase {
     @Override
     public void initialize() {
         startTimestamp = Timer.getFPGATimestamp();
-        startingPoint = new Translation2d(
-            driveTrain.getLeft().getPosition(),
-            driveTrain.getRight().getPosition()
-        );
+        driveTrain.resetPose();
     }
 
     @Override
@@ -78,6 +75,7 @@ public class PathweaverExecutor extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
+        driveTrain.setVelocity(0.0, 0.0);
         driveTrain.setPower(0.0, 0.0);
     }
 

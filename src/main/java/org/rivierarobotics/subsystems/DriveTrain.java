@@ -100,14 +100,19 @@ public class DriveTrain extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
+    public void resetPose() {
+        left.resetPose();
+        right.resetPose();
+    }
+
     @Override
     public void periodic() {
         left.setPidPower();
         right.setPidPower();
         odometry.update(
                 Rotation2d.fromDegrees(gyro.getYaw()),
-                MathUtil.feetToMeters(left.getPosition() / 12),
-                MathUtil.feetToMeters(right.getPosition() / 12)
+                MathUtil.feetToMeters(left.getOffsetPosition() / 12),
+                MathUtil.feetToMeters(right.getOffsetPosition() / 12)
         );
     }
 
