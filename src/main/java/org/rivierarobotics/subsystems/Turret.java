@@ -42,7 +42,7 @@ public class Turret extends BasePIDSubsystem {
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         //TODO: more tuning :):):):):):)
-        super(new PIDConfig(0.0008, 0.0000015, 0.00000, 0.035, 15, 1.0));
+        super(new PIDConfig(0.0008, 0.0, 0.00000, 0.04, 15, 1.0));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
