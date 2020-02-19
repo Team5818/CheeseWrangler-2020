@@ -54,7 +54,7 @@ public class PathweaverExecutor extends CommandBase {
     }
 
     private static Trajectory generateTrajectory(Pose2dPath path) {
-        var configuration = new TrajectoryConfig(1.7, 2.0);
+        TrajectoryConfig configuration = new TrajectoryConfig(1.7, 2.0);
         return TrajectoryGenerator.generateTrajectory(path.pointMap, configuration);
     }
 
@@ -74,6 +74,11 @@ public class PathweaverExecutor extends CommandBase {
         ChassisSpeeds adjustedSpeeds = controller.calculate(current, goal);
         DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.getKinematics().toWheelSpeeds(adjustedSpeeds);
         driveTrain.setVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        driveTrain.setPower(0.0, 0.0);
     }
 
     @Override
