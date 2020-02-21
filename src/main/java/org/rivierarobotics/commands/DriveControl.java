@@ -45,7 +45,7 @@ public class DriveControl extends CommandBase {
     @Override
     public void execute() {
         double x = MathUtil.fitDeadband(rightJs.getX());
-        double y = MathUtil.fitDeadband(leftJs.getY());
+        double y = MathUtil.fitDeadband(-leftJs.getY());
         double left, right;
 
         double max = Math.max(Math.abs(x), Math.abs(y));

@@ -72,8 +72,4 @@ public class MathUtil {
             return 0;
         }
     }
-
-    public static double feetToMeters(double feet) {
-        return feet * 0.3048;
-    }
 }

@@ -23,9 +23,9 @@ package org.rivierarobotics.autonomous;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
@@ -33,43 +33,46 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
 public class PathweaverExecutor extends CommandBase {
     private final DriveTrain driveTrain;
-    private final NavXGyro gyro;
     private final RamseteController controller;
     private final Trajectory trajectory;
-    private Translation2d startingPoint;
     private double startTimestamp;
 
     public PathweaverExecutor(@Provided DriveTrain driveTrain, Pose2dPath path) {
         this.driveTrain = driveTrain;
-        this.gyro = driveTrain.getGyro();
         this.controller = new RamseteController();
         this.trajectory = generateTrajectory(path);
 
         addRequirements(driveTrain);
     }
 
-    private static Trajectory generateTrajectory(Pose2dPath path) {
-        TrajectoryConfig configuration = new TrajectoryConfig(1.7, 2.0);
-        return TrajectoryGenerator.generateTrajectory(path.pointMap, configuration);
+    private Trajectory generateTrajectory(Pose2dPath path) {
+        TrajectoryConfig configuration = new TrajectoryConfig(0.8, 2.0);
+        configuration.setKinematics(driveTrain.getKinematics());
+        return TrajectoryGenerator.generateTrajectory(path.start, path.interiorWaypoints, path.end, configuration);
     }
 
     @Override
     public void initialize() {
         startTimestamp = Timer.getFPGATimestamp();
-        driveTrain.resetPose();
+        driveTrain.resetEncoder();
+        SmartDashboard.putString("isInit", "YES");
     }
 
     @Override
     public void execute() {
+        SmartDashboard.putNumber("isRunning", Timer.getFPGATimestamp());
         Pose2d current = driveTrain.getPose();
         Trajectory.State goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
+        SmartDashboard.putString("CurrentPose", current.toString());
+        SmartDashboard.putString("GoalPose", goal.toString());
         ChassisSpeeds adjustedSpeeds = controller.calculate(current, goal);
         DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.getKinematics().toWheelSpeeds(adjustedSpeeds);
+        SmartDashboard.putNumber("wleft", wheelSpeeds.leftMetersPerSecond);
+        SmartDashboard.putNumber("wright", wheelSpeeds.rightMetersPerSecond);
         driveTrain.setVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
     }
 
@@ -81,6 +84,6 @@ public class PathweaverExecutor extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return trajectory.getTotalTimeSeconds() >= (Timer.getFPGATimestamp() - startTimestamp);
+        return trajectory.getTotalTimeSeconds() <= (Timer.getFPGATimestamp() - startTimestamp);
     }
 }

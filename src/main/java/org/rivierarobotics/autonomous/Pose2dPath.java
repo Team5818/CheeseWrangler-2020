@@ -22,7 +22,8 @@ package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import org.rivierarobotics.util.MathUtil;
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.util.Units;
 
 import java.util.List;
 
@@ -30,28 +31,12 @@ public enum Pose2dPath {
     //Add another enum entry for each path desired to enter, and a series of Pose2d objects as the points
     //Distances are in feet, x and y ordered, and angles are exit angles in degrees
 
-    PROVIDED_PATH(
-        pose2d(-4, -1, -45),
-        pose2d(-2, -2, 0),
-        pose2d(0, 0, 0)
-    ),
-
     FORWARD_BACK(
-        pose2d(1, 0, 0),
-        pose2d(0, 0, 0)
-    ),
-
-    SQUARE(
-        pose2d(0, 4, 90),
-        pose2d(4, 4, 180),
-        pose2d(4, 0, 270),
-        pose2d(0, 0, 0)
-    ),
-
-    TRIANGLE(
-        pose2d(0, 4, 90),
-        pose2d(4, 0, 45),
-        pose2d(0, 0, 0)
+            pose2d(0, 0, 0),
+            pose2d(0, 0, 0),
+            trans2d(2.5, 2.5),
+            trans2d(0, 5),
+            trans2d(-2.5, 2.5)
     );
 
     /**
@@ -63,13 +48,21 @@ public enum Pose2dPath {
      * @return the pose
      */
     private static Pose2d pose2d(double feetX, double feetY, double headingDegrees) {
-        return new Pose2d(MathUtil.feetToMeters(feetX), MathUtil.feetToMeters(feetY),
+        return new Pose2d(Units.feetToMeters(feetX), Units.feetToMeters(feetY),
             Rotation2d.fromDegrees(headingDegrees));
     }
 
-    public final List<Pose2d> pointMap;
+    private static Translation2d trans2d(double feetX, double feetY) {
+        return new Translation2d(Units.feetToMeters(feetX), Units.feetToMeters(feetY));
+    }
 
-    Pose2dPath(Pose2d... pointMap) {
-        this.pointMap = List.of(pointMap);
+    public final Pose2d start;
+    public final Pose2d end;
+    public final List<Translation2d> interiorWaypoints;
+
+    Pose2dPath(Pose2d start, Pose2d end, Translation2d... interiorWaypoints) {
+        this.start = start;
+        this.end = end;
+        this.interiorWaypoints = List.of(interiorWaypoints);
     }
 }

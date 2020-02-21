@@ -20,20 +20,26 @@
 
 package org.rivierarobotics.subsystems;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.Dimensions;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class DriveTrain extends SubsystemBase {
+    private static final NetworkTableEntry ENTRY = Shuffleboard.getTab("DriveTrain")
+            .add("UpdRotation", "").getEntry();
     private final DriveTrainSide left, right;
     private final NavXGyro gyro;
     private final DifferentialDriveKinematics kinematics;
@@ -47,7 +53,9 @@ public class DriveTrain extends SubsystemBase {
         this.left = left;
         this.right = right;
         this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
-        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
+        Rotation2d gyroAngle = Rotation2d.fromDegrees(gyro.getYaw());
+        this.odometry = new DifferentialDriveOdometry(gyroAngle);
+        ENTRY.setString(odometry.getPoseMeters() + "/" + gyroAngle);
         setDefaultCommand(controlCreator.create(this));
     }
 
@@ -83,10 +91,6 @@ public class DriveTrain extends SubsystemBase {
         return right;
     }
 
-    public NavXGyro getGyro() {
-        return gyro;
-    }
-
     public void setVelocity(double l, double r) {
         left.setVelocity(l);
         right.setVelocity(r);
@@ -105,14 +109,21 @@ public class DriveTrain extends SubsystemBase {
         right.resetPose();
     }
 
+    public void resetEncoder() {
+        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(gyro.getYaw()));
+        left.resetEncoder();
+        right.resetEncoder();
+    }
+
     @Override
     public void periodic() {
         left.setPidPower();
         right.setPidPower();
+        ENTRY.setString(left.getPosition() + "/" + right.getPosition());
         odometry.update(
                 Rotation2d.fromDegrees(gyro.getYaw()),
-                MathUtil.feetToMeters(left.getOffsetPosition() / 12),
-                MathUtil.feetToMeters(right.getOffsetPosition() / 12)
+                Units.inchesToMeters(left.getPosition()),
+                Units.inchesToMeters(right.getPosition())
         );
     }
 

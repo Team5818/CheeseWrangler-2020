@@ -59,8 +59,6 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.FORWARD_BACK));
         new JoystickButton(coDriverLeft, 2)
                 .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
-        new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.SQUARE));
 /*
         // Competition Robot Button Map
         new JoystickButton(driverLeft, 1)

@@ -76,6 +76,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
+        globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
@@ -115,5 +116,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
         SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
+        SmartDashboard.putNumber("DTPOS L", globalComponent.getDriveTrain().getLeft().getPosition());
+        SmartDashboard.putNumber("DTPOS R", globalComponent.getDriveTrain().getRight().getPosition());
+
     }
 }

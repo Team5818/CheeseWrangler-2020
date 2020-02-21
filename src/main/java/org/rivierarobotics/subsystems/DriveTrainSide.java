@@ -25,27 +25,31 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.util.Units;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
-    private final CANSparkMax sparkSlaveOne, sparkSlaveTwo;
+    private final CANSparkMax sparkSlaveOne;
+    private final CANSparkMax sparkSlaveTwo;
+    private final boolean invert;
     private DriveTrain.Gear currentGear;
     private PIDController pidController;
     private boolean pidEnabled = false;
     //TODO find actual ticks to inches
     private double initialPosition;
-    private final double ticksToInches = 1 / 1;
+    private final double ticksPerInch = 12720.0 / 72;
 
     //TODO remove when new drivetrain is implemented
     public DriveTrainSide(MotorIds motors, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
         this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
-        this.pidController = new PIDController(0.002, 0.0, 0.0, 0.005);
+        this.pidController = new PIDController(0.000002, 0.0, 0.0);
+        this.invert = invert;
 
         masterTalon.configFactoryDefault();
-        masterTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        masterTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
 
         NeutralIdleMode.BRAKE.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
         masterTalon.setInverted(invert);
@@ -63,11 +67,19 @@ public class DriveTrainSide {
     }
 
     public double getPositionTicks() {
-        return masterTalon.getSensorCollection().getPulseWidthPosition();
+        int pos = masterTalon.getSensorCollection().getQuadraturePosition();
+        if (invert) {
+            pos *= -1;
+        }
+        return pos;
     }
 
     public int getVelocity() {
-        return masterTalon.getSensorCollection().getQuadratureVelocity();
+        int vel = masterTalon.getSensorCollection().getQuadratureVelocity();
+        if (invert) {
+            vel *= -1;
+        }
+        return vel;
     }
 
     public void setGear(DriveTrain.Gear gear) {
@@ -79,8 +91,9 @@ public class DriveTrainSide {
     }
 
     public void setVelocity(double vel) {
+        double rawVel = Units.metersToInches(vel) * 10 * ticksPerInch;
         pidEnabled = true;
-        pidController.setSetpoint(vel);
+        pidController.setSetpoint(rawVel);
     }
 
     public void setPidPower() {
@@ -93,15 +106,19 @@ public class DriveTrainSide {
     }
 
     public double getPosition() {
-        return getPositionTicks() / ticksToInches;
+        return getPositionTicks() / ticksPerInch;
     }
 
     public double getOffsetPosition() {
-        return (getPositionTicks() - initialPosition) / ticksToInches;
+        return (getPositionTicks() - initialPosition) / ticksPerInch;
     }
 
     public void resetPose() {
         initialPosition = getPositionTicks();
+    }
+
+    public void resetEncoder() {
+        masterTalon.getSensorCollection().setQuadraturePosition(0, 100);
     }
 
     public static class MotorIds {
