@@ -62,6 +62,10 @@ public class DriveTrainSide {
         }
     }
 
+    public void setPower(double pwr) {
+        setPower(pwr, getRPMHigh(), getRPMLow());
+    }
+
     public void setPower(double pwr, double highRPM, double lowRPM) {
         switch (currentGear) {
             case HYBRID:
@@ -79,11 +83,6 @@ public class DriveTrainSide {
     }
 
     private void hybridSetPower(double pwr, double highRPM, double lowRPM) {
-        if (pwr > 0.95) {
-            pwr = 1.0;
-        } else if (pwr < -0.95) {
-            pwr = -1.0;
-        }
         double highPower = 0;
         if ((highRPM > lowBoundHigh && highRPM < highBoundHigh)) {
             highPower = ((highBoundHigh - highRPM) / (highBoundHigh - lowBoundHigh)) * pwr;
@@ -120,11 +119,11 @@ public class DriveTrainSide {
     }
 
     public double getRPMHigh() {
-        return Math.abs(getMotorRPM(tl));
+        return (Math.abs(getMotorRPM(tl)) + Math.abs(getMotorRPM(tr))) / 2;
     }
 
     public double getRPMLow() {
-        return Math.abs(getMotorRPM(bl));
+        return (Math.abs(getMotorRPM(bl)) + Math.abs(getMotorRPM(br))) / 2;
     }
 
     public void setGear(DriveTrain.Gear gear) {
