@@ -1,4 +1,6 @@
 import com.techshroom.inciseblue.commonLib
+import org.rivierarobotics.gradlerioredux.artifactsKt
+import org.rivierarobotics.gradlerioredux.targetsKt
 
 plugins {
     id("org.rivierarobotics.gradlerioredux") version "0.7.6"
@@ -7,6 +9,18 @@ plugins {
 gradleRioRedux {
     robotClass = "org.rivierarobotics.robot.Robot"
     teamNumber = 5818
+}
+
+afterEvaluate {
+    deploy {
+        artifactsKt {
+            fileTreeArtifact("frcStaticFileDeploy") {
+                files.set(fileTree("PathWeaver/output"))
+                targets.add("roboRio")
+                directory = "/home/lvuser/deploy/paths"
+            }
+        }
+    }
 }
 
 dependencies {

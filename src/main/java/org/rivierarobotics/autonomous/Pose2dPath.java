@@ -20,63 +20,50 @@
 
 package org.rivierarobotics.autonomous;
 
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.util.Units;
 
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
+import java.util.Locale;
 import java.util.function.Function;
 
 public enum Pose2dPath {
-    //Add another enum entry for each path desired to enter, and a series of Pose2d objects as the points
-    //Distances are in feet, x and y ordered, and angles are exit angles in degrees
+    FLEX;
 
-    FORWARD_BACK(config -> TrajectoryGenerator.generateTrajectory(
-            List.of(
-                    pose2d(0, 0, 0),
-                    pose2d(0.732, 1.768, 45),
-                    pose2d(2.5, 2.5, 90),
-                    pose2d(4.268,1.768,135),
-                    pose2d(5, 0, 180),
-                    pose2d(4.268, -1.768,-135),
-                    pose2d(2.5, -2.5, -90),
-                    pose2d(0.732,-1.768,-45),
-                    pose2d(0, 0, 0)
-            ),
-            config
-    ));
+    private final Path trajectoryJson;
+    private Trajectory trajectory;
 
-    // NOTE: X and Y swapped on PURPOSE
-    // Y is the forward / back direction, X is the sideways direction
-
-    /**
-     * Given a pose in feet & degrees, generate a {@link Pose2d}.
-     *
-     * @param feetX x coordinate in feet
-     * @param feetY y coordinate in feet
-     * @param headingDegrees heading in degrees
-     * @return the pose
-     */
-    private static Pose2d pose2d(double feetX, double feetY, double headingDegrees) {
-        return new Pose2d(Units.feetToMeters(feetY), Units.feetToMeters(feetX),
-            Rotation2d.fromDegrees(headingDegrees));
+    Pose2dPath() {
+        var id = name().toLowerCase(Locale.US);
+        trajectoryJson = Filesystem.getDeployDirectory().toPath().resolve("paths/" + id + ".wpilib.json");
+        if (!Files.exists(trajectoryJson)) {
+            throw new IllegalStateException("No path JSON for " + id);
+        }
     }
 
-    private static Translation2d trans2d(double feetX, double feetY) {
-        return new Translation2d(Units.feetToMeters(feetY), Units.feetToMeters(feetX));
+    public Trajectory getTrajectory() {
+        if (trajectory == null) {
+            trajectory = loadTrajectory();
+        }
+        return trajectory;
     }
 
-    private final Function<TrajectoryConfig, Trajectory> generator;
-
-    Pose2dPath(Function<TrajectoryConfig, Trajectory> generator) {
-        this.generator = generator;
-    }
-
-    public Trajectory generateTrajectory(TrajectoryConfig config) {
-        return generator.apply(config);
+    private Trajectory loadTrajectory() {
+        try {
+            return TrajectoryUtil.fromPathweaverJson(trajectoryJson);
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
     }
 }

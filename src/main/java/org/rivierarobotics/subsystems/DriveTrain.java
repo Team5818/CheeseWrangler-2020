@@ -55,7 +55,6 @@ public class DriveTrain extends SubsystemBase {
         this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
         Rotation2d gyroAngle = Rotation2d.fromDegrees(gyro.getYaw());
         this.odometry = new DifferentialDriveOdometry(gyroAngle);
-        ENTRY.setString(odometry.getPoseMeters() + "/" + gyroAngle);
         setDefaultCommand(controlCreator.create(this));
     }
 

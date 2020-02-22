@@ -50,9 +50,8 @@ public class PathweaverExecutor extends CommandBase {
     }
 
     private Trajectory generateTrajectory(Pose2dPath path) {
-        TrajectoryConfig configuration = new TrajectoryConfig(1.2, 2.0);
-        configuration.setKinematics(driveTrain.getKinematics());
-        return path.generateTrajectory(configuration);
+        var traj = path.getTrajectory();
+        return traj.relativeTo(traj.getInitialPose());
     }
 
     @Override
