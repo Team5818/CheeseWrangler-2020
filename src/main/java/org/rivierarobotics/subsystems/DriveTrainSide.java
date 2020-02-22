@@ -122,7 +122,9 @@ public class DriveTrainSide {
     }
 
     public static class MotorIds {
-        public final int masterTalon, sparkSlaveOne, sparkSlaveTwo;
+        public final int masterTalon;
+        public final int sparkSlaveOne;
+        public final int sparkSlaveTwo;
 
         public MotorIds(int masterTalon, int sparkSlaveOne, int sparkSlaveTwo) {
             this.masterTalon = masterTalon;

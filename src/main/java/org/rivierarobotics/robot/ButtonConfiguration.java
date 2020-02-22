@@ -30,7 +30,12 @@ import org.rivierarobotics.util.VisionTarget;
 import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private final Joystick driverLeft, driverRight, coDriverLeft, coDriverRight, driverButtons, coDriverButtons;
+    private final Joystick driverLeft;
+    private final Joystick driverRight;
+    private final Joystick coDriverLeft;
+    private final Joystick coDriverRight;
+    private final Joystick driverButtons;
+    private final Joystick coDriverButtons;
     private final CommandComponent cmds;
 
     @Inject
@@ -51,17 +56,24 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-        new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.vision().autoAimHood(0, 0.69));
-        new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.vision().autoAimTurret(0, 0.69));
         new JoystickButton(coDriverLeft, 1)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
         new JoystickButton(coDriverLeft, 2)
                 .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
-/*
+        /*
         // Competition Robot Button Map
-        new JoystickButton(driverLeft, 1)
+        new JoystickButton(coDriverLeft, 1)
+            .whenPressed(cmds.cameraServo().setAngle(10));
+        new JoystickButton(coDriverLeft, 2)
+            .whenPressed(cmds.cameraServo().setAngle(20));
+        new JoystickButton(coDriverRight, 1)
+                .whenPressed(cmds.cameraServo().setAngle(30));
+        new JoystickButton(coDriverRight, 2)
+                .whenPressed(cmds.cameraServo().setAngle(90));
+        new JoystickButton(coDriverButtons, 12)
+            .whenPressed(cmds.turret().setAngle(20));
+        new JoystickButton(coDriverButtons, 12)
+            .whenPressed(cmds.hood().alignQuadrature());
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
         new JoystickButton(driverLeft, 2)
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));

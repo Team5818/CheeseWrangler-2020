@@ -20,12 +20,10 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
@@ -38,9 +36,8 @@ import javax.inject.Singleton;
 
 @Singleton
 public class DriveTrain extends SubsystemBase {
-    private static final NetworkTableEntry ENTRY = Shuffleboard.getTab("DriveTrain")
-            .add("UpdRotation", "").getEntry();
-    private final DriveTrainSide left, right;
+    private final DriveTrainSide left;
+    private final DriveTrainSide right;
     private final NavXGyro gyro;
     private final DifferentialDriveKinematics kinematics;
     private final DifferentialDriveOdometry odometry;
@@ -118,7 +115,6 @@ public class DriveTrain extends SubsystemBase {
     public void periodic() {
         left.setPidPower();
         right.setPidPower();
-        ENTRY.setString(left.getPosition() + "/" + right.getPosition());
         odometry.update(
                 Rotation2d.fromDegrees(gyro.getYaw()),
                 Units.inchesToMeters(left.getPosition()),

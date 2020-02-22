@@ -18,24 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.util.PositionTracker;
 
-public class ShuffleUtil {
-    private ShuffleUtil() {
+import javax.inject.Inject;
+
+public class CorrectPosition extends InstantCommand {
+
+    PositionTracker tracker;
+
+    @Inject
+    public CorrectPosition(PositionTracker tracker) {
+        this.tracker = tracker;
     }
 
-    public static void setOutEntry(ShuffleboardTab tab, String key, double value) {
-        addEntry(tab, key).setDouble(value);
+    @Override
+    public void execute() {
+        tracker.correctPosition();
     }
 
-    public static void setOutEntry(ShuffleboardTab tab, String key, boolean value) {
-        addEntry(tab, key).setBoolean(value);
-    }
-
-    private static NetworkTableEntry addEntry(ShuffleboardTab tab, String key) {
-        return tab.add(key, 0).getEntry();
-    }
 }
