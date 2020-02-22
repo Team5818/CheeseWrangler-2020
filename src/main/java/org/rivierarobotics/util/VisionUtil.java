@@ -40,7 +40,7 @@ public class VisionUtil {
     }
 
     public final double getLLValue(String key) {
-        if(key == "ty") {
+        if (key == "ty") {
             return limelight.getEntry(key).getDouble(0) + limelightServo.getAngle();
         }
         return limelight.getEntry(key).getDouble(0);

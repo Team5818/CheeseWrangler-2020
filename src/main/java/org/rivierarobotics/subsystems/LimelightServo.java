@@ -50,11 +50,11 @@ public class LimelightServo extends SubsystemBase {
     }
 
     public double getAngle() {
-        return (servo.getPosition()-0.5) * -240.0;
+        return (servo.getPosition() - 0.5) * -240.0;
     }
 
     public void setAngle(double angle) {
-        this.servo.set(0.5 - (angle * 1/240.0));
+        this.servo.set(0.5 - (angle * 1 / 240.0));
     }
 
 
