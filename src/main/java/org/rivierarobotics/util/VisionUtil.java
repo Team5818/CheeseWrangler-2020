@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.rivierarobotics.subsystems.LimelightServo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -30,13 +31,18 @@ import javax.inject.Singleton;
 @Singleton
 public class VisionUtil {
     private final NetworkTable limelight;
+    private final LimelightServo limelightServo;
 
     @Inject
-    public VisionUtil() {
+    public VisionUtil(LimelightServo limelightServo) {
+        this.limelightServo = limelightServo;
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
     public final double getLLValue(String key) {
+        if(key == "ty") {
+            return limelight.getEntry(key).getDouble(0) + limelightServo.getAngle();
+        }
         return limelight.getEntry(key).getDouble(0);
     }
 

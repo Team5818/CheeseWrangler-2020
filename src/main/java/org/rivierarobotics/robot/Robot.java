@@ -28,11 +28,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.DriveTrainSide;
-import org.rivierarobotics.subsystems.Flywheel;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
@@ -81,8 +77,8 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
-        CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
-        CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(90));
+        //CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
+        //CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(0));
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 
@@ -109,7 +105,7 @@ public class Robot extends TimedRobot {
         Hood h = globalComponent.getHood();
         Flywheel fly = globalComponent.getFlywheel();
         DriveTrainSide left = globalComponent.getDriveTrain().getLeft();
-        Servo servo = globalComponent.getLimelightServo().getServo();
+        LimelightServo servo = globalComponent.getLimelightServo();
 
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
@@ -121,6 +117,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
         SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
         SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
+        SmartDashboard.putNumber("LLAngle", servo.getAngle());
 
 
     }
