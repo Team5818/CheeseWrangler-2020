@@ -23,21 +23,35 @@ package org.rivierarobotics.autonomous;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
 import edu.wpi.first.wpilibj.util.Units;
 
 import java.util.List;
+import java.util.function.Function;
 
 public enum Pose2dPath {
     //Add another enum entry for each path desired to enter, and a series of Pose2d objects as the points
     //Distances are in feet, x and y ordered, and angles are exit angles in degrees
 
-    FORWARD_BACK(
-            pose2d(0, 0, 0),
-            pose2d(0, 0, 0),
-            trans2d(2.5, 2.5),
-            trans2d(0, 5),
-            trans2d(-2.5, 2.5)
-    );
+    FORWARD_BACK(config -> TrajectoryGenerator.generateTrajectory(
+            List.of(
+                    pose2d(0, 0, 0),
+                    pose2d(0.732, 1.768, 45),
+                    pose2d(2.5, 2.5, 90),
+                    pose2d(4.268,1.768,135),
+                    pose2d(5, 0, 180),
+                    pose2d(4.268, -1.768,-135),
+                    pose2d(2.5, -2.5, -90),
+                    pose2d(0.732,-1.768,-45),
+                    pose2d(0, 0, 0)
+            ),
+            config
+    ));
+
+    // NOTE: X and Y swapped on PURPOSE
+    // Y is the forward / back direction, X is the sideways direction
 
     /**
      * Given a pose in feet & degrees, generate a {@link Pose2d}.
@@ -48,21 +62,21 @@ public enum Pose2dPath {
      * @return the pose
      */
     private static Pose2d pose2d(double feetX, double feetY, double headingDegrees) {
-        return new Pose2d(Units.feetToMeters(feetX), Units.feetToMeters(feetY),
+        return new Pose2d(Units.feetToMeters(feetY), Units.feetToMeters(feetX),
             Rotation2d.fromDegrees(headingDegrees));
     }
 
     private static Translation2d trans2d(double feetX, double feetY) {
-        return new Translation2d(Units.feetToMeters(feetX), Units.feetToMeters(feetY));
+        return new Translation2d(Units.feetToMeters(feetY), Units.feetToMeters(feetX));
     }
 
-    public final Pose2d start;
-    public final Pose2d end;
-    public final List<Translation2d> interiorWaypoints;
+    private final Function<TrajectoryConfig, Trajectory> generator;
 
-    Pose2dPath(Pose2d start, Pose2d end, Translation2d... interiorWaypoints) {
-        this.start = start;
-        this.end = end;
-        this.interiorWaypoints = List.of(interiorWaypoints);
+    Pose2dPath(Function<TrajectoryConfig, Trajectory> generator) {
+        this.generator = generator;
+    }
+
+    public Trajectory generateTrajectory(TrajectoryConfig config) {
+        return generator.apply(config);
     }
 }
