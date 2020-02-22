@@ -24,7 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.*;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.LimelightServo;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -71,6 +75,8 @@ public class EncoderAim extends CommandBase {
 
         if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
             turret.getPidController().setP(0.004);
+        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
+            turret.getPidController().setP(0.002);
         } else {
             turret.getPidController().setP(0.001);
         }
