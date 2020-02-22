@@ -57,6 +57,12 @@ public class VisionAimTurret extends CommandBase {
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
         double tv = vision.getLLValue("tv");
 
+        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
+            turret.getPidController().setP(0.003);
+        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
+            turret.getPidController().setP(0.002);
+        }
+
         if (tv == 1) {
             turret.setAbsolutePosition(turretAngle);
         }

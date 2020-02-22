@@ -75,6 +75,8 @@ public class EncoderAim extends CommandBase {
 
         if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
             turret.getPidController().setP(0.004);
+        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
+            turret.getPidController().setP(0.002);
         } else {
             turret.getPidController().setP(0.001);
         }
