@@ -22,24 +22,37 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import dagger.Provides;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.EjectorControl;
+import org.rivierarobotics.inject.Sided;
 
+import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class Ejector extends SubsystemBase {
-    private final WPI_TalonSRX ejectorTalon;
+    private final EjectorSide left;
+    private final EjectorSide right;
     private final Provider<EjectorControl> command;
 
-    public Ejector(int id, Provider<EjectorControl> command) {
+    @Inject
+    public Ejector(@Sided(Sided.Side.LEFT) EjectorSide left,
+                   @Sided(Sided.Side.RIGHT) EjectorSide right,
+                   Provider<EjectorControl> command) {
         this.command = command;
-        ejectorTalon = new WPI_TalonSRX(id);
-        ejectorTalon.configFactoryDefault();
-        ejectorTalon.setNeutralMode(NeutralMode.Brake);
+        this.left = left;
+        this.right = right;
     }
 
+
     public void setPower(double pwr) {
-        ejectorTalon.set(pwr);
+        left.setPower(pwr);
+        right.setPower(pwr);
+    }
+
+    public void setPower(double leftPwr, double rightPwr) {
+        left.setPower(leftPwr);
+        right.setPower(rightPwr);
     }
 
     @Override

@@ -20,24 +20,22 @@
 
 package org.rivierarobotics.commands;
 
-import javax.inject.Inject;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Ejector;
 
-public class EjectorCommands {
-    private final EjectorSetPowerCreator ejectorSetPowerCreator;
-    private final EjectorEjectCheeseCreator ejectorEjectCheeseCreator;
+@GenerateCreator
+public class EjectorEjectCheese extends InstantCommand {
+    private final Ejector ejector;
 
-    @Inject
-    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator,
-                           EjectorEjectCheeseCreator ejectorEjectCheeseCreator) {
-        this.ejectorSetPowerCreator = ejectorSetPowerCreator;
-        this.ejectorEjectCheeseCreator = ejectorEjectCheeseCreator;
+    public EjectorEjectCheese(@Provided Ejector ejector) {
+        this.ejector = ejector;
+        addRequirements(ejector);
     }
 
-    public EjectorSetPower setPower(double power) {
-        return ejectorSetPowerCreator.create(power);
-    }
-
-    public EjectorEjectCheese ejectCheese() {
-        return ejectorEjectCheeseCreator.create();
+    @Override
+    public void execute() {
+        ejector.setPower(0.75);
     }
 }

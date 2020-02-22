@@ -40,7 +40,8 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 25;
     private static final int FLYWHEEL_TALON = 11;
     private static final int CHEESE_WHEEL_TALON = 7;
-    private static final int EJECTOR_TALON = 17;
+    private static final int EJECTOR_LEFT_TALON = 17; //At the time of writing this, the IDs of the ejector motors is
+    private static final int EJECTOR_RIGHT_TALON = 17; // unknown, so the same IDs are used as a placeholder.
     private static final int INTAKE_LEFT_TALON = 18;
     private static final int INTAKE_RIGHT_TALON = 19;
     private static final int CLIMB_TALON = 20;
@@ -85,8 +86,16 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Ejector provideEjector(Provider<EjectorControl> command) {
-        return new Ejector(EJECTOR_TALON, command);
+    @Sided(Sided.Side.LEFT)
+    public static EjectorSide provideEjectorSideLeft() {
+        return new EjectorSide(EJECTOR_LEFT_TALON, true);
+    }
+
+    @Provides
+    @Singleton
+    @Sided(Sided.Side.RIGHT)
+    public static EjectorSide provideEjectorSideRight() {
+        return new EjectorSide(EJECTOR_RIGHT_TALON, false);
     }
 
     @Provides
