@@ -22,24 +22,27 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.util.MathUtil;
 
+import javax.inject.Inject;
+
 public class HoodControl extends CommandBase {
     private final Hood hood;
-    private final Joystick leftCoDriverJs;
+    private final Joystick coDriverRightJs;
 
-    public HoodControl(Hood hood) {
+    @Inject
+    public HoodControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick js,
+                       Hood hood) {
         this.hood = hood;
-        this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
+        this.coDriverRightJs = js;
         addRequirements(hood);
-        //TODO make each control command the default for Hood and Turret, and remove the control button
     }
 
     @Override
     public void execute() {
-        hood.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getY()));
+        hood.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
     }
 
     @Override

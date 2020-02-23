@@ -20,24 +20,63 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import org.rivierarobotics.commands.DriveControl;
-import org.rivierarobotics.util.RobotMap;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.commands.DriveControlCreator;
+import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.Dimensions;
+import org.rivierarobotics.util.NavXGyro;
 
-public class DriveTrain implements Subsystem {
-    private final DriveTrainSide left, right;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
-    public DriveTrain() {
-        this.left = new DriveTrainSide(RobotMap.DriveTrain.Left.LEFT_TALON_MASTER, RobotMap.DriveTrain.Left.LEFT_SPARK_SLAVE_ONE,
-                RobotMap.DriveTrain.Left.LEFT_SPARK_SLAVE_TWO, RobotMap.DriveTrain.Left.LEFT_INVERT);
-        this.right = new DriveTrainSide(RobotMap.DriveTrain.Right.RIGHT_TALON_MASTER, RobotMap.DriveTrain.Right.RIGHT_SPARK_SLAVE_ONE,
-                RobotMap.DriveTrain.Right.RIGHT_SPARK_SLAVE_TWO, RobotMap.DriveTrain.Right.RIGHT_INVERT);
-        setDefaultCommand(new DriveControl(this));
+@Singleton
+public class DriveTrain extends SubsystemBase {
+    private final DriveTrainSide left;
+    private final DriveTrainSide right;
+    private final NavXGyro gyro;
+    private final DifferentialDriveKinematics kinematics;
+    private final DifferentialDriveOdometry odometry;
+
+    @Inject
+    public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
+                      @Sided(Sided.Side.RIGHT) DriveTrainSide right,
+                      NavXGyro gyro, DriveControlCreator controlCreator) {
+        this.gyro = gyro;
+        this.left = left;
+        this.right = right;
+        this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
+        Rotation2d gyroAngle = Rotation2d.fromDegrees(gyro.getYaw());
+        this.odometry = new DifferentialDriveOdometry(gyroAngle);
+        setDefaultCommand(controlCreator.create(this));
     }
 
     public void setPower(double l, double r) {
-        left.setManualPower(l);
-        right.setManualPower(r);
+        left.setPower(l);
+        right.setPower(r);
+    }
+
+    public double getAvgVelocity() {
+        return (left.getVelocity() + right.getVelocity()) / 2.0;
+    }
+
+    public double getXVelocity() {
+        double tickV = (getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw())));
+        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
+    }
+
+    public double getYVelocity() {
+        double tickV = (getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw())));
+        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
+    }
+
+    public void setGear(Gear gear) {
+        left.setGear(gear);
+        right.setGear(gear);
     }
 
     public DriveTrainSide getLeft() {
@@ -46,5 +85,44 @@ public class DriveTrain implements Subsystem {
 
     public DriveTrainSide getRight() {
         return right;
+    }
+
+    public void setVelocity(double l, double r) {
+        left.setVelocity(l);
+        right.setVelocity(r);
+    }
+
+    public DifferentialDriveKinematics getKinematics() {
+        return kinematics;
+    }
+
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    public void resetPose() {
+        left.resetPose();
+        right.resetPose();
+    }
+
+    public void resetEncoder() {
+        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(gyro.getYaw()));
+        left.resetEncoder();
+        right.resetEncoder();
+    }
+
+    @Override
+    public void periodic() {
+        left.setPidPower();
+        right.setPidPower();
+        odometry.update(
+                Rotation2d.fromDegrees(gyro.getYaw()),
+                Units.inchesToMeters(left.getPosition()),
+                Units.inchesToMeters(right.getPosition())
+        );
+    }
+
+    public enum Gear {
+        LOW, HIGH, HYBRID;
     }
 }

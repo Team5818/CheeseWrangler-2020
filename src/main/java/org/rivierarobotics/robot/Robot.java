@@ -20,61 +20,114 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.subsystems.*;
-import org.rivierarobotics.util.RobotMap;
+import org.rivierarobotics.autonomous.PathweaverExecutor;
+import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.inject.DaggerGlobalComponent;
+import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.DriveTrainSide;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.LimelightServo;
+import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
-    public static Robot runningRobot;
-    public final DriveTrain driveTrain;
-    public final Turret turret;
-    public final Hood hood;
-    public final Flywheel flywheel;
-    public final PistonController pistonController;
-    public final Joystick driverLeftJs, driverRightJs, coDriverRightJs, coDriverLeftJs;
-    public boolean isArcade = true;
-
-    public Robot() {
-        runningRobot = this;
-
-        this.driverLeftJs = new Joystick(RobotMap.Joysticks.DRIVER_LEFT_JS);
-        this.driverRightJs = new Joystick(RobotMap.Joysticks.DRIVER_RIGHT_JS);
-        this.coDriverLeftJs = new Joystick(RobotMap.Joysticks.CODRIVER_LEFT_JS);
-        this.coDriverRightJs = new Joystick(RobotMap.Joysticks.CODRIVER_RIGHT_JS);
-
-        this.driveTrain = new DriveTrain();
-        this.hood = new Hood();
-        this.flywheel = new Flywheel();
-        this.turret = new Turret();
-        this.pistonController = new PistonController();
-    }
+    private GlobalComponent globalComponent;
+    private Command autonomousCommand;
+    private SendableChooser<Command> chooser;
 
     @Override
     public void robotInit() {
-        ButtonConfiguration.init();
-    }
-
-    @Override
-    public void teleopInit() {
-    }
-
-    @Override
-    public void teleopPeriodic() {
-        CommandScheduler.getInstance().run();
+        globalComponent = DaggerGlobalComponent.create();
+        globalComponent.robotInit();
+        chooser = new SendableChooser<>();
+        
+        chooser.addOption("Flex", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.FLEX));
+        chooser.addOption("CheeseRun", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.CHEESERUN));
     }
 
     @Override
     public void robotPeriodic() {
-        selectiveTickPid(turret);
-        selectiveTickPid(hood);
-        selectiveTickPid(flywheel);
+        displayShuffleboard();
+        if (isEnabled()) {
+            globalComponent.getPositionTracker().trackPosition();
+        }
     }
 
-    private void selectiveTickPid(BasePID subsystem) {
-        if (!isDisabled() && !subsystem.getPidController().atSetpoint()) {
-            subsystem.tickPid();
+    @Override
+    public void autonomousInit() {
+        autonomousCommand = chooser.getSelected();
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
         }
+    }
+
+    @Override
+    public void autonomousPeriodic() {
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void teleopInit() {
+        var commandComponent = globalComponent.getCommandComponentBuilder().build();
+        CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
+        }
+
+        globalComponent.getDriveTrain().resetEncoder();
+        globalComponent.getButtonConfiguration().initTeleop();
+        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
+        globalComponent.getNavXGyro().resetGyro();
+        //CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
+        //CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(0));
+        globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
+    }
+
+    @Override
+    public void teleopPeriodic() {
+        globalComponent.getPositionTracker().trackPosition();
+        CommandScheduler.getInstance().run();
+    }
+
+    @Override
+    public void disabledInit() {
+        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_OFF);
+    }
+
+    @Override
+    public void disabledPeriodic() {
+    }
+
+    private void displayShuffleboard() {
+        VisionUtil vision = globalComponent.getVisionUtil();
+        NavXGyro navX = globalComponent.getNavXGyro();
+        Turret tt = globalComponent.getTurret();
+        CheeseWheel in = globalComponent.getCheeseWheel();
+        Hood h = globalComponent.getHood();
+        Flywheel fly = globalComponent.getFlywheel();
+        DriveTrainSide left = globalComponent.getDriveTrain().getLeft();
+        LimelightServo servo = globalComponent.getLimelightServo();
+
+        SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
+        SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
+        SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
+        SmartDashboard.putNumber("yaw", navX.getYaw());
+        SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
+        SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
+        SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
+        SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
+        SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
+        SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
+        SmartDashboard.putNumber("LLAngle", servo.getAngle());
+        SmartDashboard.putData(chooser);
     }
 }

@@ -20,26 +20,33 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import org.rivierarobotics.util.RobotMap;
 
-public class Flywheel extends BasePID implements Subsystem {
+public class Flywheel extends BasePIDSubsystem {
     private final WPI_TalonSRX flywheelTalon;
+    private double position;
 
-    public Flywheel() {
-        super(0.0004, 0.0, 0.0, 1.0, 0.0);
-        flywheelTalon = new WPI_TalonSRX(RobotMap.Controllers.FLYWHEEL_TALON);
+    public Flywheel(int id) {
+        //TODO ryan help
+        super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
+        flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();
-        flywheelTalon.setNeutralMode(NeutralMode.Brake);
-        getPidController().enableContinuousInput(0, 4096);
-        //TODO figure out how to do velocity control on flywheel via PID
+        flywheelTalon.setInverted(true);
+        flywheelTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        flywheelTalon.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
     public double getPositionTicks() {
-        return flywheelTalon.getSensorCollection().getPulseWidthVelocity();
+        return flywheelTalon.getSensorCollection().getQuadratureVelocity();
+    }
+
+    @Override
+    public void setPositionTicks(double pos) {
+        this.position = pos;
+        super.setPositionTicks(pos);
     }
 
     @Override

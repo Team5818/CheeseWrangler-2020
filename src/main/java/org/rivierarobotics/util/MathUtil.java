@@ -44,4 +44,29 @@ public class MathUtil {
         }
         return 0;
     }
+
+    public static double wrapToCircle(double angle) {
+        return angle % 360;
+    }
+
+    public static double limit(double value, double max) {
+        if (value > max) {
+            return max;
+        } else if (value < -max) {
+            return -max;
+        } else {
+            return value;
+        }
+    }
+
+    public static double minAbsCompare(double v1, double v2) {
+        double absMin = Math.min(Math.abs(v1), Math.abs(v2));
+        if (Math.abs(v1) == absMin) {
+            return v1;
+        } else if (Math.abs(v2) == absMin) {
+            return v2;
+        } else {
+            return 0;
+        }
+    }
 }

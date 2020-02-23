@@ -20,44 +20,51 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.subsystems.Hood;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.Reporting;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
+@GenerateCreator
 public class VisionAimTurret extends CommandBase {
-    private final ShuffleboardTab vision;
     private final Turret turret;
-    private final Hood hood;
+    private final DriveTrain driveTrain;
+    private final VisionUtil vision;
+    private final double extraDistance;
+    private final double height;
 
-    public VisionAimTurret(Turret turret, Hood hood) {
-        vision = Shuffleboard.getTab("Vision");
+    //TODO remove parameters you don't want to set with this command and addRequirements() the ones you want to move with this command
+    public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain driveTrain, @Provided VisionUtil vision, double extraDistance, double height) {
         this.turret = turret;
-        this.hood = hood;
-        addRequirements(turret, hood);
+        this.driveTrain = driveTrain;
+        this.vision = vision;
+        this.height = height;
+        this.extraDistance = extraDistance;
+        addRequirements(turret, driveTrain);
     }
 
     @Override
     public void execute() {
-        double tv = VisionUtil.getLLValue("tv");
-        double tx = VisionUtil.getLLValue("tx");
-        double ty = VisionUtil.getLLValue("ty");
+        double ty = vision.getLLValue("ty");
+        double t = ShooterUtil.getTConstant();
+        double dist = height / Math.tan(Math.toRadians(ty));
+        double txTurret = turret.getTxTurret(dist, extraDistance);
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity();
+        double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
+        double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
+        double tv = vision.getLLValue("tv");
 
-        Reporting.setOutEntry(vision, "Valid Target", tv == 1);
-        Reporting.setOutEntry(vision, "X Offset", tx);
-        Reporting.setOutEntry(vision, "Y Offset", ty);
+        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
+            turret.getPidController().setP(0.003);
+        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
+            turret.getPidController().setP(0.002);
+        }
 
         if (tv == 1) {
-            hood.setPosition(hood.getPosition() + (90 - ty));
-            turret.setPosition(turret.getPosition() + tx);
+            turret.setAbsolutePosition(turretAngle);
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

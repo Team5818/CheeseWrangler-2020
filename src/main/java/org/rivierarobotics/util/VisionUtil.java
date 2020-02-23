@@ -21,24 +21,39 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.rivierarobotics.subsystems.LimelightServo;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+@Singleton
 public class VisionUtil {
-    private static final double LLAngle = 0, LLHeight = 10, targetHeight = 20;
-    public static NetworkTable LIMELIGHT = NetworkTableInstance.getDefault().getTable("limelight");
+    private final NetworkTable limelight;
+    private final LimelightServo limelightServo;
 
-    private VisionUtil() {
+    @Inject
+    public VisionUtil(LimelightServo limelightServo) {
+        this.limelightServo = limelightServo;
+        limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
-    public static double getLLValue(String key) {
-        return LIMELIGHT.getEntry(key).getDouble(0);
-    }
-
-    public static double getDistanceToTarget() {
-        if (getLLValue("tv") == 1) {
-            return (targetHeight - LLHeight) / Math.tan(LLAngle + getLLValue("ty"));
-        } else {
-            return -1;
+    public final double getLLValue(String key) {
+        if (key == "ty") {
+            return limelight.getEntry(key).getDouble(0) + limelightServo.getAngle();
         }
+        return limelight.getEntry(key).getDouble(0);
     }
+
+    public final void setLedState(LimelightLedState state) {
+        limelight.getEntry("ledMode").setNumber(state.set);
+    }
+
+    public final void invertLedState() {
+        NetworkTableEntry led = limelight.getEntry("ledMode");
+        double cs = (double) led.getNumber(1.0);
+        led.setNumber(cs == 1 ? 3 : 1);
+    }
+
 }

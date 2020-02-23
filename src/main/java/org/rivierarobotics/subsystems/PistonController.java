@@ -21,17 +21,19 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class PistonController {
+public class PistonController extends SubsystemBase {
 
     public PistonController() {
     }
 
     private Solenoid pistonFor(Piston piston) {
-        if (piston == Piston.TEST) {
-            return null;
-        } else {
-            throw new IllegalArgumentException("Piston invalid");
+        switch (piston) {
+            case TEST:
+                return null;
+            default:
+                throw new IllegalArgumentException("Piston invalid");
         }
     }
 

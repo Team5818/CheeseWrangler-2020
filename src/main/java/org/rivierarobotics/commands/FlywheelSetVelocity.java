@@ -20,22 +20,22 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.robot.Robot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
 
-public class FlywheelSetVelocity extends InstantCommand {
-    private final Flywheel flywheel;
-    private final double velocity;
-
-    public FlywheelSetVelocity(double velocity) {
-        this.flywheel = Robot.runningRobot.flywheel;
-        this.velocity = velocity;
-        addRequirements(flywheel);
+@GenerateCreator
+public class FlywheelSetVelocity extends BasePIDSetPosition<Flywheel> {
+    public FlywheelSetVelocity(@Provided Flywheel flywheel, double velocity) {
+        //TODO set allowable error in ticks
+        super(flywheel, 8, velocity);
     }
 
     @Override
     public void execute() {
-        flywheel.setPosition(velocity);
+        SmartDashboard.putNumber("veee", super.positionTicks);
+        SmartDashboard.putNumber("fwset", subsystem.getPidController().getSetpoint());
+        super.execute();
     }
 }

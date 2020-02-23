@@ -22,54 +22,56 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Robot;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
 
+@GenerateCreator
 public class DriveControl extends CommandBase {
     private final DriveTrain driveTrain;
-    private final Joystick leftJs, rightJs;
+    private final Joystick leftJs;
+    private final Joystick rightJs;
 
-    public DriveControl(DriveTrain driveTrain) {
-        this.driveTrain = driveTrain;
-        this.leftJs = Robot.runningRobot.driverLeftJs;
-        this.rightJs = Robot.runningRobot.driverRightJs;
+    public DriveControl(@Provided @Input(Input.Selector.DRIVER_LEFT) Joystick left,
+                        @Provided @Input(Input.Selector.DRIVER_RIGHT) Joystick right,
+                        DriveTrain dt) {
+        this.driveTrain = dt;
+        this.leftJs = left;
+        this.rightJs = right;
         addRequirements(driveTrain);
     }
 
     @Override
     public void execute() {
-        if (Robot.runningRobot.isArcade) {
-            double x = MathUtil.fitDeadband(rightJs.getX());
-            double y = MathUtil.fitDeadband(leftJs.getY());
-            double left, right;
+        double x = MathUtil.fitDeadband(rightJs.getX());
+        double y = MathUtil.fitDeadband(-leftJs.getY());
+        double left;
+        double right;
 
-            double max = Math.max(Math.abs(x), Math.abs(y));
-            double diff = y - x;
-            double sum = y + x;
-            if (y > 0) {
-                if (x > 0) {
-                    left = max;
-                    right = diff;
-                } else {
-                    left = sum;
-                    right = max;
-                }
+        double max = Math.max(Math.abs(x), Math.abs(y));
+        double diff = y - x;
+        double sum = y + x;
+        if (y > 0) {
+            if (x > 0) {
+                left = max;
+                right = diff;
             } else {
-                if (x > 0) {
-                    left = sum;
-                    right = -max;
-                } else {
-                    left = -max;
-                    right = diff;
-                }
+                left = sum;
+                right = max;
             }
-
-            driveTrain.setPower(left, right);
         } else {
-            driveTrain.setPower(leftJs.getY(), rightJs.getY());
+            if (x > 0) {
+                left = sum;
+                right = -max;
+            } else {
+                left = -max;
+                right = diff;
+            }
         }
 
+        driveTrain.setPower(left, right);
     }
 
     @Override

@@ -22,24 +22,27 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 
+import javax.inject.Inject;
+
 public class TurretControl extends CommandBase {
     private final Turret turret;
-    private final Joystick leftCoDriverJs;
+    private final Joystick coDriverRightJs;
 
-    public TurretControl(Turret turret) {
+    @Inject
+    public TurretControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
+                         Turret turret) {
         this.turret = turret;
-        this.leftCoDriverJs = Robot.runningRobot.coDriverLeftJs;
+        this.coDriverRightJs = coDriverRightJs;
         addRequirements(turret);
-        //TODO make each control command the default for Hood and Turret, and remove the control button
     }
 
     @Override
     public void execute() {
-        turret.setManualPower(MathUtil.fitDeadband(leftCoDriverJs.getX()));
+        turret.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getX()));
     }
 
     @Override

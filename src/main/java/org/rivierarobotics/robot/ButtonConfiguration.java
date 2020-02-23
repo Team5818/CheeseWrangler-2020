@@ -20,22 +20,98 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.SetTurretPosition;
-import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.VisionTarget;
+
+import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private ButtonConfiguration() {
+    private final Joystick driverLeft;
+    private final Joystick driverRight;
+    private final Joystick coDriverLeft;
+    private final Joystick coDriverRight;
+    private final Joystick driverButtons;
+    private final Joystick coDriverButtons;
+    private final CommandComponent cmds;
+    double angle = 0;
+
+    @Inject
+    public ButtonConfiguration(@Input(Input.Selector.DRIVER_LEFT) Joystick driverLeft,
+                               @Input(Input.Selector.DRIVER_RIGHT) Joystick driverRight,
+                               @Input(Input.Selector.CODRIVER_LEFT) Joystick coDriverLeft,
+                               @Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRight,
+                               @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
+                               @Input(Input.Selector.CODRIVER_BUTTONS) Joystick coDriverButtons,
+                               CommandComponent.Builder component) {
+        this.driverLeft = driverLeft;
+        this.driverRight = driverRight;
+        this.coDriverLeft = coDriverLeft;
+        this.coDriverRight = coDriverRight;
+        this.driverButtons = driverButtons;
+        this.coDriverButtons = coDriverButtons;
+        this.cmds = component.build();
     }
 
-    public static void init() {
-        Turret turret = Robot.runningRobot.turret;
-        new JoystickButton(Robot.runningRobot.coDriverLeftJs, 1)
-                .whenPressed(new SetTurretPosition(turret, 90));
-        new JoystickButton(Robot.runningRobot.coDriverLeftJs, 2)
-                .whenPressed(new SetTurretPosition(turret, 180));
-        new JoystickButton(Robot.runningRobot.coDriverRightJs, 1)
-                .whenPressed(new TurretControl(turret));
+    public void initTeleop() {
+        new JoystickButton(coDriverLeft, 1)
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
+        new JoystickButton(coDriverLeft, 2)
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.CHEESERUN));
+        new JoystickButton(coDriverRight, 1)
+                .whenPressed(cmds.cameraServo().setAngle(0));
+        new JoystickButton(coDriverRight, 2)
+                .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
+        new JoystickButton(coDriverButtons, 12)
+            .whenPressed(cmds.turret().setAngle(20));
+        new JoystickButton(coDriverButtons, 11)
+            .whenPressed(cmds.hood().alignQuadrature());
+        /*
+        new JoystickButton(driverLeft, 1)
+        // Competition Robot Button Map
+                .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
+        new JoystickButton(driverLeft, 2)
+                .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));
+        new JoystickButton(driverRight, 1)
+                .whenPressed(cmds.intake().setPower(1.0));
+        new JoystickButton(driverRight, 2)
+                .whenPressed(cmds.intake().setPower(-1.0));
+        new JoystickButton(driverButtons, 6)
+                .whenPressed(cmds.cheeseWheel().invertMode());
+        new JoystickButton(coDriverButtons, 12)
+                .whenPressed(cmds.climb().setPosition(Climb.Height.FORTY_FIVE));
+        new JoystickButton(coDriverButtons, 10)
+                .whenPressed(cmds.climb().setPosition(Climb.Height.SIXTY));
+        new JoystickButton(coDriverButtons, 8)
+                .whenPressed(cmds.climb().setPosition(Climb.Height.SEVENTY_TWO));
+        new JoystickButton(coDriverButtons, 11)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 9)
+                .whenPressed(cmds.climb().lock());
+        new JoystickButton(coDriverLeft, 1)
+                .whenPressed();
+        new JoystickButton(coDriverLeft, 2)
+                .whenPressed();
+        new JoystickButton(coDriverRight, 1)
+                .whenPressed(cmds.cheeseWheel().shootNext());
+        new JoystickButton(coDriverRight, 2)
+                .whenPressed(cmds.cheeseWheel().shootAll());
+        new JoystickButton(coDriverButtons, 6)
+                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
+        new JoystickButton(coDriverButtons, 5)
+                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.CLIMB));
+        new JoystickButton(coDriverButtons, 4)
+                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
+        new JoystickButton(coDriverButtons, 3)
+                .whenPressed();
+        new JoystickButton(coDriverButtons, 2)
+                .whenPressed(cmds.cheeseWheel().incrementIndex());
+        new JoystickButton(coDriverButtons, 1)
+                .whenPressed(cmds.cheeseWheel().decrementIndex());*/
     }
 }

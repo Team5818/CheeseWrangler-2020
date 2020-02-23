@@ -22,26 +22,79 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import org.rivierarobotics.util.RobotMap;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.rivierarobotics.commands.HoodControl;
 
-public class Hood extends BasePID implements Subsystem {
+import javax.inject.Provider;
+
+public class Hood extends BasePIDSubsystem {
+    private static final double zeroTicks = -2334;
     private final WPI_TalonSRX hoodTalon;
+    private final Provider<HoodControl> command;
+    private final DigitalInput limit;
+    private double angle;
 
-    public Hood() {
-        super(0.0004, 0, 0.0001, 0.4, 0.0);
-        hoodTalon = new WPI_TalonSRX(RobotMap.Controllers.HOOD_TALON);
+    public Hood(int motorId, int limitId, Provider<HoodControl> command) {
+        super(new PIDConfig(0.001, 0.0001, 0.0, 0.03, 10, 0.6), 4096 / 360.0);
+        this.command = command;
+        hoodTalon = new WPI_TalonSRX(motorId);
+        limit = new DigitalInput(limitId);
         hoodTalon.configFactoryDefault();
+        hoodTalon.setSensorPhase(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public final WPI_TalonSRX getHoodTalon() {
+        return hoodTalon;
+    }
+
+    public final DigitalInput getLimit() {
+        return limit;
     }
 
     @Override
     public double getPositionTicks() {
-        return hoodTalon.getSensorCollection().getPulseWidthPosition();
+        return hoodTalon.getSensorCollection().getQuadraturePosition();
     }
 
     @Override
     public void setPower(double pwr) {
         hoodTalon.set(pwr);
+    }
+
+    @Override
+    public void setManualPower(double pwr) {
+        if (pwr >= 0 && getPositionTicks() > 0) {
+            pwr = 0;
+        } else if (pwr < 0 && getPositionTicks() < -4000) {
+            pwr = 0;
+        }
+        SmartDashboard.putNumber("HoodPower", pwr);
+        super.setManualPower(pwr);
+    }
+
+    public double getAbsolutePosition() {
+        return (zeroTicks - getPositionTicks()) / 5 * 360 / 4096;
+    }
+
+    //TODO attempt to eliminate field "angle" as it appears to not be needed
+    public void setAbsolutePosition(double angle) {
+        SmartDashboard.putNumber("SetHoodAngle", angle);
+        this.angle = angle;
+        if (angle >= -20 && angle <= 42) {
+            SmartDashboard.putNumber("Hood SetTicks", zeroTicks + angle * getAnglesOrInchesToTicks() * -5);
+            setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
+        } else {
+            setPositionTicks(0);
+        }
+    }
+
+    @Override
+    public void periodic() {
+        if (getDefaultCommand() == null) {
+            setDefaultCommand(command.get());
+        }
+        super.periodic();
     }
 }
