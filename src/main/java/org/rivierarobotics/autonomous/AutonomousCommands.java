@@ -22,6 +22,8 @@ package org.rivierarobotics.autonomous;
 
 import javax.inject.Inject;
 
+import edu.wpi.first.wpilibj2.command.Command;
+
 public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;
 

@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.autonomous;
 
+import javax.inject.Inject;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
