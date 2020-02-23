@@ -24,21 +24,29 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel;
-import jaci.pathfinder.followers.EncoderFollower;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.util.Units;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     private final WPI_TalonSRX masterTalon;
     private final CANSparkMax sparkSlaveOne;
     private final CANSparkMax sparkSlaveTwo;
+    private final boolean invert;
     private DriveTrain.Gear currentGear;
-    private EncoderFollower follower;
+    private PIDController pidController;
+    private boolean pidEnabled = false;
+    //TODO find actual ticks to inches
+    private double initialPosition;
+    private final double ticksPerInch = 12720.0 / 72;
 
     //TODO remove when new drivetrain is implemented
     public DriveTrainSide(MotorIds motors, boolean invert) {
         this.masterTalon = new WPI_TalonSRX(motors.masterTalon);
         this.sparkSlaveOne = new CANSparkMax(motors.sparkSlaveOne, CANSparkMaxLowLevel.MotorType.kBrushless);
         this.sparkSlaveTwo = new CANSparkMax(motors.sparkSlaveTwo, CANSparkMaxLowLevel.MotorType.kBrushless);
+        this.pidController = new PIDController(0.000002, 0.0, 0.0);
+        this.invert = invert;
 
         masterTalon.configFactoryDefault();
         masterTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
@@ -48,23 +56,30 @@ public class DriveTrainSide {
         sparkSlaveOne.setInverted(!invert);
         sparkSlaveTwo.setInverted(!invert);
 
-        this.follower = new EncoderFollower();
-        follower.configureEncoder((int) getPositionTicks(), 600, 0.10414);
-        follower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+        initialPosition = getPositionTicks();
     }
 
     public void setPower(double pwr) {
+        pidEnabled = false;
         masterTalon.set(pwr);
         sparkSlaveOne.set(pwr);
         sparkSlaveTwo.set(pwr);
     }
 
     public double getPositionTicks() {
-        return masterTalon.getSensorCollection().getQuadraturePosition();
+        int pos = masterTalon.getSensorCollection().getQuadraturePosition();
+        if (invert) {
+            pos *= -1;
+        }
+        return pos;
     }
 
-    public double getVelocity() {
-        return masterTalon.getSensorCollection().getQuadratureVelocity();
+    public int getVelocity() {
+        int vel = masterTalon.getSensorCollection().getQuadratureVelocity();
+        if (invert) {
+            vel *= -1;
+        }
+        return vel;
     }
 
     public void setGear(DriveTrain.Gear gear) {
@@ -75,8 +90,35 @@ public class DriveTrainSide {
         mode.applyTo(masterTalon, sparkSlaveOne, sparkSlaveTwo);
     }
 
-    public EncoderFollower getEncoderFollower() {
-        return follower;
+    public void setVelocity(double vel) {
+        double rawVel = Units.metersToInches(vel) * 10 * ticksPerInch;
+        pidEnabled = true;
+        pidController.setSetpoint(rawVel);
+    }
+
+    public void setPidPower() {
+        if (pidEnabled) {
+            double power = pidController.calculate(getVelocity());
+            masterTalon.set(power);
+            sparkSlaveOne.set(power);
+            sparkSlaveTwo.set(power);
+        }
+    }
+
+    public double getPosition() {
+        return getPositionTicks() / ticksPerInch;
+    }
+
+    public double getOffsetPosition() {
+        return (getPositionTicks() - initialPosition) / ticksPerInch;
+    }
+
+    public void resetPose() {
+        initialPosition = getPositionTicks();
+    }
+
+    public void resetEncoder() {
+        masterTalon.getSensorCollection().setQuadraturePosition(0, 100);
     }
 
     public static class MotorIds {

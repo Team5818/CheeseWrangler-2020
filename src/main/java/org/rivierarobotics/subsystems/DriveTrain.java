@@ -20,19 +20,27 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.NavXGyro;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class DriveTrain extends SubsystemBase {
     private final DriveTrainSide left;
     private final DriveTrainSide right;
     private final NavXGyro gyro;
-    private final double wheelCircumference = 0.32; // meters
+    private final DifferentialDriveKinematics kinematics;
+    private final DifferentialDriveOdometry odometry;
 
     @Inject
     public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
@@ -41,6 +49,9 @@ public class DriveTrain extends SubsystemBase {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
+        this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
+        Rotation2d gyroAngle = Rotation2d.fromDegrees(gyro.getYaw());
+        this.odometry = new DifferentialDriveOdometry(gyroAngle);
         setDefaultCommand(controlCreator.create(this));
     }
 
@@ -50,18 +61,17 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public double getAvgVelocity() {
-        return (left.getVelocity() - right.getVelocity()) / 2;
+        return (left.getVelocity() + right.getVelocity()) / 2.0;
     }
 
     public double getXVelocity() {
         double tickV = (getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 2400.0) * wheelCircumference);
+        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
     }
 
     public double getYVelocity() {
         double tickV = (getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw())));
-        SmartDashboard.putNumber("YVELOCITY", 10 * tickV * (1 / 600.0) * wheelCircumference);
-        return (10 * tickV * (1 / 2400.0) * wheelCircumference);
+        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
     }
 
     public void setGear(Gear gear) {
@@ -77,8 +87,39 @@ public class DriveTrain extends SubsystemBase {
         return right;
     }
 
-    public NavXGyro getGyro() {
-        return gyro;
+    public void setVelocity(double l, double r) {
+        left.setVelocity(l);
+        right.setVelocity(r);
+    }
+
+    public DifferentialDriveKinematics getKinematics() {
+        return kinematics;
+    }
+
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    public void resetPose() {
+        left.resetPose();
+        right.resetPose();
+    }
+
+    public void resetEncoder() {
+        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(gyro.getYaw()));
+        left.resetEncoder();
+        right.resetEncoder();
+    }
+
+    @Override
+    public void periodic() {
+        left.setPidPower();
+        right.setPidPower();
+        odometry.update(
+                Rotation2d.fromDegrees(gyro.getYaw()),
+                Units.inchesToMeters(left.getPosition()),
+                Units.inchesToMeters(right.getPosition())
+        );
     }
 
     public enum Gear {

@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.inject.Input;
@@ -59,16 +60,16 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-            .whenPressed(cmds.vision().encoderAim(0));
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
         new JoystickButton(coDriverLeft, 2)
-            .whenPressed(cmds.vision().correctPosition());
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.CHEESERUN));
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cameraServo().setAngle(0));
         new JoystickButton(coDriverRight, 2)
                 .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 12)
             .whenPressed(cmds.turret().setAngle(20));
-        new JoystickButton(coDriverButtons, 12)
+        new JoystickButton(coDriverButtons, 11)
             .whenPressed(cmds.hood().alignQuadrature());
         /*
         new JoystickButton(driverLeft, 1)
@@ -82,7 +83,6 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.intake().setPower(-1.0));
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.cheeseWheel().invertMode());
-
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.climb().setPosition(Climb.Height.FORTY_FIVE));
         new JoystickButton(coDriverButtons, 10)

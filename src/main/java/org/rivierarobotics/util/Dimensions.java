@@ -18,29 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.util;
 
-import jaci.pathfinder.Waypoint;
-
-public enum WaypointPath {
-    //Add another enum entry for each path desired to enter, and a series of Waypoint objects as the points
-    //Distances are in meters, x and y ordered, and angles are exit angles in radians
-
-    PROVIDED_PATH(
-        new Waypoint(-4, -1, Math.toRadians(-45)),
-        new Waypoint(-2, -2, 0),
-        new Waypoint(0, 0, 0)
-    ),
-    SQUARE(
-        new Waypoint(0, 4, Math.toRadians(90)),
-        new Waypoint(4, 4, Math.toRadians(180)),
-        new Waypoint(4, 0, Math.toRadians(270)),
-        new Waypoint(0, 0, Math.toRadians(0))
-    );
-
-    public final Waypoint[] pointMap;
-
-    WaypointPath(Waypoint... pointMap) {
-        this.pointMap = pointMap;
-    }
+public interface Dimensions {
+    double WHEEL_CIRCUMFERENCE = 0.32; // meters
+    double TRACKWIDTH = 0.7366; // meters
 }

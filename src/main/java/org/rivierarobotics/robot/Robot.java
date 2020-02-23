@@ -20,15 +20,21 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.autonomous.PathweaverExecutor;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.*;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.DriveTrainSide;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.LimelightServo;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
@@ -43,6 +49,9 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         chooser = new SendableChooser<>();
+        
+        chooser.addOption("Flex", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.FLEX));
+        chooser.addOption("CheeseRun", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.CHEESERUN));
     }
 
     @Override
@@ -74,6 +83,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
+        globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
@@ -118,7 +128,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
         SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("LLAngle", servo.getAngle());
-
-
+        SmartDashboard.putData(chooser);
     }
 }
