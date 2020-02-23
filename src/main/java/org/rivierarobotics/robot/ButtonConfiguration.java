@@ -62,7 +62,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 1)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.CHEESERUN));
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cameraServo().setAngle(0));
         new JoystickButton(coDriverRight, 2)
