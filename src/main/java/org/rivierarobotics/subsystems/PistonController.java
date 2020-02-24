@@ -30,6 +30,8 @@ public class PistonController extends SubsystemBase {
 
     private Solenoid pistonFor(Piston piston) {
         switch (piston) {
+            case COLORWHEEL:
+                return null;
             case TEST:
                 return null;
             default:

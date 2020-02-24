@@ -1,38 +1,54 @@
+/*
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.rivierarobotics.util.ColorWheelColor;
-
-//import com.revrobotics.
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.ColorMatchResult;
-import com.revrobotics.ColorMatch;
 
 public class ColorWheel extends BasePIDSubsystem {
-    private final WPI_TalonSRX ColorWheelTalon;
+    private final WPI_TalonSRX colorWheelTalon;
     private ColorWheelColor colorInit;
     private ColorSensorV3 colorSensorV3;
-    //initial color
+    public final Piston piston = Piston.COLORWHEEL;
     public final double colorWheelRadius;
-    //TODO Input some kind of Color sensor
 
     public ColorWheel(int id, double colorWheelRadius, ColorSensorV3 colorSensorV3) {
         super( 0.0, 0.0, 0.0, 1);
-        ColorWheelTalon = new WPI_TalonSRX(id);
-        ColorWheelTalon.configFactoryDefault();
-        ColorWheelTalon.setNeutralMode(NeutralMode.Brake);
+        colorWheelTalon = new WPI_TalonSRX(id);
+        colorWheelTalon.configFactoryDefault();
+        colorWheelTalon.setNeutralMode(NeutralMode.Brake);
         this.colorWheelRadius = colorWheelRadius;
         this.colorSensorV3 = colorSensorV3;
+        colorInit = getColor();
     }
-    public ColorWheelColor getColor(){
-        if(colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 0 && colorSensorV3.getBlue() == 0){
+    public ColorWheelColor getColor() {
+        if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 0 && colorSensorV3.getBlue() == 0) {
             return ColorWheelColor.RED;
-        }else if(colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 0){
+        } else if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 0) {
             return ColorWheelColor.YELLOW;
-        }else if(colorSensorV3.getRed() == 0 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 0){
+        } else if (colorSensorV3.getRed() == 0 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 0) {
             return  ColorWheelColor.GREEN;
-        }else if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 255){
+        } else if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 255) {
             return  ColorWheelColor.BLUE;
         }
         return null;
@@ -40,11 +56,11 @@ public class ColorWheel extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return ColorWheelTalon.getSensorCollection().getQuadratureVelocity();
+        return colorWheelTalon.getSensorCollection().getQuadratureVelocity();
     }
 
     @Override
     protected void setPower(double pwr) {
-        ColorWheelTalon.set(pwr);
+        colorWheelTalon.set(pwr);
     }
 }
