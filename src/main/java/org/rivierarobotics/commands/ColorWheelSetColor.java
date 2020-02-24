@@ -31,8 +31,8 @@ import org.rivierarobotics.util.ColorWheelColor;
 public class ColorWheelSetColor extends InstantCommand {
     private ColorWheel colorWheel;
     private ColorWheelColor color;
+    //The color you are setting it to
     private PistonController pistonController;
-    //the color that we are setting it to
 
     public ColorWheelSetColor(@Provided ColorWheel colorWheel, ColorWheelColor color, @Provided PistonController pistonController) {
         this.pistonController = pistonController;

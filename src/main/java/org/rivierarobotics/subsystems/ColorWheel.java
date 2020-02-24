@@ -31,6 +31,8 @@ public class ColorWheel extends BasePIDSubsystem {
     private ColorSensorV3 colorSensorV3;
     public final Piston piston = Piston.COLORWHEEL;
     public final double colorWheelRadius;
+    private final double colorleniency = 10.0;
+    //colorleniency is a setting which modifies how lenient the sensor is to detect a color
 
     public ColorWheel(int id, double colorWheelRadius, ColorSensorV3 colorSensorV3) {
         super( 0.0, 0.0, 0.0, 1);
@@ -42,13 +44,21 @@ public class ColorWheel extends BasePIDSubsystem {
         colorInit = getColor();
     }
     public ColorWheelColor getColor() {
-        if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 0 && colorSensorV3.getBlue() == 0) {
+        if ((colorSensorV3.getRed() <= 255 + colorleniency|| colorSensorV3.getRed() >= 255 - colorleniency)
+                && (colorSensorV3.getGreen() <= 0 + colorleniency || colorSensorV3.getGreen() >= 0 - colorleniency)
+                && (colorSensorV3.getBlue() <= 0 + colorleniency || colorSensorV3.getBlue() >= 0 - colorleniency)) {
             return ColorWheelColor.RED;
-        } else if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 0) {
+        } else if ((colorSensorV3.getRed() <= 255 + colorleniency|| colorSensorV3.getRed() >= 255 - colorleniency)
+                && (colorSensorV3.getGreen() <= 255 + colorleniency || colorSensorV3.getGreen() >= 255 - colorleniency)
+                && (colorSensorV3.getBlue() <= 0 + colorleniency || colorSensorV3.getBlue() >= 0 - colorleniency)) {
             return ColorWheelColor.YELLOW;
-        } else if (colorSensorV3.getRed() == 0 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 0) {
+        } else if ((colorSensorV3.getRed() <= 0 + colorleniency|| colorSensorV3.getRed() >= 0 - colorleniency)
+                && (colorSensorV3.getGreen() <= 255 + colorleniency || colorSensorV3.getGreen() >= 255 - colorleniency)
+                && (colorSensorV3.getBlue() <= 0 + colorleniency || colorSensorV3.getBlue() >= 0 - colorleniency)) {
             return  ColorWheelColor.GREEN;
-        } else if (colorSensorV3.getRed() == 255 && colorSensorV3.getGreen() == 255 && colorSensorV3.getBlue() == 255) {
+        } else if ((colorSensorV3.getRed() <= 255 + colorleniency|| colorSensorV3.getRed() >= 255 - colorleniency)
+                && (colorSensorV3.getGreen() <= 255 + colorleniency || colorSensorV3.getGreen() >= 255 - colorleniency)
+                && (colorSensorV3.getBlue() <= 255 + colorleniency || colorSensorV3.getBlue() >= 255 - colorleniency)) {
             return  ColorWheelColor.BLUE;
         }
         return null;

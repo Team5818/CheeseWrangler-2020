@@ -32,8 +32,9 @@ public class ColorWheelSpin extends InstantCommand {
     private PistonController pistonController;
     private int rotations;
     private double circumference = 1.0;
+    //Circumference of actual color Wheel, not that of the spinner
 
-    public ColorWheelSpin(@Provided ColorWheel colorWheel, int rotations, @Provided PistonController pistonController) {
+    public ColorWheelSpin(@Provided ColorWheel colorWheel, @Provided PistonController pistonController, int rotations) {
         this.colorWheel = colorWheel;
         this.rotations = rotations;
         this.pistonController = pistonController;
@@ -42,7 +43,7 @@ public class ColorWheelSpin extends InstantCommand {
     @Override
     public void execute() {
         pistonController.operatePiston(colorWheel.piston, true);
-        colorWheel.setPosition((circumference * rotations) / colorWheel.colorWheelRadius);
+        colorWheel.setPosition((rotations * circumference) / colorWheel.colorWheelRadius);
     }
 
 
