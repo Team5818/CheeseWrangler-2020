@@ -31,28 +31,19 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class Ejector extends SubsystemBase {
-    private final EjectorSide left;
-    private final EjectorSide right;
+    private final WPI_TalonSRX ejectorTalon;
     private final Provider<EjectorControl> command;
 
     @Inject
-    public Ejector(@Sided(Sided.Side.LEFT) EjectorSide left,
-                   @Sided(Sided.Side.RIGHT) EjectorSide right,
-                   Provider<EjectorControl> command) {
+    public Ejector(int id, Provider<EjectorControl> command) {
         this.command = command;
-        this.left = left;
-        this.right = right;
+        this.ejectorTalon = new WPI_TalonSRX(id);
+        ejectorTalon.setNeutralMode(NeutralMode.Brake);
     }
 
 
     public void setPower(double pwr) {
-        left.setPower(pwr);
-        right.setPower(pwr);
-    }
-
-    public void setPower(double leftPwr, double rightPwr) {
-        left.setPower(leftPwr);
-        right.setPower(rightPwr);
+        ejectorTalon.set(pwr);
     }
 
     @Override

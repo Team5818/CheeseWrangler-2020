@@ -27,6 +27,6 @@ public @interface Sided {
     Side value();
 
     enum Side {
-        LEFT, RIGHT
+        LEFT, RIGHT, FRONT, BACK
     }
 }

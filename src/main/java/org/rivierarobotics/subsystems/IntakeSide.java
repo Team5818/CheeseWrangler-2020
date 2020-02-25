@@ -26,11 +26,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 public class IntakeSide {
     private final WPI_TalonSRX intakeTalon;
 
-    public IntakeSide(int id, boolean invert) {
+    public IntakeSide(int id) {
         intakeTalon = new WPI_TalonSRX(id);
         intakeTalon.configFactoryDefault();
         intakeTalon.setNeutralMode(NeutralMode.Brake);
-        intakeTalon.setInverted(invert);
     }
 
     public void setPower(double pwr) {

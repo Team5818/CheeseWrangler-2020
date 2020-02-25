@@ -26,17 +26,23 @@ import org.rivierarobotics.inject.Sided;
 import javax.inject.Inject;
 
 public class Intake extends SubsystemBase {
-    private final IntakeSide left, right;
+    private final IntakeSide front;
+    private final IntakeSide back;
 
     @Inject
-    public Intake(@Sided(Sided.Side.LEFT) IntakeSide left,
-                  @Sided(Sided.Side.RIGHT) IntakeSide right) {
-        this.left = left;
-        this.right = right;
+    public Intake(@Sided(Sided.Side.FRONT) IntakeSide front,
+                  @Sided(Sided.Side.BACK) IntakeSide back) {
+        this.front = front;
+        this.back = back;
+    }
+
+    public void setPower(double frontPwr, double backPwr) {
+        front.setPower(frontPwr);
+        back.setPower(backPwr);
     }
 
     public void setPower(double pwr) {
-        left.setPower(pwr);
-        right.setPower(pwr);
+        front.setPower(pwr);
+        back.setPower(pwr);
     }
 }

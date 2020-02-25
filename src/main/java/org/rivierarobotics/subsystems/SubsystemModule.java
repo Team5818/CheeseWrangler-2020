@@ -85,16 +85,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.LEFT)
-    public static EjectorSide provideEjectorSideLeft() {
-        return new EjectorSide(EJECTOR_LEFT_TALON, true);
-    }
-
-    @Provides
-    @Singleton
-    @Sided(Sided.Side.RIGHT)
-    public static EjectorSide provideEjectorSideRight() {
-        return new EjectorSide(EJECTOR_RIGHT_TALON, false);
+    public static Ejector provideEjector(Provider<EjectorControl> command) {
+        return new Ejector(EJECTOR_TALON, command);
     }
 
     @Provides
@@ -106,16 +98,16 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.LEFT)
-    public static IntakeSide provideIntakeSideLeft() {
-        return new IntakeSide(INTAKE_LEFT_TALON, true);
+    @Sided(Sided.Side.FRONT)
+    public static IntakeSide provideIntakeSideFront() {
+        return new IntakeSide(INTAKE_FRONT_TALON);
     }
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.RIGHT)
-    public static IntakeSide provideIntakeSideRight() {
-        return new IntakeSide(INTAKE_RIGHT_TALON, false);
+    @Sided(Sided.Side.BACK)
+    public static IntakeSide provideIntakeSideBack() {
+        return new IntakeSide(INTAKE_BACK_TALON);
     }
 
     @Provides

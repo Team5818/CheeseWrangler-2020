@@ -29,15 +29,32 @@ import org.rivierarobotics.subsystems.Intake;
 public class IntakeSetPower extends InstantCommand {
     private final Intake intake;
     private final double power;
+    private final double frontPower;
+    private final double backPower;
 
     public IntakeSetPower(@Provided Intake intake, double power) {
         this.intake = intake;
         this.power = power;
         addRequirements(intake);
+        frontPower = 0;
+        backPower = 0;
     }
+
+    public IntakeSetPower(@Provided Intake intake, double frontPower, double backPower) {
+        this.intake = intake;
+        this.frontPower = frontPower;
+        this.backPower = backPower;
+        power = 0;
+        addRequirements(intake);
+    }
+
 
     @Override
     public void execute() {
-        intake.setPower(power);
+        if (power != 0) {
+            intake.setPower(power);
+        } else {
+            intake.setPower(frontPower, backPower);
+        }
     }
 }
