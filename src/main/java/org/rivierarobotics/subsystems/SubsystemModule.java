@@ -36,15 +36,14 @@ import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 22;
-    private static final int HOOD_TALON = 25;
-    private static final int FLYWHEEL_TALON = 11;
-    private static final int CHEESE_WHEEL_TALON = 7;
-    private static final int EJECTOR_LEFT_TALON = 17; //At the time of writing this, the IDs of the ejector motors is
-    private static final int EJECTOR_RIGHT_TALON = 17; // unknown, so the same IDs are used as a placeholder.
-    private static final int INTAKE_LEFT_TALON = 18;
-    private static final int INTAKE_RIGHT_TALON = 19;
-    private static final int CLIMB_TALON = 20;
+    private static final int TURRET_TALON = 7;
+    private static final int HOOD_TALON = 5;
+    private static final int FLYWHEEL_TALON = 4;
+    private static final int CHEESE_WHEEL_TALON = 6;
+    private static final int EJECTOR_TALON = 8;
+    private static final int INTAKE_FRONT_TALON = 9;
+    private static final int INTAKE_BACK_TALON = 10;
+    private static final int CLIMB_TALON = 21;
 
     private static final int HOOD_LIMIT_SWITCH = 6;
     private static final int INDEX_SENSOR_INTAKE = 9;
