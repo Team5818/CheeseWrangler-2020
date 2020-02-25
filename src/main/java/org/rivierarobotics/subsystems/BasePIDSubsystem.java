@@ -21,34 +21,45 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.util.SubsystemShuffleTab;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
-    private final double pidRange, anglesOrInchesToTicks, kP, kI, kD;
-    private final PIDController pidController;
-    private boolean pidEnabled = false;
-    private SubsystemShuffleTab shuffTab;
+    protected final SubsystemShuffleTab shuffleTab;
+    protected final PIDController pidController;
+    protected final PIDConfig pidConfig;
+    protected final double anglesOrInchesToTicks;
+    protected boolean pidEnabled = false;
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange) {
-        this(kP, kI, kD, pidRange, 0.0, 4096.0 / 360);
+    public BasePIDSubsystem(PIDConfig pidConfig) {
+        this(pidConfig, 4096.0 / 360);
     }
 
-    public BasePIDSubsystem(double kP, double kI, double kD, double pidRange, double tolerance, double anglesOrInchesToTicks) {
-        this.pidController = new PIDController(kP, kI, kD, 0.005);
-        this.pidRange = pidRange;
+    public BasePIDSubsystem(PIDConfig pidConfig, double anglesOrInchesToTicks) {
+        this.pidConfig = pidConfig;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
-        this.shuffTab = new SubsystemShuffleTab(getName());
-        pidController.setTolerance(tolerance);
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
+
+        this.shuffleTab = new SubsystemShuffleTab(getName());
+        this.pidController = new PIDController(pidConfig.getP(), pidConfig.getI(), pidConfig.getD(), 0.005);
+        this.pidController.setTolerance(pidConfig.getTolerance());
     }
 
     private void tickPid() {
-        double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPositionTicks())));
+        double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
-            setPower(pidPower);
+            if (pidController.atSetpoint()) {
+                return;
+            }
+            SmartDashboard.putNumber("InitPID", pidPower);
+            if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0 && pidConfig.getF() != 0) {
+                if (pidPower < 0) {
+                    setPower(-pidConfig.getF());
+                } else if (pidPower > 0) {
+                    setPower(pidConfig.getF());
+                }
+            } else {
+                setPower(pidPower);
+            }
         }
     }
 
@@ -56,7 +67,11 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         return pidController;
     }
 
-    public double getAnglesOrInchesToTicks() {
+    public final PIDConfig getPidConfig() {
+        return pidConfig;
+    }
+
+    public final double getAnglesOrInchesToTicks() {
         return anglesOrInchesToTicks;
     }
 
@@ -84,17 +99,16 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     protected abstract void setPower(double pwr);
 
     private void displayShuffleboard() {
-        shuffTab.setEntry("Position", getPosition());
-        shuffTab.setEntry("Position Ticks", getPositionTicks());
-        shuffTab.setEntry("Setpoint", pidController.getSetpoint());
-        shuffTab.setEntry("At Setpoint", pidController.atSetpoint());
-        shuffTab.setEntry("PID Enabled", pidEnabled);
+        shuffleTab.setEntry("Position", getPosition());
+        shuffleTab.setEntry("Position Ticks", getPositionTicks());
+        shuffleTab.setEntry("Setpoint", pidController.getSetpoint());
+        shuffleTab.setEntry("At Setpoint", pidController.atSetpoint());
+        shuffleTab.setEntry("PID Enabled", pidEnabled);
+        shuffleTab.setEntry("Error", pidController.getSetpoint() - Math.abs(getPosition()));
     }
 
     public void resetPidConstants() {
-        pidController.setP(kP);
-        pidController.setI(kI);
-        pidController.setD(kD);
+        pidController.setPID(pidConfig.getP(), pidConfig.getI(), pidConfig.getD());
     }
 
     @Override

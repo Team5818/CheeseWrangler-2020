@@ -20,37 +20,34 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-public class Climb extends BasePIDSubsystem {
-    private final WPI_TalonSRX climbTalon;
+import java.util.HashMap;
+import java.util.Map;
 
-    public Climb(int id) {
-        super(new PIDConfig(0, 0, 0, 1));
-        this.climbTalon = new WPI_TalonSRX(id);
-        climbTalon.configFactoryDefault();
-        climbTalon.setSensorPhase(true);
-        climbTalon.setNeutralMode(NeutralMode.Brake);
+public class SubsystemShuffleTab {
+    private Map<String, NetworkTableEntry> entryMap;
+    private ShuffleboardTab tab;
+
+    public SubsystemShuffleTab(String name) {
+        this.tab = Shuffleboard.getTab(name);
+        this.entryMap = new HashMap<>();
     }
 
-    @Override
-    public double getPositionTicks() {
-        return climbTalon.getSensorCollection().getPulseWidthPosition();
-    }
-
-    @Override
-    protected void setPower(double pwr) {
-        climbTalon.set(pwr);
-    }
-
-    public enum Height {
-        FORTY_FIVE(0), SIXTY(0), SEVENTY_TWO(0);
-
-        public final int position;
-
-        Height(int position) {
-            this.position = position;
+    public void setEntry(String key, Object value) {
+        NetworkTableEntry entry = entryMap.get(key);
+        if (entry == null) {
+            entry = addEntry(key);
         }
+        assert entry != null;
+        entry.setValue(value);
+    }
+
+    public NetworkTableEntry addEntry(String key) {
+        NetworkTableEntry entry = tab.add(key, 0).getEntry();
+        entryMap.put(key, entry);
+        return entry;
     }
 }

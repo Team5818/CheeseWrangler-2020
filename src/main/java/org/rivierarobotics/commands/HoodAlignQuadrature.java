@@ -36,6 +36,7 @@ public class HoodAlignQuadrature extends CommandBase {
 
     @Override
     public void execute() {
+        //TODO why do we need this if?
         if (isFinished()) {
             return;
         }
@@ -50,6 +51,7 @@ public class HoodAlignQuadrature extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return hood.isAtEnd();
+        // switch is false when triggered
+        return !hood.getLimit().get();
     }
 }

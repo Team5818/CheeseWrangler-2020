@@ -18,29 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands;
 
-import jaci.pathfinder.Waypoint;
+<<<<<<< HEAD:src/main/java/org/rivierarobotics/commands/EjectorEjectCheese.java
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Ejector;
 
-public enum WaypointPath {
-    //Add another enum entry for each path desired to enter, and a series of Waypoint objects as the points
-    //Distances are in meters, x and y ordered, and angles are exit angles in radians
+@GenerateCreator
+public class EjectorEjectCheese extends InstantCommand {
+    private final Ejector ejector;
 
-    PROVIDED_PATH(
-            new Waypoint(-4, -1, Math.toRadians(-45)),
-            new Waypoint(-2, -2, 0),
-            new Waypoint(0, 0, 0)
-    ),
-    SQUARE(
-            new Waypoint(0, 4, Math.toRadians(90)),
-            new Waypoint(4, 4, Math.toRadians(180)),
-            new Waypoint(4, 0, Math.toRadians(270)),
-            new Waypoint(0, 0, Math.toRadians(0))
-    );
+    public EjectorEjectCheese(@Provided Ejector ejector) {
+        this.ejector = ejector;
+        addRequirements(ejector);
+    }
 
-    public final Waypoint[] pointMap;
-
-    WaypointPath(Waypoint... pointMap) {
-        this.pointMap = pointMap;
+    @Override
+    public void execute() {
+        ejector.setPower(0.75);
     }
 }
+=======
+public interface Dimensions {
+    double WHEEL_CIRCUMFERENCE = 0.32; // meters
+    double TRACKWIDTH = 0.7366; // meters
+}
+>>>>>>> master:src/main/java/org/rivierarobotics/util/Dimensions.java

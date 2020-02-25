@@ -21,21 +21,22 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Ejector;
+import org.rivierarobotics.util.PositionTracker;
 
-@GenerateCreator
-public class EjectorEjectCheese extends InstantCommand {
-    private final Ejector ejector;
+import javax.inject.Inject;
 
-    public EjectorEjectCheese(@Provided Ejector ejector) {
-        this.ejector = ejector;
-        addRequirements(ejector);
+public class CorrectPosition extends InstantCommand {
+
+    PositionTracker tracker;
+
+    @Inject
+    public CorrectPosition(PositionTracker tracker) {
+        this.tracker = tracker;
     }
 
     @Override
     public void execute() {
-        ejector.setPower(0.75);
+        tracker.correctPosition();
     }
+
 }

@@ -27,14 +27,13 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
-public class EncoderAim extends CommandBase {
+public class CalcAim extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
@@ -42,13 +41,11 @@ public class EncoderAim extends CommandBase {
     private final Turret turret;
     private final PositionTracker tracker;
     private final double extraDistance;
-    private final LimelightServo limelightServo;
 
-    public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
-                      @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
-                      @Provided LimelightServo limelightServo, double extraDistance) {
+    public CalcAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
+                   @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
+                   double extraDistance) {
         this.hood = hood;
-        this.limelightServo = limelightServo;
         this.driveTrain = dt;
         this.flywheel = flywheel;
         this.vision = vision;
@@ -68,27 +65,26 @@ public class EncoderAim extends CommandBase {
         double t = ShooterUtil.getTConstant();
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
         double vz = zFromGoal / t - driveTrain.getXVelocity();
+        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
-        turret.changeAimMode(Turret.AimMode.STILL);
+        double captainKalbag = Math.toDegrees(captainKalbag(xFromGoal, zFromGoal));
 
-        limelightServo.setAngle(Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(), dist)) - 10);
+        SmartDashboard.putNumber("changeInAngle", captainKalbag);
 
-        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
-            turret.getPidController().setP(0.004);
-        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
-            turret.getPidController().setP(0.002);
+
+        if (Math.abs(driveTrain.getAvgVelocity()) > 20) {
+            SmartDashboard.putNumber("turretvel", captainKalbag * turret.getAnglesOrInchesToTicks() / 10);
+            turret.changeAimMode(Turret.AimMode.MOVING);
+            turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10 + 5);
         } else {
-            turret.getPidController().setP(0.001);
+            turret.changeAimMode(Turret.AimMode.STILL);
+            turret.setAbsolutePosition(turretAngle);
         }
 
-        turret.setAbsolutePosition(turretAngle);
-
         double y = ShooterUtil.getYVelocityConstant();
-        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
-
         SmartDashboard.putNumber("BallVel", ballVel);
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
@@ -106,6 +102,14 @@ public class EncoderAim extends CommandBase {
                 }
             }
         }
+    }
+
+    private double captainKalbag(double xFromGoal, double zFromGoal) {
+        double epicTime = 0.1;
+        double xDist = xFromGoal - driveTrain.getYVelocity() * epicTime;
+        double zDist = zFromGoal - driveTrain.getXVelocity() * epicTime;
+        return (1 / (Math.pow((zDist / xDist), 2) + 1)) * ((-driveTrain.getXVelocity() * xDist)
+            - (-driveTrain.getYVelocity() * xDist)) / Math.pow(xDist, 2);
     }
 
     @Override

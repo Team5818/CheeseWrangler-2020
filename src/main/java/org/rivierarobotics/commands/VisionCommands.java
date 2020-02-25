@@ -24,22 +24,32 @@ import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class VisionCommands {
     private VisionAimHoodCreator visionAimHoodCreator;
     private VisionAimTurretCreator visionAimTurretCreator;
     private LimelightLedSetStateCreator limelightLedSetStateCreator;
     private VisionAimCreator visionAimCreator;
+    private Provider<CorrectPosition> correctPositionProvider;
+    private EncoderAimCreator encoderAimCreator;
+    private CalcAimCreator calcAimCreator;
 
     @Inject
     public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
                           VisionAimTurretCreator visionAimTurretCreator,
                           LimelightLedSetStateCreator limelightLedSetStateCreator,
-                          VisionAimCreator visionAimCreator) {
+                          VisionAimCreator visionAimCreator,
+                          Provider<CorrectPosition> correctPositionProvider,
+                          EncoderAimCreator encoderAimCreator,
+                          CalcAimCreator calcAimCreator) {
         this.visionAimHoodCreator = visionAimHoodCreator;
         this.visionAimCreator = visionAimCreator;
         this.visionAimTurretCreator = visionAimTurretCreator;
         this.limelightLedSetStateCreator = limelightLedSetStateCreator;
+        this.correctPositionProvider = correctPositionProvider;
+        this.encoderAimCreator = encoderAimCreator;
+        this.calcAimCreator = calcAimCreator;
     }
 
     public VisionAimHood autoAimHood(double extraDistance, double height) {
@@ -50,8 +60,20 @@ public class VisionCommands {
         return visionAimTurretCreator.create(extraDistance, height);
     }
 
+    public CalcAim calcAim(double extraDistance) {
+        return calcAimCreator.create(extraDistance);
+    }
+
     public VisionAim visionAim(VisionTarget target) {
         return visionAimCreator.create(target);
+    }
+
+    public EncoderAim encoderAim(double extraDistance) {
+        return encoderAimCreator.create(extraDistance);
+    }
+
+    public CorrectPosition correctPosition() {
+        return correctPositionProvider.get();
     }
 
     public LimelightLedSetState limelightSetState(LimelightLedState state) {

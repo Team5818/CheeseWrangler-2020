@@ -1,7 +1,8 @@
 import com.techshroom.inciseblue.commonLib
+import org.rivierarobotics.gradlerioredux.artifactsKt
 
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.7.5"
+    id("org.rivierarobotics.gradlerioredux") version "0.7.6"
 }
 
 gradleRioRedux {
@@ -9,7 +10,20 @@ gradleRioRedux {
     teamNumber = 5818
 }
 
+afterEvaluate {
+    deploy {
+        artifactsKt {
+            fileTreeArtifact("frcStaticFileDeploy") {
+                files.set(fileTree("PathWeaver/output"))
+                targets.add("roboRio")
+                directory = "/home/lvuser/deploy/paths"
+            }
+        }
+    }
+}
+
 dependencies {
+    implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
     commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
         compileOnly(lib("annotations"))
         annotationProcessor(lib("processor"))

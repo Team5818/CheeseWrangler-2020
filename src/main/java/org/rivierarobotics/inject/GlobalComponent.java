@@ -24,7 +24,17 @@ import dagger.Component;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
-import org.rivierarobotics.subsystems.*;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Climb;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.Ejector;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.Intake;
+import org.rivierarobotics.subsystems.LimelightServo;
+import org.rivierarobotics.subsystems.PistonController;
+import org.rivierarobotics.subsystems.SubsystemModule;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
@@ -80,4 +90,5 @@ public abstract class GlobalComponent {
     public abstract PositionTracker getPositionTracker();
 
     public abstract CommandComponent.Builder getCommandComponentBuilder();
+
 }
