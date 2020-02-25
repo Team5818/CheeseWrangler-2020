@@ -1,6 +1,5 @@
 import com.techshroom.inciseblue.commonLib
 import org.rivierarobotics.gradlerioredux.artifactsKt
-import org.rivierarobotics.gradlerioredux.targetsKt
 
 plugins {
     id("org.rivierarobotics.gradlerioredux") version "0.7.6"
@@ -24,6 +23,7 @@ afterEvaluate {
 }
 
 dependencies {
+    implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
     commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
         compileOnly(lib("annotations"))
         annotationProcessor(lib("processor"))
