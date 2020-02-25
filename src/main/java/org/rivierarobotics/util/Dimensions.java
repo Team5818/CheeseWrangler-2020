@@ -18,31 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-<<<<<<< HEAD:src/main/java/org/rivierarobotics/commands/EjectorEjectCheese.java
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Ejector;
-
-@GenerateCreator
-public class EjectorEjectCheese extends InstantCommand {
-    private final Ejector ejector;
-
-    public EjectorEjectCheese(@Provided Ejector ejector) {
-        this.ejector = ejector;
-        addRequirements(ejector);
-    }
-
-    @Override
-    public void execute() {
-        ejector.setPower(0.75);
-    }
-}
-=======
 public interface Dimensions {
     double WHEEL_CIRCUMFERENCE = 0.32; // meters
     double TRACKWIDTH = 0.7366; // meters
 }
->>>>>>> master:src/main/java/org/rivierarobotics/util/Dimensions.java

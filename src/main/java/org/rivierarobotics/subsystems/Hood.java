@@ -49,8 +49,9 @@ public class Hood extends BasePIDSubsystem {
         return hoodTalon;
     }
 
-    public final DigitalInput getLimit() {
-        return limit;
+    public boolean isAtEnd() {
+        // switch is false when triggered
+        return !limit.get();
     }
 
     @Override

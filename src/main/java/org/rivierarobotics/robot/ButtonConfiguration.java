@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.util.VisionTarget;
@@ -29,7 +30,12 @@ import org.rivierarobotics.util.VisionTarget;
 import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private final Joystick driverLeft, driverRight, coDriverLeft, coDriverRight, driverButtons, coDriverButtons;
+    private final Joystick driverLeft;
+    private final Joystick driverRight;
+    private final Joystick coDriverLeft;
+    private final Joystick coDriverRight;
+    private final Joystick driverButtons;
+    private final Joystick coDriverButtons;
     private final CommandComponent cmds;
 
     @Inject

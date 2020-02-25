@@ -24,20 +24,13 @@ import javax.inject.Inject;
 
 public class EjectorCommands {
     private final EjectorSetPowerCreator ejectorSetPowerCreator;
-    private final EjectorEjectCheeseCreator ejectorEjectCheeseCreator;
 
     @Inject
-    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator,
-                           EjectorEjectCheeseCreator ejectorEjectCheeseCreator) {
+    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator) {
         this.ejectorSetPowerCreator = ejectorSetPowerCreator;
-        this.ejectorEjectCheeseCreator = ejectorEjectCheeseCreator;
     }
 
     public EjectorSetPower setPower(double power) {
         return ejectorSetPowerCreator.create(power);
-    }
-
-    public EjectorEjectCheese ejectCheese() {
-        return ejectorEjectCheeseCreator.create();
     }
 }

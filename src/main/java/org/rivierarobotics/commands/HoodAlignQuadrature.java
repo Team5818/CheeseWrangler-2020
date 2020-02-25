@@ -51,7 +51,6 @@ public class HoodAlignQuadrature extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        // switch is false when triggered
-        return !hood.getLimit().get();
+        return hood.isAtEnd();
     }
 }

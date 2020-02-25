@@ -21,38 +21,37 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import jaci.pathfinder.followers.EncoderFollower;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     //TODO change values of threshold to realistic values
-    private final double lowBoundLow = 5000 / 2.0, highBoundLow = 6000 / 2.0,
-            lowBoundHigh = lowBoundLow / 2.5, highBoundHigh = (highBoundLow / 2.5);
+    private static final double LOW_BOUND_LOW = 5000 / 2.0;
+    private static final double HIGH_BOUND_LOW = 6000 / 2.0;
+    private static final double LOW_BOUND_HIGH = LOW_BOUND_LOW / 2.5;
+    private static final double HIGH_BOUND_HIGH = (HIGH_BOUND_LOW / 2.5);
+    // TODO re-find ticks-per-inch for the comp bot
+    private static final double TICKS_PER_INCH = 12720.0 / 72;
     private final boolean invert;
-    private WPI_TalonFX tl, tr, bl, br;
+    private WPI_TalonFX tl;
+    private WPI_TalonFX tr;
+    private WPI_TalonFX bl;
+    private WPI_TalonFX br;
     private Encoder shaftEncoder;
     private DriveTrain.Gear currentGear;
-    private EncoderFollower follower;
 
     public DriveTrainSide(MotorIds motors, boolean invert) {
-        this.tl = new WPI_TalonFX(motors.tl);
-        this.tr = new WPI_TalonFX(motors.tr);
-        this.bl = new WPI_TalonFX(motors.bl);
-        this.br = new WPI_TalonFX(motors.br);
+        this.tl = new WPI_TalonFX(motors.topLeft);
+        this.tr = new WPI_TalonFX(motors.topRight);
+        this.bl = new WPI_TalonFX(motors.bottomLeft);
+        this.br = new WPI_TalonFX(motors.bottomRight);
         this.currentGear = DriveTrain.Gear.HYBRID;
         this.invert = invert;
 
         setupMotors(tl, tr, bl, br);
         NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
 
-        this.shaftEncoder = new Encoder(motors.encA, motors.encB);
-
-        this.follower = new EncoderFollower();
-        follower.configurePIDVA(1.0, 0.0, 0.0, 1 / 1.7, 0);
+        this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
     }
 
     private void setupMotors(WPI_TalonFX... motors) {
@@ -60,6 +59,11 @@ public class DriveTrainSide {
             motor.configFactoryDefault();
             motor.setInverted(invert);
         }
+    }
+
+    public void setVelocity(double vel) {
+        // TODO implement proper velocity control
+        throw new UnsupportedOperationException();
     }
 
     public void setPower(double pwr) {
@@ -79,21 +83,23 @@ public class DriveTrainSide {
                 tl.set(pwr);
                 tr.set(pwr);
                 break;
+            default:
+                throw new IllegalStateException("Unknown gear: " + currentGear);
         }
     }
 
     private void hybridSetPower(double pwr, double highRPM, double lowRPM) {
         double highPower = 0;
-        if ((highRPM > lowBoundHigh && highRPM < highBoundHigh)) {
-            highPower = ((highBoundHigh - highRPM) / (highBoundHigh - lowBoundHigh)) * pwr;
-        } else if (highRPM > highBoundHigh) {
+        if ((highRPM > LOW_BOUND_HIGH && highRPM < HIGH_BOUND_HIGH)) {
+            highPower = ((HIGH_BOUND_HIGH - highRPM) / (HIGH_BOUND_HIGH - LOW_BOUND_HIGH)) * pwr;
+        } else if (highRPM > HIGH_BOUND_HIGH) {
             highPower = pwr;
         }
         tl.set(highPower);
         tr.set(highPower);
 
         double lowPower = 0;
-        if (lowRPM < lowBoundLow) {
+        if (lowRPM < LOW_BOUND_LOW) {
             lowPower = pwr;
         }
         bl.set(lowPower);
@@ -134,20 +140,25 @@ public class DriveTrainSide {
         mode.applyTo(tl, tr, bl, br);
     }
 
-    public EncoderFollower getEncoderFollower() {
-        return follower;
+    public void resetEncoder() {
+        shaftEncoder.reset();
     }
 
     public static class MotorIds {
-        public final int tl, tr, bl, br, encA, encB;
+        public final int topLeft;
+        public final int topRight;
+        public final int bottomLeft;
+        public final int bottomRight;
+        public final int encoderA;
+        public final int encoderB;
 
-        public MotorIds(int tl, int tr, int bl, int br, int encA, int encB) {
-            this.tl = tl;
-            this.tr = tr;
-            this.bl = bl;
-            this.br = br;
-            this.encA = encA;
-            this.encB = encB;
+        public MotorIds(int topLeft, int topRight, int bottomLeft, int bottomRight, int encoderA, int encoderB) {
+            this.topLeft = topLeft;
+            this.topRight = topRight;
+            this.bottomLeft = bottomLeft;
+            this.bottomRight = bottomRight;
+            this.encoderA = encoderA;
+            this.encoderB = encoderB;
         }
     }
 }
