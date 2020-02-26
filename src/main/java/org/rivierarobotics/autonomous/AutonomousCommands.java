@@ -21,16 +21,24 @@
 package org.rivierarobotics.autonomous;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;
+    private Provider<FlexRoutine> flexRoutineProvider;
 
     @Inject
-    public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator) {
+    public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
+                              PathweaverExecutorCreator pathweaverExecutorCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
+        this.flexRoutineProvider = flexRoutineProvider;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
         return pathweaverExecutorCreator.create(path);
+    }
+
+    public FlexRoutine flexRoutine() {
+        return flexRoutineProvider.get();
     }
 }
