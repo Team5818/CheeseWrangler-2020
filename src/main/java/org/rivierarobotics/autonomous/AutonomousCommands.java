@@ -26,12 +26,16 @@ import javax.inject.Provider;
 public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;
     private Provider<FlexRoutine> flexRoutineProvider;
+    private Provider<FlexTapeRoutine> flexTapeProvider;
 
     @Inject
     public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
+                              Provider<FlexTapeRoutine> flexTapeProvider,
                               PathweaverExecutorCreator pathweaverExecutorCreator) {
+
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.flexRoutineProvider = flexRoutineProvider;
+        this.flexTapeProvider = flexTapeProvider;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
@@ -41,4 +45,6 @@ public class AutonomousCommands {
     public FlexRoutine flexRoutine() {
         return flexRoutineProvider.get();
     }
+
+    public FlexTapeRoutine flexTape() {return flexTapeProvider.get();}
 }

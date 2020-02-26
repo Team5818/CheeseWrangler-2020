@@ -39,7 +39,7 @@ import java.util.Locale;
 import java.util.function.Function;
 
 public enum Pose2dPath {
-    FLEX, CHEESERUN;
+    FLEX, CHEESERUN, FLEXTAPE;
 
     private final Path trajectoryJson;
     private Trajectory trajectory;
