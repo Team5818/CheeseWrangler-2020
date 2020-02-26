@@ -84,15 +84,15 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     @Override
-    public void setPosition(double position) {
-        position += (zeroTicks / getAnglesOrInchesToTicks());
-        super.setPosition(position);
-    }
-
-    @Override
     public double getPosition() {
         double position = super.getPosition();
         return position - (zeroTicks / getAnglesOrInchesToTicks());
+    }
+
+    @Override
+    public void setPosition(double position) {
+        position += (zeroTicks / getAnglesOrInchesToTicks());
+        super.setPosition(position);
     }
 
     public enum Mode {

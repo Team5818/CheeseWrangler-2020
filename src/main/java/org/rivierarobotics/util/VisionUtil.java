@@ -40,7 +40,8 @@ public class VisionUtil {
     }
 
     public final double getLLValue(String key) {
-        if (key == "ty") {
+        //TODO this is a bad idea, make this its own wrapper method - also key == ty probably wasn't working as intended
+        if (key.equals("ty")) {
             return limelight.getEntry(key).getDouble(0) + limelightServo.getAngle();
         }
         return limelight.getEntry(key).getDouble(0);

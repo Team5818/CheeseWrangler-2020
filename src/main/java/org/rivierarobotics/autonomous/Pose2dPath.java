@@ -31,6 +31,7 @@ import java.nio.file.Path;
 import java.util.Locale;
 
 public enum Pose2dPath {
+    // An underscore indicates a camelCase filename, keep all lowercase filenames and uppercase enums otherwise
     FLEX, CHEESERUN, FLEX_TAPE;
 
     private final Path trajectoryJson;

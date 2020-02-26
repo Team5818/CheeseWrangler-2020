@@ -45,6 +45,4 @@ public class TurretSetVelocity extends BasePIDSetPosition<Turret> {
     public void execute() {
         super.execute();
     }
-
-
 }

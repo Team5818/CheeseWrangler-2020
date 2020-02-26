@@ -36,7 +36,6 @@ public class VisionAimTurret extends CommandBase {
     private final double extraDistance;
     private final double height;
 
-    //TODO remove parameters you don't want to set with this command and addRequirements() the ones you want to move with this command
     public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain driveTrain, @Provided VisionUtil vision, double extraDistance, double height) {
         this.turret = turret;
         this.driveTrain = driveTrain;

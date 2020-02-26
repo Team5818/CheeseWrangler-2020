@@ -36,6 +36,10 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
         this.turret = turret;
     }
 
+    protected double getPositionTicks() {
+        return subsystem.getAbsoluteAngle();
+    }
+
     @Override
     protected void setPositionTicks(double angle) {
         turret.changeAimMode(Turret.AimMode.STILL);
@@ -46,18 +50,11 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
             turret.getPidController().setP(0.001);
         }
 
-
-
-
         SmartDashboard.putNumber("turretset", position);
         if (isInvalidPosition()) {
             position -= 4096;
         }
         super.setPositionTicks(position);
-    }
-
-    protected double getPositionTicks() {
-        return subsystem.getAbsoluteAngle();
     }
 
     private boolean isInvalidPosition() {

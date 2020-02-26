@@ -43,7 +43,6 @@ public class PathweaverExecutor extends CommandBase {
         this.driveTrain = driveTrain;
         this.controller = new RamseteController();
         this.trajectory = generateTrajectory(path);
-
         addRequirements(driveTrain);
     }
 

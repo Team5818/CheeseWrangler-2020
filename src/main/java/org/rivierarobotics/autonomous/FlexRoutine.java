@@ -27,8 +27,6 @@ import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
-
-
 public class FlexRoutine extends SequentialCommandGroup {
 
     @Inject

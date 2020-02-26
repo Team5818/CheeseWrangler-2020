@@ -21,7 +21,6 @@
 package org.rivierarobotics.util;
 
 public class ShooterUtil {
-
     private ShooterUtil() {
     }
 
@@ -65,6 +64,4 @@ public class ShooterUtil {
     public static double getLeftFieldToGoal() {
         return 0.9; //meters
     }
-
-
 }

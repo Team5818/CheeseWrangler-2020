@@ -41,7 +41,6 @@ public class VisionAimHood extends CommandBase {
     private final double extraDistance;
     private final double height;
 
-    //TODO remove parameters you don't want to set with this command and addRequirements() the ones you want to move with this command
     public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, double extraDistance, double height) {
         this.hood = hd;
         this.driveTrain = dt;
@@ -55,7 +54,6 @@ public class VisionAimHood extends CommandBase {
 
     @Override
     public void execute() {
-
         double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
         double t = ShooterUtil.getTConstant();   //time constant
         double dist = height / Math.tan(Math.toRadians(vision.getLLValue("ty")));
@@ -84,8 +82,6 @@ public class VisionAimHood extends CommandBase {
                 }
             }
         }
-
-
     }
 
     @Override

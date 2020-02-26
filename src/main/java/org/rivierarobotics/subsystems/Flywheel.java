@@ -29,7 +29,6 @@ public class Flywheel extends BasePIDSubsystem {
     private double position;
 
     public Flywheel(int id) {
-        //TODO ryan help
         super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
         flywheelTalon = new WPI_TalonSRX(id);
         flywheelTalon.configFactoryDefault();

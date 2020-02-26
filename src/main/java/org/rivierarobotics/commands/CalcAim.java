@@ -71,7 +71,6 @@ public class CalcAim extends CommandBase {
 
         SmartDashboard.putNumber("changeInAngle", captainKalbag);
 
-
         if (Math.abs(driveTrain.getAvgVelocity()) > 20) {
             SmartDashboard.putNumber("turretvel", captainKalbag * turret.getAnglesOrInchesToTicks() / 10);
             turret.changeAimMode(Turret.AimMode.MOVING);

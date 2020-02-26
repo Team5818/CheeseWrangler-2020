@@ -41,7 +41,7 @@ public class AutonomousCommands {
         return pathweaverExecutorCreator.create(path);
     }
 
-    public FlexRoutine flexRoutine() {
+    public FlexRoutine flex() {
         return flexRoutineProvider.get();
     }
 

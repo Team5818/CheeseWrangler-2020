@@ -71,6 +71,7 @@ public class DriveControl extends CommandBase {
             }
         }
 
+        //TODO uncomment when robot is stable
         //driveTrain.setPower(left, right);
     }
 

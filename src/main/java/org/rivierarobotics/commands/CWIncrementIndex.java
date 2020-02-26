@@ -32,13 +32,13 @@ public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
     }
 
     @Override
-    protected void setPositionTicks(double position) {
-        subsystem.setPosition(position);
-    }
-
-    @Override
     protected double getPositionTicks() {
         SmartDashboard.putNumber("pos", subsystem.getPosition());
         return subsystem.getPosition();
+    }
+
+    @Override
+    protected void setPositionTicks(double position) {
+        subsystem.setPosition(position);
     }
 }

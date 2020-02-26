@@ -28,14 +28,13 @@ import org.rivierarobotics.subsystems.Turret;
 import javax.inject.Inject;
 
 public class PositionTracker {
+    static double[] pos = new double[2];
+    static double beforeT = 0;
     private final Timer time;
     private final NavXGyro gyro;
     private final DriveTrain driveTrain;
-    private final double wheelCircumference = 0.32; // meters
     private final VisionUtil vision;
     private final Turret turret;
-    static double[] pos = new double[2];
-    static double beforeT = 0;
     double t;
 
     @Inject

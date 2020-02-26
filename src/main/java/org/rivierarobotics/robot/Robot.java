@@ -25,12 +25,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.autonomous.PathweaverExecutor;
 import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
@@ -40,18 +39,20 @@ import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
+    private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
 
     @Override
     public void robotInit() {
         globalComponent = DaggerGlobalComponent.create();
+        commandComponent = globalComponent.getCommandComponentBuilder().build();
         globalComponent.robotInit();
         chooser = new SendableChooser<>();
 
-        //TODO use commandComponent
-        chooser.addOption("Flex", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.FLEX));
-        chooser.addOption("CheeseRun", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.CHEESERUN));
+        //TODO not sure if this is valid syntax
+        chooser.addOption("Flex", commandComponent.auto().pathweaver(Pose2dPath.FLEX));
+        chooser.addOption("Cheeserun", commandComponent.auto().pathweaver(Pose2dPath.CHEESERUN));
     }
 
     @Override
@@ -66,6 +67,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         autonomousCommand = chooser.getSelected();
         if (autonomousCommand != null) {
+            //TODO uncomment when auto is testing/implemented
             //autonomousCommand.schedule();
         }
     }
@@ -77,13 +79,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        var commandComponent = globalComponent.getCommandComponentBuilder().build();
-        CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(0));
-        //CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
 
+        CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(0));
         globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
@@ -111,7 +111,6 @@ public class Robot extends TimedRobot {
         Turret tt = globalComponent.getTurret();
         CheeseWheel in = globalComponent.getCheeseWheel();
         Hood h = globalComponent.getHood();
-        Flywheel fly = globalComponent.getFlywheel();
         LimelightServo servo = globalComponent.getLimelightServo();
         CheeseWheel cheeseWheel = globalComponent.getCheeseWheel();
 

@@ -40,9 +40,4 @@ public class Intake extends SubsystemBase {
         front.setPower(frontPwr);
         back.setPower(backPwr);
     }
-
-    public void setPower(double pwr) {
-        front.setPower(pwr);
-        back.setPower(pwr);
-    }
 }

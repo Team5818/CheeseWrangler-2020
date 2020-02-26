@@ -39,6 +39,4 @@ public class TurretCommands {
     public TurretSetVelocity setVelocity(double velocity) {
         return turretSetVelocityCreator.create(velocity);
     }
-
-
 }

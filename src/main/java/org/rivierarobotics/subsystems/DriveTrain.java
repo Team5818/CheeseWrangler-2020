@@ -50,8 +50,7 @@ public class DriveTrain extends SubsystemBase {
         this.left = left;
         this.right = right;
         this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
-        Rotation2d gyroAngle = Rotation2d.fromDegrees(gyro.getYaw());
-        this.odometry = new DifferentialDriveOdometry(gyroAngle);
+        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }
 
@@ -111,9 +110,9 @@ public class DriveTrain extends SubsystemBase {
     @Override
     public void periodic() {
         odometry.update(
-                Rotation2d.fromDegrees(gyro.getYaw()),
-                Units.inchesToMeters(left.getPosition()),
-                Units.inchesToMeters(right.getPosition())
+            Rotation2d.fromDegrees(gyro.getYaw()),
+            Units.inchesToMeters(left.getPosition()),
+            Units.inchesToMeters(right.getPosition())
         );
     }
 

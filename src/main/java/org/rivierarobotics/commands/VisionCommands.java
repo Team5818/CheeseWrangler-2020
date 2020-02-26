@@ -31,7 +31,7 @@ public class VisionCommands {
     private VisionAimTurretCreator visionAimTurretCreator;
     private LimelightLedSetStateCreator limelightLedSetStateCreator;
     private VisionAimCreator visionAimCreator;
-    private Provider<CorrectPosition> correctPositionProvider;
+    private Provider<TrackerCorrectPosition> correctPositionProvider;
     private EncoderAimCreator encoderAimCreator;
     private CalcAimCreator calcAimCreator;
 
@@ -40,7 +40,7 @@ public class VisionCommands {
                           VisionAimTurretCreator visionAimTurretCreator,
                           LimelightLedSetStateCreator limelightLedSetStateCreator,
                           VisionAimCreator visionAimCreator,
-                          Provider<CorrectPosition> correctPositionProvider,
+                          Provider<TrackerCorrectPosition> correctPositionProvider,
                           EncoderAimCreator encoderAimCreator,
                           CalcAimCreator calcAimCreator) {
         this.visionAimHoodCreator = visionAimHoodCreator;
@@ -72,7 +72,7 @@ public class VisionCommands {
         return encoderAimCreator.create(extraDistance);
     }
 
-    public CorrectPosition correctPosition() {
+    public TrackerCorrectPosition correctPosition() {
         return correctPositionProvider.get();
     }
 

@@ -27,15 +27,18 @@ import javax.inject.Inject;
 
 public class LimelightServo extends SubsystemBase {
     private final Servo servo;
-    private final double zeroDegree = 90;
 
     @Inject
     public LimelightServo(int id) {
         this.servo = new Servo(id);
     }
 
-    public Servo getServo() {
-        return servo;
+    public double getAngle() {
+        return (servo.getPosition() - 0.5) * -240.0;
+    }
+
+    public void setAngle(double angle) {
+        this.servo.set(0.5 - (angle * 1 / 240.0));
     }
 
     public enum Position {
@@ -47,16 +50,4 @@ public class LimelightServo extends SubsystemBase {
             this.angle = angle;
         }
     }
-
-    public double getAngle() {
-        return (servo.getPosition() - 0.5) * -240.0;
-    }
-
-    public void setAngle(double angle) {
-        this.servo.set(0.5 - (angle * 1 / 240.0));
-    }
-
-
-
-
 }

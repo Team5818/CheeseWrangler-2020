@@ -25,12 +25,11 @@ import org.rivierarobotics.util.PositionTracker;
 
 import javax.inject.Inject;
 
-public class CorrectPosition extends InstantCommand {
-
+public class TrackerCorrectPosition extends InstantCommand {
     PositionTracker tracker;
 
     @Inject
-    public CorrectPosition(PositionTracker tracker) {
+    public TrackerCorrectPosition(PositionTracker tracker) {
         this.tracker = tracker;
     }
 
@@ -38,5 +37,4 @@ public class CorrectPosition extends InstantCommand {
     public void execute() {
         tracker.correctPosition();
     }
-
 }

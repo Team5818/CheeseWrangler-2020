@@ -33,16 +33,14 @@ import javax.inject.Provider;
 
 public class Turret extends BasePIDSubsystem {
     private static final double zeroTicks = 1383;
+    private static final double maxAngle = 150;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
     public AimMode mode = AimMode.ENCODER;
-    private double angle;
-    private static final double maxAngle = 150;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-        //TODO: more tuning :):):):):):)
         super(new PIDConfig(0.001, 0.0, 0.00000, 0.0, 15, 1.0));
         this.command = command;
         this.gyro = gyro;
@@ -71,11 +69,8 @@ public class Turret extends BasePIDSubsystem {
         if (mode == AimMode.MOVING) {
             return turretTalon.getSensorCollection().getPulseWidthVelocity();
         } else {
-
             return turretTalon.getSensorCollection().getPulseWidthPosition();
         }
-
-
     }
 
     public double getAbsoluteAngle() {
@@ -95,7 +90,6 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsolutePosition(double angle) {
-        this.angle = angle;
         SmartDashboard.putNumber("Turret SetAngle", angle);
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
@@ -141,7 +135,6 @@ public class Turret extends BasePIDSubsystem {
     public void changeAimMode(AimMode mode) {
         this.mode = mode;
     }
-
 
     public enum AimMode {
         VISION, ENCODER, MOVING, STILL;

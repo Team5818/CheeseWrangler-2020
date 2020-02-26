@@ -28,16 +28,15 @@ import org.rivierarobotics.util.VisionTarget;
 import javax.inject.Inject;
 
 public class FlexTapeRoutine extends SequentialCommandGroup {
-
     @Inject
     public FlexTapeRoutine(AutonomousCommands autonomousCommands,
                            VisionCommands visionCommands,
                            CheeseWheelCommands cheeseWheelCommands) {
         addCommands(
-                autonomousCommands.pathweaver(Pose2dPath.FLEX_TAPE),
-                visionCommands.visionAim(VisionTarget.INNER),
-                cheeseWheelCommands.autoCollect(true),
-                cheeseWheelCommands.shootNext()
+            autonomousCommands.pathweaver(Pose2dPath.FLEX_TAPE),
+            visionCommands.visionAim(VisionTarget.INNER),
+            cheeseWheelCommands.autoCollect(true),
+            cheeseWheelCommands.shootNext()
         );
     }
 }

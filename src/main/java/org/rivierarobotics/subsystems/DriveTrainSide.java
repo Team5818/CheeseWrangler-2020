@@ -22,7 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
-import org.rivierarobotics.util.NeutralIdleMode;
+import org.rivierarobotics.util.CTRENeutralMode;
 
 public class DriveTrainSide {
     //TODO change values of threshold to realistic values
@@ -49,7 +49,7 @@ public class DriveTrainSide {
         this.invert = invert;
 
         setupMotors(tl, tr, bl, br);
-        NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
+        CTRENeutralMode.COAST.applyTo(tl, tr, bl, br);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
     }
@@ -59,11 +59,6 @@ public class DriveTrainSide {
             motor.configFactoryDefault();
             motor.setInverted(invert);
         }
-    }
-
-    public void setVelocity(double vel) {
-        // TODO implement proper velocity control
-        throw new UnsupportedOperationException();
     }
 
     public void setPower(double pwr) {
@@ -120,6 +115,11 @@ public class DriveTrainSide {
         return shaftEncoder.getRate();
     }
 
+    public void setVelocity(double vel) {
+        // TODO implement proper velocity control
+        throw new UnsupportedOperationException();
+    }
+
     public double getMotorRPM(WPI_TalonFX motor) {
         return motor.getSensorCollection().getIntegratedSensorVelocity() * (600.0 / 2048);
     }
@@ -136,7 +136,7 @@ public class DriveTrainSide {
         this.currentGear = gear;
     }
 
-    public void setNeutralIdle(NeutralIdleMode mode) {
+    public void setNeutralIdle(CTRENeutralMode mode) {
         mode.applyTo(tl, tr, bl, br);
     }
 
