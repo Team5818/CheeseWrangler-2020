@@ -22,7 +22,6 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 

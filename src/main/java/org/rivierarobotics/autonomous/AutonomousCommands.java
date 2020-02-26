@@ -32,7 +32,6 @@ public class AutonomousCommands {
     public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
                               Provider<FlexTapeRoutine> flexTapeProvider,
                               PathweaverExecutorCreator pathweaverExecutorCreator) {
-
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.flexRoutineProvider = flexRoutineProvider;
         this.flexTapeProvider = flexTapeProvider;
@@ -46,5 +45,7 @@ public class AutonomousCommands {
         return flexRoutineProvider.get();
     }
 
-    public FlexTapeRoutine flexTape() {return flexTapeProvider.get();}
+    public FlexTapeRoutine flexTape() {
+        return flexTapeProvider.get();
+    }
 }

@@ -20,15 +20,15 @@
 
 package org.rivierarobotics.autonomous;
 
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
+
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Locale;
-
-import edu.wpi.first.wpilibj.Filesystem;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 
 public enum Pose2dPath {
     FLEX, CHEESERUN, FLEX_TAPE;

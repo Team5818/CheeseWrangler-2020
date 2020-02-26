@@ -23,7 +23,6 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.PIDConfig;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator

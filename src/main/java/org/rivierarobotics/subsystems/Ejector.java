@@ -22,10 +22,8 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import dagger.Provides;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.EjectorControl;
-import org.rivierarobotics.inject.Sided;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

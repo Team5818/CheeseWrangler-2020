@@ -20,12 +20,12 @@
 
 package org.rivierarobotics.subsystems;
 
-import javax.inject.Provider;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import org.rivierarobotics.commands.CheeseWheelControl;
+
+import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
     public final double indexDiff = 360.0 / 5;
