@@ -37,6 +37,6 @@ public class HoodSetAngle extends BasePIDSetPosition<Hood> {
 
     @Override
     protected void setPositionTicks(double position) {
-        this.subsystem.setAbsolutePosition(position);
+        this.subsystem.setAbsoluteAngle(position);
     }
 }

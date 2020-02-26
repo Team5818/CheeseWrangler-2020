@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
@@ -83,7 +84,7 @@ public class Turret extends BasePIDSubsystem {
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx") + getAbsoluteAngle());
-        double txTurret = Math.atan2(distance * Math.sin(tx) - 0.18, distance * Math.cos(tx) + extraDistance);
+        double txTurret = Math.atan2(distance * Math.sin(tx) - ShooterUtil.getLLtoTurret(), distance * Math.cos(tx) + extraDistance);
         SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
         SmartDashboard.putNumber("txTurret", Math.toDegrees(txTurret));
         return txTurret;
@@ -95,13 +96,8 @@ public class Turret extends BasePIDSubsystem {
         SmartDashboard.putNumber("turretset", position);
         if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
             setPositionTicks(position);
-        } else {
-            position -= 4096;
-            if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
-                setPositionTicks(position);
-            } else {
-                return;
-            }
+        } else if (position - 4096 < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
+            setPositionTicks(position - 4096);
         }
     }
 

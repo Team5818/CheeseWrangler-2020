@@ -59,7 +59,7 @@ public class CalcAim extends CommandBase {
     public void execute() {
         double[] pos = tracker.getPosition();
         double xFromGoal = ShooterUtil.getFieldLength() - pos[1];
-        double zFromGoal = ShooterUtil.getLeftFieldToGoal() - pos[0];
+        double zFromGoal = ShooterUtil.getLeftFieldToFarGoal() - pos[0];
         double dist = Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2));
         SmartDashboard.putNumber("dist", dist);
         double t = ShooterUtil.getTConstant();
@@ -88,15 +88,15 @@ public class CalcAim extends CommandBase {
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
         if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity()) {
-            hood.setAbsolutePosition(hoodAngle + 3.5);
+            hood.setAbsoluteAngle(hoodAngle + 3.5);
             flywheel.setPositionTicks(encoderVelocity + 10);
         } else {
             if (dist < 1) {
-                hood.setAbsolutePosition(ShooterUtil.getMaxHoodAngle());
+                hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
                 flywheel.setPositionTicks(120);
             } else {
                 if (dist > 1) {
-                    hood.setAbsolutePosition(hoodAngle);
+                    hood.setAbsoluteAngle(hoodAngle);
                     flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
                 }
             }

@@ -61,18 +61,20 @@ public class EncoderAim extends CommandBase {
     @Override
     public void execute() {
         double[] pos = tracker.getPosition();
-        double xFromGoal = ShooterUtil.getFieldLength() - pos[1];
-        double zFromGoal = ShooterUtil.getLeftFieldToGoal() - pos[0];
-        double dist = Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2));
+        double xFromGoal = pos[1];
+        double zFromGoal = pos[0] - ShooterUtil.getLeftFieldToCloseGoal();
+        double dist = Math.sqrt(Math.pow(xFromGoal + extraDistance, 2) + Math.pow(zFromGoal, 2));
         SmartDashboard.putNumber("dist", dist);
         double t = ShooterUtil.getTConstant();
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
         double vz = zFromGoal / t - driveTrain.getXVelocity();
-        double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
+        double turretAngle = Math.toDegrees(Math.atan2(vz, vx)) + 180;
         turret.changeAimMode(Turret.AimMode.STILL);
 
-        limelightServo.setAngle(Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(), dist)) - 10);
+        limelightServo.setAngle(Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
+            Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2)))) - 10);
 
+        //TODO: Get an equation that can model the change in P for the change in angle
         if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
             turret.getPidController().setP(0.004);
         } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
@@ -92,21 +94,25 @@ public class EncoderAim extends CommandBase {
         SmartDashboard.putNumber("BallVel", ballVel);
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
-        if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity()) {
-            hood.setAbsolutePosition(hoodAngle + 3.5);
-            flywheel.setPositionTicks(encoderVelocity + 10);
+
+        if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
+            //Close Shot
+            hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
+            flywheel.setPositionTicks(encoderVelocity);
+        } else if (vxz > ShooterUtil.getMaxBallVelocity()) {
+            //Long Shot
+            hood.setAbsoluteAngle(hoodAngle);
+            flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
         } else {
-            if (dist < 1) {
-                hood.setAbsolutePosition(ShooterUtil.getMaxHoodAngle());
-                flywheel.setPositionTicks(120);
-            } else {
-                if (dist > 1) {
-                    hood.setAbsolutePosition(hoodAngle);
-                    flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
-                }
-            }
+            //Calculated Shot
+            hood.setAbsoluteAngle(hoodAngle);
+            flywheel.setPositionTicks(encoderVelocity);
         }
+
     }
+
+
+
 
     @Override
     public boolean isFinished() {

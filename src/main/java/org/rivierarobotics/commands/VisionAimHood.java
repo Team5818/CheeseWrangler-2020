@@ -68,18 +68,19 @@ public class VisionAimHood extends CommandBase {
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle + 3);
 
-        if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity() && vision.getLLValue("tv") == 1) {
-            hood.setAbsolutePosition(hoodAngle + 3);
-            flywheel.setPositionTicks(encoderVelocity + 10);
-        } else {
-            if (dist < 1 && vision.getLLValue("tv") == 1) {
-                hood.setAbsolutePosition(ShooterUtil.getMaxHoodAngle());
-                flywheel.setPositionTicks(120);
+        if (vision.getLLValue("ty") ==  1) {
+            if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
+                //Close Shot
+                hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
+                flywheel.setPositionTicks(encoderVelocity);
+            } else if (vxz > ShooterUtil.getMaxBallVelocity()) {
+                //Long Shot
+                hood.setAbsoluteAngle(hoodAngle);
+                flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
             } else {
-                if (dist > 1 && vision.getLLValue("tv") == 1) {
-                    hood.setAbsolutePosition(hoodAngle);
-                    flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
-                }
+                //Calculated Shot
+                hood.setAbsoluteAngle(hoodAngle);
+                flywheel.setPositionTicks(encoderVelocity);
             }
         }
     }

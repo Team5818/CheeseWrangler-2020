@@ -21,12 +21,24 @@
 package org.rivierarobotics.util;
 
 public class ShooterUtil {
+    //TODO:Update literally everything in this class
     private ShooterUtil() {
     }
 
     public static double getTopHeight() {
         return 1.63; //diff between robot height and top goal meters
     }
+
+    public static double getMaxBallVelocity() {
+        //in m/s
+        return 12;
+    }
+
+    public static double getLLtoTurret() {
+        //meters
+        return 0.18;
+    }
+
 
     public static double getDistanceFromOuterToInnerTarget() {
         //meters
@@ -53,6 +65,7 @@ public class ShooterUtil {
         return 42; //degrees
     }
 
+    //TODO: Change this for the new robot once we do ball trials <- graph vel on the x and ticks per second on the y and get an equation
     public static double velocityToTicks(double vel) {
         return ((vel - 0.86) / .003) * (1 / 600.0) * 4.4 * 12;
     }
@@ -61,7 +74,12 @@ public class ShooterUtil {
         return 7.31; //meters
     }
 
-    public static double getLeftFieldToGoal() {
+    public static double getLeftFieldToFarGoal() {
         return 0.9; //meters
     }
+
+    public static double getLeftFieldToCloseGoal() {
+        return 0.1; // meters
+    }
+
 }
