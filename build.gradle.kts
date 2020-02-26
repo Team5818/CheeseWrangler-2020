@@ -1,20 +1,25 @@
 import com.techshroom.inciseblue.commonLib
 import org.rivierarobotics.gradlerioredux.artifactsKt
+import org.rivierarobotics.gradlerioredux.tasks.PathWeaverSourceSetExtension
 
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.7.6"
+    id("org.rivierarobotics.gradlerioredux") version "0.7.8"
 }
 
 gradleRioRedux {
     robotClass = "org.rivierarobotics.robot.Robot"
     teamNumber = 5818
+    pathWeaverProjectProperty.set(project.layout.projectDirectory.dir("PathWeaver"))
 }
+
+val pathWeaver = sourceSets.main.get().extensions.getByType<PathWeaverSourceSetExtension>().pathWeaver
+pathWeaver.srcDir(file("PathWeaver/Paths"))
 
 afterEvaluate {
     deploy {
         artifactsKt {
-            fileTreeArtifact("frcStaticFileDeploy") {
-                files.set(fileTree("PathWeaver/output"))
+            fileTreeArtifact("frcPathsDeploy") {
+                files.set(fileTree(pathWeaver.destinationDirectory))
                 targets.add("roboRio")
                 directory = "/home/lvuser/deploy/paths"
             }
