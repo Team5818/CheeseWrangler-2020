@@ -18,30 +18,20 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-import org.rivierarobotics.subsystems.CheeseWheel;
+public class Ball {
+    private boolean isFilled;
 
-import javax.inject.Inject;
-
-public class CWSetClosestHalfIndex extends BasePIDSetPosition<CheeseWheel> {
-    @Inject
-    public CWSetClosestHalfIndex(CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 0.05, 0);
+    public Ball() {
+        isFilled = false;
     }
 
-    @Override
-    protected void setSetPosition(double position) {
-        positionTicks = Math.floor(subsystem.getClosestIndex()) + 0.5;
+    public boolean isFilled() {
+        return isFilled;
     }
 
-    @Override
-    protected double getPositionTicks() {
-        return subsystem.getClosestIndex();
-    }
-
-    @Override
-    protected void setPositionTicks(double position) {
-        subsystem.setIndex(position);
+    public void setFilled(boolean filled) {
+        isFilled = filled;
     }
 }

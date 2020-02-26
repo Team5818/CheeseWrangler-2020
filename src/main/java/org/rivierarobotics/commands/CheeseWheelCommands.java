@@ -26,8 +26,8 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class CheeseWheelCommands {
-    private CWIncrementIndexCreator incrementIndexCreator;
-    private CWDecrementIndexCreator decrementIndexCreator;
+    private CWIncrementIndexCreator incrementIndex;
+    private CWDecrementIndexCreator decrementIndex;
     private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
     private Provider<CWShootAll> shootAllProvider;
     private Provider<CWShootIndividual> shootIndividualProvider;
@@ -37,8 +37,8 @@ public class CheeseWheelCommands {
     private CWAutoCollectCreator autoCollectCreator;
 
     @Inject
-    public CheeseWheelCommands(CWIncrementIndexCreator incrementIndexCreator,
-                               CWDecrementIndexCreator decrementIndexCreator,
+    public CheeseWheelCommands(CWIncrementIndexCreator incrementIndex,
+                               CWDecrementIndexCreator decrementIndex,
                                Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
                                Provider<CWShootAll> shootAllProvider,
                                Provider<CWShootIndividual> shootIndividualProvider,
@@ -46,8 +46,8 @@ public class CheeseWheelCommands {
                                CWSetModeCreator setModeCreator,
                                CWInvertModeCreator invertModeCreator,
                                CWAutoCollectCreator autoCollectCreator) {
-        this.incrementIndexCreator = incrementIndexCreator;
-        this.decrementIndexCreator = decrementIndexCreator;
+        this.incrementIndex = incrementIndex;
+        this.decrementIndex = decrementIndex;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
         this.shootAllProvider = shootAllProvider;
         this.shootIndividualProvider = shootIndividualProvider;
@@ -58,11 +58,11 @@ public class CheeseWheelCommands {
     }
 
     public CWIncrementIndex incrementIndex() {
-        return incrementIndexCreator.create();
+        return incrementIndex.create();
     }
 
     public CWDecrementIndex decrementIndex() {
-        return decrementIndexCreator.create();
+        return decrementIndex.create();
     }
 
     public CWSetClosestHalfIndex setClosestHalfIndex() {

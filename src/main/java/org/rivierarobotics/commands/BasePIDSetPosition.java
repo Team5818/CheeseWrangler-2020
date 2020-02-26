@@ -33,7 +33,7 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
     public BasePIDSetPosition(T subsystem, double maxErrorTicks, double positionTicks) {
         this.subsystem = subsystem;
         this.maxErrorTicks = maxErrorTicks;
-        this.positionTicks = positionTicks;
+        setSetPosition(positionTicks);
         addRequirements(subsystem);
     }
 
@@ -56,5 +56,9 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
 
     protected void setPositionTicks(double position) {
         subsystem.setPositionTicks(position);
+    }
+
+    protected void setSetPosition(double position) {
+        this.positionTicks = position;
     }
 }

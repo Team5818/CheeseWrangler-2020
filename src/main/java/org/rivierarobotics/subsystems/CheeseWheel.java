@@ -28,12 +28,12 @@ import org.rivierarobotics.commands.CheeseWheelControl;
 import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
-    public final double indexDiff = 360.0 / 5;
+    public final double INDEX_DIFF = 360.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final DigitalInput intakeSensor;
     private final DigitalInput outputSensor;
     private final Provider<CheeseWheelControl> command;
-    private final double zeroTicks = -200;
+    private final double ZERO_TICKS = -200;
     public Mode mode = Mode.COLLECT_FRONT;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
@@ -45,7 +45,6 @@ public class CheeseWheel extends BasePIDSubsystem {
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-        pidController.enableContinuousInput(0, 4095);
     }
 
     public boolean getIntakeSensorState() {
@@ -86,13 +85,32 @@ public class CheeseWheel extends BasePIDSubsystem {
     @Override
     public double getPosition() {
         double position = super.getPosition();
-        return position - (zeroTicks / getAnglesOrInchesToTicks());
+        return position - (ZERO_TICKS / getAnglesOrInchesToTicks());
     }
 
     @Override
-    public void setPosition(double position) {
-        position += (zeroTicks / getAnglesOrInchesToTicks());
-        super.setPosition(position);
+    public void setPosition(double angle) {
+        if (angle < 180) {
+            setPositionTicks(ZERO_TICKS + getPositionTicks() + mode.offset - (angle * getAnglesOrInchesToTicks()));
+        } else {
+            setPositionTicks(ZERO_TICKS + getPositionTicks() + mode.offset + ((360 - angle) * getAnglesOrInchesToTicks()));
+        }
+    }
+
+    public double getAngle() {
+        return (getPositionTicks() - ZERO_TICKS) * (1 / getAnglesOrInchesToTicks());
+    }
+
+    public void setIndex(double index) {
+        setPosition(((index * INDEX_DIFF) + getAngle() + mode.offset) % 360);
+    }
+
+    public int getClosestWholeIndex() {
+        return (int) Math.round(getClosestIndex());
+    }
+
+    public double getClosestIndex() {
+        return (getAngle() - mode.offset) / INDEX_DIFF;
     }
 
     public enum Mode {

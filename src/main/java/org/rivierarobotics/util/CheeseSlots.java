@@ -18,30 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-import org.rivierarobotics.subsystems.CheeseWheel;
+public class CheeseSlots {
+    private static boolean[] slots;
 
-import javax.inject.Inject;
-
-public class CWSetClosestHalfIndex extends BasePIDSetPosition<CheeseWheel> {
-    @Inject
-    public CWSetClosestHalfIndex(CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 0.05, 0);
+    static {
+        slots = new boolean[5];
     }
 
-    @Override
-    protected void setSetPosition(double position) {
-        positionTicks = Math.floor(subsystem.getClosestIndex()) + 0.5;
+    public static void increment() {
+        boolean temp = slots[slots.length - 1];
+        for (int i = slots.length - 1; i >= 0; i--) {
+            slots[i] = slots[i - 1];
+        }
+        slots[0] = temp;
     }
 
-    @Override
-    protected double getPositionTicks() {
-        return subsystem.getClosestIndex();
+    public static void decrement() {
+        boolean temp = slots[0];
+        for (int i = 0; i < slots.length - 1; i++) {
+            slots[i] = slots[i + 1];
+        }
+        slots[slots.length - 1] = temp;
     }
 
-    @Override
-    protected void setPositionTicks(double position) {
-        subsystem.setIndex(position);
+    public static void setSlotStatus(int index, boolean filled) {
+        slots[index] = filled;
+    }
+
+    public static boolean getSlotStatus(int index) {
+        return slots[index];
     }
 }

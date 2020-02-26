@@ -20,19 +20,14 @@
 
 package org.rivierarobotics.commands;
 
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
-import javax.inject.Inject;
-
-public class CWSetClosestHalfIndex extends BasePIDSetPosition<CheeseWheel> {
-    @Inject
-    public CWSetClosestHalfIndex(CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 0.05, 0);
-    }
-
-    @Override
-    protected void setSetPosition(double position) {
-        positionTicks = Math.floor(subsystem.getClosestIndex()) + 0.5;
+@GenerateCreator
+public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
+        super(cheeseWheel, 0.05, index);
     }
 
     @Override

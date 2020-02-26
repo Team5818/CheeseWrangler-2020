@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
@@ -28,17 +27,21 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 @GenerateCreator
 public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
     public CWIncrementIndex(@Provided CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 40, cheeseWheel.getPosition() + cheeseWheel.indexDiff);
+        super(cheeseWheel, 0.05, 0.0);
+    }
+
+    @Override
+    protected void setSetPosition(double position) {
+        positionTicks = subsystem.getClosestWholeIndex() + 1;
     }
 
     @Override
     protected double getPositionTicks() {
-        SmartDashboard.putNumber("pos", subsystem.getPosition());
-        return subsystem.getPosition();
+        return subsystem.getClosestIndex();
     }
 
     @Override
     protected void setPositionTicks(double position) {
-        subsystem.setPosition(position);
+        subsystem.setIndex(position);
     }
 }
