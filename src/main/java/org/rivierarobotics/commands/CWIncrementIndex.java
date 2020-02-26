@@ -20,24 +20,24 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
-import javax.inject.Inject;
-
-public class CWIncrementIndex extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-
-    @Inject
-    public CWIncrementIndex(CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
+@GenerateCreator
+public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
+    public CWIncrementIndex(@Provided CheeseWheel cheeseWheel) {
+        super(cheeseWheel, 40, 0);
     }
 
     @Override
-    public void execute() {
-        cheeseWheel.currentIndex += 1;
-        cheeseWheel.currentIndex %= 5;
-        cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
+    public void initialize() {
+        positionTicks = subsystem.getIndexPosition(subsystem.currentIndex);
+        subsystem.currentIndex += 1;
+//        subsystem.currentIndex %= 5;
+        SmartDashboard.putNumber("cindex", subsystem.currentIndex);
+        SmartDashboard.putNumber("CWSET", positionTicks);
+        setPositionTicks(positionTicks);
     }
 }

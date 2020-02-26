@@ -26,25 +26,31 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import org.rivierarobotics.commands.CheeseWheelControl;
 
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
+@Singleton
 public class CheeseWheel extends BasePIDSubsystem {
     public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final DigitalInput intakeSensor;
     private final DigitalInput outputSensor;
     private final Provider<CheeseWheelControl> command;
+    private final double zeroTicks = -200;
+    private int current;
+    private double rots = 0;
     public int currentIndex = 0;
     public Mode mode = Mode.COLLECT_FRONT;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
-        super(new PIDConfig(0, 0, 0, 1));
+        super(new PIDConfig(0.0012, 0.0, 0, 0.0, 15, 0.5));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.intakeSensor = new DigitalInput(sensorOne);
         this.outputSensor = new DigitalInput(sensorTwo);
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
+        rots = getRotations();
     }
 
     public boolean getIntakeSensorState() {
@@ -53,6 +59,10 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     public boolean getOutputSensorState() {
         return outputSensor.get();
+    }
+
+    public double getRotations() {
+        return getPositionTicks() % 4096;
     }
 
     public void setMode(Mode mode) {
@@ -64,11 +74,25 @@ public class CheeseWheel extends BasePIDSubsystem {
         }
     }
 
-    public double getIndexPosition(int index) {
-        return mode.offset + (index * diff);
+    public int getIndexPosition(int index) {
+        current = index;
+        double indexPos = zeroTicks + (index * diff);
+        if( Math.abs(indexPos + diff) > zeroTicks + 3800 || Math.abs(indexPos + diff) < zeroTicks + 4200 ) {
+            if(current - index < 0) {
+                rots++;
+            } else {
+                rots--;
+            }
+        }
+        if (indexPos != 0) {
+            return (int) (indexPos + (rots * 4096));
+        } else {
+            return (int) indexPos;
+        }
     }
 
     public double getRelativeIndex() {
+        //TODO implement rotations
         return (getPositionTicks() - mode.offset) / diff;
     }
 
@@ -90,14 +114,23 @@ public class CheeseWheel extends BasePIDSubsystem {
         super.periodic();
     }
 
+    public void setIndexPosition(double position) {
+        setPositionTicks(position);
+    }
+
+    @Override
+    public void setPositionTicks(double position) {
+        rots = getRotations();
+        super.setPositionTicks(position);
+    }
+
     public enum Mode {
         //TODO set offsets from bottom to position
         SHOOTING(0), COLLECT_FRONT(0), COLLECT_BACK(0), CLIMB(0), LAST(0);
 
         public final int offset;
 
-        Mode(int offset) {
-            this.offset = offset;
+        Mode(int offset) { this.offset = offset;
         }
     }
 }

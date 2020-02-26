@@ -71,7 +71,7 @@ public class DriveControl extends CommandBase {
             }
         }
 
-        driveTrain.setPower(left, right);
+        //driveTrain.setPower(left, right);
     }
 
     @Override

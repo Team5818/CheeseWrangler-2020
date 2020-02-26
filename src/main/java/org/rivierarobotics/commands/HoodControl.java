@@ -37,12 +37,12 @@ public class HoodControl extends CommandBase {
                        Hood hood) {
         this.hood = hood;
         this.coDriverRightJs = js;
-        addRequirements(hood);
+        //addRequirements(hood);
     }
 
     @Override
     public void execute() {
-        hood.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
+        //hood.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
     }
 
     @Override

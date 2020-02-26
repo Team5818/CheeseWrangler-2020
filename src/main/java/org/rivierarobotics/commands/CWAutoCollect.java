@@ -48,7 +48,6 @@ public class CWAutoCollect extends CommandBase {
     public void execute() {
         if (cheeseWheel.getIntakeSensorState()) {
             //TODO move this to the incrementIndex command
-            cheeseWheel.currentIndex += 1;
             cheeseWheel.currentIndex %= 5;
             cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
             //TODO add detection/wait for wood b/n index slots

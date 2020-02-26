@@ -47,7 +47,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     private void tickPid() {
         double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
-            if (pidController.atSetpoint()) {
+            if (Math.abs(pidController.getSetpoint() - getPositionTicks()) < pidConfig.getTolerance()) {
                 return;
             }
             SmartDashboard.putNumber("InitPID", pidPower);

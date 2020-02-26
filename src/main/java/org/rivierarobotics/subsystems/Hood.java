@@ -90,12 +90,4 @@ public class Hood extends BasePIDSubsystem {
             setPositionTicks(0);
         }
     }
-
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
-    }
 }

@@ -22,7 +22,6 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.util.VisionTarget;
@@ -57,9 +56,9 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
+                .whenPressed(cmds.cheeseWheel().incrementIndex());
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.CHEESERUN));
+                .whenPressed(cmds.cheeseWheel().setPosition(-200));
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cameraServo().setAngle(0));
         new JoystickButton(coDriverRight, 2)

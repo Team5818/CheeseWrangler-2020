@@ -38,7 +38,7 @@ public class CWDecrementIndex extends InstantCommand {
     public void execute() {
         cheeseWheel.currentIndex -= 1;
         if (cheeseWheel.currentIndex < 0) {
-            cheeseWheel.currentIndex = 4 + cheeseWheel.currentIndex;
+//            cheeseWheel.currentIndex = 4 + cheeseWheel.currentIndex;
         }
         cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
     }

@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         autonomousCommand = chooser.getSelected();
         if (autonomousCommand != null) {
-            autonomousCommand.schedule();
+            //autonomousCommand.schedule();
         }
     }
 
@@ -78,7 +78,8 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         var commandComponent = globalComponent.getCommandComponentBuilder().build();
-        CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
+        //CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
+        CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(-200));
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -87,7 +88,6 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 
     @Override
@@ -113,22 +113,21 @@ public class Robot extends TimedRobot {
         Hood h = globalComponent.getHood();
         Flywheel fly = globalComponent.getFlywheel();
         LimelightServo servo = globalComponent.getLimelightServo();
+        CheeseWheel cheeseWheel = globalComponent.getCheeseWheel();
 
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
-        SmartDashboard.putNumber("hoodPosition", h.getPositionTicks());
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
         SmartDashboard.putBoolean("Limit", h.isAtEnd());
-        SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
         SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
-        SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
         SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
         SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
         SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("LLAngle", servo.getAngle());
+        SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());
         SmartDashboard.putData(chooser);
     }
 }
