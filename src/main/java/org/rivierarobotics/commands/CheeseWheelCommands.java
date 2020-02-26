@@ -27,7 +27,7 @@ import javax.inject.Provider;
 
 public class CheeseWheelCommands {
     private CWIncrementIndexCreator incrementIndexCreator;
-    private Provider<CWDecrementIndex> decrementIndexProvider;
+    private CWDecrementIndexCreator decrementIndexCreator;
     private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
     private Provider<CWShootAll> shootAllProvider;
     private Provider<CWShootIndividual> shootIndividualProvider;
@@ -38,7 +38,7 @@ public class CheeseWheelCommands {
 
     @Inject
     public CheeseWheelCommands(CWIncrementIndexCreator incrementIndexCreator,
-                               Provider<CWDecrementIndex> decrementIndexProvider,
+                               CWDecrementIndexCreator decrementIndexCreator,
                                Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
                                Provider<CWShootAll> shootAllProvider,
                                Provider<CWShootIndividual> shootIndividualProvider,
@@ -47,7 +47,7 @@ public class CheeseWheelCommands {
                                CWInvertModeCreator invertModeCreator,
                                CWAutoCollectCreator autoCollectCreator) {
         this.incrementIndexCreator = incrementIndexCreator;
-        this.decrementIndexProvider = decrementIndexProvider;
+        this.decrementIndexCreator = decrementIndexCreator;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
         this.shootAllProvider = shootAllProvider;
         this.shootIndividualProvider = shootIndividualProvider;
@@ -62,7 +62,7 @@ public class CheeseWheelCommands {
     }
 
     public CWDecrementIndex decrementIndex() {
-        return decrementIndexProvider.get();
+        return decrementIndexCreator.create();
     }
 
     public CWSetClosestHalfIndex setClosestHalfIndex() {

@@ -58,7 +58,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 1)
                 .whenPressed(cmds.cheeseWheel().incrementIndex());
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.cheeseWheel().setPosition(-200));
+                .whenPressed(cmds.cheeseWheel().setPosition(0));
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cameraServo().setAngle(0));
         new JoystickButton(coDriverRight, 2)

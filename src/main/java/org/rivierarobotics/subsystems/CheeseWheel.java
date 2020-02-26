@@ -20,25 +20,20 @@
 
 package org.rivierarobotics.subsystems;
 
+import javax.inject.Provider;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import org.rivierarobotics.commands.CheeseWheelControl;
 
-import javax.inject.Provider;
-import javax.inject.Singleton;
-
-@Singleton
 public class CheeseWheel extends BasePIDSubsystem {
-    public final double diff = 4096.0 / 5;
+    public final double indexDiff = 360.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final DigitalInput intakeSensor;
     private final DigitalInput outputSensor;
     private final Provider<CheeseWheelControl> command;
     private final double zeroTicks = -200;
-    private int current;
-    private double rots = 0;
-    public int currentIndex = 0;
     public Mode mode = Mode.COLLECT_FRONT;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
@@ -50,7 +45,7 @@ public class CheeseWheel extends BasePIDSubsystem {
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-        rots = getRotations();
+        pidController.enableContinuousInput(0, 4095);
     }
 
     public boolean getIntakeSensorState() {
@@ -59,10 +54,6 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     public boolean getOutputSensorState() {
         return outputSensor.get();
-    }
-
-    public double getRotations() {
-        return getPositionTicks() % 4096;
     }
 
     public void setMode(Mode mode) {
@@ -74,31 +65,9 @@ public class CheeseWheel extends BasePIDSubsystem {
         }
     }
 
-    public int getIndexPosition(int index) {
-        current = index;
-        double indexPos = zeroTicks + (index * diff);
-        if( Math.abs(indexPos + diff) > zeroTicks + 3800 || Math.abs(indexPos + diff) < zeroTicks + 4200 ) {
-            if(current - index < 0) {
-                rots++;
-            } else {
-                rots--;
-            }
-        }
-        if (indexPos != 0) {
-            return (int) (indexPos + (rots * 4096));
-        } else {
-            return (int) indexPos;
-        }
-    }
-
-    public double getRelativeIndex() {
-        //TODO implement rotations
-        return (getPositionTicks() - mode.offset) / diff;
-    }
-
     @Override
     public double getPositionTicks() {
-        return wheelTalon.getSensorCollection().getPulseWidthPosition();
+        return wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
     }
 
     @Override
@@ -114,14 +83,16 @@ public class CheeseWheel extends BasePIDSubsystem {
         super.periodic();
     }
 
-    public void setIndexPosition(double position) {
-        setPositionTicks(position);
+    @Override
+    public void setPosition(double position) {
+        position += (zeroTicks / getAnglesOrInchesToTicks());
+        super.setPosition(position);
     }
 
     @Override
-    public void setPositionTicks(double position) {
-        rots = getRotations();
-        super.setPositionTicks(position);
+    public double getPosition() {
+        double position = super.getPosition();
+        return position - (zeroTicks / getAnglesOrInchesToTicks());
     }
 
     public enum Mode {
@@ -130,7 +101,8 @@ public class CheeseWheel extends BasePIDSubsystem {
 
         public final int offset;
 
-        Mode(int offset) { this.offset = offset;
+        Mode(int offset) {
+            this.offset = offset;
         }
     }
 }

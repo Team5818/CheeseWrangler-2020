@@ -37,9 +37,6 @@ public class CWSetClosestHalfIndex extends InstantCommand {
 
     @Override
     public void execute() {
-        double closestIndexPos = cheeseWheel.getIndexPosition((int) Math.round(cheeseWheel.getRelativeIndex()));
-        double diffTicks = cheeseWheel.getPositionTicks() - closestIndexPos;
-        double halfIndexDiff = MathUtil.minAbsCompare(diffTicks - (cheeseWheel.diff / 2), diffTicks + (cheeseWheel.diff / 2));
-        cheeseWheel.setPositionTicks(cheeseWheel.getPositionTicks() + halfIndexDiff);
+
     }
 }

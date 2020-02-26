@@ -28,16 +28,17 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 @GenerateCreator
 public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
     public CWIncrementIndex(@Provided CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 40, 0);
+        super(cheeseWheel, 40, cheeseWheel.getPosition() + cheeseWheel.indexDiff);
     }
 
     @Override
-    public void initialize() {
-        positionTicks = subsystem.getIndexPosition(subsystem.currentIndex);
-        subsystem.currentIndex += 1;
-//        subsystem.currentIndex %= 5;
-        SmartDashboard.putNumber("cindex", subsystem.currentIndex);
-        SmartDashboard.putNumber("CWSET", positionTicks);
-        setPositionTicks(positionTicks);
+    protected void setPositionTicks(double position) {
+        subsystem.setPosition(position);
+    }
+
+    @Override
+    protected double getPositionTicks() {
+        SmartDashboard.putNumber("pos", subsystem.getPosition());
+        return subsystem.getPosition();
     }
 }

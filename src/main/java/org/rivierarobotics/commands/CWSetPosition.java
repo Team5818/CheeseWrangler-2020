@@ -27,7 +27,6 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 @GenerateCreator
 public class CWSetPosition extends BasePIDSetPosition<CheeseWheel> {
     public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks) {
-        //TODO set allowable error in ticks
         super(cheeseWheel, 40, ticks);
     }
 }

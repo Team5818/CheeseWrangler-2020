@@ -30,7 +30,6 @@ import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.DriveTrainSide;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
@@ -49,7 +48,8 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         chooser = new SendableChooser<>();
-        
+
+        //TODO use commandComponent
         chooser.addOption("Flex", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.FLEX));
         chooser.addOption("CheeseRun", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.CHEESERUN));
     }
@@ -78,8 +78,8 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         var commandComponent = globalComponent.getCommandComponentBuilder().build();
+        CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(0));
         //CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
-        CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(-200));
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }

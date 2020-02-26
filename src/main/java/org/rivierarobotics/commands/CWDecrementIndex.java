@@ -20,26 +20,18 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
-import javax.inject.Inject;
-
-public class CWDecrementIndex extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-
-    @Inject
-    public CWDecrementIndex(CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
+@GenerateCreator
+public class CWDecrementIndex extends BasePIDSetPosition<CheeseWheel> {
+    public CWDecrementIndex(@Provided CheeseWheel cheeseWheel) {
+        super(cheeseWheel, 40, cheeseWheel.getPosition() - cheeseWheel.indexDiff);
     }
 
     @Override
-    public void execute() {
-        cheeseWheel.currentIndex -= 1;
-        if (cheeseWheel.currentIndex < 0) {
-//            cheeseWheel.currentIndex = 4 + cheeseWheel.currentIndex;
-        }
-        cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
+    public void initialize() {
+
     }
 }
