@@ -22,16 +22,24 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.WaypointPath;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
 public class ButtonConfiguration {
-    private final Joystick driverLeft, driverRight, coDriverLeft, coDriverRight, driverButtons, coDriverButtons;
+    private final Joystick driverLeft;
+    private final Joystick driverRight;
+    private final Joystick coDriverLeft;
+    private final Joystick coDriverRight;
+    private final Joystick driverButtons;
+    private final Joystick coDriverButtons;
     private final CommandComponent cmds;
+    double angle = 0;
 
     @Inject
     public ButtonConfiguration(@Input(Input.Selector.DRIVER_LEFT) Joystick driverLeft,
@@ -51,19 +59,21 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-        new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.vision().autoAimHood(0, 0.69));
-        new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.auto().pathfinder(WaypointPath.SQUARE));
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.TOP));
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.BOTTOM));
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.CHEESERUN));
+        new JoystickButton(coDriverRight, 1)
+                .whenPressed(cmds.cameraServo().setAngle(0));
+        new JoystickButton(coDriverRight, 2)
+                .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.auto().pathfinder(WaypointPath.SQUARE));
-/*
-        // Competition Robot Button Map
+            .whenPressed(cmds.turret().setAngle(20));
+        new JoystickButton(coDriverButtons, 11)
+            .whenPressed(cmds.hood().alignQuadrature());
+        /*
         new JoystickButton(driverLeft, 1)
+        // Competition Robot Button Map
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
         new JoystickButton(driverLeft, 2)
                 .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));
@@ -73,7 +83,6 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.intake().setPower(-1.0));
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.cheeseWheel().invertMode());
-
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.climb().setPosition(Climb.Height.FORTY_FIVE));
         new JoystickButton(coDriverButtons, 10)

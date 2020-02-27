@@ -18,26 +18,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.inject.Sided;
-
-import javax.inject.Inject;
-
-public class Intake extends SubsystemBase {
-    private final IntakeSide left;
-    private final IntakeSide right;
-
-    @Inject
-    public Intake(@Sided(Sided.Side.LEFT) IntakeSide left,
-                  @Sided(Sided.Side.RIGHT) IntakeSide right) {
-        this.left = left;
-        this.right = right;
-    }
-
-    public void setPower(double pwr) {
-        left.setPower(pwr);
-        right.setPower(pwr);
-    }
+public interface Dimensions {
+    double WHEEL_CIRCUMFERENCE = 0.32; // meters
+    double TRACKWIDTH = 0.7366; // meters
 }

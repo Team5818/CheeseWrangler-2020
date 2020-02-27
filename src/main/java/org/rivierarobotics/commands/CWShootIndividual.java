@@ -30,14 +30,14 @@ public class CWShootIndividual extends SequentialCommandGroup {
     @Inject
     public CWShootIndividual(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
-                cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
-                cheeseCommands.setClosestHalfIndex(),
-                ejectorCommands.setPower(1.0),
-                new WaitCommand(0.5),
-                cheeseCommands.incrementIndex(),
-                new WaitCommand(0.5),
-                cheeseCommands.setMode(CheeseWheel.Mode.LAST),
-                cheeseCommands.incrementIndex()
+            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
+            cheeseCommands.setClosestHalfIndex(),
+            ejectorCommands.setPower(1.0),
+            new WaitCommand(0.5),
+            cheeseCommands.incrementIndex(),
+            new WaitCommand(0.5),
+            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
+            cheeseCommands.incrementIndex()
         );
     }
 }

@@ -35,7 +35,7 @@ public class ColorWheel extends BasePIDSubsystem {
     //colorleniency is a setting which modifies how lenient the sensor is to detect a color
 
     public ColorWheel(int id, double colorWheelRadius, ColorSensorV3 colorSensorV3) {
-        super( 0.0, 0.0, 0.0, 1);
+        super(new PIDConfig(0,0,0,1));
         colorWheelTalon = new WPI_TalonSRX(id);
         colorWheelTalon.configFactoryDefault();
         colorWheelTalon.setNeutralMode(NeutralMode.Brake);

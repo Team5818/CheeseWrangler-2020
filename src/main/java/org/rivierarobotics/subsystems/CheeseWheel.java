@@ -30,13 +30,15 @@ import javax.inject.Provider;
 public class CheeseWheel extends BasePIDSubsystem {
     public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
-    private final DigitalInput intakeSensor, outputSensor;
+    private final DigitalInput intakeSensor;
+    private final DigitalInput outputSensor;
     private final Provider<CheeseWheelControl> command;
     public int currentIndex = 0;
-    public Mode mode = Mode.COLLECT_FRONT, lastMode = Mode.COLLECT_FRONT;
+    public Mode mode = Mode.COLLECT_FRONT;
+    public Mode lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
-        super(0.0, 0.0, 0.0, 1.0);
+        super(new PIDConfig(0, 0, 0, 1));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.intakeSensor = new DigitalInput(sensorOne);
         this.outputSensor = new DigitalInput(sensorTwo);

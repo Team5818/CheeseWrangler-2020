@@ -20,34 +20,31 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Turret;
 
-import javax.inject.Inject;
+@GenerateCreator
+public class TurretSetVelocity extends BasePIDSetPosition<Turret> {
+    private final Turret turret;
+    private final double velocity;
 
-public class CWShootAll extends SequentialCommandGroup {
-    @Inject
-    public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
-        addCommands(
-            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
-            cheeseCommands.setClosestHalfIndex(),
-            ejectorCommands.setPower(1.0)
-        );
-
-        for (int i = 0; i < 5; i++) {
-            addCommands(cheeseCommands.incrementIndex(), new WaitCommand(1));
-        }
-
-        addCommands(
-            ejectorCommands.setPower(0.0),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
-            cheeseCommands.incrementIndex()
-        );
+    public TurretSetVelocity(@Provided Turret turret, double velocity) {
+        super(turret, 3, velocity);
+        this.turret = turret;
+        this.velocity = velocity;
     }
 
     @Override
-    public boolean isFinished() {
-        return false;
+    protected void setPositionTicks(double velocity) {
+        turret.changeAimMode(Turret.AimMode.MOVING);
+        super.setPositionTicks(velocity);
     }
+
+    @Override
+    public void execute() {
+        super.execute();
+    }
+
+
 }

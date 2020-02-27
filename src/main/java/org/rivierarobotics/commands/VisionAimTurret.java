@@ -20,14 +20,12 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -51,23 +49,22 @@ public class VisionAimTurret extends CommandBase {
     @Override
     public void execute() {
         double ty = vision.getLLValue("ty");
-        double t = 0.375;   //time constant
-        double h = height;    //height of goal (0.69 for practice atm)
-        double dist = h / Math.tan(Math.toRadians(ty));
-        SmartDashboard.putNumber("distancetotarget", dist);
-        double tx = vision.getLLValue("tx") + turret.getAbsoluteAngle();
-        tx = Math.toRadians(tx);
-        SmartDashboard.putNumber("modifiedtx", Math.toDegrees(tx));
-        double txTurret = Math.atan2(dist * Math.sin(tx) - 0.21, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
-        SmartDashboard.putNumber("turrettx", Math.toDegrees(txTurret));
-        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity(); //by splitting up our values in the x and y coordinates there has to be new velocities that go with it
+        double t = ShooterUtil.getTConstant();
+        double dist = height / Math.tan(Math.toRadians(ty));
+        double txTurret = turret.getTxTurret(dist, extraDistance);
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity();
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
-        double turretAngle = Math.toDegrees(Math.atan2(vz, vx)); //nice and simple angle calculation
+        double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
         double tv = vision.getLLValue("tv");
+
+        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
+            turret.getPidController().setP(0.003);
+        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
+            turret.getPidController().setP(0.002);
+        }
+
         if (tv == 1) {
             turret.setAbsolutePosition(turretAngle);
-            SmartDashboard.putNumber("setABS", turretAngle);
         }
     }
-
 }

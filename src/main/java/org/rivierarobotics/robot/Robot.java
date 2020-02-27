@@ -25,11 +25,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.autonomous.PathweaverExecutor;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.DriveTrainSide;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.NavXGyro;
@@ -45,6 +49,9 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         chooser = new SendableChooser<>();
+        
+        chooser.addOption("Flex", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.FLEX));
+        chooser.addOption("CheeseRun", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.CHEESERUN));
     }
 
     @Override
@@ -76,9 +83,12 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
+        globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
+        //CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
+        //CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(0));
         globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
     }
 
@@ -104,16 +114,20 @@ public class Robot extends TimedRobot {
         CheeseWheel in = globalComponent.getCheeseWheel();
         Hood h = globalComponent.getHood();
         Flywheel fly = globalComponent.getFlywheel();
+        DriveTrainSide left = globalComponent.getDriveTrain().getLeft();
+        LimelightServo servo = globalComponent.getLimelightServo();
+
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
-        SmartDashboard.putNumber("hoodPosition", h.getPositionTicks());
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
-        SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
-        SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
-        SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
         SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
+        SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
+        SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
+        SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
+        SmartDashboard.putNumber("LLAngle", servo.getAngle());
+        SmartDashboard.putData(chooser);
     }
 }

@@ -20,24 +20,34 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.inject.Sided;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
-import javax.inject.Inject;
+import java.util.HashMap;
+import java.util.Map;
 
-public class Intake extends SubsystemBase {
-    private final IntakeSide left;
-    private final IntakeSide right;
+public class SubsystemShuffleTab {
+    private Map<String, NetworkTableEntry> entryMap;
+    private ShuffleboardTab tab;
 
-    @Inject
-    public Intake(@Sided(Sided.Side.LEFT) IntakeSide left,
-                  @Sided(Sided.Side.RIGHT) IntakeSide right) {
-        this.left = left;
-        this.right = right;
+    public SubsystemShuffleTab(String name) {
+        this.tab = Shuffleboard.getTab(name);
+        this.entryMap = new HashMap<>();
     }
 
-    public void setPower(double pwr) {
-        left.setPower(pwr);
-        right.setPower(pwr);
+    public void setEntry(String key, Object value) {
+        NetworkTableEntry entry = entryMap.get(key);
+        if (entry == null) {
+            entry = addEntry(key);
+        }
+        assert entry != null;
+        entry.setValue(value);
+    }
+
+    public NetworkTableEntry addEntry(String key) {
+        NetworkTableEntry entry = tab.add(key, 0).getEntry();
+        entryMap.put(key, entry);
+        return entry;
     }
 }

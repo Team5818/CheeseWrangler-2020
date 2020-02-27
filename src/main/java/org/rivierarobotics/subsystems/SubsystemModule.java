@@ -48,11 +48,12 @@ public class SubsystemModule {
     private static final int HOOD_LIMIT_SWITCH = 0;
     private static final int INDEX_SENSOR_INTAKE = 9;
     private static final int INDEX_SENSOR_OUTPUT = 10;
-    private static final int LIMELIGHT_SERVO = 0;
+    private static final int LIMELIGHT_SERVO = 1;
 
-    private static final DriveTrainSide.MotorIds
-            DRIVETRAIN_LEFT_MOTOR_IDS = new DriveTrainSide.MotorIds(1, 2, 3),
-            DRIVETRAIN_RIGHT_MOTOR_IDS = new DriveTrainSide.MotorIds(4, 5, 6);
+    private static final DriveTrainSide.MotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
+        new DriveTrainSide.MotorIds(1, 2, 3);
+    private static final DriveTrainSide.MotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
+        new DriveTrainSide.MotorIds(4, 5, 6);
 
     private SubsystemModule() {
     }
@@ -61,14 +62,14 @@ public class SubsystemModule {
     @Singleton
     @Sided(Sided.Side.LEFT)
     public static DriveTrainSide provideDriveSideLeft() {
-        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, true);
+        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, false);
     }
 
     @Provides
     @Singleton
     @Sided(Sided.Side.RIGHT)
     public static DriveTrainSide provideDriveSideRight() {
-        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, false);
+        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, true);
     }
 
     @Provides

@@ -22,13 +22,13 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -55,31 +55,37 @@ public class VisionAimHood extends CommandBase {
 
     @Override
     public void execute() {
-        double ty = vision.getLLValue("ty");
-        double vy = 3.679;  //Vy constant
-        double t = 0.375;   //time constant
-        double h = height;    //height of goal (0.69)
-        double m = 0.14;    //mass of ball
-        double dist = h / Math.tan(Math.toRadians(ty));
-        SmartDashboard.putNumber("distancetotarget", dist);
-        double tx = vision.getLLValue("tx") + turret.getAbsoluteAngle();
-        tx = Math.toRadians(tx);
-        SmartDashboard.putNumber("modifiedtx", Math.toDegrees(tx));
-        double txTurret = Math.atan2(dist * Math.sin(tx) - 0.21, dist * Math.cos(tx)); //returns turret tx as it is offset from the camera.
-        SmartDashboard.putNumber("turrettx", Math.toDegrees(txTurret));
-        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity(); //by splitting up our values in the x and y coordinates there has to be new velocities that go with it
+
+        double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
+        double t = ShooterUtil.getTConstant();   //time constant
+        double dist = height / Math.tan(Math.toRadians(vision.getLLValue("ty")));
+        double txTurret = turret.getTxTurret(dist, extraDistance);
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity();
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
-        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)); // pythag for final velocity in the goal's direction
-        double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz)); //calculates hood angle with the Magnus Effect
-        double flywheelVelocity = vxz / Math.cos(Math.toRadians(hoodAngle)); //VALUE IN METERS / SECOND
-        double encoderVelocity = ((flywheelVelocity - 0.86) / .003) * (1 / 600.0) * 4.4 * 12;
-        SmartDashboard.putNumber("hoodAngleSetpoint", hoodAngle);
-        SmartDashboard.putNumber("EncoderVelocity", encoderVelocity);
-        SmartDashboard.putNumber("flywheelVelocity", flywheelVelocity);
-        if (hoodAngle <= 40 && flywheelVelocity <= 12) {
-            hood.setAbsolutePosition(hoodAngle + 2);
+        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
+        double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
+        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
+        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel) + 10;
+        SmartDashboard.putNumber("BallVel", ballVel);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
+        SmartDashboard.putNumber("HoodAngleMath", hoodAngle + 3);
+
+        if (hoodAngle <= ShooterUtil.getMaxHoodAngle() && encoderVelocity <= ShooterUtil.getMaxFlywheelVelocity() && vision.getLLValue("tv") == 1) {
+            hood.setAbsolutePosition(hoodAngle + 3);
             flywheel.setPositionTicks(encoderVelocity + 10);
+        } else {
+            if (dist < 1 && vision.getLLValue("tv") == 1) {
+                hood.setAbsolutePosition(ShooterUtil.getMaxHoodAngle());
+                flywheel.setPositionTicks(120);
+            } else {
+                if (dist > 1 && vision.getLLValue("tv") == 1) {
+                    hood.setAbsolutePosition(hoodAngle);
+                    flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
+                }
+            }
         }
+
+
     }
 
     @Override

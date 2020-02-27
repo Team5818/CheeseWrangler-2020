@@ -28,11 +28,11 @@ import org.rivierarobotics.subsystems.LimelightServo;
 
 @GenerateCreator
 public class LLServoSetPosition extends InstantCommand {
-    private final Servo servo;
+    private final LimelightServo servo;
     private final double position;
 
     public LLServoSetPosition(@Provided LimelightServo servo, double position) {
-        this.servo = servo.getServo();
+        this.servo = servo;
         this.position = position;
         addRequirements(servo);
     }

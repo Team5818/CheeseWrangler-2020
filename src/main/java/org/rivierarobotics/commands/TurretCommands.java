@@ -24,13 +24,21 @@ import javax.inject.Inject;
 
 public class TurretCommands {
     private TurretSetAngleCreator turretSetAngleCreator;
+    private TurretSetVelocityCreator turretSetVelocityCreator;
 
     @Inject
-    public TurretCommands(TurretSetAngleCreator turretSetPositionCreator) {
+    public TurretCommands(TurretSetAngleCreator turretSetPositionCreator, TurretSetVelocityCreator turretSetVelocityCreator) {
         this.turretSetAngleCreator = turretSetPositionCreator;
+        this.turretSetVelocityCreator = turretSetVelocityCreator;
     }
 
     public TurretSetAngle setAngle(double pos) {
         return turretSetAngleCreator.create(pos);
     }
+
+    public TurretSetVelocity setVelocity(double velocity) {
+        return turretSetVelocityCreator.create(velocity);
+    }
+
+
 }

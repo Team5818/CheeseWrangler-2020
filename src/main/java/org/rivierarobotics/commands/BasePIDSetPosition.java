@@ -26,7 +26,8 @@ import org.rivierarobotics.subsystems.BasePIDSubsystem;
 
 public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase {
     protected final T subsystem;
-    protected final double positionTicks, maxErrorTicks;
+    protected final double positionTicks;
+    protected final double maxErrorTicks;
 
     // Measurements do not need to be in ticks if get/set methods are overridden, but are in ticks by default
     public BasePIDSetPosition(T subsystem, double maxErrorTicks, double positionTicks) {
