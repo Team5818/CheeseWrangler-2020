@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands;
 
-import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -36,7 +36,7 @@ public class IntakeCommands {
         this.intakeBasedOnMovementProvider = intakeBasedOnMovementProvider;
     }
 
-    public IntakeSetPower setPower(Sided.Side side) {
+    public IntakeSetPower setPower(Side side) {
         return intakeSetPowerCreator.create(side);
     }
 

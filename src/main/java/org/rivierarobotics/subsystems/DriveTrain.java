@@ -30,6 +30,7 @@ import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,8 +44,8 @@ public class DriveTrain extends SubsystemBase {
     private final DifferentialDriveOdometry odometry;
 
     @Inject
-    public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
-                      @Sided(Sided.Side.RIGHT) DriveTrainSide right,
+    public DriveTrain(@Sided(Side.LEFT) DriveTrainSide left,
+                      @Sided(Side.RIGHT) DriveTrainSide right,
                       NavXGyro gyro, DriveControlCreator controlCreator) {
         this.gyro = gyro;
         this.left = left;

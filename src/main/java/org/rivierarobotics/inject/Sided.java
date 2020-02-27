@@ -20,13 +20,11 @@
 
 package org.rivierarobotics.inject;
 
+import org.rivierarobotics.util.Side;
+
 import javax.inject.Qualifier;
 
 @Qualifier
 public @interface Sided {
     Side value();
-
-    enum Side {
-        LEFT, RIGHT, FRONT, BACK
-    }
 }

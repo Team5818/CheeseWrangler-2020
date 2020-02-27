@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
-        SmartDashboard.putNumber("wheelAngle", cheeseWheel.getAngle());
+        SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
         SmartDashboard.putBoolean("Limit", h.isAtEnd());

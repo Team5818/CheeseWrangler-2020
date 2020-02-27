@@ -20,52 +20,71 @@
 
 package org.rivierarobotics.util;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
-@Singleton
-public class CheeseSlots {
-    private boolean[] slots;
+public enum CheeseSlots {
+    ZERO(0),
+    ONE(1),
+    TWO(2),
+    THREE(3),
+    FOUR(4);
 
-    @Inject
-    public CheeseSlots() {
-        slots = new boolean[5];
+    private final double frontCollectPosition;
+    private final double backCollectPosition;
+    private final double shootPosition;
+    private boolean isFilled;
+
+    private static final double indexDiff = 360.0 / 5;
+    //TODO determine offsets
+    private static final double frontOffset = 0;
+    private static final double backOffset = 0;
+    private static final double shootOffset = 0;
+
+    CheeseSlots(int index) {
+        this.frontCollectPosition = (indexDiff * index) + frontOffset;
+        this.backCollectPosition = (indexDiff * index) + backOffset;
+        this.shootPosition = (indexDiff * index) + shootOffset;
     }
-    
-    public void incrementMultiple(int rep) {
-        for (int i = 0; i < rep; i++) {
-            increment();
+
+    public boolean isFilled() {
+        return isFilled;
+    }
+
+    public void setFilled(boolean filled) {
+        isFilled = filled;
+    }
+
+    public static int getClosestIndex(CheeseWheel.Mode mode, double currentPos, boolean lookForFilled) {
+        CheeseSlots[] allSlots = CheeseSlots.values();
+        int minIndex = 0;
+        double minDiff = 0;
+
+        for (int i = 0; i < allSlots.length; i++) {
+            if (!lookForFilled && !allSlots[i].isFilled) {
+                continue;
+            }
+
+            double intendPos;
+            switch (mode) {
+                case COLLECT_FRONT:
+                    intendPos = allSlots[i].frontCollectPosition;
+                    break;
+                case COLLECT_BACK:
+                    intendPos = allSlots[i].backCollectPosition;
+                    break;
+                case SHOOTING:
+                    intendPos = allSlots[i].shootPosition;
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected Cheese Wheel mode: " + mode);
+            }
+
+            double diff = Math.abs(intendPos - currentPos);
+            if (diff < minDiff) {
+                minIndex = i;
+                minDiff = diff;
+            }
         }
-    }
-
-    public void decrementMultiple(int rep) {
-        //yes I know this is bad
-        for (int i = 0; i < rep; i++) {
-            decrement();
-        }
-    }
-
-    public void increment() {
-        boolean temp = slots[slots.length - 1];
-        for (int i = slots.length - 1; i >= 0; i--) {
-            slots[i] = slots[i - 1];
-        }
-        slots[0] = temp;
-    }
-
-    public void decrement() {
-        boolean temp = slots[0];
-        for (int i = 0; i < slots.length - 1; i++) {
-            slots[i] = slots[i + 1];
-        }
-        slots[slots.length - 1] = temp;
-    }
-
-    public void setSlotStatus(int index, boolean filled) {
-        slots[index] = filled;
-    }
-
-    public boolean getSlotStatus(int index) {
-        return slots[index];
+        return minIndex;
     }
 }

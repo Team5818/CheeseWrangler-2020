@@ -34,16 +34,14 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
     private final double zeroTicks = -200;
-    private final CheeseSlots slots;
     private final CWSensors sensors;
     public Mode mode = Mode.COLLECT_FRONT;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
-    public CheeseWheel(int motor, CWSensors sensors, CheeseSlots slots, Provider<CheeseWheelControl> command) {
+    public CheeseWheel(int motor, CWSensors sensors, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.0012, 0.0, 0, 0.0, 15, 0.5));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
-        this.slots = slots;
         this.sensors = sensors;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
@@ -73,8 +71,7 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     @Override
     public double getPosition() {
-        double position = super.getPosition();
-        return position - (zeroTicks / getAnglesOrInchesToTicks());
+        return Math.abs((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()));
     }
 
     @Override
@@ -84,17 +81,13 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     }
 
-    public double getAngle() {
-        return Math.abs((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks())) + mode.offset;
-    }
-
     @Override
     public double getPositionTicks() {
         return wheelTalon.getSensorCollection().getPulseWidthPosition();
     }
 
     public double getSetIndex(double index) {
-        double angle = index * 360.0 / 5 + getAngle();
+        double angle = index * 360.0 / 5 + getPosition();
         angle = angle % 360;
         SmartDashboard.putNumber("addangle", angle);
         if (angle < 180) {
@@ -107,14 +100,18 @@ public class CheeseWheel extends BasePIDSubsystem {
     public int getIndex() {
         int min = 360;
         double minAngle = 360;
-        SmartDashboard.putNumber("angleff", getAngle() % 360);
+        SmartDashboard.putNumber("angleff", getPosition() % 360);
         for (int i = 0; i < 5; i++) {
-            if (minAngle > Math.abs(getAngle() % 360 - (i * indexDiff))) {
-                minAngle = Math.abs(getAngle() % 360 - (i * indexDiff));
+            if (minAngle > Math.abs(getPosition() % 360 - (i * indexDiff))) {
+                minAngle = Math.abs(getPosition() % 360 - (i * indexDiff));
                 min = i;
             }
         }
         return min;
+    }
+
+    public int getClosestIndex(boolean lookForFilled) {
+        return CheeseSlots.getClosestIndex(mode, getPosition(), lookForFilled);
     }
 
     public CWSensors getSensors() {
@@ -122,13 +119,6 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     public enum Mode {
-        //TODO set offsets from bottom to position
-        SHOOTING(0), COLLECT_FRONT(0), COLLECT_BACK(0), CLIMB(0), LAST(0);
-
-        public final int offset;
-
-        Mode(int offset) {
-            this.offset = offset;
-        }
+        COLLECT_FRONT, COLLECT_BACK, SHOOTING, LAST;
     }
 }

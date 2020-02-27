@@ -18,20 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.Side;
-
-import javax.inject.Inject;
-
-public class IntakeBasedOnMovement extends ConditionalCommand {
-
-    @Inject
-    public IntakeBasedOnMovement(DriveTrain driveTrain, IntakeSetPowerCreator intakeSetPowerCreator) {
-        super(intakeSetPowerCreator.create(Side.FRONT),
-            intakeSetPowerCreator.create(Side.BACK),
-            () -> driveTrain.getAvgVelocity() >= 0);
-    }
+public enum Side {
+    LEFT, RIGHT, FRONT, BACK
 }

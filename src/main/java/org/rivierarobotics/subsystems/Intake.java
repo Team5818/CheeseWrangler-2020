@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 
@@ -30,8 +31,8 @@ public class Intake extends SubsystemBase {
     private final IntakeSide back;
 
     @Inject
-    public Intake(@Sided(Sided.Side.FRONT) IntakeSide front,
-                  @Sided(Sided.Side.BACK) IntakeSide back) {
+    public Intake(@Sided(Side.FRONT) IntakeSide front,
+                  @Sided(Side.BACK) IntakeSide back) {
         this.front = front;
         this.back = back;
     }

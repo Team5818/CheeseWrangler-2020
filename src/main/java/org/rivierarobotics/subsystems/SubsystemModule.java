@@ -31,6 +31,7 @@ import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.CWSensors;
 import org.rivierarobotics.util.CheeseSlots;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
@@ -65,14 +66,14 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.LEFT)
+    @Sided(Side.LEFT)
     public static DriveTrainSide provideDriveSideLeft() {
         return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, false);
     }
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.RIGHT)
+    @Sided(Side.RIGHT)
     public static DriveTrainSide provideDriveSideRight() {
         return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, true);
     }
@@ -104,22 +105,22 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.FRONT)
+    @Sided(Side.FRONT)
     public static IntakeSide provideIntakeSideFront() {
         return new IntakeSide(INTAKE_VICTOR_FRONT);
     }
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.BACK)
+    @Sided(Side.BACK)
     public static IntakeSide provideIntakeSideBack() {
         return new IntakeSide(INTAKE_VICTOR_BACK);
     }
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(@Provided CWSensors sensors, @Provided CheeseSlots slots, Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, sensors, slots, command);
+    public static CheeseWheel provideCheeseWheel(@Provided CWSensors sensors, Provider<CheeseWheelControl> command) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, sensors, command);
     }
 
     @Provides
