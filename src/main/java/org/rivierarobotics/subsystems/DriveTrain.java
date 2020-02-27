@@ -54,6 +54,11 @@ public class DriveTrain extends SubsystemBase {
         setDefaultCommand(controlCreator.create(this));
     }
 
+    public void setVelocity(double velocity) {
+        left.setVelocity(velocity);
+        right.setVelocity(velocity);
+    }
+
     public void setPower(double l, double r) {
         double rpmHighAvg = (left.getRPMHigh() + right.getRPMHigh()) / 2;
         double rpmLowAvg = (left.getRPMLow() + right.getRPMLow()) / 2;
