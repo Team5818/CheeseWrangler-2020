@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.CheeseWheelControl;
 import org.rivierarobotics.util.CWSensors;
 import org.rivierarobotics.util.CheeseSlots;
@@ -58,11 +59,6 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     @Override
-    public double getPositionTicks() {
-        return wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
-    }
-
-    @Override
     protected void setPower(double pwr) {
         wheelTalon.set(pwr);
     }
@@ -82,36 +78,51 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     @Override
-    public void setPosition(double angle) {
-        if (angle < 180) {
-            setPositionTicks(zeroTicks + getPositionTicks() + mode.offset - (angle * getAnglesOrInchesToTicks()));
-        } else {
-            setPositionTicks(zeroTicks + getPositionTicks() + mode.offset + ((360 - angle) * getAnglesOrInchesToTicks()));
-        }
+    public void setPosition(double position) {
+        SmartDashboard.putNumber("posi",position);
+        setPositionTicks(position);
+
     }
 
     public double getAngle() {
-        return (getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks());
+        return Math.abs((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()));
     }
 
-    public void setIndex(double index) {
-        if (Math.round(index) == index) {
-            int diff = (int) (getClosestIndex() - index);
-            if (diff < 0) {
-                slots.decrementMultiple(Math.abs(diff));
-            } else {
-                slots.incrementMultiple(diff);
-            }
+    @Override
+    public double getPositionTicks() {
+        return wheelTalon.getSensorCollection().getPulseWidthPosition();
+    }
+
+    public double getSetIndex(double index) {
+        double angle = index * 360.0 / 5 + getAngle();
+        angle = angle % 360;
+        SmartDashboard.putNumber("addangle", angle);
+        if(angle < 180) {
+            return (getPositionTicks() - angle * getAnglesOrInchesToTicks());
+        } else {
+            return (getPositionTicks() + (360 - angle * getAnglesOrInchesToTicks()));
         }
-        setPosition(((index * indexDiff) + getAngle() + mode.offset) % 360);
     }
 
     public int getClosestIndex() {
         return (int) Math.round(getRelativeIndex());
     }
 
+    public int getIndex() {
+        int min = 360;
+        double minAngle = 360;
+        SmartDashboard.putNumber("angleff", getAngle() % 360);
+        for(int i = 0; i < 5; i++) {
+            if(minAngle > Math.abs(getAngle() % 360 - (i * indexDiff))) {
+                minAngle = Math.abs(getAngle() % 360 - (i * indexDiff));
+                min = i;
+            }
+        }
+        return min;
+    }
+
     public double getRelativeIndex() {
-        return (getAngle() - mode.offset) / indexDiff;
+        return (getAngle() - mode.offset)  / indexDiff;
     }
 
     public CWSensors getSensors() {

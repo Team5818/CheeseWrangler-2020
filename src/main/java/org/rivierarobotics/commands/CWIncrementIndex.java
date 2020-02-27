@@ -42,6 +42,5 @@ public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setPositionTicks(double position) {
-        subsystem.setIndex(position);
     }
 }

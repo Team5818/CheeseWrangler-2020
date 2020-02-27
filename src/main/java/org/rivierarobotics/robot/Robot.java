@@ -83,7 +83,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
-        CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(0));
+        //CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(0));
         globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
@@ -114,17 +114,16 @@ public class Robot extends TimedRobot {
         LimelightServo servo = globalComponent.getLimelightServo();
         CheeseWheel cheeseWheel = globalComponent.getCheeseWheel();
 
+        SmartDashboard.putNumber("index", cheeseWheel.getIndex());
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
+        SmartDashboard.putNumber("wheelAngle", cheeseWheel.getAngle());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
         SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putBoolean("InState", in.getSensors().getIntakeSensorStatus());
-        SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
-        SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
-        SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("LLAngle", servo.getAngle());
         SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());
         SmartDashboard.putData(chooser);
