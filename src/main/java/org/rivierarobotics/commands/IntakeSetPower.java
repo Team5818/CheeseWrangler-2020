@@ -23,6 +23,7 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.subsystems.Intake;
 
 @GenerateCreator
@@ -30,16 +31,20 @@ public class IntakeSetPower extends InstantCommand {
     private final Intake intake;
     private final double frontPower;
     private final double backPower;
+    private static final double pwrConstant = 0.5;
 
-    public IntakeSetPower(@Provided Intake intake, double power) {
-        this(intake, power, power);
-    }
-
-    public IntakeSetPower(@Provided Intake intake, double frontPower, double backPower) {
+    IntakeSetPower(@Provided Intake intake, Sided.Side side) {
         this.intake = intake;
-        this.frontPower = frontPower;
-        this.backPower = backPower;
-        addRequirements(intake);
+        if (side == Sided.Side.FRONT) {
+            frontPower = pwrConstant;
+            backPower = 0.0;
+        } else {
+            if (side != Sided.Side.BACK) {
+                throw new IllegalArgumentException("Invalid side: " + side);
+            }
+            frontPower = 0.0;
+            backPower = pwrConstant;
+        }
     }
 
     @Override

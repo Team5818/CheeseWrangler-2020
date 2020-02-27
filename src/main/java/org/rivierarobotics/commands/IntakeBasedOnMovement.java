@@ -20,27 +20,18 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.subsystems.DriveTrain;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class IntakeCommands {
-    private IntakeSetPowerCreator intakeSetPowerCreator;
-    private final Provider<IntakeBasedOnMovement> intakeBasedOnMovementProvider;
+public class IntakeBasedOnMovement extends ConditionalCommand {
 
     @Inject
-    public IntakeCommands(IntakeSetPowerCreator intakeSetPowerCreator,
-                          Provider<IntakeBasedOnMovement> intakeBasedOnMovementProvider) {
-        this.intakeSetPowerCreator = intakeSetPowerCreator;
-        this.intakeBasedOnMovementProvider = intakeBasedOnMovementProvider;
-    }
-
-    public IntakeSetPower setPower(Sided.Side side) {
-        return intakeSetPowerCreator.create(side);
-    }
-
-    public IntakeBasedOnMovement basedOnMovement() {
-        return intakeBasedOnMovementProvider.get();
+    public IntakeBasedOnMovement(DriveTrain driveTrain, IntakeSetPowerCreator intakeSetPowerCreator) {
+        super(intakeSetPowerCreator.create(Sided.Side.FRONT),
+                intakeSetPowerCreator.create(Sided.Side.BACK),
+                () -> driveTrain.getAvgVelocity() >= 0);
     }
 }
