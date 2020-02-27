@@ -43,7 +43,7 @@ public class DriveTrainSide extends BasePIDSubsystem {
     private Encoder shaftEncoder;
     private DriveTrain.Gear currentGear;
 
-    public DriveTrainSide(MotorIds motors, boolean invert) {
+    public DriveTrainSide(DTMotorIds motors, boolean invert) {
         super(new PIDConfig(0.0, 0.0, 0.0, 0.05, 0.0, 1.0)); //kF is not accurate
         this.tl = new WPI_TalonFX(motors.topLeft);
         this.tr = new WPI_TalonFX(motors.topRight);
@@ -52,10 +52,6 @@ public class DriveTrainSide extends BasePIDSubsystem {
         this.currentGear = DriveTrain.Gear.HYBRID;
         this.invert = invert;
 
-        tl.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        tr.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        bl.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        br.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         setupMotors(tl, tr, bl, br);
         NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
 
@@ -67,6 +63,7 @@ public class DriveTrainSide extends BasePIDSubsystem {
         for (WPI_TalonFX motor : motors) {
             motor.configFactoryDefault();
             motor.setInverted(invert);
+            motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         }
     }
 
@@ -124,7 +121,6 @@ public class DriveTrainSide extends BasePIDSubsystem {
 
     public void setVelocity(double vel) {
         // TODO implement proper velocity control
-
     }
 
     public double getMotorRPM(WPI_TalonFX motor) {
@@ -149,23 +145,5 @@ public class DriveTrainSide extends BasePIDSubsystem {
 
     public void resetEncoder() {
         shaftEncoder.reset();
-    }
-
-    public static class MotorIds {
-        public final int topLeft;
-        public final int topRight;
-        public final int bottomLeft;
-        public final int bottomRight;
-        public final int encoderA;
-        public final int encoderB;
-
-        public MotorIds(int topLeft, int topRight, int bottomLeft, int bottomRight, int encoderA, int encoderB) {
-            this.topLeft = topLeft;
-            this.topRight = topRight;
-            this.bottomLeft = bottomLeft;
-            this.bottomRight = bottomRight;
-            this.encoderA = encoderA;
-            this.encoderB = encoderB;
-        }
     }
 }

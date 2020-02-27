@@ -65,8 +65,6 @@ public class ButtonConfiguration {
             .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 12)
             .whenPressed(cmds.turret().setAngle(20));
-        new JoystickButton(coDriverButtons, 11)
-            .whenPressed(cmds.hood().alignQuadrature());
         /*
         // Competition Robot Button Map
         new JoystickButton(driverLeft, 1)

@@ -32,13 +32,11 @@ public class Hood extends BasePIDSubsystem {
     private static final double zeroTicks = -2334;
     private final WPI_TalonFX hoodFalcon;
     private final Provider<HoodControl> command;
-    private final DigitalInput limit;
 
-    public Hood(int motorId, int limitId, Provider<HoodControl> command) {
+    public Hood(int motorId, Provider<HoodControl> command) {
         super(new PIDConfig(0.001, 0.0001, 0.0, 0.03, 10, 0.6), 4096 / 360.0);
         this.command = command;
         hoodFalcon = new WPI_TalonFX(motorId);
-        limit = new DigitalInput(limitId);
         hoodFalcon.configFactoryDefault();
         hoodFalcon.setSensorPhase(true);
         hoodFalcon.setNeutralMode(NeutralMode.Brake);
@@ -46,11 +44,6 @@ public class Hood extends BasePIDSubsystem {
 
     public final WPI_TalonFX getHoodFalcon() {
         return hoodFalcon;
-    }
-
-    public boolean isAtEnd() {
-        // switch is false when triggered
-        return !limit.get();
     }
 
     @Override
@@ -78,7 +71,6 @@ public class Hood extends BasePIDSubsystem {
         return (zeroTicks - getPositionTicks()) / 5 * 360 / 4096;
     }
 
-    //TODO attempt to eliminate field "angle" as it appears to not be needed
     public void setAbsoluteAngle(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
         if (angle >= -20 && angle <= 42) {

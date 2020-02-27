@@ -20,6 +20,9 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.cscore.UsbCamera;
+import edu.wpi.cscore.VideoMode;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -48,6 +51,8 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
         globalComponent.robotInit();
+        UsbCamera driverCamera = CameraServer.getInstance().startAutomaticCapture();
+        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
         chooser = new SendableChooser<>();
 
         //TODO not sure if this is valid syntax
@@ -83,7 +88,6 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
-        //CommandScheduler.getInstance().schedule(commandComponent.cheeseWheel().setPosition(0));
         globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
@@ -122,7 +126,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
-        SmartDashboard.putBoolean("Limit", h.isAtEnd());
         SmartDashboard.putBoolean("InState", in.getSensors().getIntakeSensorStatus());
         SmartDashboard.putNumber("LLAngle", servo.getAngle());
         SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());

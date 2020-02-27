@@ -47,18 +47,17 @@ public class SubsystemModule {
     private static final int INTAKE_VICTOR_BACK = 10;
     private static final int CLIMB_FALCON = 21;
 
-    private static final int HOOD_LIMIT_SWITCH = 6;
     private static final int LIMELIGHT_SERVO = 1;
     private static final int CAMERA_SERVO = 2;
     private static final int CW_INTAKE_SENSOR = 8;
     private static final int CW_OUTPUT_SENSOR = 9;
 
-    private static final DriveTrainSide.MotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
-        new DriveTrainSide.MotorIds(
+    private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
+        new DTMotorIds(
             1, 0, 3, 2,
             0, 1);
-    private static final DriveTrainSide.MotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
-        new DriveTrainSide.MotorIds(
+    private static final DTMotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
+        new DTMotorIds(
             13, 12, 15, 14,
             2, 3);
 
@@ -88,7 +87,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Hood provideHood(Provider<HoodControl> command) {
-        return new Hood(HOOD_TALON, HOOD_LIMIT_SWITCH, command);
+        return new Hood(HOOD_TALON, command);
     }
 
     @Provides
