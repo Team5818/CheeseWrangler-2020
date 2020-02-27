@@ -27,21 +27,22 @@ import javax.inject.Inject;
 public class CWSetClosestIndex extends BasePIDSetPosition<CheeseWheel> {
     @Inject
     public CWSetClosestIndex(CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 0.05, 0);
+        super(cheeseWheel, 40, 0);
     }
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = subsystem.getClosestIndex();
+        positionTicks = subsystem.getIndex();
     }
 
     @Override
     protected double getPositionTicks() {
-        return subsystem.getRelativeIndex();
+        return subsystem.getPositionTicks();
     }
 
     @Override
-    protected void setPositionTicks(double position) {
-        //subsystem.setIndex(position);
+    protected void setPositionTicks(double index) {
+        super.setPositionTicks(subsystem.getSetIndex(index));
     }
+
 }

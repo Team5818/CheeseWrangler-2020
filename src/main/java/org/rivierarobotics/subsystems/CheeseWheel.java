@@ -79,13 +79,13 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     @Override
     public void setPosition(double position) {
-        SmartDashboard.putNumber("posi",position);
+        SmartDashboard.putNumber("posi", position);
         setPositionTicks(position);
 
     }
 
     public double getAngle() {
-        return Math.abs((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()));
+        return Math.abs((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks())) + mode.offset;
     }
 
     @Override
@@ -97,32 +97,24 @@ public class CheeseWheel extends BasePIDSubsystem {
         double angle = index * 360.0 / 5 + getAngle();
         angle = angle % 360;
         SmartDashboard.putNumber("addangle", angle);
-        if(angle < 180) {
+        if (angle < 180) {
             return (getPositionTicks() - angle * getAnglesOrInchesToTicks());
         } else {
             return (getPositionTicks() + (360 - angle * getAnglesOrInchesToTicks()));
         }
     }
 
-    public int getClosestIndex() {
-        return (int) Math.round(getRelativeIndex());
-    }
-
     public int getIndex() {
         int min = 360;
         double minAngle = 360;
         SmartDashboard.putNumber("angleff", getAngle() % 360);
-        for(int i = 0; i < 5; i++) {
-            if(minAngle > Math.abs(getAngle() % 360 - (i * indexDiff))) {
+        for (int i = 0; i < 5; i++) {
+            if (minAngle > Math.abs(getAngle() % 360 - (i * indexDiff))) {
                 minAngle = Math.abs(getAngle() % 360 - (i * indexDiff));
                 min = i;
             }
         }
         return min;
-    }
-
-    public double getRelativeIndex() {
-        return (getAngle() - mode.offset)  / indexDiff;
     }
 
     public CWSensors getSensors() {

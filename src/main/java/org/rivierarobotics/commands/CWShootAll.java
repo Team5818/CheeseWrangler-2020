@@ -33,7 +33,6 @@ public class CWShootAll extends SequentialCommandGroup {
         addCommands(
             visionCommands.visionAim(VisionTarget.INNER),
             cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
-            cheeseCommands.setClosestHalfIndex(),
             new WaitCommand(0.1),
             ejectorCommands.setPower(1.0),
             new WaitCommand(0.1)

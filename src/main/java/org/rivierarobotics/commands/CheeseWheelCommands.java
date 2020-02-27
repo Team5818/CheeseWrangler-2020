@@ -28,7 +28,6 @@ import javax.inject.Provider;
 public class CheeseWheelCommands {
     private CWIncrementIndexCreator incrementIndex;
     private CWDecrementIndexCreator decrementIndex;
-    private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
     private Provider<CWSetClosestIndex> setClosestIndexProvider;
     private CWSetPositionCreator setPositionCreator;
     private CWSetModeCreator setModeCreator;
@@ -39,7 +38,6 @@ public class CheeseWheelCommands {
     @Inject
     public CheeseWheelCommands(CWIncrementIndexCreator incrementIndex,
                                CWDecrementIndexCreator decrementIndex,
-                               Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
                                Provider<CWSetClosestIndex> setClosestIndexProvider,
                                CWSetPositionCreator setPositionCreator,
                                CWSetModeCreator setModeCreator,
@@ -48,7 +46,6 @@ public class CheeseWheelCommands {
                                CWSetIndexCreator setIndexCreator) {
         this.incrementIndex = incrementIndex;
         this.decrementIndex = decrementIndex;
-        this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
         this.setClosestIndexProvider = setClosestIndexProvider;
         this.setPositionCreator = setPositionCreator;
         this.setModeCreator = setModeCreator;
@@ -65,10 +62,6 @@ public class CheeseWheelCommands {
         return decrementIndex.create();
     }
 
-    public CWSetClosestHalfIndex setClosestHalfIndex() {
-        return setClosestHalfIndexProvider.get();
-    }
-
     public CWSetClosestIndex setClosestIndex() {
         return setClosestIndexProvider.get();
     }
@@ -81,8 +74,10 @@ public class CheeseWheelCommands {
         return setModeCreator.create(mode);
     }
 
-    public CWSetIndex setIndex(int index) { return setIndexCreator.create(index); }
-;
+    public CWSetIndex setIndex(int index) {
+        return setIndexCreator.create(index);
+    }
+
     public CWInvertMode invertMode() {
         return invertModeCreator.create();
     }
