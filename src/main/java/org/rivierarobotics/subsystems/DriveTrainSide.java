@@ -20,11 +20,14 @@
 
 package org.rivierarobotics.subsystems;
 
+import static org.rivierarobotics.util.Dimensions.WHEEL_CIRCUMFERENCE;
+
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import org.rivierarobotics.util.NeutralIdleMode;
 
-public class DriveTrainSide {
+public class DriveTrainSide extends BasePIDSubsystem {
     //TODO change values of threshold to realistic values
     private static final double LOW_BOUND_LOW = 5000 / 2.0;
     private static final double HIGH_BOUND_LOW = 6000 / 2.0;
@@ -41,6 +44,7 @@ public class DriveTrainSide {
     private DriveTrain.Gear currentGear;
 
     public DriveTrainSide(MotorIds motors, boolean invert) {
+        super(new PIDConfig(0.0, 0.0, 0.0, 0.05, 0.0, 1.0)); //kF is not accurate
         this.tl = new WPI_TalonFX(motors.topLeft);
         this.tr = new WPI_TalonFX(motors.topRight);
         this.bl = new WPI_TalonFX(motors.bottomLeft);
@@ -48,10 +52,15 @@ public class DriveTrainSide {
         this.currentGear = DriveTrain.Gear.HYBRID;
         this.invert = invert;
 
+        tl.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        tr.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        bl.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        br.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
         setupMotors(tl, tr, bl, br);
         NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
+        shaftEncoder.setDistancePerPulse(WHEEL_CIRCUMFERENCE / 2048);
     }
 
     private void setupMotors(WPI_TalonFX... motors) {
@@ -102,22 +111,20 @@ public class DriveTrainSide {
     }
 
     public double getPositionTicks() {
-        return shaftEncoder.get();
+        return getVelocity();
     }
 
-    //TODO determine what units this is in
     public double getPosition() {
         return shaftEncoder.getDistance();
     }
 
-    //TODO determine what units this is in
     public double getVelocity() {
         return shaftEncoder.getRate();
     }
 
     public void setVelocity(double vel) {
         // TODO implement proper velocity control
-        throw new UnsupportedOperationException();
+
     }
 
     public double getMotorRPM(WPI_TalonFX motor) {
