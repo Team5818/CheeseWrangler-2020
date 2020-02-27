@@ -18,27 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+public enum ServoPosition {
+    FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
 
-@GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+    public final int angle;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 40, index);
+    ServoPosition(int angle) {
+        this.angle = angle;
     }
-
-    @Override
-    protected void setSetPosition(double index) {
-        super.setSetPosition(subsystem.getSetIndex(index));
-    }
-
-    @Override
-    protected void setPositionTicks(double index) {
-        super.setPositionTicks(subsystem.getSetIndex(index));
-    }
-
 }

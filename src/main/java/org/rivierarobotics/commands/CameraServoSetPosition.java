@@ -20,25 +20,25 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.CameraServo;
+import org.rivierarobotics.subsystems.LimelightServo;
 
 @GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+public class CameraServoSetPosition extends InstantCommand {
+    private final CameraServo servo;
+    private final double position;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 40, index);
+    public CameraServoSetPosition(@Provided CameraServo servo, double position) {
+        this.servo = servo;
+        this.position = position;
+        addRequirements(servo);
     }
 
     @Override
-    protected void setSetPosition(double index) {
-        super.setSetPosition(subsystem.getSetIndex(index));
+    public void execute() {
+        servo.setAngle(position);
     }
-
-    @Override
-    protected void setPositionTicks(double index) {
-        super.setPositionTicks(subsystem.getSetIndex(index));
-    }
-
 }

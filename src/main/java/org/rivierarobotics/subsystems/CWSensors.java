@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
@@ -31,9 +31,9 @@ public class CWSensors {
     private final DigitalInput outputSensor;
 
     @Inject
-    public CWSensors() {
-        this.intakeSensor = new DigitalInput(9);
-        this.outputSensor = new DigitalInput(10);
+    public CWSensors(int intake, int output) {
+        this.intakeSensor = new DigitalInput(intake);
+        this.outputSensor = new DigitalInput(output);
     }
 
     public boolean getIntakeSensorStatus() {

@@ -20,25 +20,23 @@
 
 package org.rivierarobotics.commands;
 
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.ServoPosition;
 
-@GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+import javax.inject.Inject;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 40, index);
+public class CameraServoCommands {
+    private CameraServoSetPositionCreator cameraServoSetPositionCreator;
+
+    @Inject
+    public CameraServoCommands(CameraServoSetPositionCreator cameraServoSetPositionCreator) {
+        this.cameraServoSetPositionCreator = cameraServoSetPositionCreator;
     }
 
-    @Override
-    protected void setSetPosition(double index) {
-        super.setSetPosition(subsystem.getSetIndex(index));
+    public CameraServoSetPosition setAngle(double angle) {
+        return cameraServoSetPositionCreator.create(angle);
     }
 
-    @Override
-    protected void setPositionTicks(double index) {
-        super.setPositionTicks(subsystem.getSetIndex(index));
+    public CameraServoSetPosition setPosition(ServoPosition position) {
+        return cameraServoSetPositionCreator.create(position.angle);
     }
-
 }

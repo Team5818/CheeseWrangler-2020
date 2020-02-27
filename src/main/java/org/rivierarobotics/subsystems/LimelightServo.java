@@ -40,14 +40,4 @@ public class LimelightServo extends SubsystemBase {
     public void setAngle(double angle) {
         this.servo.set(0.5 - (angle * 1 / 240.0));
     }
-
-    public enum Position {
-        FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
-
-        public final int angle;
-
-        Position(int angle) {
-            this.angle = angle;
-        }
-    }
 }

@@ -18,27 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-@GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+import javax.inject.Inject;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 40, index);
+public class CameraServo extends SubsystemBase {
+    private final Servo servo;
+
+    @Inject
+    public CameraServo(int id) {
+        this.servo = new Servo(id);
     }
 
-    @Override
-    protected void setSetPosition(double index) {
-        super.setSetPosition(subsystem.getSetIndex(index));
+    //TODO redo these two methods for camera specific servo
+    public double getAngle() {
+        return (servo.getPosition() - 0.5) * -240.0;
     }
 
-    @Override
-    protected void setPositionTicks(double index) {
-        super.setPositionTicks(subsystem.getSetIndex(index));
+    public void setAngle(double angle) {
+        this.servo.set(0.5 - (angle * 1 / 240.0));
     }
-
 }

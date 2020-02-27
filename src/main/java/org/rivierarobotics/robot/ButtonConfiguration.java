@@ -60,7 +60,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 2)
             .whenPressed(cmds.cheeseWheel().setIndex(1));
         new JoystickButton(coDriverRight, 1)
-            .whenPressed(cmds.cameraServo().setAngle(0));
+            .whenPressed(cmds.limelightServo().setAngle(0));
         new JoystickButton(coDriverRight, 2)
             .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 12)

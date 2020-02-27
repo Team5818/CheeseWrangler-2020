@@ -24,6 +24,7 @@ import dagger.Module;
 import dagger.Subcomponent;
 import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.commands.CWCommandGroups;
+import org.rivierarobotics.commands.CameraServoCommands;
 import org.rivierarobotics.commands.CheeseWheelCommands;
 import org.rivierarobotics.commands.ClimbCommands;
 import org.rivierarobotics.commands.DriveCommands;
@@ -60,7 +61,9 @@ public abstract class CommandComponent {
 
     public abstract AutonomousCommands auto();
 
-    public abstract LimelightServoCommands cameraServo();
+    public abstract LimelightServoCommands limelightServo();
+
+    public abstract CameraServoCommands cameraServo();
 
     public abstract ClimbCommands climb();
 
