@@ -29,34 +29,28 @@ public class CheeseWheelCommands {
     private CWIncrementIndexCreator incrementIndex;
     private CWDecrementIndexCreator decrementIndex;
     private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
-    private Provider<CWShootAll> shootAllProvider;
-    private Provider<CWShootIndividual> shootIndividualProvider;
+    private Provider<CWSetClosestIndex> setClosestIndexProvider;
     private CWSetPositionCreator setPositionCreator;
     private CWSetModeCreator setModeCreator;
     private CWInvertModeCreator invertModeCreator;
-    private CWAutoCollectCreator autoCollectCreator;
     private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
 
     @Inject
     public CheeseWheelCommands(CWIncrementIndexCreator incrementIndex,
                                CWDecrementIndexCreator decrementIndex,
                                Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
-                               Provider<CWShootAll> shootAllProvider,
-                               Provider<CWShootIndividual> shootIndividualProvider,
+                               Provider<CWSetClosestIndex> setClosestIndexProvider,
                                CWSetPositionCreator setPositionCreator,
                                CWSetModeCreator setModeCreator,
                                CWInvertModeCreator invertModeCreator,
-                               CWAutoCollectCreator autoCollectCreator,
                                WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator) {
         this.incrementIndex = incrementIndex;
         this.decrementIndex = decrementIndex;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
-        this.shootAllProvider = shootAllProvider;
-        this.shootIndividualProvider = shootIndividualProvider;
+        this.setClosestIndexProvider = setClosestIndexProvider;
         this.setPositionCreator = setPositionCreator;
         this.setModeCreator = setModeCreator;
         this.invertModeCreator = invertModeCreator;
-        this.autoCollectCreator = autoCollectCreator;
         this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
     }
 
@@ -72,12 +66,8 @@ public class CheeseWheelCommands {
         return setClosestHalfIndexProvider.get();
     }
 
-    public CWShootAll shootAll() {
-        return shootAllProvider.get();
-    }
-
-    public CWShootIndividual shootNext() {
-        return shootIndividualProvider.get();
+    public CWSetClosestIndex setClosestIndex() {
+        return setClosestIndexProvider.get();
     }
 
     public CWSetPosition setPosition(int ticks) {
@@ -90,10 +80,6 @@ public class CheeseWheelCommands {
 
     public CWInvertMode invertMode() {
         return invertModeCreator.create();
-    }
-
-    public CWAutoCollect autoCollect(boolean front) {
-        return autoCollectCreator.create(front);
     }
 
     public WaitForBallIntakeTrigger waitForBall() {

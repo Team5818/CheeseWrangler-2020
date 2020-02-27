@@ -33,10 +33,12 @@ public class VisionAim extends ParallelCommandGroup {
         //TODO: we need to get our heights to match the actual heights of the goal. extraDistance should be correct.
         switch (target) {
             case BOTTOM:
-                addCommands(vision.autoAimHood(0, 0.2), vision.autoAimTurret(0, 1));
+                addCommands(vision.autoAimHood(0, 0.2),
+                    vision.autoAimTurret(0, 1));
                 break;
             case TOP:
-                addCommands(vision.autoAimHood(0, ShooterUtil.getTopHeight()), vision.autoAimTurret(0, ShooterUtil.getTopHeight()));
+                addCommands(vision.autoAimHood(0, ShooterUtil.getTopHeight()),
+                    vision.autoAimTurret(0, ShooterUtil.getTopHeight()));
                 break;
             default:
                 addCommands(vision.autoAimHood(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()),

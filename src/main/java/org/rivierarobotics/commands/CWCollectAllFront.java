@@ -18,25 +18,39 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.CWCommandGroups;
-import org.rivierarobotics.commands.VisionCommands;
-import org.rivierarobotics.util.VisionTarget;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
 import javax.inject.Inject;
 
-public class FlexTapeRoutine extends SequentialCommandGroup {
+public class CWCollectAllFront extends SequentialCommandGroup {
     @Inject
-    public FlexTapeRoutine(AutonomousCommands autonomousCommands,
-                           VisionCommands visionCommands,
-                           CWCommandGroups cheeseWheelCommandGroups) {
+    public CWCollectAllFront(CheeseWheelCommands cheeseCommands) {
         addCommands(
-            autonomousCommands.pathweaver(Pose2dPath.FLEX_TAPE),
-            visionCommands.visionAim(VisionTarget.INNER),
-            cheeseWheelCommandGroups.autoCollect(true),
-            cheeseWheelCommandGroups.shootNext()
+            cheeseCommands.setMode(CheeseWheel.Mode.COLLECT_FRONT),
+            cheeseCommands.setClosestIndex()
         );
+
+        for (int i = 0; i < 5; i++) {
+            addCommands(
+                cheeseCommands.waitForBall(),
+                new WaitCommand(0.1),
+                cheeseCommands.incrementIndex()
+            );
+        }
+
+        addCommands(
+            cheeseCommands.setMode(CheeseWheel.Mode.LAST)
+        );
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

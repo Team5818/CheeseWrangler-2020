@@ -23,21 +23,22 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
 public class CWShootIndividual extends SequentialCommandGroup {
     @Inject
-    public CWShootIndividual(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
+    public CWShootIndividual(VisionCommands visionCommands, CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
+            visionCommands.visionAim(VisionTarget.INNER),
             cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
             cheeseCommands.setClosestHalfIndex(),
             ejectorCommands.setPower(1.0),
-            new WaitCommand(0.5),
+            new WaitCommand(0.2),
             cheeseCommands.incrementIndex(),
-            new WaitCommand(0.5),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
-            cheeseCommands.incrementIndex()
+            new WaitCommand(0.2),
+            cheeseCommands.setMode(CheeseWheel.Mode.LAST)
         );
     }
 }

@@ -38,6 +38,7 @@ public class Ejector extends SubsystemBase {
         this.command = command;
         this.leftVictor = new WPI_VictorSPX(left);
         this.rightVictor = new WPI_VictorSPX(right);
+        rightVictor.setInverted(true);
         NeutralIdleMode.BRAKE.applyTo(leftVictor, rightVictor);
     }
 

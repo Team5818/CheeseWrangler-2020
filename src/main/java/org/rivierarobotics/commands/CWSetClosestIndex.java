@@ -18,25 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.CWCommandGroups;
-import org.rivierarobotics.commands.VisionCommands;
-import org.rivierarobotics.util.VisionTarget;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
 import javax.inject.Inject;
 
-public class FlexTapeRoutine extends SequentialCommandGroup {
+public class CWSetClosestIndex extends BasePIDSetPosition<CheeseWheel> {
     @Inject
-    public FlexTapeRoutine(AutonomousCommands autonomousCommands,
-                           VisionCommands visionCommands,
-                           CWCommandGroups cheeseWheelCommandGroups) {
-        addCommands(
-            autonomousCommands.pathweaver(Pose2dPath.FLEX_TAPE),
-            visionCommands.visionAim(VisionTarget.INNER),
-            cheeseWheelCommandGroups.autoCollect(true),
-            cheeseWheelCommandGroups.shootNext()
-        );
+    public CWSetClosestIndex(CheeseWheel cheeseWheel) {
+        super(cheeseWheel, 0.05, 0);
+    }
+
+    @Override
+    protected void setSetPosition(double position) {
+        positionTicks = subsystem.getClosestIndex();
+    }
+
+    @Override
+    protected double getPositionTicks() {
+        return subsystem.getRelativeIndex();
+    }
+
+    @Override
+    protected void setPositionTicks(double position) {
+        subsystem.setIndex(position);
     }
 }
