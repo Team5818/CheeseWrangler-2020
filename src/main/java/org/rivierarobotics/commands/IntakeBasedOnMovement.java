@@ -31,7 +31,7 @@ public class IntakeBasedOnMovement extends ConditionalCommand {
     @Inject
     public IntakeBasedOnMovement(DriveTrain driveTrain, IntakeSetPowerCreator intakeSetPowerCreator) {
         super(intakeSetPowerCreator.create(Sided.Side.FRONT),
-                intakeSetPowerCreator.create(Sided.Side.BACK),
-                () -> driveTrain.getAvgVelocity() >= 0);
+            intakeSetPowerCreator.create(Sided.Side.BACK),
+            () -> driveTrain.getAvgVelocity() >= 0);
     }
 }

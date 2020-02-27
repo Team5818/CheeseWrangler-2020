@@ -59,6 +59,11 @@ public class DriveTrain extends SubsystemBase {
         right.setVelocity(velocity);
     }
 
+    public void setVelocity(double l, double r) {
+        left.setVelocity(l);
+        right.setVelocity(r);
+    }
+
     public void setPower(double l, double r) {
         double rpmHighAvg = (left.getRPMHigh() + right.getRPMHigh()) / 2;
         double rpmLowAvg = (left.getRPMLow() + right.getRPMLow()) / 2;
@@ -93,10 +98,7 @@ public class DriveTrain extends SubsystemBase {
         return right;
     }
 
-    public void setVelocity(double l, double r) {
-        left.setVelocity(l);
-        right.setVelocity(r);
-    }
+
 
     public DifferentialDriveKinematics getKinematics() {
         return kinematics;
