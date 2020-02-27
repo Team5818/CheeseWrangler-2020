@@ -32,12 +32,12 @@ public class CWSetClosestHalfIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = Math.floor(subsystem.getClosestIndex()) + 0.5;
+        positionTicks = Math.floor(subsystem.getRelativeIndex()) + 0.5;
     }
 
     @Override
     protected double getPositionTicks() {
-        return subsystem.getClosestIndex();
+        return subsystem.getRelativeIndex();
     }
 
     @Override

@@ -20,23 +20,23 @@
 
 package org.rivierarobotics.commands;
 
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
-@GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 0.05, index);
-    }
+import javax.inject.Inject;
 
-    @Override
-    protected double getPositionTicks() {
-        return subsystem.getRelativeIndex();
-    }
-
-    @Override
-    protected void setPositionTicks(double position) {
-        subsystem.setIndex(position);
+public class CollectShootSingleCycle extends SequentialCommandGroup {
+    @Inject
+    public CollectShootSingleCycle(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
+        addCommands(
+            cheeseCommands.setMode(CheeseWheel.Mode.COLLECT_FRONT),
+            cheeseCommands.waitForBall(),
+            ejectorCommands.setPower(1.0),
+            new WaitCommand(0.1),
+            cheeseCommands.incrementIndex(),
+            cheeseCommands.incrementIndex(),
+            ejectorCommands.setPower(0.0)
+        );
     }
 }

@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
         SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
         SmartDashboard.putBoolean("Limit", h.isAtEnd());
-        SmartDashboard.putBoolean("InState", in.getIntakeSensorState());
+        SmartDashboard.putBoolean("InState", in.getSensors().getIntakeSensorStatus());
         SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
         SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
         SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());

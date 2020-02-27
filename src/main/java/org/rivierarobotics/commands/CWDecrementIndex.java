@@ -32,12 +32,12 @@ public class CWDecrementIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = subsystem.getClosestWholeIndex() - 1;
+        positionTicks = subsystem.getClosestIndex() - 1;
     }
 
     @Override
     protected double getPositionTicks() {
-        return subsystem.getClosestIndex();
+        return subsystem.getRelativeIndex();
     }
 
     @Override

@@ -28,6 +28,8 @@ import org.rivierarobotics.commands.EjectorControl;
 import org.rivierarobotics.commands.HoodControl;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.CWSensors;
+import org.rivierarobotics.util.CheeseSlots;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -46,8 +48,6 @@ public class SubsystemModule {
     private static final int CLIMB_TALON = 21;
 
     private static final int HOOD_LIMIT_SWITCH = 6;
-    private static final int INDEX_SENSOR_INTAKE = 9;
-    private static final int INDEX_SENSOR_OUTPUT = 10;
     private static final int LIMELIGHT_SERVO = 1;
 
     private static final DriveTrainSide.MotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
@@ -117,8 +117,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, INDEX_SENSOR_INTAKE, INDEX_SENSOR_OUTPUT, command);
+    public static CheeseWheel provideCheeseWheel(@Provided CWSensors sensors, @Provided CheeseSlots slots, Provider<CheeseWheelControl> command) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, sensors, slots, command);
     }
 
     @Provides

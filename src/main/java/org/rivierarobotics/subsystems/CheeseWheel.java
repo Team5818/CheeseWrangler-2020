@@ -22,37 +22,30 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import org.rivierarobotics.commands.CheeseWheelControl;
+import org.rivierarobotics.util.CWSensors;
+import org.rivierarobotics.util.CheeseSlots;
 
 import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
-    public final double INDEX_DIFF = 360.0 / 5;
+    public final double indexDiff = 360.0 / 5;
     private final WPI_TalonSRX wheelTalon;
-    private final DigitalInput intakeSensor;
-    private final DigitalInput outputSensor;
     private final Provider<CheeseWheelControl> command;
-    private final double ZERO_TICKS = -200;
+    private final double zeroTicks = -200;
+    private final CheeseSlots slots;
+    private final CWSensors sensors;
     public Mode mode = Mode.COLLECT_FRONT;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
-    public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
+    public CheeseWheel(int motor, CWSensors sensors, CheeseSlots slots, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.0012, 0.0, 0, 0.0, 15, 0.5));
         this.wheelTalon = new WPI_TalonSRX(motor);
-        this.intakeSensor = new DigitalInput(sensorOne);
-        this.outputSensor = new DigitalInput(sensorTwo);
         this.command = command;
+        this.slots = slots;
+        this.sensors = sensors;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-    }
-
-    public boolean getIntakeSensorState() {
-        return intakeSensor.get();
-    }
-
-    public boolean getOutputSensorState() {
-        return outputSensor.get();
     }
 
     public void setMode(Mode mode) {
@@ -85,32 +78,44 @@ public class CheeseWheel extends BasePIDSubsystem {
     @Override
     public double getPosition() {
         double position = super.getPosition();
-        return position - (ZERO_TICKS / getAnglesOrInchesToTicks());
+        return position - (zeroTicks / getAnglesOrInchesToTicks());
     }
 
     @Override
     public void setPosition(double angle) {
         if (angle < 180) {
-            setPositionTicks(ZERO_TICKS + getPositionTicks() + mode.offset - (angle * getAnglesOrInchesToTicks()));
+            setPositionTicks(zeroTicks + getPositionTicks() + mode.offset - (angle * getAnglesOrInchesToTicks()));
         } else {
-            setPositionTicks(ZERO_TICKS + getPositionTicks() + mode.offset + ((360 - angle) * getAnglesOrInchesToTicks()));
+            setPositionTicks(zeroTicks + getPositionTicks() + mode.offset + ((360 - angle) * getAnglesOrInchesToTicks()));
         }
     }
 
     public double getAngle() {
-        return (getPositionTicks() - ZERO_TICKS) * (1 / getAnglesOrInchesToTicks());
+        return (getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks());
     }
 
     public void setIndex(double index) {
-        setPosition(((index * INDEX_DIFF) + getAngle() + mode.offset) % 360);
+        if (Math.round(index) == index) {
+            int diff = (int) (getClosestIndex() - index);
+            if (diff < 0) {
+                slots.decrementMultiple(Math.abs(diff));
+            } else {
+                slots.incrementMultiple(diff);
+            }
+        }
+        setPosition(((index * indexDiff) + getAngle() + mode.offset) % 360);
     }
 
-    public int getClosestWholeIndex() {
-        return (int) Math.round(getClosestIndex());
+    public int getClosestIndex() {
+        return (int) Math.round(getRelativeIndex());
     }
 
-    public double getClosestIndex() {
-        return (getAngle() - mode.offset) / INDEX_DIFF;
+    public double getRelativeIndex() {
+        return (getAngle() - mode.offset) / indexDiff;
+    }
+
+    public CWSensors getSensors() {
+        return sensors;
     }
 
     public enum Mode {

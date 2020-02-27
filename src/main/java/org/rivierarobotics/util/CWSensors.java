@@ -20,52 +20,27 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class CheeseSlots {
-    private boolean[] slots;
+public class CWSensors {
+    private final DigitalInput intakeSensor;
+    private final DigitalInput outputSensor;
 
     @Inject
-    public CheeseSlots() {
-        slots = new boolean[5];
-    }
-    
-    public void incrementMultiple(int rep) {
-        for (int i = 0; i < rep; i++) {
-            increment();
-        }
+    public CWSensors() {
+        this.intakeSensor = new DigitalInput(9);
+        this.outputSensor = new DigitalInput(10);
     }
 
-    public void decrementMultiple(int rep) {
-        //yes I know this is bad
-        for (int i = 0; i < rep; i++) {
-            decrement();
-        }
+    public boolean getIntakeSensorStatus() {
+        return intakeSensor.get();
     }
 
-    public void increment() {
-        boolean temp = slots[slots.length - 1];
-        for (int i = slots.length - 1; i >= 0; i--) {
-            slots[i] = slots[i - 1];
-        }
-        slots[0] = temp;
-    }
-
-    public void decrement() {
-        boolean temp = slots[0];
-        for (int i = 0; i < slots.length - 1; i++) {
-            slots[i] = slots[i + 1];
-        }
-        slots[slots.length - 1] = temp;
-    }
-
-    public void setSlotStatus(int index, boolean filled) {
-        slots[index] = filled;
-    }
-
-    public boolean getSlotStatus(int index) {
-        return slots[index];
+    public boolean getOutputSensorStatus() {
+        return outputSensor.get();
     }
 }

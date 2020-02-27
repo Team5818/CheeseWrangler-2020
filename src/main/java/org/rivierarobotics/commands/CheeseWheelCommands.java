@@ -35,6 +35,7 @@ public class CheeseWheelCommands {
     private CWSetModeCreator setModeCreator;
     private CWInvertModeCreator invertModeCreator;
     private CWAutoCollectCreator autoCollectCreator;
+    private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
 
     @Inject
     public CheeseWheelCommands(CWIncrementIndexCreator incrementIndex,
@@ -45,7 +46,8 @@ public class CheeseWheelCommands {
                                CWSetPositionCreator setPositionCreator,
                                CWSetModeCreator setModeCreator,
                                CWInvertModeCreator invertModeCreator,
-                               CWAutoCollectCreator autoCollectCreator) {
+                               CWAutoCollectCreator autoCollectCreator,
+                               WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator) {
         this.incrementIndex = incrementIndex;
         this.decrementIndex = decrementIndex;
         this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
@@ -55,6 +57,7 @@ public class CheeseWheelCommands {
         this.setModeCreator = setModeCreator;
         this.invertModeCreator = invertModeCreator;
         this.autoCollectCreator = autoCollectCreator;
+        this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
     }
 
     public CWIncrementIndex incrementIndex() {
@@ -91,5 +94,9 @@ public class CheeseWheelCommands {
 
     public CWAutoCollect autoCollect(boolean front) {
         return autoCollectCreator.create(front);
+    }
+
+    public WaitForBallIntakeTrigger waitForBall() {
+        return waitForBallIntakeTriggerCreator.create();
     }
 }

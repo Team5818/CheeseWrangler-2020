@@ -20,23 +20,27 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CWSensors;
 
 @GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 0.05, index);
+public class WaitForBallIntakeTrigger extends CommandBase {
+    private CWSensors sensors;
+
+    public WaitForBallIntakeTrigger(@Provided CWSensors sensors) {
+        this.sensors = sensors;
     }
 
     @Override
-    protected double getPositionTicks() {
-        return subsystem.getRelativeIndex();
+    public void execute() {
+        //idk if I even need this but maybe it needs to do something?
+        double add = 1 + 1;
     }
 
     @Override
-    protected void setPositionTicks(double position) {
-        subsystem.setIndex(position);
+    public boolean isFinished() {
+        return sensors.getIntakeSensorStatus();
     }
 }
