@@ -21,7 +21,7 @@
 package org.rivierarobotics.commands;
 
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.CTRENeutralMode;
+import org.rivierarobotics.util.NeutralIdleMode;
 
 import javax.inject.Inject;
 
@@ -40,7 +40,7 @@ public class DriveCommands {
         return driveChangeGearCreator.create(gear);
     }
 
-    public DriveSetNeutralIdle setNeutralIdle(CTRENeutralMode mode) {
+    public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {
         return driveSetNeutralIdleCreator.create(mode);
     }
 }

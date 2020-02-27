@@ -40,12 +40,13 @@ import javax.inject.Singleton;
 public class SubsystemModule {
     private static final int TURRET_TALON = 7;
     private static final int HOOD_TALON = 5;
-    private static final int FLYWHEEL_TALON = 4;
+    private static final int FLYWHEEL_FALCON = 4;
     private static final int CHEESE_WHEEL_TALON = 6;
-    private static final int EJECTOR_TALON = 8;
-    private static final int INTAKE_FRONT_TALON = 9;
-    private static final int INTAKE_BACK_TALON = 10;
-    private static final int CLIMB_TALON = 21;
+    private static final int EJECTOR_VICTOR_LEFT = 8;
+    private static final int EJECTOR_VICTOR_RIGHT = 28;
+    private static final int INTAKE_VICTOR_FRONT = 9;
+    private static final int INTAKE_VICTOR_BACK = 10;
+    private static final int CLIMB_FALCON = 21;
 
     private static final int HOOD_LIMIT_SWITCH = 6;
     private static final int LIMELIGHT_SERVO = 1;
@@ -91,13 +92,13 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Ejector provideEjector(Provider<EjectorControl> command) {
-        return new Ejector(EJECTOR_TALON, command);
+        return new Ejector(EJECTOR_VICTOR_LEFT, EJECTOR_VICTOR_RIGHT, command);
     }
 
     @Provides
     @Singleton
     public static Flywheel provideFlywheel() {
-        return new Flywheel(FLYWHEEL_TALON);
+        return new Flywheel(FLYWHEEL_FALCON);
     }
 
 
@@ -105,14 +106,14 @@ public class SubsystemModule {
     @Singleton
     @Sided(Sided.Side.FRONT)
     public static IntakeSide provideIntakeSideFront() {
-        return new IntakeSide(INTAKE_FRONT_TALON);
+        return new IntakeSide(INTAKE_VICTOR_FRONT);
     }
 
     @Provides
     @Singleton
     @Sided(Sided.Side.BACK)
     public static IntakeSide provideIntakeSideBack() {
-        return new IntakeSide(INTAKE_BACK_TALON);
+        return new IntakeSide(INTAKE_VICTOR_BACK);
     }
 
     @Provides
@@ -136,6 +137,6 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Climb provideClimb() {
-        return new Climb(CLIMB_TALON);
+        return new Climb(CLIMB_FALCON);
     }
 }

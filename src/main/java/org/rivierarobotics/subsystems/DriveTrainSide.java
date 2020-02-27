@@ -22,7 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
-import org.rivierarobotics.util.CTRENeutralMode;
+import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide {
     //TODO change values of threshold to realistic values
@@ -49,7 +49,7 @@ public class DriveTrainSide {
         this.invert = invert;
 
         setupMotors(tl, tr, bl, br);
-        CTRENeutralMode.COAST.applyTo(tl, tr, bl, br);
+        NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
     }
@@ -136,7 +136,7 @@ public class DriveTrainSide {
         this.currentGear = gear;
     }
 
-    public void setNeutralIdle(CTRENeutralMode mode) {
+    public void setNeutralIdle(NeutralIdleMode mode) {
         mode.applyTo(tl, tr, bl, br);
     }
 

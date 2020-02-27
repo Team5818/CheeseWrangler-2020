@@ -22,34 +22,27 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Flywheel extends BasePIDSubsystem {
-    private final WPI_TalonSRX flywheelTalon;
-    private double position;
+    private final WPI_TalonFX flywheelFalcon;
 
     public Flywheel(int id) {
         super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
-        flywheelTalon = new WPI_TalonSRX(id);
-        flywheelTalon.configFactoryDefault();
-        flywheelTalon.setInverted(true);
-        flywheelTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        flywheelTalon.setNeutralMode(NeutralMode.Coast);
+        flywheelFalcon = new WPI_TalonFX(id);
+        flywheelFalcon.configFactoryDefault();
+        flywheelFalcon.setInverted(true);
+        flywheelFalcon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        flywheelFalcon.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
     public double getPositionTicks() {
-        return flywheelTalon.getSensorCollection().getQuadratureVelocity();
-    }
-
-    @Override
-    public void setPositionTicks(double pos) {
-        this.position = pos;
-        super.setPositionTicks(pos);
+        return flywheelFalcon.getSelectedSensorPosition();
     }
 
     @Override
     public void setPower(double pwr) {
-        flywheelTalon.set(pwr);
+        flywheelFalcon.set(pwr);
     }
 }

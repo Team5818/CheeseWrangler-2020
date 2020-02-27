@@ -21,18 +21,18 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
 public class IntakeSide {
-    private final WPI_TalonSRX intakeTalon;
+    private final WPI_VictorSPX intakeVictor;
 
     public IntakeSide(int id) {
-        intakeTalon = new WPI_TalonSRX(id);
-        intakeTalon.configFactoryDefault();
-        intakeTalon.setNeutralMode(NeutralMode.Brake);
+        intakeVictor = new WPI_VictorSPX(id);
+        intakeVictor.configFactoryDefault();
+        intakeVictor.setNeutralMode(NeutralMode.Brake);
     }
 
     public void setPower(double pwr) {
-        intakeTalon.set(pwr);
+        intakeVictor.set(pwr);
     }
 }

@@ -23,13 +23,13 @@ package org.rivierarobotics.util;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 
-public enum CTRENeutralMode {
+public enum NeutralIdleMode {
     BRAKE(NeutralMode.Brake),
     COAST(NeutralMode.Coast);
 
     public final NeutralMode ctre;
 
-    CTRENeutralMode(NeutralMode ctre) {
+    NeutralIdleMode(NeutralMode ctre) {
         this.ctre = ctre;
     }
 

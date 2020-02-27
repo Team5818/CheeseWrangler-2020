@@ -24,14 +24,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.CTRENeutralMode;
+import org.rivierarobotics.util.NeutralIdleMode;
 
 @GenerateCreator
 public class DriveSetNeutralIdle extends InstantCommand {
     private final DriveTrain driveTrain;
-    private final CTRENeutralMode mode;
+    private final NeutralIdleMode mode;
 
-    public DriveSetNeutralIdle(@Provided DriveTrain driveTrain, CTRENeutralMode mode) {
+    public DriveSetNeutralIdle(@Provided DriveTrain driveTrain, NeutralIdleMode mode) {
         this.driveTrain = driveTrain;
         this.mode = mode;
         addRequirements(driveTrain);

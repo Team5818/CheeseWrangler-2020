@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -30,22 +31,22 @@ import javax.inject.Provider;
 
 public class Hood extends BasePIDSubsystem {
     private static final double zeroTicks = -2334;
-    private final WPI_TalonSRX hoodTalon;
+    private final WPI_TalonFX hoodFalcon;
     private final Provider<HoodControl> command;
     private final DigitalInput limit;
 
     public Hood(int motorId, int limitId, Provider<HoodControl> command) {
         super(new PIDConfig(0.001, 0.0001, 0.0, 0.03, 10, 0.6), 4096 / 360.0);
         this.command = command;
-        hoodTalon = new WPI_TalonSRX(motorId);
+        hoodFalcon = new WPI_TalonFX(motorId);
         limit = new DigitalInput(limitId);
-        hoodTalon.configFactoryDefault();
-        hoodTalon.setSensorPhase(true);
-        hoodTalon.setNeutralMode(NeutralMode.Brake);
+        hoodFalcon.configFactoryDefault();
+        hoodFalcon.setSensorPhase(true);
+        hoodFalcon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public final WPI_TalonSRX getHoodTalon() {
-        return hoodTalon;
+    public final WPI_TalonFX getHoodFalcon() {
+        return hoodFalcon;
     }
 
     public boolean isAtEnd() {
@@ -55,12 +56,12 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return hoodTalon.getSensorCollection().getQuadraturePosition();
+        return hoodFalcon.getSensorCollection().getIntegratedSensorPosition();
     }
 
     @Override
     public void setPower(double pwr) {
-        hoodTalon.set(pwr);
+        hoodFalcon.set(pwr);
     }
 
     @Override

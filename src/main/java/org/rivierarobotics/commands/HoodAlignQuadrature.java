@@ -25,6 +25,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Hood;
 
+//TODO remove this once compbot is up fully
 @GenerateCreator
 public class HoodAlignQuadrature extends CommandBase {
     private final Hood hood;
@@ -46,7 +47,7 @@ public class HoodAlignQuadrature extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         hood.setManualPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 100);
+        hood.getHoodFalcon().getSensorCollection().setIntegratedSensorPosition(0, 100);
     }
 
     @Override
