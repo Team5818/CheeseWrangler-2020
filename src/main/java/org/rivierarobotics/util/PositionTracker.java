@@ -26,7 +26,9 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class PositionTracker {
     static double[] pos = new double[2];
     static double beforeT = 0;
@@ -63,7 +65,9 @@ public class PositionTracker {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
-        double dist = ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty")));
+
+        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY()));
+
         double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
         double xFromTarget = dist * Math.sin(Math.abs(txTurret));
         if ((turret.getAbsoluteAngle() < -90 && turret.getAbsoluteAngle() > -270) || (turret.getAbsoluteAngle() > 90

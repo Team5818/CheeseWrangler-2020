@@ -48,7 +48,7 @@ public class SubsystemModule {
     private static final int CLIMB_FALCON = 21;
 
     private static final int LIMELIGHT_SERVO = 1;
-    private static final int CAMERA_SERVO = 2;
+    private static final int CAMERA_SERVO = 0;
     private static final int CW_FRONT_SENSOR = 1;
     private static final int CW_BACK_SENSOR = 0;
 

@@ -59,7 +59,7 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
 
     private boolean isInvalidPosition() {
         return (position >= zeroTicks + turret.getMaxAngleInTicks()
-            || position <= zeroTicks - turret.getMaxAngleInTicks());
+            || position <= zeroTicks + turret.getMinAngleInTicks());
     }
 
     @Override

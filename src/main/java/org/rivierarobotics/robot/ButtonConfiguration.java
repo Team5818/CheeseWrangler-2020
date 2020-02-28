@@ -24,8 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.Side;
+import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
@@ -62,9 +61,9 @@ public class ButtonConfiguration {
 //            .toggleWhenPressed(cmds.cheeseWheel().moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT));
             .whileHeld(cmds.intake().setPower(Side.BACK));
         new JoystickButton(coDriverRight, 1)
-            .whenPressed(cmds.flywheel().setPower(-0.6));
+            .whenPressed(cmds.turret().setAngle(0));
         new JoystickButton(coDriverRight, 2)
-            .whenPressed(cmds.flywheel().setPower(0));
+            .whenPressed(cmds.turret().setAngle(-40));
         new JoystickButton(coDriverButtons, 12)
             .whenPressed(cmds.turret().setAngle(20));
         /*

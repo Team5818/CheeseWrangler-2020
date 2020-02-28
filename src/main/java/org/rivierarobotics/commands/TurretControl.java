@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
@@ -42,7 +43,7 @@ public class TurretControl extends CommandBase {
     @Override
     public void execute() {
         //TODO uncomment when robot is stable
-        //turret.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getX()));
+        turret.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getX()));
     }
 
     @Override

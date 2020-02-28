@@ -29,7 +29,7 @@ import org.rivierarobotics.commands.HoodControl;
 import javax.inject.Provider;
 
 public class Hood extends BasePIDSubsystem {
-    private static final double zeroTicks = -2334;
+    private static final double zeroTicks = 2796;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
 
@@ -53,14 +53,19 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public void setPower(double pwr) {
+        if(pwr <= 0 && getPositionTicks() < 2038) {
+            pwr = 0;
+        } else if(pwr > 0 && getPositionTicks() > 2420) {
+            pwr = 0;
+        }
         hoodTalon.set(pwr);
     }
 
     @Override
     public void setManualPower(double pwr) {
-        if (pwr >= 0 && getPositionTicks() < 2038) {
+        if(pwr <= 0 && getPositionTicks() < 2038) {
             pwr = 0;
-        } else if (pwr < 0 && getPositionTicks() > 2420) {
+        } else if(pwr > 0 && getPositionTicks() > 2420) {
             pwr = 0;
         }
         SmartDashboard.putNumber("HoodPower", pwr);
@@ -68,14 +73,14 @@ public class Hood extends BasePIDSubsystem {
     }
 
     public double getAbsolutePosition() {
-        return (zeroTicks - getPositionTicks()) / 5 * 360 / 4096;
+        return (zeroTicks - getPositionTicks()) * 360 / 4096;
     }
 
     public void setAbsoluteAngle(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
-        if (angle >= -20 && angle <= 42) {
-            SmartDashboard.putNumber("Hood SetTicks", zeroTicks + angle * getAnglesOrInchesToTicks() * -5);
-            setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()) * 5);
+        if (angle >= 33 && angle <= 66) {
+            SmartDashboard.putNumber("Hood SetTicks", zeroTicks - angle * getAnglesOrInchesToTicks());
+            setPositionTicks(zeroTicks + (angle * getAnglesOrInchesToTicks()));
         } else {
             setPositionTicks(0);
         }

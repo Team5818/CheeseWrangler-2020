@@ -92,14 +92,14 @@ public class EncoderAim extends CommandBase {
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
 
         SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
 
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot
             hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
             flywheel.setPositionTicks(encoderVelocity);
-        } else if (vxz > ShooterUtil.getMaxBallVelocity()) {
+        } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < ShooterUtil.getMinHoodAngle()) {
             //Long Shot
             hood.setAbsoluteAngle(hoodAngle);
             flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());

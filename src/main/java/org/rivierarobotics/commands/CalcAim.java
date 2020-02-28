@@ -42,6 +42,8 @@ public class CalcAim extends CommandBase {
     private final PositionTracker tracker;
     private final double extraDistance;
 
+    //UNUSED SHOOTING CLASS. USE ENCODER AIM.
+
     public CalcAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
                    @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
                    double extraDistance) {
