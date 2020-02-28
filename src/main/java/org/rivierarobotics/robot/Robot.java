@@ -94,6 +94,7 @@ public class Robot extends TimedRobot {
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getNavXGyro().setAngleAdjustment(180);
     }
 
     @Override

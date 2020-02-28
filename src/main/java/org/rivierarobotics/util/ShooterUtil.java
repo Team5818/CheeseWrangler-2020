@@ -75,15 +75,15 @@ public class ShooterUtil {
     }
 
     public static double getFieldLength() {
-        return 7.31; //meters
+        return 16; //meters
     }
 
     public static double getLeftFieldToFarGoal() {
-        return 0.9; //meters
+        return 5.8; //meters
     }
 
     public static double getLeftFieldToCloseGoal() {
-        return 0.1; // meters
+        return 2.44; // meters
     }
 
 }
