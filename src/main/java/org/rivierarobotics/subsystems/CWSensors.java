@@ -30,15 +30,22 @@ import javax.inject.Singleton;
 public class CWSensors {
     private final AnalogInput intakeSensor;
     private final AnalogInput outputSensor;
+    private final CheeseWheel cheeseWheel;
 
     @Inject
-    public CWSensors(int intake, int output) {
+    public CWSensors(int intake, int output, CheeseWheel cheeseWheel) {
+        this.cheeseWheel = cheeseWheel;
         this.intakeSensor = new AnalogInput(intake);
         this.outputSensor = new AnalogInput(output);
     }
 
     public boolean getIntakeSensorStatus() {
-        return (intakeSensor.getValue() < 200 && intakeSensor.getValue() > 100);
+         if( (cheeseWheel.getPosition() % 360) % (360.0 / 5.0) < 6
+            || Math.abs(cheeseWheel.getPosition() % 360 - 360) < 6) {
+             return (intakeSensor.getValue() < 200 && intakeSensor.getValue() > 100);
+         } else {
+             return false;
+         }
     }
 
     public double getIntakeSensorValue() {

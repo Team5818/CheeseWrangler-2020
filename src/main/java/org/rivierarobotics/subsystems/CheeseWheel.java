@@ -89,7 +89,7 @@ public class CheeseWheel extends BasePIDSubsystem {
         double angle = index * 360.0 / 5 + getPosition();
         angle = angle % 360;
         SmartDashboard.putNumber("addangle", angle);
-        if (angle < 180) {
+        if (Math.abs(angle) < 180) {
             return (getPositionTicks() - angle * getAnglesOrInchesToTicks());
         } else {
             return (getPositionTicks() + (360 - angle * getAnglesOrInchesToTicks()));
@@ -99,10 +99,15 @@ public class CheeseWheel extends BasePIDSubsystem {
     public int getIndex() {
         int min = 360;
         double minAngle = 360;
+        double pos = Math.abs(getPosition() % 360);
         SmartDashboard.putNumber("angleff", getPosition() % 360);
-        for (int i = 0; i < 5; i++) {
-            if (minAngle > Math.abs(getPosition() % 360 - (i * indexDiff))) {
-                minAngle = Math.abs(getPosition() % 360 - (i * indexDiff));
+        for (int i = 0; i < 6; i++) {
+            double angleDiff = Math.abs(pos - (i * indexDiff));
+            if (minAngle > angleDiff) {
+                minAngle = angleDiff;
+                if(i == 5) {
+                    return 0;
+                }
                 min = i;
             }
         }
