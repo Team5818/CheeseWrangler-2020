@@ -73,9 +73,9 @@ public class VisionAimHood extends CommandBase {
                 //Close Shot
                 hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
                 flywheel.setPositionTicks(encoderVelocity);
-            } else if (vxz > ShooterUtil.getMaxBallVelocity()) {
+            } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < 33) {
                 //Long Shot
-                hood.setAbsoluteAngle(hoodAngle);
+                hood.setAbsoluteAngle(45);
                 flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
             } else {
                 //Calculated Shot

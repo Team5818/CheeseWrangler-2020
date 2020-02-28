@@ -26,7 +26,7 @@ public class ShooterUtil {
     }
 
     public static double getTopHeight() {
-        return 1.63; //diff between robot height and top goal meters
+        return 1.78; //diff between robot height and top goal meters
     }
 
     public static double getMaxBallVelocity() {
@@ -36,7 +36,7 @@ public class ShooterUtil {
 
     public static double getLLtoTurret() {
         //meters
-        return 0.18;
+        return 0.203;
     }
 
 
@@ -62,7 +62,11 @@ public class ShooterUtil {
     }
 
     public static double getMaxHoodAngle() {
-        return 42; //degrees
+        return 66; //degrees
+    }
+
+    public static double getMinHoodAngle() {
+        return 33;
     }
 
     //TODO: Change this for the new robot once we do ball trials <- graph vel on the x and ticks per second on the y and get an equation

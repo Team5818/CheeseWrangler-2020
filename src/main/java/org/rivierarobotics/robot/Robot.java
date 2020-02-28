@@ -98,7 +98,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        globalComponent.getPositionTracker().trackPosition();
         CommandScheduler.getInstance().run();
     }
 
@@ -127,14 +126,13 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
-        SmartDashboard.putNumber("hoooood", globalComponent.getHood().getPositionTicks());
-        SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
-        SmartDashboard.putBoolean("IntakeSens", cwSensors.getIntakeSensorStatus());
-        SmartDashboard.putNumber("IntakeSensVal", cwSensors.getIntakeSensorValue());
+        SmartDashboard.putNumber("flyVelocity", wheel.getPositionTicks());
+        SmartDashboard.putNumber("hoodPosition", globalComponent.getHood().getPositionTicks());
+        SmartDashboard.putNumber("hoodAngle", globalComponent.getHood().getAbsolutePosition());
+        SmartDashboard.putNumber("TurretPosition", globalComponent.getTurret().getPositionTicks());
+        SmartDashboard.putNumber("TurretAngle", globalComponent.getTurret().getAbsoluteAngle());
+
         //SmartDashboard.putBoolean("OutSens", cwSensors.getOutputSensorStatus());
-        SmartDashboard.putNumber("flywheelVel", wheel.getPositionTicks());
-        SmartDashboard.putNumber("LLAngle", servo.getAngle());
-        SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());
         SmartDashboard.putData(chooser);
 
 

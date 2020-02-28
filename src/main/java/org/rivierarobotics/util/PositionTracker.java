@@ -26,7 +26,9 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class PositionTracker {
     static double[] pos = new double[2];
     static double beforeT = 0;

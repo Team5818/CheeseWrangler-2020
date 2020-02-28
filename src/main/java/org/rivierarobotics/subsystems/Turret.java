@@ -33,8 +33,9 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends BasePIDSubsystem {
-    private static final double zeroTicks = 1383;
-    private static final double maxAngle = 150;
+    private static final double zeroTicks = 3793;
+    private static final double maxAngle = 25;
+    private static final double minAngle = -243.7;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -42,7 +43,7 @@ public class Turret extends BasePIDSubsystem {
     public AimMode mode = AimMode.ENCODER;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-        super(new PIDConfig(0.001, 0.0, 0.00000, 0.0, 15, 1.0));
+        super(new PIDConfig(0.00125, 0.000125, 0.00000, 0.0, 15, 1.0));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -75,7 +76,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + MathUtil.wrapToCircle(gyro.getYaw()));
+        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + gyro.getYaw() % 360);
     }
 
     public double getAngle() {
@@ -84,7 +85,7 @@ public class Turret extends BasePIDSubsystem {
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx") + getAbsoluteAngle());
-        double txTurret = Math.atan2(distance * Math.sin(tx) - ShooterUtil.getLLtoTurret(), distance * Math.cos(tx) + extraDistance);
+        double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance - ShooterUtil.getLLtoTurret());
         SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
         SmartDashboard.putNumber("txTurret", Math.toDegrees(txTurret));
         return txTurret;
@@ -94,9 +95,9 @@ public class Turret extends BasePIDSubsystem {
         SmartDashboard.putNumber("Turret SetAngle", angle);
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
-        if (position < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
+        if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position);
-        } else if (position - 4096 < zeroTicks + maxAngle * getAnglesOrInchesToTicks() && position > zeroTicks - getMaxAngleInTicks()) {
+        } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position - 4096);
         }
     }
@@ -105,18 +106,47 @@ public class Turret extends BasePIDSubsystem {
         return maxAngle * getAnglesOrInchesToTicks();
     }
 
+    public double getMinAngleInTicks() {
+        return minAngle * getAnglesOrInchesToTicks();
+    }
+
+    public void setPIDMode(PIDMode pidMode) {
+        if(pidMode.equals(PIDMode.CLOSE)) {
+            pidController.setP(pidController.getP() * 2);
+         } else if (pidMode.equals(PIDMode.MID)) {
+            pidController.setP(pidController.getP() * 1.5);
+        } else if(pidMode.equals(PIDMode.FAR)) {
+            pidController.setP(pidController.getP() * 0.5);
+            pidController.setI(pidController.getI() * 1.5);
+        } else {
+            pidController.setP(0.00125);
+            pidController.setI(0.000125);
+        }
+    }
+
+
+
+
     @Override
     public void setPower(double pwr) {
+        if (pwr >= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
+            pwr = 0;
+        } else if (pwr < 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
+            pwr = 0;
+        }
+        SmartDashboard.putNumber("RSetPowerT", pwr);
         turretTalon.set(pwr);
     }
 
     @Override
     public void setManualPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - zeroTicks < -getMaxAngleInTicks()) {
+        SmartDashboard.putNumber("TPow",pwr);
+        if (pwr >= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
+        } else if (pwr < 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
+        SmartDashboard.putNumber("TPowS",pwr);
         super.setManualPower(pwr);
     }
 
@@ -134,5 +164,9 @@ public class Turret extends BasePIDSubsystem {
 
     public enum AimMode {
         VISION, ENCODER, MOVING, STILL;
+    }
+
+    public enum PIDMode {
+        CLOSE, MID, FAR;
     }
 }
