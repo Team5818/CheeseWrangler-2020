@@ -1,3 +1,23 @@
+/*
+ * This file is part of Placeholder-2020, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -23,9 +43,6 @@ public class TrenchRun extends SequentialCommandGroup {
                 visionCommands.correctPosition(),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOSHOOT),
                 visionCommands.visionAim(VisionTarget.INNER),
-                cheesewheelCommandGroups.shootNext(),
-                cheesewheelCommandGroups.shootNext(),
-                cheesewheelCommandGroups.shootNext(),
 
                 intakeCommands.setPower(Side.BACK),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOCOLLECT),
@@ -39,9 +56,6 @@ public class TrenchRun extends SequentialCommandGroup {
 
                 autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTED),
                 visionCommands.visionAim(VisionTarget.INNER),
-                cheesewheelCommandGroups.shootNext(),
-                cheesewheelCommandGroups.shootNext(),
-                cheesewheelCommandGroups.shootNext(),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLL),
                 intakeCommands.setPower(Side.FRONT),
@@ -51,8 +65,6 @@ public class TrenchRun extends SequentialCommandGroup {
                 intakeCommands.setPower(Side.FRONT),
                 cheesewheelCommandGroups.autoCollect(true),
 
-                autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTEDD),
-                cheesewheelCommandGroups.shootNext(),
-                cheesewheelCommandGroups.shootNext());
+                autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTEDD));
     }
 }
