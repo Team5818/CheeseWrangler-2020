@@ -32,12 +32,10 @@ public class CWShootIndividual extends SequentialCommandGroup {
     public CWShootIndividual(VisionCommands visionCommands, CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
             visionCommands.visionAim(VisionTarget.INNER),
-            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
             ejectorCommands.setPower(1.0),
             new WaitCommand(0.2),
             cheeseCommands.incrementIndex(),
-            new WaitCommand(0.2),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST)
+            new WaitCommand(0.2)
         );
     }
 }

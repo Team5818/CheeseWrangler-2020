@@ -30,7 +30,6 @@ public class CWCollectAllFront extends SequentialCommandGroup {
     @Inject
     public CWCollectAllFront(CheeseWheelCommands cheeseCommands) {
         addCommands(
-            cheeseCommands.setMode(CheeseWheel.Mode.COLLECT_FRONT),
             cheeseCommands.setClosestIndex()
         );
 
@@ -43,7 +42,6 @@ public class CWCollectAllFront extends SequentialCommandGroup {
         }
 
         addCommands(
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST)
         );
     }
 

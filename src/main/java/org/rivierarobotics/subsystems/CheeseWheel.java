@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
@@ -34,9 +33,9 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
     private final double zeroTicks = -200;
+    private static final double INPUT_RANGE = 4095;
     private final CWSensors sensors;
-    public static Mode mode = Mode.COLLECT_FRONT;
-    public static Mode lastMode = Mode.COLLECT_FRONT;
+    public Mode lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, CWSensors sensors, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.0012, 0.0, 0, 0.0, 15, 0.5));
@@ -45,15 +44,7 @@ public class CheeseWheel extends BasePIDSubsystem {
         this.sensors = sensors;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-    }
-
-    public void setMode(Mode mode) {
-        if (mode == Mode.LAST) {
-            CheeseWheel.mode = lastMode;
-        } else {
-            lastMode = CheeseWheel.mode;
-            CheeseWheel.mode = mode;
-        }
+        pidController.enableContinuousInput(0, INPUT_RANGE);
     }
 
     @Override
@@ -109,23 +100,43 @@ public class CheeseWheel extends BasePIDSubsystem {
         return min;
     }
 
-    public CheeseSlot getClosestSlot(boolean lookForFilled) {
+    public double getClosestIndexAngle(Mode mode, boolean lookForFilled) {
+        return getClosestSlot(mode, lookForFilled).getModePosition(mode);
+    }
+
+    public CheeseSlot getClosestSlot(Mode mode, boolean lookForFilled) {
+        this.lastMode = mode;
         CheeseSlot[] allSlots = CheeseSlot.values();
-        CheeseSlot minIndex = allSlots[0];
-        double minDiff = 0;
+        CheeseSlot minSlot = allSlots[0];
+        double minDiff = Double.MAX_VALUE;
 
-        for (int i = 0; i < allSlots.length; i++) {
-            if (!lookForFilled && !allSlots[i].isFilled) {
-                continue;
-            }
-
-            double diff = Math.abs(allSlots[i].getModedPosition(mode) - getPositionTicks());
+        for (CheeseSlot allSlot : allSlots) {
+//            if (!lookForFilled && !allSlots[i].isFilled) {
+//                continue;
+//            }
+            double diff = allSlot.getModePosition(mode) - getPositionTicks();
+            diff = correctDiffForGap(diff);
+            diff = Math.abs(diff);
             if (diff < minDiff) {
-                minIndex = allSlots[i];
+                minSlot = allSlot;
                 minDiff = diff;
             }
+            SmartDashboard.putNumber("diff", diff);
         }
-        return minIndex;
+        return minSlot;
+    }
+
+    // Handles continuous input gap
+    public double correctDiffForGap(double diff) {
+        diff %= INPUT_RANGE;
+        if (Math.abs(diff) > INPUT_RANGE / 2) {
+            if (diff > 0) {
+                return diff - INPUT_RANGE;
+            } else {
+                return diff + INPUT_RANGE;
+            }
+        }
+        return diff;
     }
 
     public CWSensors getSensors() {
@@ -133,6 +144,6 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     public enum Mode {
-        COLLECT_FRONT, COLLECT_BACK, SHOOTING, LAST;
+        COLLECT_FRONT, COLLECT_BACK, SHOOTING
     }
 }

@@ -32,14 +32,12 @@ public class CollectShootSingleCycle extends SequentialCommandGroup {
     public CollectShootSingleCycle(VisionCommands visionCommands, CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
             visionCommands.visionAim(VisionTarget.INNER),
-            cheeseCommands.setMode(CheeseWheel.Mode.COLLECT_FRONT),
             cheeseCommands.waitForBall(),
             ejectorCommands.setPower(1.0),
             new WaitCommand(0.1),
             cheeseCommands.incrementIndex(),
             cheeseCommands.incrementIndex(),
-            ejectorCommands.setPower(0.0),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST)
+            ejectorCommands.setPower(0.0)
         );
     }
 }

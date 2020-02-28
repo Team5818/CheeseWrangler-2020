@@ -31,8 +31,6 @@ public class CheeseWheelCommands {
     private CWDecrementIndexCreator decrementIndex;
     private Provider<CWSetClosestIndex> setClosestIndexProvider;
     private CWSetPositionCreator setPositionCreator;
-    private CWSetModeCreator setModeCreator;
-    private CWInvertModeCreator invertModeCreator;
     private CWSetIndexCreator setIndexCreator;
     private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
 
@@ -41,17 +39,13 @@ public class CheeseWheelCommands {
                                CWDecrementIndexCreator decrementIndex,
                                Provider<CWSetClosestIndex> setClosestIndexProvider,
                                CWSetPositionCreator setPositionCreator,
-                               CWSetModeCreator setModeCreator,
-                               CWInvertModeCreator invertModeCreator,
                                WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator,
                                CWSetIndexCreator setIndexCreator) {
         this.incrementIndex = incrementIndex;
         this.decrementIndex = decrementIndex;
         this.setClosestIndexProvider = setClosestIndexProvider;
         this.setPositionCreator = setPositionCreator;
-        this.setModeCreator = setModeCreator;
         this.setIndexCreator = setIndexCreator;
-        this.invertModeCreator = invertModeCreator;
         this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
     }
 
@@ -71,16 +65,8 @@ public class CheeseWheelCommands {
         return setPositionCreator.create(ticks);
     }
 
-    public CWSetMode setMode(CheeseWheel.Mode mode) {
-        return setModeCreator.create(mode);
-    }
-
-    public CWSetIndex setIndex(CheeseSlot index) {
-        return setIndexCreator.create(index);
-    }
-
-    public CWInvertMode invertMode() {
-        return invertModeCreator.create();
+    public CWSetIndex setIndex(CheeseWheel.Mode mode, CheeseSlot index) {
+        return setIndexCreator.create(mode, index);
     }
 
     public WaitForBallIntakeTrigger waitForBall() {

@@ -41,7 +41,6 @@ public class CWAutoCollect extends CommandBase {
 
     @Override
     public void initialize() {
-        cheeseWheel.setMode(front ? CheeseWheel.Mode.COLLECT_FRONT : CheeseWheel.Mode.COLLECT_BACK);
     }
 
     @Override

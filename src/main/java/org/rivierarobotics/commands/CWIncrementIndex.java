@@ -34,19 +34,20 @@ public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = subsystem.getClosestSlot(false).getModedPosition(CheeseWheel.Mode.COLLECT_FRONT) + CheeseSlot.INDEX_DIFF;
+        positionTicks = subsystem.getClosestIndexAngle(subsystem.lastMode, false) + CheeseSlot.INDEX_DIFF;
     }
 
     @Override
     protected double getPositionTicks() {
+        SmartDashboard.putNumber("possset", positionTicks);
         SmartDashboard.putNumber("yticks", subsystem.getPositionTicks());
-        SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(false).getIndex());
+        SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(subsystem.lastMode, false).getIndex());
         return super.getPositionTicks();
     }
 
     @Override
     public void end(boolean interrupted) {
         //TODO remove temporary hard set over
-        subsystem.getClosestSlot(false).isFilled = true;
+        subsystem.getClosestSlot(subsystem.lastMode, false).isFilled = true;
     }
 }

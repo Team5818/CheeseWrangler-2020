@@ -35,6 +35,7 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLedState;
 import org.rivierarobotics.util.LimelightPIPMode;
 import org.rivierarobotics.util.NavXGyro;
@@ -120,13 +121,14 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
-        SmartDashboard.putNumber("yaw", navX.getYaw());
+        SmartDashboard.putNumber("HoodPos", globalComponent.getHood().getPositionTicks());
         SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
         SmartDashboard.putBoolean("IntakeSens", cwSensors.getIntakeSensorStatus());
         SmartDashboard.putNumber("IntakeSensVal", cwSensors.getIntakeSensorValue());
         SmartDashboard.putNumber("flywheelVel", wheel.getPositionTicks());
-        SmartDashboard.putNumber("LLAngle", servo.getAngle());
+        SmartDashboard.putNumber("TPos", globalComponent.getTurret().getPositionTicks());
         SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());
+        SmartDashboard.putNumber("indexEnum", cheeseWheel.getClosestSlot(CheeseWheel.Mode.SHOOTING, false).getIndex());
         SmartDashboard.putData(chooser);
     }
 }

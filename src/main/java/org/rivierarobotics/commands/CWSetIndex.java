@@ -28,14 +28,16 @@ import org.rivierarobotics.util.CheeseSlot;
 @GenerateCreator
 public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
     private final CheeseSlot index;
+    private final CheeseWheel.Mode mode;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseSlot index) {
-        super(cheeseWheel, 40, index.getCurrentModedPosition());
+    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseSlot index) {
+        super(cheeseWheel, 40, index.getModePosition(mode));
         this.index = index;
+        this.mode = mode;
     }
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = index.getCurrentModedPosition();
+        positionTicks = index.getModePosition(mode);
     }
 }

@@ -23,11 +23,7 @@ package org.rivierarobotics.util;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
 public enum CheeseSlot {
-    ZERO(0),
-    ONE(1),
-    TWO(2),
-    THREE(3),
-    FOUR(4);
+    ZERO, ONE, TWO, THREE, FOUR;
 
     public final int index;
     public final double frontCollectPosition;
@@ -39,35 +35,26 @@ public enum CheeseSlot {
     //TODO determine offsets
     private static final double frontOffset = 0;
     private static final double backOffset = 0;
-    private static final double shootOffset = 0;
+    private static final double shootOffset = -200;
 
-    CheeseSlot(int index) {
-        this.index = index;
+    CheeseSlot() {
+        this.index = ordinal();
         this.frontCollectPosition = (INDEX_DIFF * index) + frontOffset;
         this.backCollectPosition = (INDEX_DIFF * index) + backOffset;
         this.shootPosition = (INDEX_DIFF * index) + shootOffset;
     }
 
-    public double getCurrentModedPosition() {
-        return getModedPosition(CheeseWheel.mode);
-    }
-
-    public double getModedPosition(CheeseWheel.Mode mode) {
-        double pos;
+    public double getModePosition(CheeseWheel.Mode mode) {
         switch (mode) {
             case COLLECT_FRONT:
-                pos = this.frontCollectPosition;
-                break;
+                return this.frontCollectPosition;
             case COLLECT_BACK:
-                pos = this.backCollectPosition;
-                break;
+                return this.backCollectPosition;
             case SHOOTING:
-                pos = this.shootPosition;
-                break;
+                return this.shootPosition;
             default:
                 throw new IllegalStateException("Unexpected mode: " + mode);
         }
-        return pos;
     }
 
     public int getIndex() {

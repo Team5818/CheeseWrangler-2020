@@ -32,7 +32,6 @@ public class CWShootAll extends SequentialCommandGroup {
     public CWShootAll(VisionCommands visionCommands, CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
         addCommands(
             visionCommands.visionAim(VisionTarget.INNER),
-            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
             new WaitCommand(0.1),
             ejectorCommands.setPower(1.0),
             new WaitCommand(0.1)
@@ -46,7 +45,6 @@ public class CWShootAll extends SequentialCommandGroup {
 
         addCommands(
             ejectorCommands.setPower(0.0),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
             cheeseCommands.incrementIndex()
         );
     }

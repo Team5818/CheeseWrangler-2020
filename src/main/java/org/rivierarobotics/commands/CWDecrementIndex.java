@@ -34,19 +34,12 @@ public class CWDecrementIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = subsystem.getClosestSlot(false).getModedPosition(CheeseWheel.Mode.COLLECT_FRONT) - CheeseSlot.INDEX_DIFF;
-    }
-
-    @Override
-    protected double getPositionTicks() {
-        SmartDashboard.putNumber("yticks", subsystem.getPositionTicks());
-        SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(false).getIndex());
-        return super.getPositionTicks();
+        positionTicks = subsystem.getClosestIndexAngle(subsystem.lastMode, false) - CheeseSlot.INDEX_DIFF;
     }
 
     @Override
     public void end(boolean interrupted) {
         //TODO remove temporary hard set over
-        subsystem.getClosestSlot(false).isFilled = true;
+        subsystem.getClosestSlot(subsystem.lastMode, false).isFilled = true;
     }
 }
