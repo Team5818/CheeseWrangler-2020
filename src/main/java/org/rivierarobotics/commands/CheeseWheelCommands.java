@@ -29,7 +29,6 @@ import javax.inject.Provider;
 public class CheeseWheelCommands {
     private CWIncrementIndexCreator incrementIndex;
     private CWDecrementIndexCreator decrementIndex;
-    private Provider<CWSetClosestIndex> setClosestIndexProvider;
     private CWSetPositionCreator setPositionCreator;
     private CWSetIndexCreator setIndexCreator;
     private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
@@ -37,13 +36,11 @@ public class CheeseWheelCommands {
     @Inject
     public CheeseWheelCommands(CWIncrementIndexCreator incrementIndex,
                                CWDecrementIndexCreator decrementIndex,
-                               Provider<CWSetClosestIndex> setClosestIndexProvider,
                                CWSetPositionCreator setPositionCreator,
                                WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator,
                                CWSetIndexCreator setIndexCreator) {
         this.incrementIndex = incrementIndex;
         this.decrementIndex = decrementIndex;
-        this.setClosestIndexProvider = setClosestIndexProvider;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
         this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
@@ -55,10 +52,6 @@ public class CheeseWheelCommands {
 
     public CWDecrementIndex decrementIndex() {
         return decrementIndex.create();
-    }
-
-    public CWSetClosestIndex setClosestIndex() {
-        return setClosestIndexProvider.get();
     }
 
     public CWSetPosition setPosition(int ticks) {

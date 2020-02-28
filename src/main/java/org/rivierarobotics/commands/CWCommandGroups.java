@@ -26,19 +26,16 @@ import javax.inject.Provider;
 public class CWCommandGroups {
     private Provider<CWShootAll> shootAllProvider;
     private Provider<CWShootIndividual> shootIndividualProvider;
-    private Provider<CWCollectAllFront> collectAllFrontProvider;
     private Provider<CollectShootSingleCycle> collectShootSingleCycleProvider;
     private CWAutoCollectCreator autoCollectCreator;
 
     @Inject
     public CWCommandGroups(Provider<CWShootAll> shootAllProvider,
                            Provider<CWShootIndividual> shootIndividualProvider,
-                           Provider<CWCollectAllFront> collectAllFrontProvider,
                            Provider<CollectShootSingleCycle> collectShootSingleCycleProvider,
                            CWAutoCollectCreator autoCollectCreator) {
         this.shootAllProvider = shootAllProvider;
         this.shootIndividualProvider = shootIndividualProvider;
-        this.collectAllFrontProvider = collectAllFrontProvider;
         this.collectShootSingleCycleProvider = collectShootSingleCycleProvider;
         this.autoCollectCreator = autoCollectCreator;
     }
@@ -54,10 +51,6 @@ public class CWCommandGroups {
 
     public CWShootIndividual shootNext() {
         return shootIndividualProvider.get();
-    }
-
-    public CWCollectAllFront collectAllFront() {
-        return collectAllFrontProvider.get();
     }
 
     public CWAutoCollect autoCollect(boolean front) {

@@ -29,10 +29,8 @@ import org.rivierarobotics.util.CheeseSlot;
 import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
-    public final double indexDiff = 360.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
-    private final double zeroTicks = -200;
     private static final double INPUT_RANGE = 4095;
     private final CWSensors sensors;
     public Mode lastMode = Mode.COLLECT_FRONT;
@@ -61,43 +59,8 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     @Override
-    public double getPosition() {
-        return getPositionTicks() / getAnglesOrInchesToTicks();
-    }
-
-    @Override
-    public void setPosition(double position) {
-        SmartDashboard.putNumber("posi", position);
-        setPositionTicks(((position * getAnglesOrInchesToTicks()) + zeroTicks) % 360);
-    }
-
-    @Override
     public double getPositionTicks() {
         return wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
-    }
-
-    public double getSetIndex(double index) {
-        double angle = index * 360.0 / 5 + getPosition();
-        angle = angle % 360;
-        SmartDashboard.putNumber("addangle", angle);
-        if (angle < 180) {
-            return (getPositionTicks() - angle * getAnglesOrInchesToTicks());
-        } else {
-            return (getPositionTicks() + (360 - angle * getAnglesOrInchesToTicks()));
-        }
-    }
-
-    public int getIndex() {
-        int min = 360;
-        double minAngle = 360;
-        SmartDashboard.putNumber("angleff", getPosition() % 360);
-        for (int i = 0; i < 5; i++) {
-            if (minAngle > Math.abs(getPosition() % 360 - (i * indexDiff))) {
-                minAngle = Math.abs(getPosition() % 360 - (i * indexDiff));
-                min = i;
-            }
-        }
-        return min;
     }
 
     public double getClosestIndexAngle(Mode mode, boolean lookForFilled) {

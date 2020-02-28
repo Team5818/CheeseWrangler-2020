@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
 public enum CheeseSlot {
+    // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
     ZERO, ONE, TWO, THREE, FOUR;
 
     public final int index;
@@ -33,15 +34,25 @@ public enum CheeseSlot {
 
     public static final double INDEX_DIFF = 4096.0 / 5;
     //TODO determine offsets
-    private static final double frontOffset = 0;
-    private static final double backOffset = 0;
-    private static final double shootOffset = -200;
+    private static final double frontOffset = 1000;
+    private static final double backOffset = frontOffset + INDEX_DIFF * 2;
+    private static final double shootOffset = 3870;
+
+    private static double boundPosition(double pos) {
+        if (pos < 0) {
+            return pos + 4096;
+        } else if (pos > 4095) {
+            return pos - 4096;
+        }
+        return pos;
+    }
 
     CheeseSlot() {
         this.index = ordinal();
-        this.frontCollectPosition = (INDEX_DIFF * index) + frontOffset;
-        this.backCollectPosition = (INDEX_DIFF * index) + backOffset;
-        this.shootPosition = (INDEX_DIFF * index) + shootOffset;
+        double indexOffset = INDEX_DIFF * index;
+        this.frontCollectPosition = boundPosition(indexOffset + frontOffset);
+        this.backCollectPosition = boundPosition(indexOffset + backOffset);
+        this.shootPosition = boundPosition(indexOffset + shootOffset);
     }
 
     public double getModePosition(CheeseWheel.Mode mode) {

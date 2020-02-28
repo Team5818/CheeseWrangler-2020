@@ -117,7 +117,6 @@ public class Robot extends TimedRobot {
         CheeseWheel cheeseWheel = globalComponent.getCheeseWheel();
         CWSensors cwSensors = globalComponent.getCWSensors();
 
-        SmartDashboard.putNumber("index", cheeseWheel.getIndex());
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));

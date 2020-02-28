@@ -20,35 +20,65 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.util.Side;
 
+import java.util.function.BooleanSupplier;
+
 @GenerateCreator
-public class IntakeSetPower extends InstantCommand {
+public class IntakeSetPower extends CommandBase {
     private final Intake intake;
+    private final CheeseWheel cheeseWheel;
     private final double frontPower;
     private final double backPower;
-    private static final double pwrConstant = 0.5;
+    private static final double pwrConstant = 0.3;
+    private final Command goingToNext;
+    private final BooleanSupplier hasBall;
+    private final CheeseWheel.Mode mode;
 
-    IntakeSetPower(@Provided Intake intake, Side side) {
+    IntakeSetPower(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
+                   @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
         this.intake = intake;
+        this.cheeseWheel = cheeseWheel;
         if (side == Side.FRONT) {
             frontPower = pwrConstant;
             backPower = 0.0;
+            hasBall = cheeseWheel.getSensors()::getIntakeSensorStatus;
+            mode = CheeseWheel.Mode.COLLECT_FRONT;
+            goingToNext = cheeseWheelCommands.incrementIndex();
         } else {
             if (side != Side.BACK) {
                 throw new IllegalArgumentException("Invalid side: " + side);
             }
             frontPower = 0.0;
             backPower = pwrConstant;
+            hasBall = cheeseWheel.getSensors()::getOutputSensorStatus;
+            mode = CheeseWheel.Mode.COLLECT_BACK;
+            goingToNext = cheeseWheelCommands.decrementIndex();
         }
+        addRequirements(intake);
+    }
+
+    @Override
+    public void initialize() {
+        cheeseWheel.getClosestSlot(mode, false);
+        goingToNext.schedule();
     }
 
     @Override
     public void execute() {
         intake.setPower(frontPower, backPower);
+        if (goingToNext.isScheduled()) {
+            return;
+        }
+        if (hasBall.getAsBoolean()) {
+            cheeseWheel.getClosestSlot(mode, false).isFilled = true;
+            goingToNext.schedule();
+        }
     }
 }

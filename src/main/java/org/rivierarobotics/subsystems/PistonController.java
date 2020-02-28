@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PistonController extends SubsystemBase {
 
+//    private final Solenoid testSolenoid = new Solenoid(0);
+
     public PistonController() {
     }
 
@@ -32,6 +34,7 @@ public class PistonController extends SubsystemBase {
         switch (piston) {
             case TEST:
                 return null;
+//                return testSolenoid;
             default:
                 throw new IllegalArgumentException("Piston invalid");
         }
