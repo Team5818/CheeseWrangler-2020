@@ -27,14 +27,20 @@ public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;
     private Provider<FlexRoutine> flexRoutineProvider;
     private Provider<FlexTapeRoutine> flexTapeProvider;
+    private Provider<TrenchRun> trenchRunProvider;
+    private Provider<BasicAuto> basicAutoProvider;
 
     @Inject
     public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
                               Provider<FlexTapeRoutine> flexTapeProvider,
-                              PathweaverExecutorCreator pathweaverExecutorCreator) {
+                              PathweaverExecutorCreator pathweaverExecutorCreator,
+                              Provider<TrenchRun> trenchRunProvider,
+                              Provider<BasicAuto> basicAutoProvider) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.flexRoutineProvider = flexRoutineProvider;
         this.flexTapeProvider = flexTapeProvider;
+        this.trenchRunProvider = trenchRunProvider;
+        this.basicAutoProvider = basicAutoProvider;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
