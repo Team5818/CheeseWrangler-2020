@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.DigitalInput;
 
 import javax.inject.Inject;
@@ -27,20 +28,29 @@ import javax.inject.Singleton;
 
 @Singleton
 public class CWSensors {
-    private final DigitalInput intakeSensor;
-    private final DigitalInput outputSensor;
+    private final AnalogInput intakeSensor;
+    private final AnalogInput outputSensor;
 
     @Inject
     public CWSensors(int intake, int output) {
-        this.intakeSensor = new DigitalInput(intake);
-        this.outputSensor = new DigitalInput(output);
+        this.intakeSensor = new AnalogInput(intake);
+        this.outputSensor = new AnalogInput(output);
     }
 
     public boolean getIntakeSensorStatus() {
-        return intakeSensor.get();
+        return (intakeSensor.getValue() < 200 && intakeSensor.getValue() > 100);
     }
 
+    public double getIntakeSensorValue() {
+        return intakeSensor.getValue();
+    }
+
+
     public boolean getOutputSensorStatus() {
-        return outputSensor.get();
+        return (outputSensor.getValue() < 200 && outputSensor.getValue() > 100);
+    }
+
+    public double getOutputSensorValue() {
+        return outputSensor.getValue();
     }
 }

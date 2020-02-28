@@ -32,7 +32,9 @@ import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.CWSensors;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
@@ -51,8 +53,8 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
         globalComponent.robotInit();
-        UsbCamera driverCamera = CameraServer.getInstance().startAutomaticCapture();
-        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
+//        UsbCamera driverCamera = CameraServer.getInstance().startAutomaticCapture();
+//        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
         chooser = new SendableChooser<>();
 
         //TODO not sure if this is valid syntax
@@ -115,8 +117,10 @@ public class Robot extends TimedRobot {
         Turret tt = globalComponent.getTurret();
         CheeseWheel in = globalComponent.getCheeseWheel();
         Hood h = globalComponent.getHood();
+        Flywheel wheel = globalComponent.getFlywheel();
         LimelightServo servo = globalComponent.getLimelightServo();
         CheeseWheel cheeseWheel = globalComponent.getCheeseWheel();
+        CWSensors cwSensors = globalComponent.getCWSensors();
 
         SmartDashboard.putNumber("index", cheeseWheel.getIndex());
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
@@ -124,11 +128,15 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
-        SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
-        SmartDashboard.putNumber("TurretPosition", tt.getPositionTicks());
-        SmartDashboard.putBoolean("InState", in.getSensors().getIntakeSensorStatus());
+        SmartDashboard.putBoolean("IntakeSens", cwSensors.getIntakeSensorStatus());
+        SmartDashboard.putNumber("IntakeSensVal", cwSensors.getIntakeSensorValue());
+        //SmartDashboard.putBoolean("OutSens", cwSensors.getOutputSensorStatus());
+        SmartDashboard.putNumber("flywheelVel", wheel.getPositionTicks());
         SmartDashboard.putNumber("LLAngle", servo.getAngle());
         SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());
         SmartDashboard.putData(chooser);
+
+
+
     }
 }

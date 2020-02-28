@@ -49,8 +49,8 @@ public class SubsystemModule {
 
     private static final int LIMELIGHT_SERVO = 1;
     private static final int CAMERA_SERVO = 2;
-    private static final int CW_INTAKE_SENSOR = 8;
-    private static final int CW_OUTPUT_SENSOR = 9;
+    private static final int CW_INTAKE_SENSOR = 0;
+    private static final int CW_OUTPUT_SENSOR = 1;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(

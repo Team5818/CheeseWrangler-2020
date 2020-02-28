@@ -58,11 +58,11 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 1)
             .whenPressed(cmds.cheeseWheel().setIndex(0));
         new JoystickButton(coDriverLeft, 2)
-            .whenPressed(cmds.cheeseWheel().setIndex(1));
+            .whenPressed(cmds.cheeseWheel().setIndex(3));
         new JoystickButton(coDriverRight, 1)
-            .whenPressed(cmds.limelightServo().setAngle(0));
+            .whenPressed(cmds.flywheel().setPower(-0.6));
         new JoystickButton(coDriverRight, 2)
-            .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
+            .whenPressed(cmds.flywheel().setPower(0));
         new JoystickButton(coDriverButtons, 12)
             .whenPressed(cmds.turret().setAngle(20));
         /*
