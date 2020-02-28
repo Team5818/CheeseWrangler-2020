@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands;
 
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -74,7 +75,7 @@ public class CheeseWheelCommands {
         return setModeCreator.create(mode);
     }
 
-    public CWSetIndex setIndex(int index) {
+    public CWSetIndex setIndex(CheeseSlot index) {
         return setIndexCreator.create(index);
     }
 

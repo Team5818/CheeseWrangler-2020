@@ -58,9 +58,9 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if(pwr >= 0 && getPositionTicks() < 2038) {
+        if (pwr >= 0 && getPositionTicks() < 2038) {
             pwr = 0;
-        } else if(pwr < 0 && getPositionTicks() > 2420) {
+        } else if (pwr < 0 && getPositionTicks() > 2420) {
             pwr = 0;
         }
         SmartDashboard.putNumber("HoodPower", pwr);

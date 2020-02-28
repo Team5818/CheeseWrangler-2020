@@ -36,7 +36,7 @@ public class CWInvertMode extends InstantCommand {
 
     @Override
     public void execute() {
-        switch (cheeseWheel.mode) {
+        switch (CheeseWheel.mode) {
             case COLLECT_FRONT:
                 cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_BACK);
                 break;

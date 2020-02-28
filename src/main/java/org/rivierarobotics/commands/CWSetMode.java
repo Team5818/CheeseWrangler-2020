@@ -38,6 +38,6 @@ public class CWSetMode extends InstantCommand {
 
     @Override
     public void execute() {
-        cheeseWheel.mode = this.mode;
+        CheeseWheel.mode = this.mode;
     }
 }
