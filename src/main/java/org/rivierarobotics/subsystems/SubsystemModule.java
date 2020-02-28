@@ -49,8 +49,8 @@ public class SubsystemModule {
 
     private static final int LIMELIGHT_SERVO = 1;
     private static final int CAMERA_SERVO = 2;
-    private static final int CW_INTAKE_SENSOR = 0;
-    private static final int CW_OUTPUT_SENSOR = 1;
+    private static final int CW_FRONT_SENSOR = 1;
+    private static final int CW_BACK_SENSOR = 0;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(
@@ -107,14 +107,14 @@ public class SubsystemModule {
     @Singleton
     @Sided(Side.FRONT)
     public static IntakeSide provideIntakeSideFront() {
-        return new IntakeSide(INTAKE_VICTOR_FRONT);
+        return new IntakeSide(INTAKE_VICTOR_FRONT, false);
     }
 
     @Provides
     @Singleton
     @Sided(Side.BACK)
     public static IntakeSide provideIntakeSideBack() {
-        return new IntakeSide(INTAKE_VICTOR_BACK);
+        return new IntakeSide(INTAKE_VICTOR_BACK, true);
     }
 
     @Provides
@@ -144,7 +144,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static CWSensors provideCheeseWheelSensors() {
-        return new CWSensors(CW_INTAKE_SENSOR, CW_OUTPUT_SENSOR);
+        return new CWSensors(CW_FRONT_SENSOR, CW_BACK_SENSOR);
     }
 
     @Provides

@@ -36,7 +36,7 @@ public class CheeseWheel extends BasePIDSubsystem {
     public Mode lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, CWSensors sensors, Provider<CheeseWheelControl> command) {
-        super(new PIDConfig(0.0012, 0.0, 0, 0.0, 15, 0.5));
+        super(new PIDConfig(0.002, 0.0, 0, 0.1, 5, 0.5));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.sensors = sensors;
@@ -63,20 +63,21 @@ public class CheeseWheel extends BasePIDSubsystem {
         return wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
     }
 
-    public double getClosestIndexAngle(Mode mode, boolean lookForFilled) {
-        return getClosestSlot(mode, lookForFilled).getModePosition(mode);
+    public double getClosestIndexAngle(Mode mode, Filled filled) {
+        return getClosestSlot(mode, filled).getModePosition(mode);
     }
 
-    public CheeseSlot getClosestSlot(Mode mode, boolean lookForFilled) {
+    public CheeseSlot getClosestSlot(Mode mode, Filled filled) {
         this.lastMode = mode;
         CheeseSlot[] allSlots = CheeseSlot.values();
         CheeseSlot minSlot = allSlots[0];
         double minDiff = Double.MAX_VALUE;
 
         for (CheeseSlot allSlot : allSlots) {
-//            if (!lookForFilled && !allSlots[i].isFilled) {
-//                continue;
-//            }
+            if (filled != Filled.DONT_CARE && (filled == Filled.YES) != allSlot.isFilled) {
+                continue;
+            }
+
             double diff = allSlot.getModePosition(mode) - getPositionTicks();
             diff = correctDiffForGap(diff);
             diff = Math.abs(diff);
@@ -106,7 +107,11 @@ public class CheeseWheel extends BasePIDSubsystem {
         return sensors;
     }
 
+    public enum Filled {
+        YES, NO, DONT_CARE
+    }
+
     public enum Mode {
-        COLLECT_FRONT, COLLECT_BACK, SHOOTING
+        COLLECT_FRONT, COLLECT_BACK, FIX_FRONT, FIX_BACK, SHOOTING
     }
 }

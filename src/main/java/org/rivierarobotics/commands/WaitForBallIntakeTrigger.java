@@ -41,6 +41,6 @@ public class WaitForBallIntakeTrigger extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return sensors.getIntakeSensorStatus();
+        return sensors.isFrontBallPresent();
     }
 }

@@ -26,9 +26,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 public class IntakeSide {
     private final WPI_VictorSPX intakeVictor;
 
-    public IntakeSide(int id) {
+    public IntakeSide(int id, boolean inverted) {
         intakeVictor = new WPI_VictorSPX(id);
         intakeVictor.configFactoryDefault();
+        intakeVictor.setInverted(inverted);
         intakeVictor.setNeutralMode(NeutralMode.Brake);
     }
 

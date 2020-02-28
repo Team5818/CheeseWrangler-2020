@@ -24,34 +24,26 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class CheeseWheelCommands {
-    private CWIncrementIndexCreator incrementIndex;
-    private CWDecrementIndexCreator decrementIndex;
+    private CWMoveToFreeIndexCreator moveToFreeIndex;
     private CWSetPositionCreator setPositionCreator;
     private CWSetIndexCreator setIndexCreator;
     private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
 
     @Inject
-    public CheeseWheelCommands(CWIncrementIndexCreator incrementIndex,
-                               CWDecrementIndexCreator decrementIndex,
+    public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
                                CWSetPositionCreator setPositionCreator,
                                WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator,
                                CWSetIndexCreator setIndexCreator) {
-        this.incrementIndex = incrementIndex;
-        this.decrementIndex = decrementIndex;
+        this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
         this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
     }
 
-    public CWIncrementIndex incrementIndex() {
-        return incrementIndex.create();
-    }
-
-    public CWDecrementIndex decrementIndex() {
-        return decrementIndex.create();
+    public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled) {
+        return moveToFreeIndex.create(mode, filled);
     }
 
     public CWSetPosition setPosition(int ticks) {

@@ -25,9 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.Side;
-import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
@@ -58,10 +56,11 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-        new JoystickButton(coDriverLeft, 1)
-            .whenPressed(cmds.intake().setPower(Side.FRONT));
+//        new JoystickButton(coDriverLeft, 1)
+//            .whileHeld(cmds.intake().setPower(Side.FRONT));
         new JoystickButton(coDriverLeft, 2)
-            .whenPressed(cmds.cheeseWheel().setIndex(CheeseWheel.Mode.SHOOTING, CheeseSlot.ZERO));
+//            .toggleWhenPressed(cmds.cheeseWheel().moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT));
+            .whileHeld(cmds.intake().setPower(Side.BACK));
         new JoystickButton(coDriverRight, 1)
             .whenPressed(cmds.flywheel().setPower(-0.6));
         new JoystickButton(coDriverRight, 2)

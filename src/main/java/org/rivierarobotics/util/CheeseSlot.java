@@ -29,13 +29,17 @@ public enum CheeseSlot {
     public final int index;
     public final double frontCollectPosition;
     public final double backCollectPosition;
+    public final double frontFixPosition;
+    public final double backFixPosition;
     public final double shootPosition;
     public boolean isFilled;
 
     public static final double INDEX_DIFF = 4096.0 / 5;
     //TODO determine offsets
     private static final double frontOffset = 1000;
-    private static final double backOffset = frontOffset + INDEX_DIFF * 2;
+    private static final double backOffset = (frontOffset + INDEX_DIFF * 2);
+    private static final double frontFixOffset = 577;
+    private static final double backFixOffset = 3090;
     private static final double shootOffset = 3870;
 
     private static double boundPosition(double pos) {
@@ -52,6 +56,8 @@ public enum CheeseSlot {
         double indexOffset = INDEX_DIFF * index;
         this.frontCollectPosition = boundPosition(indexOffset + frontOffset);
         this.backCollectPosition = boundPosition(indexOffset + backOffset);
+        this.frontFixPosition = boundPosition(indexOffset + frontFixOffset);
+        this.backFixPosition = boundPosition(indexOffset + backFixOffset);
         this.shootPosition = boundPosition(indexOffset + shootOffset);
     }
 
@@ -61,6 +67,10 @@ public enum CheeseSlot {
                 return this.frontCollectPosition;
             case COLLECT_BACK:
                 return this.backCollectPosition;
+            case FIX_FRONT:
+                return this.frontFixPosition;
+            case FIX_BACK:
+                return this.backFixPosition;
             case SHOOTING:
                 return this.shootPosition;
             default:

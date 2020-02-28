@@ -22,7 +22,6 @@ package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
@@ -35,8 +34,8 @@ public class CollectShootSingleCycle extends SequentialCommandGroup {
             cheeseCommands.waitForBall(),
             ejectorCommands.setPower(1.0),
             new WaitCommand(0.1),
-            cheeseCommands.incrementIndex(),
-            cheeseCommands.incrementIndex(),
+//            cheeseCommands.moveToFreeIndex(),
+//            cheeseCommands.moveToFreeIndex(),
             ejectorCommands.setPower(0.0)
         );
     }

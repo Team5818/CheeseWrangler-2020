@@ -35,8 +35,8 @@ public class FlexTapeRoutine extends SequentialCommandGroup {
         addCommands(
             autonomousCommands.pathweaver(Pose2dPath.FLEX_TAPE),
             visionCommands.visionAim(VisionTarget.INNER),
-            cheeseWheelCommandGroups.autoCollect(true),
-            cheeseWheelCommandGroups.shootNext()
+            cheeseWheelCommandGroups.autoCollect(true)
+//            cheeseWheelCommandGroups.shootNext()
         );
     }
 }

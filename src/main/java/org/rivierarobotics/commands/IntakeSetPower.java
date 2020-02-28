@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
@@ -34,51 +35,66 @@ import java.util.function.BooleanSupplier;
 public class IntakeSetPower extends CommandBase {
     private final Intake intake;
     private final CheeseWheel cheeseWheel;
+    private final CheeseWheelCommands cheeseWheelCommands;
     private final double frontPower;
     private final double backPower;
-    private static final double pwrConstant = 0.3;
-    private final Command goingToNext;
+    private static final double pwrConstant = 1.0;
+    private Command goingToNext;
     private final BooleanSupplier hasBall;
     private final CheeseWheel.Mode mode;
+    private final CheeseWheel.Mode fixMode;
 
     IntakeSetPower(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
                    @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
         this.intake = intake;
         this.cheeseWheel = cheeseWheel;
+        this.cheeseWheelCommands = cheeseWheelCommands;
         if (side == Side.FRONT) {
             frontPower = pwrConstant;
             backPower = 0.0;
-            hasBall = cheeseWheel.getSensors()::getIntakeSensorStatus;
+            hasBall = cheeseWheel.getSensors()::isFrontBallPresent;
             mode = CheeseWheel.Mode.COLLECT_FRONT;
-            goingToNext = cheeseWheelCommands.incrementIndex();
+            fixMode = CheeseWheel.Mode.FIX_FRONT;
         } else {
             if (side != Side.BACK) {
                 throw new IllegalArgumentException("Invalid side: " + side);
             }
             frontPower = 0.0;
             backPower = pwrConstant;
-            hasBall = cheeseWheel.getSensors()::getOutputSensorStatus;
+            hasBall = cheeseWheel.getSensors()::isBackBallPresent;
             mode = CheeseWheel.Mode.COLLECT_BACK;
-            goingToNext = cheeseWheelCommands.decrementIndex();
+            fixMode = CheeseWheel.Mode.FIX_BACK;
         }
         addRequirements(intake);
     }
 
     @Override
     public void initialize() {
-        cheeseWheel.getClosestSlot(mode, false);
+        cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.NO);
+        goingToNext = cheeseWheelCommands.moveToFreeIndex(mode, CheeseWheel.Filled.NO);
         goingToNext.schedule();
     }
 
     @Override
     public void execute() {
         intake.setPower(frontPower, backPower);
-        if (goingToNext.isScheduled()) {
+        if (goingToNext != null && goingToNext.isScheduled()) {
             return;
         }
         if (hasBall.getAsBoolean()) {
-            cheeseWheel.getClosestSlot(mode, false).isFilled = true;
+            SmartDashboard.putString("schedulin", "iz schedule");
+            var slot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.NO);
+            slot.isFilled = true;
+            goingToNext = cheeseWheelCommands.setIndex(fixMode, slot)
+                .andThen(cheeseWheelCommands.moveToFreeIndex(mode, CheeseWheel.Filled.NO));
             goingToNext.schedule();
+        } else {
+            SmartDashboard.putString("schedulin", "CAN HAZ BALL???");
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        intake.setPower(0, 0);
     }
 }

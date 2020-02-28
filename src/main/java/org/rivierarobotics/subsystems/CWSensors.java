@@ -21,36 +21,30 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.DigitalInput;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-@Singleton
 public class CWSensors {
-    private final AnalogInput intakeSensor;
-    private final AnalogInput outputSensor;
+    private final AnalogInput frontSensor;
+    private final AnalogInput backSensor;
 
-    @Inject
-    public CWSensors(int intake, int output) {
-        this.intakeSensor = new AnalogInput(intake);
-        this.outputSensor = new AnalogInput(output);
+    public CWSensors(int front, int back) {
+        this.frontSensor = new AnalogInput(front);
+        this.backSensor = new AnalogInput(back);
     }
 
-    public boolean getIntakeSensorStatus() {
-        return (intakeSensor.getValue() < 200 && intakeSensor.getValue() > 100);
+    public boolean isFrontBallPresent() {
+        return (frontSensor.getValue() < 200 && frontSensor.getValue() > 1);
     }
 
-    public double getIntakeSensorValue() {
-        return intakeSensor.getValue();
+    public double getFrontSensorValue() {
+        return frontSensor.getValue();
     }
 
 
-    public boolean getOutputSensorStatus() {
-        return (outputSensor.getValue() < 200 && outputSensor.getValue() > 100);
+    public boolean isBackBallPresent() {
+        return (backSensor.getValue() < 200 && backSensor.getValue() > 1);
     }
 
-    public double getOutputSensorValue() {
-        return outputSensor.getValue();
+    public double getBackSensorValue() {
+        return backSensor.getValue();
     }
 }
