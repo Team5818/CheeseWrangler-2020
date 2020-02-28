@@ -21,7 +21,11 @@
 package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.*;
+import org.rivierarobotics.commands.CWCommandGroups;
+import org.rivierarobotics.commands.IntakeCommands;
+import org.rivierarobotics.commands.LimelightServoCommands;
+import org.rivierarobotics.commands.TurretCommands;
+import org.rivierarobotics.commands.VisionCommands;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -48,10 +52,8 @@ public class TrenchRun extends SequentialCommandGroup {
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOCOLLECT),
                 cheesewheelCommandGroups.autoCollect(false),
 
-                autonomousCommands.pathweaver(Pose2dPath.NEXTBAL),
                 cheesewheelCommandGroups.autoCollect(false),
 
-                autonomousCommands.pathweaver(Pose2dPath.NEXTBALL),
                 cheesewheelCommandGroups.autoCollect(false),
 
                 autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTED),
