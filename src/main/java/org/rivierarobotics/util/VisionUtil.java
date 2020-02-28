@@ -51,6 +51,10 @@ public class VisionUtil {
         limelight.getEntry("ledMode").setNumber(state.set);
     }
 
+    public final void setPipMode(LimelightPIPMode mode) {
+        limelight.getEntry("stream").setNumber(mode.set);
+    }
+
     public final void invertLedState() {
         NetworkTableEntry led = limelight.getEntry("ledMode");
         double cs = (double) led.getNumber(1.0);

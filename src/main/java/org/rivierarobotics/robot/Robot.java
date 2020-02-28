@@ -20,9 +20,6 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode;
-import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -39,6 +36,7 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.LimelightPIPMode;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -53,9 +51,8 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
-//        UsbCamera driverCamera = CameraServer.getInstance().startAutomaticCapture();
-//        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
         chooser = new SendableChooser<>();
+        globalComponent.getVisionUtil().setPipMode(LimelightPIPMode.SECONDARY);
 
         //TODO not sure if this is valid syntax
         chooser.addOption("Flex", commandComponent.auto().pathweaver(Pose2dPath.FLEX));
@@ -114,9 +111,6 @@ public class Robot extends TimedRobot {
     private void displayShuffleboard() {
         VisionUtil vision = globalComponent.getVisionUtil();
         NavXGyro navX = globalComponent.getNavXGyro();
-        Turret tt = globalComponent.getTurret();
-        CheeseWheel in = globalComponent.getCheeseWheel();
-        Hood h = globalComponent.getHood();
         Flywheel wheel = globalComponent.getFlywheel();
         LimelightServo servo = globalComponent.getLimelightServo();
         CheeseWheel cheeseWheel = globalComponent.getCheeseWheel();
@@ -127,17 +121,12 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
-        SmartDashboard.putNumber("hoooood", globalComponent.getHood().getPositionTicks());
         SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
         SmartDashboard.putBoolean("IntakeSens", cwSensors.getIntakeSensorStatus());
         SmartDashboard.putNumber("IntakeSensVal", cwSensors.getIntakeSensorValue());
-        //SmartDashboard.putBoolean("OutSens", cwSensors.getOutputSensorStatus());
         SmartDashboard.putNumber("flywheelVel", wheel.getPositionTicks());
         SmartDashboard.putNumber("LLAngle", servo.getAngle());
         SmartDashboard.putNumber("CheeseWheel Pos", cheeseWheel.getPositionTicks());
         SmartDashboard.putData(chooser);
-
-
-
     }
 }

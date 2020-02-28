@@ -29,7 +29,7 @@ import org.rivierarobotics.util.CheeseSlot;
 @GenerateCreator
 public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
     public CWIncrementIndex(@Provided CheeseWheel cheeseWheel) {
-        super(cheeseWheel, 40, 0.0);
+        super(cheeseWheel, 20, 0.0);
     }
 
     @Override
@@ -39,13 +39,14 @@ public class CWIncrementIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected double getPositionTicks() {
-        SmartDashboard.putNumber("yticks", subsystem.getPosition());
+        SmartDashboard.putNumber("yticks", subsystem.getPositionTicks());
         SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(false).getIndex());
-        return subsystem.getPosition();
+        return super.getPositionTicks();
     }
 
     @Override
-    protected void setPositionTicks(double position) {
-        super.subsystem.setPosition(position);
+    public void end(boolean interrupted) {
+        //TODO remove temporary hard set over
+        subsystem.getClosestSlot(false).isFilled = true;
     }
 }

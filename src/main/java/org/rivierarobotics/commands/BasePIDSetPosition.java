@@ -28,17 +28,19 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
     protected final T subsystem;
     protected double positionTicks;
     protected final double maxErrorTicks;
+    private final double posTemp;
 
     // Measurements do not need to be in ticks if get/set methods are overridden, but are in ticks by default
     public BasePIDSetPosition(T subsystem, double maxErrorTicks, double positionTicks) {
         this.subsystem = subsystem;
         this.maxErrorTicks = maxErrorTicks;
-        setSetPosition(positionTicks);
+        posTemp = positionTicks;
         addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
+        setSetPosition(posTemp);
         setPositionTicks(positionTicks);
     }
 

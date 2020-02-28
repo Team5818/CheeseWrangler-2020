@@ -35,8 +35,8 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final Provider<CheeseWheelControl> command;
     private final double zeroTicks = -200;
     private final CWSensors sensors;
-    public Mode mode = Mode.COLLECT_FRONT;
-    public Mode lastMode = Mode.COLLECT_FRONT;
+    public static Mode mode = Mode.COLLECT_FRONT;
+    public static Mode lastMode = Mode.COLLECT_FRONT;
 
     public CheeseWheel(int motor, CWSensors sensors, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.0012, 0.0, 0, 0.0, 15, 0.5));
@@ -49,10 +49,10 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     public void setMode(Mode mode) {
         if (mode == Mode.LAST) {
-            this.mode = lastMode;
+            CheeseWheel.mode = lastMode;
         } else {
-            this.lastMode = this.mode;
-            this.mode = mode;
+            lastMode = CheeseWheel.mode;
+            CheeseWheel.mode = mode;
         }
     }
 
@@ -71,7 +71,7 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     @Override
     public double getPosition() {
-        return (getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks());
+        return getPositionTicks() / getAnglesOrInchesToTicks();
     }
 
     @Override
@@ -110,7 +110,6 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     public CheeseSlot getClosestSlot(boolean lookForFilled) {
-        SmartDashboard.putNumber("time run", Timer.getFPGATimestamp());
         CheeseSlot[] allSlots = CheeseSlot.values();
         CheeseSlot minIndex = allSlots[0];
         double minDiff = 0;
@@ -120,7 +119,7 @@ public class CheeseWheel extends BasePIDSubsystem {
                 continue;
             }
 
-            double diff = Math.abs(allSlots[i].getModedPosition(mode) - getPosition());
+            double diff = Math.abs(allSlots[i].getModedPosition(mode) - getPositionTicks());
             if (diff < minDiff) {
                 minIndex = allSlots[i];
                 minDiff = diff;

@@ -23,22 +23,19 @@ package org.rivierarobotics.commands;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+    private final CheeseSlot index;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, int index) {
-        super(cheeseWheel, 40, index);
+    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseSlot index) {
+        super(cheeseWheel, 40, index.getCurrentModedPosition());
+        this.index = index;
     }
 
     @Override
-    protected void setSetPosition(double index) {
-        super.setSetPosition(subsystem.getSetIndex(index));
+    protected void setSetPosition(double position) {
+        positionTicks = index.getCurrentModedPosition();
     }
-
-    @Override
-    protected void setPositionTicks(double index) {
-        super.setPositionTicks(subsystem.getSetIndex(index));
-    }
-
 }

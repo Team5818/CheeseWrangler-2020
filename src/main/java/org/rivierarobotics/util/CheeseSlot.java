@@ -35,7 +35,7 @@ public enum CheeseSlot {
     public final double shootPosition;
     public boolean isFilled;
 
-    public static final double INDEX_DIFF = 360.0 / 5;
+    public static final double INDEX_DIFF = 4096.0 / 5;
     //TODO determine offsets
     private static final double frontOffset = 0;
     private static final double backOffset = 0;
@@ -46,6 +46,10 @@ public enum CheeseSlot {
         this.frontCollectPosition = (INDEX_DIFF * index) + frontOffset;
         this.backCollectPosition = (INDEX_DIFF * index) + backOffset;
         this.shootPosition = (INDEX_DIFF * index) + shootOffset;
+    }
+
+    public double getCurrentModedPosition() {
+        return getModedPosition(CheeseWheel.mode);
     }
 
     public double getModedPosition(CheeseWheel.Mode mode) {

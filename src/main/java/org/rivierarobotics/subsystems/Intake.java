@@ -25,7 +25,9 @@ import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class Intake extends SubsystemBase {
     private final IntakeSide front;
     private final IntakeSide back;

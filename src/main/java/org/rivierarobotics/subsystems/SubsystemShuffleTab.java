@@ -42,6 +42,7 @@ public class SubsystemShuffleTab {
         if (entry == null) {
             entry = addEntry(key);
         }
+        assert entry != null;
         entry.setValue(value);
     }
 
