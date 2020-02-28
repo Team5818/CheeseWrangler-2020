@@ -34,7 +34,7 @@ public enum Pose2dPath {
     // An underscore indicates a camelCase filename, keep all lowercase filenames and uppercase enums otherwise
     FLEX, CHEESERUN, FLEX_TAPE,
     MOVETOSHOOT, MOVETOCOLLECT, NEXTBAL, NEXTBALL, SHOOTCOLLECTED, NEXTBALLL, NEXTBALLLL, SHOOTCOLLECTEDD,
-    MOVETOSHOOTT;
+    MOVETOSHOOTT, MOVETOSHOOTTMID, MOVETOSHOOTTRIGHT;
 
     private final Path trajectoryJson;
     private Trajectory trajectory;
