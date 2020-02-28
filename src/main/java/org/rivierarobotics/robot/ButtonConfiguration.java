@@ -56,9 +56,9 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-            .whenPressed(cmds.hood().setAngle(33));
+            .whenPressed(cmds.limelightServo().setAngle(0));
         new JoystickButton(coDriverLeft, 2)
-            .whenPressed(cmds.hood().setAngle(45));
+            .whenPressed(cmds.limelightServo().setAngle(20));
         new JoystickButton(coDriverRight, 1)
             .whenPressed(cmds.turret().setAngle(0));
         new JoystickButton(coDriverRight, 2)

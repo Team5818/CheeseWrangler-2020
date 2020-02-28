@@ -25,7 +25,6 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -50,7 +49,6 @@ public class Turret extends BasePIDSubsystem {
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
-        turretTalon.setInverted(true);
         turretTalon.setNeutralMode(NeutralMode.Brake);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
@@ -85,7 +83,7 @@ public class Turret extends BasePIDSubsystem {
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx") + getAbsoluteAngle());
-        double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance - ShooterUtil.getLLtoTurret());
+        double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance - ShooterUtil.getLLtoTurretX());
         SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
         SmartDashboard.putNumber("txTurret", Math.toDegrees(txTurret));
         return txTurret;
@@ -129,9 +127,9 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setPower(double pwr) {
-        if (pwr >= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
+        if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
-        } else if (pwr < 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("RSetPowerT", pwr);
@@ -141,9 +139,9 @@ public class Turret extends BasePIDSubsystem {
     @Override
     public void setManualPower(double pwr) {
         SmartDashboard.putNumber("TPow",pwr);
-        if (pwr >= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
+        if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
-        } else if (pwr < 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
         SmartDashboard.putNumber("TPowS",pwr);

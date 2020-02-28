@@ -65,7 +65,9 @@ public class PositionTracker {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
-        double dist = ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty")));
+
+        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY()));
+
         double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
         double xFromTarget = dist * Math.sin(Math.abs(txTurret));
         if ((turret.getAbsoluteAngle() < -90 && turret.getAbsoluteAngle() > -270) || (turret.getAbsoluteAngle() > 90

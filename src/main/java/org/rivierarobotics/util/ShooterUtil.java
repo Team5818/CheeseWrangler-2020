@@ -34,9 +34,14 @@ public class ShooterUtil {
         return 12;
     }
 
-    public static double getLLtoTurret() {
+    public static double getLLtoTurretX() {
         //meters
         return 0.203;
+    }
+
+    public static double getLLtoTurretY() {
+        //meters
+        return 0.137;
     }
 
 
@@ -71,7 +76,7 @@ public class ShooterUtil {
 
     //TODO: Change this for the new robot once we do ball trials <- graph vel on the x and ticks per second on the y and get an equation
     public static double velocityToTicks(double vel) {
-        return ((vel - 0.86) / .003) * (1 / 600.0) * 4.4 * 12;
+        return ((vel - 0.86) / .003) * (1 / 2048.0) * 4.4 * 12;
     }
 
     public static double getFieldLength() {

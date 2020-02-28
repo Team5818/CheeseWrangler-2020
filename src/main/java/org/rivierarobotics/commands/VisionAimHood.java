@@ -56,14 +56,14 @@ public class VisionAimHood extends CommandBase {
     public void execute() {
         double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
         double t = ShooterUtil.getTConstant();   //time constant
-        double dist = height / Math.tan(Math.toRadians(vision.getLLValue("ty")));
+        double dist = height / Math.tan(Math.toRadians(vision.getActualTY()));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity();
         double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel) + 10;
+        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
         SmartDashboard.putNumber("BallVel", ballVel);
         SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
         SmartDashboard.putNumber("HoodAngleMath", hoodAngle + 3);

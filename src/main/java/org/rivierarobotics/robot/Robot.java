@@ -126,6 +126,8 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
+        SmartDashboard.putNumber("tyReal", vision.getActualTY());
+        SmartDashboard.putNumber("LLServoAngle", servo.getAngle());
         SmartDashboard.putNumber("yaw", navX.getYaw());
         SmartDashboard.putNumber("flyVelocity", wheel.getPositionTicks());
         SmartDashboard.putNumber("hoodPosition", globalComponent.getHood().getPositionTicks());
