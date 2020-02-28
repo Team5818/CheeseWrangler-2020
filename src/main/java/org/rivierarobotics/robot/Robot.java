@@ -51,8 +51,8 @@ public class Robot extends TimedRobot {
     @Override
     public void robotInit() {
         globalComponent = DaggerGlobalComponent.create();
-        commandComponent = globalComponent.getCommandComponentBuilder().build();
         globalComponent.robotInit();
+        commandComponent = globalComponent.getCommandComponentBuilder().build();
 //        UsbCamera driverCamera = CameraServer.getInstance().startAutomaticCapture();
 //        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
         chooser = new SendableChooser<>();
@@ -127,6 +127,7 @@ public class Robot extends TimedRobot {
         SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
         SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
         SmartDashboard.putNumber("yaw", navX.getYaw());
+        SmartDashboard.putNumber("hoooood", globalComponent.getHood().getPositionTicks());
         SmartDashboard.putNumber("wheelAngle", cheeseWheel.getPosition());
         SmartDashboard.putBoolean("IntakeSens", cwSensors.getIntakeSensorStatus());
         SmartDashboard.putNumber("IntakeSensVal", cwSensors.getIntakeSensorValue());

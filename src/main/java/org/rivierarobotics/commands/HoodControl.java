@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
@@ -36,13 +37,13 @@ public class HoodControl extends CommandBase {
                        Hood hood) {
         this.hood = hood;
         this.coDriverRightJs = js;
-        //addRequirements(hood);
+        addRequirements(hood);
     }
 
     @Override
     public void execute() {
         //TODO uncomment this when robot is stable
-        //hood.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
+        hood.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
     }
 
     @Override

@@ -114,6 +114,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         tickPid();
-        displayShuffleboard();
+//        displayShuffleboard();
     }
 }

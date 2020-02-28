@@ -56,7 +56,7 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-            .whenPressed(cmds.cheeseWheel().setIndex(0));
+            .whenPressed(cmds.cheeseWheel().incrementIndex());
         new JoystickButton(coDriverLeft, 2)
             .whenPressed(cmds.cheeseWheel().setIndex(3));
         new JoystickButton(coDriverRight, 1)

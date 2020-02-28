@@ -22,9 +22,10 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.CheeseWheelControl;
-import org.rivierarobotics.util.CheeseSlots;
+import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Provider;
 
@@ -70,19 +71,18 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     @Override
     public double getPosition() {
-        return Math.abs((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()));
+        return (getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks());
     }
 
     @Override
     public void setPosition(double position) {
         SmartDashboard.putNumber("posi", position);
-        setPositionTicks(position);
-
+        setPositionTicks(((position * getAnglesOrInchesToTicks()) + zeroTicks) % 360);
     }
 
     @Override
     public double getPositionTicks() {
-        return wheelTalon.getSensorCollection().getPulseWidthPosition();
+        return wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
     }
 
     public double getSetIndex(double index) {
@@ -109,8 +109,24 @@ public class CheeseWheel extends BasePIDSubsystem {
         return min;
     }
 
-    public int getClosestIndex(boolean lookForFilled) {
-        return CheeseSlots.getClosestIndex(mode, getPosition(), lookForFilled);
+    public CheeseSlot getClosestSlot(boolean lookForFilled) {
+        SmartDashboard.putNumber("time run", Timer.getFPGATimestamp());
+        CheeseSlot[] allSlots = CheeseSlot.values();
+        CheeseSlot minIndex = allSlots[0];
+        double minDiff = 0;
+
+        for (int i = 0; i < allSlots.length; i++) {
+            if (!lookForFilled && !allSlots[i].isFilled) {
+                continue;
+            }
+
+            double diff = Math.abs(allSlots[i].getModedPosition(mode) - getPosition());
+            if (diff < minDiff) {
+                minIndex = allSlots[i];
+                minDiff = diff;
+            }
+        }
+        return minIndex;
     }
 
     public CWSensors getSensors() {
