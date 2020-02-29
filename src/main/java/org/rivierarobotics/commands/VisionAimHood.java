@@ -65,15 +65,15 @@ public class VisionAimHood extends CommandBase {
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
         SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity + 10);
-        SmartDashboard.putNumber("HoodAngleMath", hoodAngle + 3);
+        SmartDashboard.putNumber("FlyVel", encoderVelocity);
+        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
 
-        if (vision.getLLValue("ty") ==  1) {
+        if (vision.getLLValue("ty") ==  1 || ballVel < 8) {
             if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
                 //Close Shot
                 hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
                 flywheel.setPositionTicks(encoderVelocity);
-            } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < 33) {
+            } else if (ballVel > ShooterUtil.getMaxBallVelocity() || hoodAngle < 33) {
                 //Long Shot
                 hood.setAbsoluteAngle(45);
                 flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());

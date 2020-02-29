@@ -31,7 +31,7 @@ public class ShooterUtil {
 
     public static double getMaxBallVelocity() {
         //in m/s
-        return 12;
+        return 22;
     }
 
     public static double getLLtoTurretX() {
@@ -63,7 +63,7 @@ public class ShooterUtil {
     }
 
     public static double getMaxFlywheelVelocity() {
-        return 350; //encoder value
+        return 19880; //encoder value
     }
 
     public static double getMaxHoodAngle() {
@@ -76,7 +76,7 @@ public class ShooterUtil {
 
     //TODO: Change this for the new robot once we do ball trials <- graph vel on the x and ticks per second on the y and get an equation
     public static double velocityToTicks(double vel) {
-        return ((vel - 0.86) / .003) * (1 / 2048.0) * 4.4 * 12;
+        return (1077.97 * vel - 4034);
     }
 
     public static double getFieldLength() {
