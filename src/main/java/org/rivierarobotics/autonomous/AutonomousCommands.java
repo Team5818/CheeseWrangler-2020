@@ -31,6 +31,7 @@ public class AutonomousCommands {
     private Provider<BasicAuto> basicAutoProvider;
     private Provider<BasicAuto2> basicAuto2Provider;
     private Provider<BasicAuto3> basicAuto3Provider;
+    private Provider<ForwardAuto> forwardAutoProvider;
 
     @Inject
     public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
@@ -39,14 +40,16 @@ public class AutonomousCommands {
                               Provider<TrenchRun> trenchRunProvider,
                               Provider<BasicAuto> basicAutoProvider,
                               Provider<BasicAuto2> basicAuto2Provider,
-                              Provider<BasicAuto3> basicAuto3Provider) {
+                              Provider<BasicAuto3> basicAuto3Provider,
+                              Provider<ForwardAuto> forwardAutoProvider) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.flexRoutineProvider = flexRoutineProvider;
         this.flexTapeProvider = flexTapeProvider;
         this.trenchRunProvider = trenchRunProvider;
         this.basicAutoProvider = basicAutoProvider;
         this.basicAuto2Provider = basicAuto2Provider;
-        this. basicAuto3Provider = basicAuto3Provider;
+        this.basicAuto3Provider = basicAuto3Provider;
+        this.forwardAutoProvider = forwardAutoProvider;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
@@ -63,6 +66,9 @@ public class AutonomousCommands {
     public BasicAuto basicAuto() { return basicAutoProvider.get(); }
     public BasicAuto2 basicAuto2() { return basicAuto2Provider.get(); }
     public BasicAuto3 basicAuto3() { return basicAuto3Provider.get(); }
+    public ForwardAuto forwardAuto() {
+        return  forwardAutoProvider.get();
+    }
 
 
 }

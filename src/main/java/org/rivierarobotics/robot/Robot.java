@@ -69,6 +69,7 @@ public class Robot extends TimedRobot {
             //TODO uncomment when auto is testing/implemented
             //autonomousCommand.schedule();
         }
+        commandComponent.auto().forwardAuto().schedule();
     }
 
     @Override
@@ -101,6 +102,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
     private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");

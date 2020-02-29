@@ -34,7 +34,6 @@ public class NiceShootinTex extends CommandBase {
         var diff = currentSlot.getModePosition(CheeseWheel.Mode.COLLECT_FRONT) - cheeseWheel.getPositionTicks();
         diff = cheeseWheel.correctDiffForGap(diff);
         direction = 1; //(int) Math.signum(diff);
-
         moveToNext();
     }
 

@@ -26,10 +26,17 @@ import javax.inject.Inject;
 
 public class DriveCommands {
     private DriveSetNeutralIdleCreator driveSetNeutralIdleCreator;
+    private DriveDistanceCreator driveDistanceCreator;
 
     @Inject
-    public DriveCommands(DriveSetNeutralIdleCreator driveSetNeutralIdleCreator) {
+    public DriveCommands(DriveSetNeutralIdleCreator driveSetNeutralIdleCreator,
+                         DriveDistanceCreator driveDistanceCreator) {
+        this.driveDistanceCreator = driveDistanceCreator;
         this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
+    }
+
+    public DriveDistance driveDistance(double finalDistance) {
+        return driveDistanceCreator.create(finalDistance);
     }
 
     public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {

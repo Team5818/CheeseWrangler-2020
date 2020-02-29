@@ -58,7 +58,7 @@ public class SubsystemModule {
             0, 1);
     private static final DTMotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
         new DTMotorIds(
-            13, 12,
+            13, 14,
             2, 4);
 
     private SubsystemModule() {

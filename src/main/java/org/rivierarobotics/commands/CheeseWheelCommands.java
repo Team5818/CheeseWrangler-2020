@@ -34,6 +34,7 @@ public class CheeseWheelCommands {
     private final NiceShootinTexCreator niceShootinTexCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final CWMoveToNextIndexCreator moveToNextIndexCreator;
+    private All5ShootCreator all5ShootCreator;
 
     @Inject
     public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
@@ -42,7 +43,8 @@ public class CheeseWheelCommands {
                                CWSetIndexCreator setIndexCreator,
                                NiceShootinTexCreator niceShootinTexCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
-                               CWMoveToNextIndexCreator moveToNextIndexCreator) {
+                               CWMoveToNextIndexCreator moveToNextIndexCreator,
+                               All5ShootCreator all5ShootCreator) {
         this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
@@ -50,6 +52,7 @@ public class CheeseWheelCommands {
         this.niceShootinTexCreator = niceShootinTexCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.moveToNextIndexCreator = moveToNextIndexCreator;
+        this.all5ShootCreator = all5ShootCreator;
     }
 
     public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
@@ -78,5 +81,9 @@ public class CheeseWheelCommands {
 
     public CWMoveToNextIndex moveToNextIndex(int direction) {
         return moveToNextIndexCreator.create(direction);
+    }
+
+    public All5Shoot all5Shoot(){
+        return all5ShootCreator.create();
     }
 }

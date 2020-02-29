@@ -66,7 +66,7 @@ public class DriveTrainSide extends BasePIDSubsystem {
     }
 
     public double getPosition() {
-        return shaftEncoder.getRaw();
+        return shaftEncoder.getDistance();
     }
 
     public double getVelocity() {

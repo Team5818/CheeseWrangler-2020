@@ -32,7 +32,7 @@ public class ShootNWedges extends ParallelRaceGroup {
                 }
             },
             new SequentialCommandGroup(
-                cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 1),
+                cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0),
                 ejectorCommands.setPower(1.0),
                 new CommandBase() {
                     @Override
@@ -40,6 +40,8 @@ public class ShootNWedges extends ParallelRaceGroup {
                         return MathUtil.isWithinTolerance(flywheel.getPositionTicks(), 10_000, 500);
                     }
                 },
+                    wedges == 5 ?
+                            cheeseWheelCommands.all5Shoot().withTimeout(2.0):
                 cheeseWheelCommands.niceShootinTex(wedges)
             )
         );
