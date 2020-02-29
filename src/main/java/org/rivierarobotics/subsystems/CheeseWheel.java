@@ -67,11 +67,11 @@ public class CheeseWheel extends BasePIDSubsystem {
         return base;
     }
 
-    public double getClosestIndexAngle(Mode mode, Filled filled) {
-        return getClosestSlot(mode, filled).getModePosition(mode);
+    public double getClosestIndexAngle(Mode mode, Filled filled, int direction) {
+        return getClosestSlot(mode, filled, direction).getModePosition(mode);
     }
 
-    public CheeseSlot getClosestSlot(Mode mode, Filled filled) {
+    public CheeseSlot getClosestSlot(Mode mode, Filled filled, int direction) {
         this.lastMode = mode;
         CheeseSlot[] allSlots = CheeseSlot.values();
         CheeseSlot minSlot = allSlots[0];
@@ -84,6 +84,10 @@ public class CheeseWheel extends BasePIDSubsystem {
 
             double diff = allSlot.getModePosition(mode) - getPositionTicks();
             diff = correctDiffForGap(diff);
+            if (0 != direction && ((int) Math.signum(diff)) != direction) {
+                // only take those with same direction
+                continue;
+            }
             diff = Math.abs(diff);
             if (diff < minDiff) {
                 minSlot = allSlot;

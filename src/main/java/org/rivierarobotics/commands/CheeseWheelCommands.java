@@ -52,8 +52,8 @@ public class CheeseWheelCommands {
         this.moveToNextIndexCreator = moveToNextIndexCreator;
     }
 
-    public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled) {
-        return moveToFreeIndex.create(mode, filled);
+    public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
+        return moveToFreeIndex.create(mode, filled, direction);
     }
 
     public CWSetPosition setPosition(int ticks) {

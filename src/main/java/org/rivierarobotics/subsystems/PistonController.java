@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class PistonController extends SubsystemBase {
 
-//    private final Solenoid testSolenoid = new Solenoid(0);
+    private final Solenoid testSolenoid = new Solenoid(0);
 
     public PistonController() {
     }

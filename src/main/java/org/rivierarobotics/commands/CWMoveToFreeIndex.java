@@ -31,11 +31,13 @@ import java.util.Objects;
 public class CWMoveToFreeIndex extends BasePIDSetPosition<CheeseWheel> {
     private final CheeseWheel.Mode mode;
     private final CheeseWheel.Filled filled;
+    private final int direction;
 
-    public CWMoveToFreeIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseWheel.Filled filled) {
+    public CWMoveToFreeIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
         super(cheeseWheel, 20, 0.0);
         this.mode = mode;
         this.filled = filled;
+        this.direction = direction;
     }
 
     private CheeseWheel.Mode getMode() {
@@ -44,21 +46,21 @@ public class CWMoveToFreeIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = subsystem.getClosestIndexAngle(getMode(), filled);
+        positionTicks = subsystem.getClosestIndexAngle(getMode(), filled, direction);
     }
 
     @Override
     protected double getPositionTicks() {
         SmartDashboard.putNumber("possset", positionTicks);
         SmartDashboard.putNumber("yticks", subsystem.getPositionTicks());
-        SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(getMode(), filled).getIndex());
+        SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(getMode(), filled, direction).getIndex());
         return super.getPositionTicks();
     }
 
     @Override
     public void end(boolean interrupted) {
         if (filled == CheeseWheel.Filled.NO) {
-            subsystem.getClosestSlot(getMode(), CheeseWheel.Filled.NO).isFilled = true;
+            subsystem.getClosestSlot(getMode(), CheeseWheel.Filled.NO, direction).isFilled = true;
         }
     }
 }

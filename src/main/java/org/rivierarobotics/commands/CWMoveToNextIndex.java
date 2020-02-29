@@ -43,7 +43,7 @@ public class CWMoveToNextIndex extends CommandBase {
     @Override
     public void initialize() {
         mode = cheeseWheel.lastMode;
-        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE)
+        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE, direction)
             .next(direction);
         cheeseWheel.setPositionTicks(currentSlot.getModePosition(mode));
     }

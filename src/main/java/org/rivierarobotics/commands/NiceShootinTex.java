@@ -23,14 +23,14 @@ public class NiceShootinTex extends CommandBase {
     @Override
     public void initialize() {
         shotSlots = 0;
-        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.SHOOTING, CheeseWheel.Filled.DONT_CARE);
+        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 1);
         if (!currentSlot.isFilled) {
             // we have to use whatever is closest
-            currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.SHOOTING, CheeseWheel.Filled.DONT_CARE);
+            currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 1);
         }
-        var diff = currentSlot.shootPosition - cheeseWheel.getPositionTicks();
+        var diff = currentSlot.frontCollectPosition - cheeseWheel.getPositionTicks();
         diff = cheeseWheel.correctDiffForGap(diff);
-        direction = (int) Math.signum(diff);
+        direction = 1; //(int) Math.signum(diff);
 
         moveToNext();
     }

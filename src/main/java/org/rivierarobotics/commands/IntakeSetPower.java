@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -44,6 +45,7 @@ public class IntakeSetPower extends CommandBase {
     private final BooleanSupplier hasBall;
     private final CheeseWheel.Mode mode;
     private final int direction;
+    private double startSeen;
 
     IntakeSetPower(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
                    @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
@@ -55,7 +57,7 @@ public class IntakeSetPower extends CommandBase {
             backPower = 0.0;
             hasBall = cheeseWheel.getSensors()::isFrontBallPresent;
             mode = CheeseWheel.Mode.COLLECT_FRONT;
-            direction = 1;
+            direction = -1;
         } else {
             if (side != Side.BACK) {
                 throw new IllegalArgumentException("Invalid side: " + side);
@@ -64,14 +66,14 @@ public class IntakeSetPower extends CommandBase {
             backPower = pwrConstant;
             hasBall = cheeseWheel.getSensors()::isBackBallPresent;
             mode = CheeseWheel.Mode.COLLECT_BACK;
-            direction = -1;
+            direction = 1;
         }
         addRequirements(intake, cheeseWheel);
     }
 
     @Override
     public void initialize() {
-        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE);
+        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE, direction);
         moveToNext();
     }
 
@@ -82,14 +84,21 @@ public class IntakeSetPower extends CommandBase {
             return;
         }
         if (hasBall.getAsBoolean()) {
-            currentSlot.isFilled = true;
-            currentSlot = currentSlot.next(direction);
-            moveToNext();
+            if (startSeen == 0) {
+                startSeen = Timer.getFPGATimestamp();
+            } else if ((Timer.getFPGATimestamp() - startSeen) > 0.25) {
+                currentSlot.isFilled = true;
+                currentSlot = currentSlot.next(direction);
+                moveToNext();
+                startSeen = 0;
+            }
+        } else {
+            startSeen = 0;
         }
     }
 
     private void moveToNext() {
-        cheeseWheel.setPositionTicks(currentSlot.shootPosition);
+        cheeseWheel.setPositionTicks(currentSlot.getModePosition(mode));
     }
 
     @Override

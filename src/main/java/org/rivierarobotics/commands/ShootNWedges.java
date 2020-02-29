@@ -32,7 +32,7 @@ public class ShootNWedges extends ParallelRaceGroup {
                 }
             },
             new SequentialCommandGroup(
-                cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE),
+                cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 1),
                 ejectorCommands.setPower(1.0),
                 new CommandBase() {
                     @Override

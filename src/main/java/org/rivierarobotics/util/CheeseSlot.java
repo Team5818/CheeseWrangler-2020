@@ -37,7 +37,7 @@ public enum CheeseSlot {
     public static final double INDEX_DIFF = 4096.0 / 5;
     //TODO determine offsets
     private static final double frontOffset = 1000;
-    private static final double backOffset = (frontOffset + INDEX_DIFF * 2);
+    private static final double backOffset = (frontOffset + INDEX_DIFF * 2) + 30;
     private static final double frontFixOffset = 577;
     private static final double backFixOffset = 3090;
     private static final double shootOffset = 3870;

@@ -58,6 +58,10 @@ public class Flywheel extends BasePIDSubsystem {
     }
 
     public void setVelocity(double vel) {
-        flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
+        if (vel == 0) {
+            flywheelFalcon.set(TalonFXControlMode.Disabled, 0.0);
+        } else {
+            flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
+        }
     }
 }
