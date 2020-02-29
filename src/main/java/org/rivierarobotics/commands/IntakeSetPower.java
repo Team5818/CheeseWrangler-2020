@@ -73,7 +73,7 @@ public class IntakeSetPower extends CommandBase {
 
     @Override
     public void initialize() {
-        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE, direction);
+        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE, 0);
         moveToNext();
     }
 

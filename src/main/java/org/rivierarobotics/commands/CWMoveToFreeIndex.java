@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
@@ -46,21 +45,8 @@ public class CWMoveToFreeIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected void setSetPosition(double position) {
-        positionTicks = subsystem.getClosestIndexAngle(getMode(), filled, direction);
-    }
-
-    @Override
-    protected double getPositionTicks() {
-        SmartDashboard.putNumber("possset", positionTicks);
-        SmartDashboard.putNumber("yticks", subsystem.getPositionTicks());
-        SmartDashboard.putNumber("yindex", subsystem.getClosestSlot(getMode(), filled, direction).getIndex());
-        return super.getPositionTicks();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        if (filled == CheeseWheel.Filled.NO) {
-            subsystem.getClosestSlot(getMode(), CheeseWheel.Filled.NO, direction).isFilled = true;
-        }
+        positionTicks = subsystem.getClosestSlot(getMode(), filled, 0)
+            .next(direction)
+            .getModePosition(getMode());
     }
 }
