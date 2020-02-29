@@ -86,7 +86,7 @@ public class IntakeSetPower extends CommandBase {
         if (hasBall.getAsBoolean()) {
             if (startSeen == 0) {
                 startSeen = Timer.getFPGATimestamp();
-            } else if ((Timer.getFPGATimestamp() - startSeen) > 0.25) {
+            } else if ((Timer.getFPGATimestamp() - startSeen) > 0.125) {
                 currentSlot.isFilled = true;
                 currentSlot = currentSlot.next(direction);
                 moveToNext();

@@ -64,15 +64,6 @@ public class ButtonConfiguration {
             .whenHeld(cmds.intake().setPower(Side.FRONT));
         new JoystickButton(coDriverLeft, 2)
             .whenHeld(cmds.intake().setPower(Side.BACK));
-        /*new JoystickButton(coDriverRight, 1)
-            .toggleWhenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
-        new JoystickButton(coDriverRight, 2)
-            .toggleWhenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
-        new JoystickButton(coDriverButtons, 12)
-            .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
-        new JoystickButton(coDriverButtons, 11)
-            .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
-*/
 
         // Competition Robot Button Map
         new JoystickButton(driverLeft, 1)

@@ -32,7 +32,7 @@ public class CWSensors {
     }
 
     public boolean isFrontBallPresent() {
-        return (frontSensor.getValue() < 200 && frontSensor.getValue() > 1);
+        return (frontSensor.getValue() < 300 && frontSensor.getValue() > 1);
     }
 
     public double getFrontSensorValue() {
@@ -41,7 +41,7 @@ public class CWSensors {
 
 
     public boolean isBackBallPresent() {
-        return (backSensor.getValue() < 200 && backSensor.getValue() > 1);
+        return (backSensor.getValue() < 300 && backSensor.getValue() > 1);
     }
 
     public double getBackSensorValue() {

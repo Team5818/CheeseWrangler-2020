@@ -25,6 +25,7 @@ import static org.rivierarobotics.util.Dimensions.WHEEL_CIRCUMFERENCE;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide extends BasePIDSubsystem {
@@ -72,6 +73,7 @@ public class DriveTrainSide extends BasePIDSubsystem {
     }
 
     public void setPower(double pwr, double highRPM, double lowRPM) {
+        SmartDashboard.putString("gear" + getName(), currentGear.name());
         switch (currentGear) {
             case HYBRID:
                 hybridSetPower(pwr, highRPM, lowRPM);
