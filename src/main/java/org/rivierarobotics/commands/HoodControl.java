@@ -42,7 +42,6 @@ public class HoodControl extends CommandBase {
 
     @Override
     public void execute() {
-        //TODO uncomment this when robot is stable
         hood.setManualPower(-MathUtil.fitDeadband(coDriverRightJs.getY()));
     }
 

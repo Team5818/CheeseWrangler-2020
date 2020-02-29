@@ -102,6 +102,8 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 2)
                 .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
         new JoystickButton(coDriverButtons, 1)
-                .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
+            .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
+        new JoystickButton(coDriverButtons, 3)
+            .whenPressed(cmds.hood().setAngle(34.5));
     }
 }

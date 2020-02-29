@@ -21,7 +21,6 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.HoodControl;
@@ -53,9 +52,9 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public void setPower(double pwr) {
-        if(pwr <= 0 && getPositionTicks() < 2038) {
+        if (pwr >= 0 && getPositionTicks() < 2038) {
             pwr = 0;
-        } else if(pwr > 0 && getPositionTicks() > 2420) {
+        } else if (pwr < 0 && getPositionTicks() > 2420) {
             pwr = 0;
         }
         hoodTalon.set(pwr);
@@ -63,9 +62,9 @@ public class Hood extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        if(pwr <= 0 && getPositionTicks() < 2038) {
+        if (pwr >= 0 && getPositionTicks() < 2038) {
             pwr = 0;
-        } else if(pwr > 0 && getPositionTicks() > 2420) {
+        } else if (pwr < 0 && getPositionTicks() > 2420) {
             pwr = 0;
         }
         SmartDashboard.putNumber("HoodPower", pwr);

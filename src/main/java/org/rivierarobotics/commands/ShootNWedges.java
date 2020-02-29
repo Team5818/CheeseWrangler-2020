@@ -23,7 +23,7 @@ public class ShootNWedges extends ParallelRaceGroup {
             new CommandBase() {
                 @Override
                 public void execute() {
-                    flywheel.setVelocity(10_000);
+                    flywheel.setVelocity(11_000);
                 }
 
                 @Override
@@ -37,12 +37,12 @@ public class ShootNWedges extends ParallelRaceGroup {
                 new CommandBase() {
                     @Override
                     public boolean isFinished() {
-                        return MathUtil.isWithinTolerance(flywheel.getPositionTicks(), 10_000, 500);
+                        return MathUtil.isWithinTolerance(flywheel.getPositionTicks(), 11_000, 500);
                     }
                 },
-                    wedges == 5 ?
-                            cheeseWheelCommands.all5Shoot().withTimeout(2.0):
-                cheeseWheelCommands.niceShootinTex(wedges)
+                wedges == 5
+                    ? cheeseWheelCommands.all5Shoot().withTimeout(4.0)
+                    : cheeseWheelCommands.niceShootinTex(wedges)
             )
         );
     }
