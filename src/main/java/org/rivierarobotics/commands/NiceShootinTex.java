@@ -28,6 +28,9 @@ public class NiceShootinTex extends CommandBase {
             // we have to use whatever is closest
             currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 1);
         }
+        // assume (from ShootNWedges) that we already moved to this slot!
+        // go to the next one...
+        currentSlot = currentSlot.next(1);
         var diff = currentSlot.frontCollectPosition - cheeseWheel.getPositionTicks();
         diff = cheeseWheel.correctDiffForGap(diff);
         direction = 1; //(int) Math.signum(diff);
@@ -49,7 +52,7 @@ public class NiceShootinTex extends CommandBase {
     }
 
     private void moveToNext() {
-        cheeseWheel.setPositionTicks(currentSlot.shootPosition);
+        cheeseWheel.setPositionTicks(currentSlot.frontCollectPosition);
     }
 
     @Override
