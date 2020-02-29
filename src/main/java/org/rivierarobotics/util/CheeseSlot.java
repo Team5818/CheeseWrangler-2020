@@ -26,16 +26,15 @@ public enum CheeseSlot {
     // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
     ZERO, ONE, TWO, THREE, FOUR;
 
-    public final int index;
-    public final double frontCollectPosition;
-    public final double backCollectPosition;
-    public final double frontFixPosition;
-    public final double backFixPosition;
-    public final double shootPosition;
+    private final int index;
+    private final double frontCollectPosition;
+    private final double backCollectPosition;
+    private final double frontFixPosition;
+    private final double backFixPosition;
+    private final double shootPosition;
     public boolean isFilled;
 
     public static final double INDEX_DIFF = 4096.0 / 5;
-    //TODO determine offsets
     private static final double frontOffset = 1000;
     private static final double backOffset = (frontOffset + INDEX_DIFF * 2) + 30;
     private static final double frontFixOffset = 577;
