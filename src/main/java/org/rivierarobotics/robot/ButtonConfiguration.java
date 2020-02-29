@@ -66,10 +66,6 @@ public class ButtonConfiguration {
             .whenHeld(cmds.intake().setPower(Side.BACK));
 
         // Competition Robot Button Map
-        new JoystickButton(driverLeft, 1)
-            .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
-        new JoystickButton(driverLeft, 2)
-            .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));
         /*new JoystickButton(driverRight, 1)
                 .whenPressed(cmds.intake().setPower(1.0));
         new JoystickButton(driverRight, 2)

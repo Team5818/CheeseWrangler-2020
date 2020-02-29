@@ -66,36 +66,20 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setPower(double l, double r) {
-        double rpmHighAvg = (left.getRPMHigh() + right.getRPMHigh()) / 2;
-        double rpmLowAvg = (left.getRPMLow() + right.getRPMLow()) / 2;
-        left.setPower(l, rpmHighAvg, rpmLowAvg);
-        right.setPower(r, rpmHighAvg, rpmLowAvg);
+        left.setPower(l);
+        right.setPower(r);
     }
 
     public double getAvgVelocity() {
         return (left.getVelocity() + right.getVelocity()) / 2.0;
     }
 
-    public double getRPM() {
-        if(left.getGear().equals(Gear.HIGH)) {
-            return (right.getRPMHigh() + left.getRPMHigh()) / 2;
-        } else if(left.getGear().equals(Gear.LOW)) {
-            return (right.getRPMLow() + left.getRPMLow()) / 2;
-        }
-        return (right.getRPMLow() + left.getRPMLow()) / 2;
-    }
-
     public double getXVelocity() {
-        return ((getRPM() / 60) * Dimensions.WHEEL_CIRCUMFERENCE) * Math.sin(Math.toRadians(gyro.getYaw()));
+        return getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw()));
     }
 
     public double getYVelocity() {
-        return ((getRPM() / 60) * Dimensions.WHEEL_CIRCUMFERENCE) * Math.cos(Math.toRadians(gyro.getYaw()));
-    }
-
-    public void setGear(Gear gear) {
-        left.setGear(gear);
-        right.setGear(gear);
+        return getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw()));
     }
 
     public DriveTrainSide getLeft() {
@@ -105,8 +89,6 @@ public class DriveTrain extends SubsystemBase {
     public DriveTrainSide getRight() {
         return right;
     }
-
-
 
     public DifferentialDriveKinematics getKinematics() {
         return kinematics;

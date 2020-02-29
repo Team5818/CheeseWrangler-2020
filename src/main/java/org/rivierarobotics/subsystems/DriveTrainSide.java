@@ -25,36 +25,24 @@ import static org.rivierarobotics.util.Dimensions.WHEEL_CIRCUMFERENCE;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide extends BasePIDSubsystem {
-    //TODO change values of threshold to realistic values
-    private static final double LOW_BOUND_LOW = 5000 / 2.0;
-    private static final double HIGH_BOUND_LOW = 6000 / 2.0;
-    private static final double LOW_BOUND_HIGH = LOW_BOUND_LOW / 2.5;
-    private static final double HIGH_BOUND_HIGH = (HIGH_BOUND_LOW / 2.5);
     // TODO re-find ticks-per-inch for the comp bot
     private static final double TICKS_PER_INCH = 12720.0 / 72;
     private final boolean invert;
     private WPI_TalonFX tl;
     private WPI_TalonFX tr;
-    private WPI_TalonFX bl;
-    private WPI_TalonFX br;
     private Encoder shaftEncoder;
-    private DriveTrain.Gear currentGear;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         super(new PIDConfig(0.0, 0.0, 0.0, 0.05, 0.0, 1.0)); //kF is not accurate
         this.tl = new WPI_TalonFX(motors.topLeft);
         this.tr = new WPI_TalonFX(motors.topRight);
-        this.bl = new WPI_TalonFX(motors.bottomLeft);
-        this.br = new WPI_TalonFX(motors.bottomRight);
-        this.currentGear = DriveTrain.Gear.HYBRID;
         this.invert = invert;
 
-        setupMotors(tl, tr, bl, br);
-        NeutralIdleMode.COAST.applyTo(tl, tr, bl, br);
+        setupMotors(tl, tr);
+        NeutralIdleMode.COAST.applyTo(tl, tr);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setDistancePerPulse(WHEEL_CIRCUMFERENCE / 2048);
@@ -69,44 +57,8 @@ public class DriveTrainSide extends BasePIDSubsystem {
     }
 
     public void setPower(double pwr) {
-        setPower(pwr, getRPMHigh(), getRPMLow());
-    }
-
-    public void setPower(double pwr, double highRPM, double lowRPM) {
-        SmartDashboard.putString("gear" + getName(), currentGear.name());
-        switch (currentGear) {
-            case HYBRID:
-                hybridSetPower(pwr, highRPM, lowRPM);
-                break;
-            case LOW:
-                bl.set(pwr);
-                br.set(pwr);
-                break;
-            case HIGH:
-                tl.set(pwr);
-                tr.set(pwr);
-                break;
-            default:
-                throw new IllegalStateException("Unknown gear: " + currentGear);
-        }
-    }
-
-    private void hybridSetPower(double pwr, double highRPM, double lowRPM) {
-        double highPower = 0;
-        if ((highRPM > LOW_BOUND_HIGH && highRPM < HIGH_BOUND_HIGH)) {
-            highPower = ((HIGH_BOUND_HIGH - highRPM) / (HIGH_BOUND_HIGH - LOW_BOUND_HIGH)) * pwr;
-        } else if (highRPM > HIGH_BOUND_HIGH) {
-            highPower = pwr;
-        }
-        tl.set(highPower);
-        tr.set(highPower);
-
-        double lowPower = 0;
-        if (lowRPM < LOW_BOUND_LOW) {
-            lowPower = pwr;
-        }
-        bl.set(lowPower);
-        br.set(lowPower);
+        tl.set(pwr);
+        tr.set(pwr);
     }
 
     public double getPositionTicks() {
@@ -125,28 +77,8 @@ public class DriveTrainSide extends BasePIDSubsystem {
         // TODO implement proper velocity control
     }
 
-    public double getMotorRPM(WPI_TalonFX motor) {
-        return motor.getSensorCollection().getIntegratedSensorVelocity() * (600.0 / 2048);
-    }
-
-    public double getRPMHigh() {
-        return (Math.abs(getMotorRPM(tl)) + Math.abs(getMotorRPM(tr))) / 2;
-    }
-
-    public double getRPMLow() {
-        return (Math.abs(getMotorRPM(bl)) + Math.abs(getMotorRPM(br))) / 2;
-    }
-
-    public void setGear(DriveTrain.Gear gear) {
-        this.currentGear = gear;
-    }
-
-    public DriveTrain.Gear getGear() {
-        return currentGear;
-    }
-
     public void setNeutralIdle(NeutralIdleMode mode) {
-        mode.applyTo(tl, tr, bl, br);
+        mode.applyTo(tl, tr);
     }
 
     public void resetEncoder() {
