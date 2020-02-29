@@ -31,18 +31,22 @@ public class Flywheel extends BasePIDSubsystem {
         super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
         flywheelFalcon = new WPI_TalonFX(id);
         flywheelFalcon.configFactoryDefault();
-        flywheelFalcon.setInverted(true);
-        flywheelFalcon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+        flywheelFalcon.setInverted(false);
+        flywheelFalcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
     public double getPositionTicks() {
-        return flywheelFalcon.getSelectedSensorPosition();
+        return flywheelFalcon.getSelectedSensorVelocity();
     }
 
     @Override
     public void setPower(double pwr) {
         flywheelFalcon.set(pwr);
+    }
+
+    public void setVelocity(double vel) {
+
     }
 }

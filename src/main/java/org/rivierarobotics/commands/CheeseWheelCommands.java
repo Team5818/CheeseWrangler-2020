@@ -22,6 +22,7 @@ package org.rivierarobotics.commands;
 
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
@@ -30,16 +31,22 @@ public class CheeseWheelCommands {
     private CWSetPositionCreator setPositionCreator;
     private CWSetIndexCreator setIndexCreator;
     private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
+    private final NiceShootinTexCreator niceShootinTexCreator;
+    private final ShootNWedgesCreator shootNWedgesCreator;
 
     @Inject
     public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
                                CWSetPositionCreator setPositionCreator,
                                WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator,
-                               CWSetIndexCreator setIndexCreator) {
+                               CWSetIndexCreator setIndexCreator,
+                               NiceShootinTexCreator niceShootinTexCreator,
+                               ShootNWedgesCreator shootNWedgesCreator) {
         this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
         this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
+        this.niceShootinTexCreator = niceShootinTexCreator;
+        this.shootNWedgesCreator = shootNWedgesCreator;
     }
 
     public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled) {
@@ -56,5 +63,13 @@ public class CheeseWheelCommands {
 
     public WaitForBallIntakeTrigger waitForBall() {
         return waitForBallIntakeTriggerCreator.create();
+    }
+
+    public NiceShootinTex niceShootinTex(int wedges) {
+        return niceShootinTexCreator.create(wedges);
+    }
+
+    public ShootNWedges shootNWedges(VisionTarget target, int wedges) {
+        return shootNWedgesCreator.create(target, wedges);
     }
 }

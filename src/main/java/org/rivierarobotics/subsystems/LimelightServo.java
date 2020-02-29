@@ -22,10 +22,16 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.MathUtil;
 
 import javax.inject.Inject;
 
 public class LimelightServo extends SubsystemBase {
+
+    private static final double MAX_SERVO_ANGLE = 0.3;
+    private static final double MIN_SERVO_ANGLE = 0;
+    private static final double ANGLE_PER_TICK = 80 / (MAX_SERVO_ANGLE - MIN_SERVO_ANGLE);
+
     private final Servo servo;
 
     @Inject
@@ -34,10 +40,11 @@ public class LimelightServo extends SubsystemBase {
     }
 
     public double getAngle() {
-        return (servo.getPosition() - 0.5) * -240.0;
+        return (servo.getPosition() - MIN_SERVO_ANGLE) * ANGLE_PER_TICK;
     }
 
     public void setAngle(double angle) {
-        this.servo.set(0.5 - (angle * 1 / 240.0));
+        angle = MathUtil.clamp(angle, 0, 80);
+        this.servo.set((angle / ANGLE_PER_TICK) + MIN_SERVO_ANGLE);
     }
 }

@@ -20,10 +20,10 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.cscore.UsbCamera;
-import edu.wpi.cscore.VideoMode;
-import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -32,15 +32,7 @@ import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CWSensors;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Flywheel;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.LimelightServo;
-import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.LimelightLedState;
-import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.VisionUtil;
 
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
@@ -111,7 +103,51 @@ public class Robot extends TimedRobot {
     public void disabledPeriodic() {
     }
 
+    private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");
+    private final NetworkTableEntry turretPositionTicks = visionConfTab.add("TurretPosTicks", 0)
+        .getEntry();
+    private final NetworkTableEntry turretAbsoluteAngle = visionConfTab.add("TurretAbsAngle", 0)
+        .getEntry();
+    private final NetworkTableEntry hoodPositionTicks = visionConfTab.add("HoodPosTicks", 0)
+        .getEntry();
+    private final NetworkTableEntry hoodAbsoluteAngle = visionConfTab.add("HoodAbsAngle", 0)
+        .getEntry();
+    private final NetworkTableEntry gyroYaw = visionConfTab.add("Gyro Yaw", 0)
+        .getEntry();
+    private final NetworkTableEntry ty = visionConfTab.add("ty", 0)
+        .getEntry();
+    private final NetworkTableEntry tx = visionConfTab.add("tx", 0)
+        .getEntry();
+    private final NetworkTableEntry adjustedTy = visionConfTab.add("Adj. ty", 0)
+        .getEntry();
+    private final NetworkTableEntry servoAngle = visionConfTab.add("Servo Angle", 0)
+        .getEntry();
+    private final NetworkTableEntry flyVel = visionConfTab.add("Fly Vel", 0)
+        .getEntry();
+
     private void displayShuffleboard() {
+        var turret = globalComponent.getTurret();
+        turretPositionTicks.setNumber(turret.getPositionTicks());
+        turretAbsoluteAngle.setNumber(turret.getAbsoluteAngle());
+
+        var hood = globalComponent.getHood();
+        hoodPositionTicks.setNumber(hood.getPositionTicks());
+        hoodAbsoluteAngle.setNumber(hood.getAbsolutePosition());
+
+        var gyro = globalComponent.getNavXGyro();
+        gyroYaw.setNumber(gyro.getYaw());
+
+        var visionUtil = globalComponent.getVisionUtil();
+        ty.setNumber(visionUtil.getLLValue("ty"));
+        tx.setNumber(visionUtil.getLLValue("tx"));
+        adjustedTy.setNumber(visionUtil.getActualTY());
+
+        var llServo = globalComponent.getLimelightServo();
+        servoAngle.setNumber(llServo.getAngle());
+
+        var flywheel = globalComponent.getFlywheel();
+        flyVel.setNumber(flywheel.getPositionTicks());
+
         SmartDashboard.putData(chooser);
     }
 }

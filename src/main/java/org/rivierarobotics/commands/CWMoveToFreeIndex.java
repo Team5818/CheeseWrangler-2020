@@ -57,6 +57,8 @@ public class CWMoveToFreeIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     public void end(boolean interrupted) {
-//        subsystem.getClosestSlot(getMode(), false).isFilled = true;
+        if (filled == CheeseWheel.Filled.NO) {
+            subsystem.getClosestSlot(getMode(), CheeseWheel.Filled.NO).isFilled = true;
+        }
     }
 }

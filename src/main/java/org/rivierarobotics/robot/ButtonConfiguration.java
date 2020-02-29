@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -56,17 +57,14 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-//        new JoystickButton(coDriverLeft, 1)
-//            .whileHeld(cmds.intake().setPower(Side.FRONT));
+        new JoystickButton(coDriverLeft, 1)
+            .whenHeld(cmds.intake().setPower(Side.FRONT));
         new JoystickButton(coDriverLeft, 2)
-//            .toggleWhenPressed(cmds.cheeseWheel().moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT));
-            .whileHeld(cmds.intake().setPower(Side.BACK));
+            .whenHeld(cmds.intake().setPower(Side.BACK));
         new JoystickButton(coDriverRight, 1)
-            .whenPressed(cmds.turret().setAngle(0));
+            .whenHeld(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
         new JoystickButton(coDriverRight, 2)
-            .whenPressed(cmds.turret().setAngle(-40));
-        new JoystickButton(coDriverButtons, 12)
-            .whenPressed(cmds.turret().setAngle(20));
+            .whenHeld(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
         /*
         // Competition Robot Button Map
         new JoystickButton(driverLeft, 1)

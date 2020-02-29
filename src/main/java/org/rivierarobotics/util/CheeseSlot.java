@@ -41,6 +41,7 @@ public enum CheeseSlot {
     private static final double frontFixOffset = 577;
     private static final double backFixOffset = 3090;
     private static final double shootOffset = 3870;
+    private static final int NUMBER_OF_SLOTS = values().length;
 
     private static double boundPosition(double pos) {
         if (pos < 0) {
@@ -59,6 +60,14 @@ public enum CheeseSlot {
         this.frontFixPosition = boundPosition(indexOffset + frontFixOffset);
         this.backFixPosition = boundPosition(indexOffset + backFixOffset);
         this.shootPosition = boundPosition(indexOffset + shootOffset);
+    }
+
+    public CheeseSlot next(int amount) {
+        var next = (index + amount) % NUMBER_OF_SLOTS;
+        while (next < 0) {
+            next += NUMBER_OF_SLOTS;
+        }
+        return values()[next];
     }
 
     public double getModePosition(CheeseWheel.Mode mode) {
