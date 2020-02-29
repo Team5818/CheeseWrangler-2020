@@ -27,6 +27,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.Side;
 
 import java.util.function.BooleanSupplier;
@@ -39,10 +40,10 @@ public class IntakeSetPower extends CommandBase {
     private final double frontPower;
     private final double backPower;
     private static final double pwrConstant = 1.0;
-    private Command goingToNext;
+    private CheeseSlot currentSlot;
     private final BooleanSupplier hasBall;
     private final CheeseWheel.Mode mode;
-    private final CheeseWheel.Mode fixMode;
+    private final int direction;
 
     IntakeSetPower(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
                    @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
@@ -54,7 +55,7 @@ public class IntakeSetPower extends CommandBase {
             backPower = 0.0;
             hasBall = cheeseWheel.getSensors()::isFrontBallPresent;
             mode = CheeseWheel.Mode.COLLECT_FRONT;
-            fixMode = CheeseWheel.Mode.FIX_FRONT;
+            direction = 1;
         } else {
             if (side != Side.BACK) {
                 throw new IllegalArgumentException("Invalid side: " + side);
@@ -63,34 +64,32 @@ public class IntakeSetPower extends CommandBase {
             backPower = pwrConstant;
             hasBall = cheeseWheel.getSensors()::isBackBallPresent;
             mode = CheeseWheel.Mode.COLLECT_BACK;
-            fixMode = CheeseWheel.Mode.FIX_BACK;
+            direction = -1;
         }
-        addRequirements(intake);
+        addRequirements(intake, cheeseWheel);
     }
 
     @Override
     public void initialize() {
-        cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.NO);
-        goingToNext = cheeseWheelCommands.moveToFreeIndex(mode, CheeseWheel.Filled.NO);
-        goingToNext.schedule();
+        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE);
+        moveToNext();
     }
 
     @Override
     public void execute() {
         intake.setPower(frontPower, backPower);
-        if (goingToNext != null && goingToNext.isScheduled()) {
+        if (!cheeseWheel.getPidController().atSetpoint()) {
             return;
         }
         if (hasBall.getAsBoolean()) {
-            SmartDashboard.putString("schedulin", "iz schedule");
-            var slot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.NO);
-            slot.isFilled = true;
-            goingToNext = cheeseWheelCommands.setIndex(fixMode, slot)
-                .andThen(cheeseWheelCommands.moveToFreeIndex(mode, CheeseWheel.Filled.NO));
-            goingToNext.schedule();
-        } else {
-            SmartDashboard.putString("schedulin", "CAN HAZ BALL???");
+            currentSlot.isFilled = true;
+            currentSlot = currentSlot.next(direction);
+            moveToNext();
         }
+    }
+
+    private void moveToNext() {
+        cheeseWheel.setPositionTicks(currentSlot.shootPosition);
     }
 
     @Override

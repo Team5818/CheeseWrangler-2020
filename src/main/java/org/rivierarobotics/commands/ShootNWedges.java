@@ -7,6 +7,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
@@ -24,6 +25,11 @@ public class ShootNWedges extends ParallelRaceGroup {
                 public void execute() {
                     flywheel.setVelocity(10_000);
                 }
+
+                @Override
+                public void end(boolean interrupted) {
+                    flywheel.setVelocity(0);
+                }
             },
             new SequentialCommandGroup(
                 cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE),
@@ -31,7 +37,7 @@ public class ShootNWedges extends ParallelRaceGroup {
                 new CommandBase() {
                     @Override
                     public boolean isFinished() {
-                        return flywheel.getPidController().atSetpoint();
+                        return MathUtil.isWithinTolerance(flywheel.getPositionTicks(), 10_000, 500);
                     }
                 },
                 cheeseWheelCommands.niceShootinTex(wedges)

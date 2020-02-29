@@ -23,7 +23,11 @@ public class NiceShootinTex extends CommandBase {
     @Override
     public void initialize() {
         shotSlots = 0;
-        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.SHOOTING, CheeseWheel.Filled.YES);
+        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.SHOOTING, CheeseWheel.Filled.DONT_CARE);
+        if (!currentSlot.isFilled) {
+            // we have to use whatever is closest
+            currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.SHOOTING, CheeseWheel.Filled.DONT_CARE);
+        }
         var diff = currentSlot.shootPosition - cheeseWheel.getPositionTicks();
         diff = cheeseWheel.correctDiffForGap(diff);
         direction = (int) Math.signum(diff);
@@ -39,7 +43,9 @@ public class NiceShootinTex extends CommandBase {
         shotSlots++;
         currentSlot.isFilled = false;
         currentSlot = currentSlot.next(direction);
-        moveToNext();
+        if (!isFinished()) {
+            moveToNext();
+        }
     }
 
     private void moveToNext() {

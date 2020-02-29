@@ -60,7 +60,11 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
+        int base = wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
+        while (base < 0) {
+            base += 4096;
+        }
+        return base;
     }
 
     public double getClosestIndexAngle(Mode mode, Filled filled) {

@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Flywheel extends BasePIDSubsystem {
@@ -32,8 +33,18 @@ public class Flywheel extends BasePIDSubsystem {
         flywheelFalcon = new WPI_TalonFX(id);
         flywheelFalcon.configFactoryDefault();
         flywheelFalcon.setInverted(false);
-        flywheelFalcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor);
+        flywheelFalcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 100);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
+
+        flywheelFalcon.configNominalOutputForward(0);
+        flywheelFalcon.configNominalOutputReverse(0);
+        flywheelFalcon.configPeakOutputForward(0.5);
+        flywheelFalcon.configPeakOutputReverse(-0.5);
+
+        flywheelFalcon.config_kP(0, 0.1);
+        flywheelFalcon.config_kI(0, 0.001);
+        flywheelFalcon.config_kD(0, 5);
+        flywheelFalcon.config_kF(0, 1023.0 / 20660.0);
     }
 
     @Override
@@ -47,6 +58,6 @@ public class Flywheel extends BasePIDSubsystem {
     }
 
     public void setVelocity(double vel) {
-
+        flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
     }
 }

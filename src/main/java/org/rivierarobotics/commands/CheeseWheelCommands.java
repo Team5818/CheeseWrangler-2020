@@ -33,6 +33,7 @@ public class CheeseWheelCommands {
     private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
     private final NiceShootinTexCreator niceShootinTexCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
+    private final CWMoveToNextIndexCreator moveToNextIndexCreator;
 
     @Inject
     public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
@@ -40,13 +41,15 @@ public class CheeseWheelCommands {
                                WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator,
                                CWSetIndexCreator setIndexCreator,
                                NiceShootinTexCreator niceShootinTexCreator,
-                               ShootNWedgesCreator shootNWedgesCreator) {
+                               ShootNWedgesCreator shootNWedgesCreator,
+                               CWMoveToNextIndexCreator moveToNextIndexCreator) {
         this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
         this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
         this.niceShootinTexCreator = niceShootinTexCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
+        this.moveToNextIndexCreator = moveToNextIndexCreator;
     }
 
     public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled) {
@@ -71,5 +74,9 @@ public class CheeseWheelCommands {
 
     public ShootNWedges shootNWedges(VisionTarget target, int wedges) {
         return shootNWedgesCreator.create(target, wedges);
+    }
+
+    public CWMoveToNextIndex moveToNextIndex(int direction) {
+        return moveToNextIndexCreator.create(direction);
     }
 }
