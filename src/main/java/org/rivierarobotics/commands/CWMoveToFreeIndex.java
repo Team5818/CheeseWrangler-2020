@@ -33,7 +33,7 @@ public class CWMoveToFreeIndex extends BasePIDSetPosition<CheeseWheel> {
     private final int direction;
 
     public CWMoveToFreeIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
-        super(cheeseWheel, 20, 0.0);
+        super(cheeseWheel, 20, 0.0, 2);
         this.mode = mode;
         this.filled = filled;
         this.direction = direction;

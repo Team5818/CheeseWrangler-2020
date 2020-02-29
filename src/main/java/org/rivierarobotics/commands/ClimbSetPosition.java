@@ -27,6 +27,6 @@ import org.rivierarobotics.subsystems.Climb;
 @GenerateCreator
 public class ClimbSetPosition extends BasePIDSetPosition<Climb> {
     public ClimbSetPosition(@Provided Climb climb, double position) {
-        super(climb, 20, position);
+        super(climb, 20, position, 2);
     }
 }

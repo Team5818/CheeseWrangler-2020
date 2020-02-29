@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.BasePIDSubsystem;
@@ -29,12 +30,15 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
     protected double positionTicks;
     protected final double maxErrorTicks;
     private final double posTemp;
+    private final double timeout;
+    private double start;
 
     // Measurements do not need to be in ticks if get/set methods are overridden, but are in ticks by default
-    public BasePIDSetPosition(T subsystem, double maxErrorTicks, double positionTicks) {
+    public BasePIDSetPosition(T subsystem, double maxErrorTicks, double positionTicks, double timeout) {
         this.subsystem = subsystem;
         this.maxErrorTicks = maxErrorTicks;
         posTemp = positionTicks;
+        this.timeout = timeout;
         addRequirements(subsystem);
     }
 
@@ -42,6 +46,7 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
     public void initialize() {
         setSetPosition(posTemp);
         setPositionTicks(positionTicks);
+        start = Timer.getFPGATimestamp();
     }
 
     @Override
@@ -49,7 +54,7 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
         double err = Math.abs(getPositionTicks() - positionTicks);
         boolean isInError = err < maxErrorTicks;
         SmartDashboard.putBoolean(subsystem.getName() + " isWithinError", isInError);
-        return isInError;
+        return isInError || (Timer.getFPGATimestamp() - start) > timeout;
     }
 
     protected double getPositionTicks() {

@@ -31,7 +31,7 @@ public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
     private final CheeseWheel.Mode mode;
 
     public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseSlot index) {
-        super(cheeseWheel, 40, index.getModePosition(mode));
+        super(cheeseWheel, 40, index.getModePosition(mode), 2);
         this.index = index;
         this.mode = mode;
     }

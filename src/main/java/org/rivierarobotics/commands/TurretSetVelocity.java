@@ -30,7 +30,7 @@ public class TurretSetVelocity extends BasePIDSetPosition<Turret> {
     private final double velocity;
 
     public TurretSetVelocity(@Provided Turret turret, double velocity) {
-        super(turret, 3, velocity);
+        super(turret, 3, velocity, 2);
         this.turret = turret;
         this.velocity = velocity;
     }

@@ -41,7 +41,7 @@ public class Flywheel extends BasePIDSubsystem {
         flywheelFalcon.configPeakOutputForward(1);
         flywheelFalcon.configPeakOutputReverse(-1);
 
-        flywheelFalcon.config_kP(0, 0.15);
+        flywheelFalcon.config_kP(0, 0.35);
         flywheelFalcon.config_kI(0, 0.001);
         flywheelFalcon.config_kD(0, 5);
         flywheelFalcon.config_kF(0, 1023.0 / 20660.0);

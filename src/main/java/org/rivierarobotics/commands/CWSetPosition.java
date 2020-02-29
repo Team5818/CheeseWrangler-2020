@@ -27,6 +27,6 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 @GenerateCreator
 public class CWSetPosition extends BasePIDSetPosition<CheeseWheel> {
     public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks) {
-        super(cheeseWheel, 40, ticks);
+        super(cheeseWheel, 40, ticks, 2);
     }
 }

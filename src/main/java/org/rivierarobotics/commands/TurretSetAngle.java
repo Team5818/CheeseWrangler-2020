@@ -32,7 +32,7 @@ public class TurretSetAngle extends BasePIDSetPosition<Turret> {
     private double position;
 
     public TurretSetAngle(@Provided Turret turret, double angle) {
-        super(turret, 1, angle);
+        super(turret, 1, angle, 2);
         this.turret = turret;
     }
 
