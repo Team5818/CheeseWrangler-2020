@@ -13,6 +13,8 @@ import org.rivierarobotics.util.VisionTarget;
 @GenerateCreator
 public class ShootNWedges extends ParallelRaceGroup {
 
+    private static final double TARGET_VEL = 15_000;
+
     public ShootNWedges(@Provided EjectorCommands ejectorCommands,
                         @Provided VisionCommands visionAimCommands,
                         @Provided CheeseWheelCommands cheeseWheelCommands,
@@ -23,7 +25,7 @@ public class ShootNWedges extends ParallelRaceGroup {
             new CommandBase() {
                 @Override
                 public void execute() {
-                    flywheel.setVelocity(11_000);
+                    flywheel.setVelocity(TARGET_VEL);
                 }
 
                 @Override
@@ -37,7 +39,7 @@ public class ShootNWedges extends ParallelRaceGroup {
                 new CommandBase() {
                     @Override
                     public boolean isFinished() {
-                        return MathUtil.isWithinTolerance(flywheel.getPositionTicks(), 11_000, 500);
+                        return MathUtil.isWithinTolerance(flywheel.getPositionTicks(), TARGET_VEL, 500);
                     }
                 },
                 wedges == 5

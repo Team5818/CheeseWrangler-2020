@@ -29,7 +29,7 @@ public class All5Shoot extends CommandBase {
         if (!doneHalf && cheeseWheel.getPositionTicks() > halfway) {
             doneHalf = true;
         }
-        cheeseWheel.setManualPower(0.5);
+        cheeseWheel.setManualPower(1.0);
     }
 
     @Override
