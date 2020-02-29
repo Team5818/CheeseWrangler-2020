@@ -61,7 +61,6 @@ public class PositionTracker {
     }
 
     public void correctPosition() {
-        //TODO: get field length and the distance from the left side of the field to the scoring goal
         if (vision.getLLValue("tv") == 0) {
             return;
         }

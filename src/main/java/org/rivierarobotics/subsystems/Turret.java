@@ -88,7 +88,7 @@ public class Turret extends BasePIDSubsystem {
         } else {
             tx = Math.toRadians(-180 - vision.getLLValue("tx") + getAbsoluteAngle());
         }
-        double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance - ShooterUtil.getLLtoTurretX());
+        double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance + ShooterUtil.getLLtoTurretX());
         SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
         SmartDashboard.putNumber("txTurret", Math.toDegrees(txTurret));
         return txTurret;

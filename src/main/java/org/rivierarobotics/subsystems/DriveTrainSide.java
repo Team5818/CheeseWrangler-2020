@@ -141,6 +141,10 @@ public class DriveTrainSide extends BasePIDSubsystem {
         this.currentGear = gear;
     }
 
+    public DriveTrain.Gear getGear() {
+        return currentGear;
+    }
+
     public void setNeutralIdle(NeutralIdleMode mode) {
         mode.applyTo(tl, tr, bl, br);
     }

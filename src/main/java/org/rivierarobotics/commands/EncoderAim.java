@@ -66,8 +66,10 @@ public class EncoderAim extends CommandBase {
         double dist = Math.sqrt(Math.pow(xFromGoal + extraDistance, 2) + Math.pow(zFromGoal, 2));
         SmartDashboard.putNumber("dist", dist);
         double t = ShooterUtil.getTConstant();
-        double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
-        double vz = zFromGoal / t - driveTrain.getXVelocity();
+        // - driveTrain.getYVelocity()
+        double vx = (extraDistance + xFromGoal) / t;
+        // - driveTrain.getXVelocity()
+        double vz = zFromGoal / t;
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx)) + 180;
         turret.changeAimMode(Turret.AimMode.STILL);
 

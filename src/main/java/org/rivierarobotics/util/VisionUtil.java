@@ -45,6 +45,7 @@ public class VisionUtil {
     }
 
     public final double getActualTY() {
+        //WORKS :)
         double LLDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
         return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
             LLDist + ShooterUtil.getLLtoTurretX()));

@@ -47,13 +47,12 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
-        double ty = vision.getActualTY();
         double t = ShooterUtil.getTConstant();
-        double dist = height / Math.tan(Math.toRadians(ty));
+        double dist = height / Math.tan(Math.toRadians(vision.getActualTY()));
         double txTurret = turret.getTxTurret(dist, extraDistance);
-        double vx = (dist * Math.cos(txTurret) + extraDistance) / t - driveTrain.getYVelocity();
-        double vz = dist * Math.sin(txTurret) / t - driveTrain.getXVelocity();
-        double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
+        double vz = dist * Math.sin(txTurret) / t;
+        double turretAngle = Math.toDegrees(Math.atan2(vz, vx)) + 180;
         double tv = vision.getLLValue("tv");
 
         if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {

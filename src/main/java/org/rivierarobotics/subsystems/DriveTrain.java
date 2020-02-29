@@ -76,14 +76,21 @@ public class DriveTrain extends SubsystemBase {
         return (left.getVelocity() + right.getVelocity()) / 2.0;
     }
 
+    public double getRPM() {
+        if(left.getGear().equals(Gear.HIGH)) {
+            return (right.getRPMHigh() + left.getRPMHigh()) / 2;
+        } else if(left.getGear().equals(Gear.LOW)) {
+            return (right.getRPMLow() + left.getRPMLow()) / 2;
+        }
+        return (right.getRPMLow() + left.getRPMLow()) / 2;
+    }
+
     public double getXVelocity() {
-        double tickV = (getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
+        return ((getRPM() / 60) * Dimensions.WHEEL_CIRCUMFERENCE) * Math.sin(Math.toRadians(gyro.getYaw()));
     }
 
     public double getYVelocity() {
-        double tickV = (getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
+        return ((getRPM() / 60) * Dimensions.WHEEL_CIRCUMFERENCE) * Math.cos(Math.toRadians(gyro.getYaw()));
     }
 
     public void setGear(Gear gear) {
