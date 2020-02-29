@@ -34,6 +34,8 @@ import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.util.LimelightLedState;
 
+import java.util.Objects;
+
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
@@ -49,9 +51,9 @@ public class Robot extends TimedRobot {
 //        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
         chooser = new SendableChooser<>();
 
-        //TODO not sure if this is valid syntax
-        chooser.addOption("Flex", commandComponent.auto().pathweaver(Pose2dPath.FLEX));
-        chooser.addOption("Cheeserun", commandComponent.auto().pathweaver(Pose2dPath.CHEESERUN));
+        //chooser.addOption("Flex", commandComponent.auto().pathweaver(Pose2dPath.FLEX));
+        //chooser.addOption("Cheeserun", commandComponent.auto().pathweaver(Pose2dPath.CHEESERUN));
+        chooser.addOption("4 x 4", commandComponent.auto().forwardAuto());
     }
 
     @Override
@@ -64,12 +66,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
-        autonomousCommand = chooser.getSelected();
-        if (autonomousCommand != null) {
-            //TODO uncomment when auto is testing/implemented
-            //autonomousCommand.schedule();
-        }
-        commandComponent.auto().forwardAuto().schedule();
+        autonomousCommand = Objects.requireNonNullElseGet(
+            chooser.getSelected(),
+            commandComponent.auto()::forwardAuto
+        );
+        autonomousCommand.schedule();
     }
 
     @Override

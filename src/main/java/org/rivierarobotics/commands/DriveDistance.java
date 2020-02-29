@@ -31,6 +31,7 @@ public class DriveDistance extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(driveTrain.getLeft().getPosition() - startMeters, finalMeters, 0.1);
+        return false;
+//        return MathUtil.isWithinTolerance(driveTrain.getLeft().getPosition() - startMeters, finalMeters, 0.1);
     }
 }

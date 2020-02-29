@@ -13,7 +13,7 @@ import org.rivierarobotics.util.VisionTarget;
 @GenerateCreator
 public class ShootNWedges extends ParallelRaceGroup {
 
-    private static final double TARGET_VEL = 15_000;
+    private static final double TARGET_VEL = 15_900;
 
     public ShootNWedges(@Provided EjectorCommands ejectorCommands,
                         @Provided VisionCommands visionAimCommands,
