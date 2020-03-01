@@ -86,8 +86,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Hood provideHood(Provider<HoodControl> command) {
-        return new Hood(HOOD_TALON, command);
+    public static Hood provideHood(LimelightServo servo, Provider<HoodControl> command) {
+        return new Hood(HOOD_TALON, servo, command);
     }
 
     @Provides

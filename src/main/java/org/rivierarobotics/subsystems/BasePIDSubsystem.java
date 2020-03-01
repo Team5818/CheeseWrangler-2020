@@ -49,8 +49,8 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     }
 
     private void tickPid() {
-        double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
+            double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
             if (Math.abs(pidController.getSetpoint() - getPositionTicks()) < pidConfig.getTolerance()) {
                 return;
             }

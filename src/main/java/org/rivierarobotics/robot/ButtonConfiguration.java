@@ -96,15 +96,19 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
         new JoystickButton(coDriverButtons, 3)
                 .whenPressed();*/
-        new JoystickButton(coDriverButtons, 2)
-            .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
         new JoystickButton(coDriverButtons, 1)
             .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
+        new JoystickButton(coDriverButtons, 2)
+            .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
         new JoystickButton(coDriverButtons, 3)
             .whenPressed(cmds.hood().setAngle(34.5));
+        new JoystickButton(coDriverButtons, 4)
+            .whenPressed(cmds.hood().setAngle(60));
         new JoystickButton(coDriverButtons, 11)
             .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 12)
             .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
+//        new JoystickButton(coDriverButtons, 7)
+//            .whileHeld(cmds.drive().driveDistance(0.3));
     }
 }

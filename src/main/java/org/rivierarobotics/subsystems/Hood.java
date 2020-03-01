@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import org.rivierarobotics.commands.HoodControl;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
@@ -35,10 +36,12 @@ public class Hood extends BasePIDSubsystem {
     private static final double HIGHER_SOFT = 2250;
     private static final double zeroTicks = 2786;
     private final WPI_TalonSRX hoodTalon;
+    private final LimelightServo servo;
     private final Provider<HoodControl> command;
 
-    public Hood(int motorId, Provider<HoodControl> command) {
+    public Hood(int motorId, LimelightServo servo, Provider<HoodControl> command) {
         super(new PIDConfig(0.0015, 0.001, 0.0, 0.0, 10, 0.4), 4096 / 360.0);
+        this.servo = servo;
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         hoodTalon.configFactoryDefault();
@@ -95,6 +98,7 @@ public class Hood extends BasePIDSubsystem {
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }
+        servo.setAngle(95 - getAbsolutePosition());
         super.periodic();
     }
 }

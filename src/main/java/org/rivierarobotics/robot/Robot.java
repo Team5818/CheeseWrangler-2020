@@ -69,6 +69,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getNavXGyro().setAngleAdjustment(220);
+        globalComponent.getDriveTrain().resetEncoder();
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
             commandComponent.auto()::forwardAuto
@@ -87,11 +90,8 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
 
-        globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
-        globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getNavXGyro().setAngleAdjustment(180);
         globalComponent.getLimelightServo().setAngle(70);
     }
 
