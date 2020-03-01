@@ -113,6 +113,7 @@ public class Robot extends TimedRobot {
 
     private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");
     private final ShuffleboardTab driveTrainTab = Shuffleboard.getTab("Drive Train");
+    private final ShuffleboardTab cheeseTab = Shuffleboard.getTab("Cheese Wheel");
     private final NetworkTableEntry turretTargetPos = visionConfTab.add("TurrTargetPos", 0)
         .getEntry();
     private final NetworkTableEntry turretPositionTicks = visionConfTab.add("TurretPosTicks", 0)
@@ -146,6 +147,11 @@ public class Robot extends TimedRobot {
     private final NetworkTableEntry rightVel = driveTrainTab.add("Right Vel", 0)
         .getEntry();
 
+    private final NetworkTableEntry frontSensor = driveTrainTab.add("Front Sensor", 0)
+        .getEntry();
+    private final NetworkTableEntry backSensor = driveTrainTab.add("Back Sensor", 0)
+        .getEntry();
+
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
         turretTargetPos.setNumber(turret.getAbsolutePosition());
@@ -176,6 +182,10 @@ public class Robot extends TimedRobot {
         rightEnc.setNumber(dt.getRight().getPosition());
         leftVel.setNumber(dt.getLeft().getVelocity());
         rightVel.setNumber(dt.getLeft().getVelocity());
+
+        var sens = globalComponent.getCWSensors();
+        frontSensor.setNumber(sens.getFrontSensorValue());
+        backSensor.setNumber(sens.getBackSensorValue());
 
         SmartDashboard.putData(chooser);
     }

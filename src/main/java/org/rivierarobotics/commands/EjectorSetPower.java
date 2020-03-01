@@ -20,13 +20,13 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Ejector;
 
 @GenerateCreator
-public class EjectorSetPower extends InstantCommand {
+public class EjectorSetPower extends CommandBase {
     private final Ejector ejector;
     private final double power;
 
@@ -39,5 +39,15 @@ public class EjectorSetPower extends InstantCommand {
     @Override
     public void execute() {
         ejector.setPower(power);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        ejector.setPower(0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }
