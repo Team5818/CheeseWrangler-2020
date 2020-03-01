@@ -1,7 +1,6 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
@@ -36,7 +35,7 @@ public class ShootNWedges extends ParallelRaceGroup {
             },
             new SequentialCommandGroup(
                 cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0),
-                new ParallelCommandGroup(
+                new ParallelRaceGroup(
                     ejectorCommands.setPower(1.0),
                     new SequentialCommandGroup(
                         new CommandBase() {

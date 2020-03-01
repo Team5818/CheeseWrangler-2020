@@ -33,6 +33,11 @@ public class All5Shoot extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        cheeseWheel.setManualPower(0);
+    }
+
+    @Override
     public boolean isFinished() {
         var pos = cheeseWheel.getPositionTicks();
         return doneHalf && pos >= start && pos <= halfway;
