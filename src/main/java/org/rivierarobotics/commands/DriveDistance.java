@@ -9,11 +9,13 @@ import org.rivierarobotics.subsystems.DriveTrain;
 public class DriveDistance extends CommandBase {
     private final DriveTrain driveTrain;
     private final double finalMeters;
+    private final double power;
     private double startMeters;
 
-    public DriveDistance(@Provided DriveTrain driveTrain, double finalMeters) {
+    public DriveDistance(@Provided DriveTrain driveTrain, double finalMeters, double power) {
         this.driveTrain = driveTrain;
         this.finalMeters = finalMeters;
+        this.power = power;
         addRequirements(driveTrain);
     }
 
@@ -25,7 +27,8 @@ public class DriveDistance extends CommandBase {
     @Override
     public void execute() {
         double sign = Math.signum(finalMeters);
-        driveTrain.setPower(sign * 0.5, sign * 0.5);
+        double directedPower = sign * power;
+        driveTrain.setPower(directedPower, directedPower);
     }
 
     @Override

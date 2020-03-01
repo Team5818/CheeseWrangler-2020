@@ -20,6 +20,11 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.basic.ForwardAuto;
+import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
+import org.rivierarobotics.autonomous.basic.ShootAndDrive;
+import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
+
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -31,7 +36,8 @@ public class AutonomousCommands {
     private Provider<BasicAuto> basicAutoProvider;
     private Provider<BasicAuto2> basicAuto2Provider;
     private Provider<BasicAuto3> basicAuto3Provider;
-    private Provider<ForwardAuto> forwardAutoProvider;
+    private ForwardAutoCreator forwardAutoCreator;
+    private ShootAndDriveCreator shootAndDriveCreator;
 
     @Inject
     public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
@@ -41,7 +47,8 @@ public class AutonomousCommands {
                               Provider<BasicAuto> basicAutoProvider,
                               Provider<BasicAuto2> basicAuto2Provider,
                               Provider<BasicAuto3> basicAuto3Provider,
-                              Provider<ForwardAuto> forwardAutoProvider) {
+                              ForwardAutoCreator forwardAutoCreator,
+                              ShootAndDriveCreator shootAndDriveCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.flexRoutineProvider = flexRoutineProvider;
         this.flexTapeProvider = flexTapeProvider;
@@ -49,7 +56,8 @@ public class AutonomousCommands {
         this.basicAutoProvider = basicAutoProvider;
         this.basicAuto2Provider = basicAuto2Provider;
         this.basicAuto3Provider = basicAuto3Provider;
-        this.forwardAutoProvider = forwardAutoProvider;
+        this.forwardAutoCreator = forwardAutoCreator;
+        this.shootAndDriveCreator = shootAndDriveCreator;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
@@ -59,16 +67,33 @@ public class AutonomousCommands {
     public FlexRoutine flex() {
         return flexRoutineProvider.get();
     }
+
     public FlexTapeRoutine flexTape() {
         return flexTapeProvider.get();
     }
-    public TrenchRun trenchRun() { return trenchRunProvider.get(); }
-    public BasicAuto basicAuto() { return basicAutoProvider.get(); }
-    public BasicAuto2 basicAuto2() { return basicAuto2Provider.get(); }
-    public BasicAuto3 basicAuto3() { return basicAuto3Provider.get(); }
-    public ForwardAuto forwardAuto() {
-        return  forwardAutoProvider.get();
+
+    public TrenchRun trenchRun() {
+        return trenchRunProvider.get();
     }
 
+    public BasicAuto basicAuto() {
+        return basicAutoProvider.get();
+    }
+
+    public BasicAuto2 basicAuto2() {
+        return basicAuto2Provider.get();
+    }
+
+    public BasicAuto3 basicAuto3() {
+        return basicAuto3Provider.get();
+    }
+
+    public ForwardAuto forwardAuto(boolean useVisionAim) {
+        return forwardAutoCreator.create(useVisionAim);
+    }
+
+    public ShootAndDrive shootAndDrive() {
+        return shootAndDriveCreator.create();
+    }
 
 }

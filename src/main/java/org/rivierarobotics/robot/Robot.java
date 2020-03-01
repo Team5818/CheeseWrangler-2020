@@ -27,9 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
@@ -49,13 +47,13 @@ public class Robot extends TimedRobot {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
-//        UsbCamera driverCamera = CameraServer.getInstance().startAutomaticCapture();
-//        driverCamera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 144, 108, 60);
-        chooser = new SendableChooser<>();
 
-        //chooser.addOption("Flex", commandComponent.auto().pathweaver(Pose2dPath.FLEX));
-        //chooser.addOption("Cheeserun", commandComponent.auto().pathweaver(Pose2dPath.CHEESERUN));
-        chooser.addOption("4 x 4", commandComponent.auto().forwardAuto());
+        chooser = new SendableChooser<>();
+        chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
+        chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
+        chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
+        chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
+
         flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
     }
 
@@ -63,6 +61,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
+            globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
     }
@@ -70,11 +69,11 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getNavXGyro().setAngleAdjustment(220);
+        globalComponent.getNavXGyro().setAngleAdjustment(180);
         globalComponent.getDriveTrain().resetEncoder();
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
-            commandComponent.auto()::forwardAuto
+            () -> commandComponent.auto().shootAndDrive()
         );
         autonomousCommand.schedule();
     }
@@ -91,7 +90,6 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getLimelightServo().setAngle(70);
     }
 

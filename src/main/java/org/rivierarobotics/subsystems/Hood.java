@@ -20,12 +20,12 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpiutil.math.MathUtil;
 import org.rivierarobotics.commands.HoodControl;
-import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
@@ -40,13 +40,14 @@ public class Hood extends BasePIDSubsystem {
     private final Provider<HoodControl> command;
 
     public Hood(int motorId, LimelightServo servo, Provider<HoodControl> command) {
-        super(new PIDConfig(0.0015, 0.001, 0.0, 0.0, 10, 0.4), 4096 / 360.0);
+        super(new PIDConfig(0.0015, 0.0, 0.0, 0.0, 10, 0.4), 4096 / 360.0);
         this.servo = servo;
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         hoodTalon.configFactoryDefault();
-        hoodTalon.setSensorPhase(true);
+        hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
+        hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
     public final WPI_TalonSRX getHoodTalon() {
@@ -71,12 +72,13 @@ public class Hood extends BasePIDSubsystem {
     }
 
     private double limitPower(double pwr) {
+        double sign = Math.signum(pwr);
         if (pwr <= 0 && getPositionTicks() < LOWER_SOFT) {
             pwr = MathUtil.clamp(pwr, 0.6 * -(getPositionTicks() - LOWER_HARD) / (LOWER_SOFT - LOWER_HARD), 0);
         } else if (pwr > 0 && getPositionTicks() > HIGHER_SOFT) {
             pwr = MathUtil.clamp(pwr, 0, 0.6 * (HIGHER_HARD - getPositionTicks()) / (HIGHER_HARD - HIGHER_SOFT));
         }
-        return Math.signum(pwr) * MathUtil.clamp(Math.abs(pwr), 0, 0.6);
+        return sign * MathUtil.clamp(Math.abs(pwr), 0, 0.6);
     }
 
     public double getAbsolutePosition() {

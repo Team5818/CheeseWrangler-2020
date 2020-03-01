@@ -54,16 +54,8 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
             if (Math.abs(pidController.getSetpoint() - getPositionTicks()) < pidConfig.getTolerance()) {
                 return;
             }
-            SmartDashboard.putNumber("InitPID", pidPower);
-            if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0 && pidConfig.getF() != 0) {
-                if (pidPower < 0) {
-                    setPower(-pidConfig.getF());
-                } else if (pidPower > 0) {
-                    setPower(pidConfig.getF());
-                }
-            } else {
-                setPower(pidPower);
-            }
+            SmartDashboard.putNumber(getSubsystem() + " InitPID", pidPower);
+            setPower(pidPower);
         }
     }
 

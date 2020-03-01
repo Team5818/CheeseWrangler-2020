@@ -35,8 +35,8 @@ public class DriveCommands {
         this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
     }
 
-    public DriveDistance driveDistance(double finalDistance) {
-        return driveDistanceCreator.create(finalDistance);
+    public DriveDistance driveDistance(double finalDistance, double power) {
+        return driveDistanceCreator.create(finalDistance, power);
     }
 
     public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {
