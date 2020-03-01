@@ -20,37 +20,35 @@
 
 package org.rivierarobotics.subsystems;
 
-import static org.rivierarobotics.util.Dimensions.WHEEL_CIRCUMFERENCE;
-
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide extends SubsystemBase {
-    // TODO re-find ticks-per-inch for the comp bot
-    private static final double TICKS_PER_INCH = 12720.0 / 72;
+    // same units as distance per pulse
+    private static final double MAX_VELOCITY = 5.7912;
+    private static final double FEED_FORWARD = 1.0 / MAX_VELOCITY;
     private final PIDController pidController;
     private final boolean invert;
     private WPI_TalonFX tl;
     private WPI_TalonFX tr;
     private Encoder shaftEncoder;
     private boolean pidEnabled;
-    private final double PID_RANGE;
+    private final double pidRange;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.tl = new WPI_TalonFX(motors.topLeft);
         this.tr = new WPI_TalonFX(motors.topRight);
         this.invert = invert;
-        this.pidController = new PIDController(0,0,0,0.005);
-        this.pidController.setTolerance(0);
-        this.PID_RANGE = 1.0;
+        this.pidController = new PIDController(0, 0, 0, 0.02);
+        this.pidController.setTolerance(5);
+        this.pidRange = 1.0;
 
         setupMotors(tl, tr);
-        NeutralIdleMode.COAST.applyTo(tl, tr);
+        NeutralIdleMode.BRAKE.applyTo(tl, tr);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         // meters / ticks
@@ -70,10 +68,6 @@ public class DriveTrainSide extends SubsystemBase {
         tr.set(pwr);
     }
 
-    public double getPositionTicks() {
-        return getVelocity();
-    }
-
     public double getPosition() {
         return shaftEncoder.getDistance();
     }
@@ -84,11 +78,7 @@ public class DriveTrainSide extends SubsystemBase {
 
     public void setVelocity(double vel) {
         pidEnabled = true;
-        setPosition(vel);
-    }
-
-    public void setPosition(double position) {
-        pidController.setSetpoint(position);
+        pidController.setSetpoint(vel);
     }
 
     public void setManualPower(double pwr) {
@@ -97,14 +87,16 @@ public class DriveTrainSide extends SubsystemBase {
     }
 
     private void tickPid() {
-        if(pidEnabled) {
-            double pidPower = Math.min(PID_RANGE, Math.max(-PID_RANGE, pidController.calculate(getPositionTicks())));
+        if (pidEnabled) {
+            double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPosition())));
+            pidPower += pidController.getSetpoint() * FEED_FORWARD;
             setPower(pidPower);
         }
     }
 
+    @Override
     public void periodic() {
-        //tickPid();
+        tickPid();
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {

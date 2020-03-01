@@ -56,8 +56,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setVelocity(double velocity) {
-        left.setVelocity(velocity);
-        right.setVelocity(velocity);
+        setVelocity(velocity, velocity);
     }
 
     public void setVelocity(double l, double r) {
@@ -66,8 +65,8 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setPower(double l, double r) {
-        left.setPower(l);
-        right.setPower(r);
+        left.setManualPower(l);
+        right.setManualPower(r);
     }
 
     public double getAvgVelocity() {
@@ -111,9 +110,5 @@ public class DriveTrain extends SubsystemBase {
             Units.inchesToMeters(left.getPosition()),
             Units.inchesToMeters(right.getPosition())
         );
-    }
-
-    public enum Gear {
-        LOW, HIGH, HYBRID
     }
 }

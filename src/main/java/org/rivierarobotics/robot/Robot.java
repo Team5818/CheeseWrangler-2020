@@ -143,6 +143,11 @@ public class Robot extends TimedRobot {
     private final NetworkTableEntry rightEnc = driveTrainTab.add("Right Enc", 0)
         .getEntry();
 
+    private final NetworkTableEntry leftVel = driveTrainTab.add("Left Vel", 0)
+        .getEntry();
+    private final NetworkTableEntry rightVel = driveTrainTab.add("Right Vel", 0)
+        .getEntry();
+
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
         turretTargetPos.setNumber(turret.getAbsolutePosition());
@@ -171,6 +176,8 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         leftEnc.setNumber(dt.getLeft().getPosition());
         rightEnc.setNumber(dt.getRight().getPosition());
+        leftVel.setNumber(dt.getLeft().getVelocity());
+        rightVel.setNumber(dt.getLeft().getVelocity());
 
         SmartDashboard.putData(chooser);
     }
