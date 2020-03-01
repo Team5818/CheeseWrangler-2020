@@ -27,9 +27,10 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.NeutralIdleMode;
 
-public class DriveTrainSide {
+public class DriveTrainSide extends SubsystemBase {
     // TODO re-find ticks-per-inch for the comp bot
     private static final double TICKS_PER_INCH = 12720.0 / 72;
     private final PIDController pidController;
@@ -103,7 +104,7 @@ public class DriveTrainSide {
     }
 
     public void periodic() {
-        tickPid();
+        //tickPid();
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {
