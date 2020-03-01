@@ -25,21 +25,28 @@ import static org.rivierarobotics.util.Dimensions.WHEEL_CIRCUMFERENCE;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
+import edu.wpi.first.wpilibj.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.util.NeutralIdleMode;
 
-public class DriveTrainSide extends BasePIDSubsystem {
+public class DriveTrainSide {
     // TODO re-find ticks-per-inch for the comp bot
     private static final double TICKS_PER_INCH = 12720.0 / 72;
+    private final PIDController pidController;
     private final boolean invert;
     private WPI_TalonFX tl;
     private WPI_TalonFX tr;
     private Encoder shaftEncoder;
+    private boolean pidEnabled;
+    private final double PID_RANGE;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        super(new PIDConfig(0.0, 0.0, 0.0, 0.05, 0.0, 1.0)); //kF is not accurate
         this.tl = new WPI_TalonFX(motors.topLeft);
         this.tr = new WPI_TalonFX(motors.topRight);
         this.invert = invert;
+        this.pidController = new PIDController(0,0,0,0.005);
+        this.pidController.setTolerance(0);
+        this.PID_RANGE = 1.0;
 
         setupMotors(tl, tr);
         NeutralIdleMode.COAST.applyTo(tl, tr);
@@ -75,7 +82,28 @@ public class DriveTrainSide extends BasePIDSubsystem {
     }
 
     public void setVelocity(double vel) {
-        // TODO implement proper velocity control
+        pidEnabled = true;
+        setPosition(vel);
+    }
+
+    public void setPosition(double position) {
+        pidController.setSetpoint(position);
+    }
+
+    public void setManualPower(double pwr) {
+        pidEnabled = false;
+        setPower(pwr);
+    }
+
+    private void tickPid() {
+        if(pidEnabled) {
+            double pidPower = Math.min(PID_RANGE, Math.max(-PID_RANGE, pidController.calculate(getPositionTicks())));
+            setPower(pidPower);
+        }
+    }
+
+    public void periodic() {
+        tickPid();
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {
