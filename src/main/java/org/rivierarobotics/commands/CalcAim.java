@@ -79,7 +79,7 @@ public class CalcAim extends CommandBase {
             turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10 + 5);
         } else {
             turret.changeAimMode(Turret.AimMode.STILL);
-            turret.setAbsolutePosition(turretAngle);
+            turret.setAbsoluteAngle(turretAngle);
         }
 
         double y = ShooterUtil.getYVelocityConstant();

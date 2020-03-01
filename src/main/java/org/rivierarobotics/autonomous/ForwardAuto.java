@@ -20,8 +20,8 @@ public class ForwardAuto extends SequentialCommandGroup {
             cheeseWheelCommands.shootNWedges(VisionTarget.INNER, 5),
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    commands.driveDistance(-3).withTimeout(4.0),
-                    commands.driveDistance(3).withTimeout(4.0)
+                    commands.driveDistance(-4).withTimeout(6.0),
+                    commands.driveDistance(4).withTimeout(6.0)
                 ),
                 intake.setPower(Side.BACK)
             ),

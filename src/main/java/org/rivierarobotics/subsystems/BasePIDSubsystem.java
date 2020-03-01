@@ -44,6 +44,10 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this.pidController.setTolerance(pidConfig.getTolerance());
     }
 
+    public void setPidEnabled(boolean pidEnabled) {
+        this.pidEnabled = pidEnabled;
+    }
+
     private void tickPid() {
         double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
         if (pidEnabled) {

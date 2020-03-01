@@ -45,7 +45,8 @@ public class DriveTrainSide extends BasePIDSubsystem {
         NeutralIdleMode.COAST.applyTo(tl, tr);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
-        shaftEncoder.setDistancePerPulse(WHEEL_CIRCUMFERENCE / 2048);
+        // meters / ticks
+        shaftEncoder.setDistancePerPulse(-1.8288 / 7916);
     }
 
     private void setupMotors(WPI_TalonFX... motors) {

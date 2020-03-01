@@ -58,30 +58,29 @@ public class VisionAimHood extends CommandBase {
         double t = ShooterUtil.getTConstant();   //time constant
         double dist = height / Math.tan(Math.toRadians(vision.getActualTY()));
         double txTurret = turret.getTxTurret(dist, extraDistance);
-        double vx = (dist * Math.cos(txTurret) + extraDistance);
+        double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
         double vz = dist * Math.sin(txTurret) / t;
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)) + (0.5 * 0.2 * t);
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+        SmartDashboard.putNumber("YVEL", vy);
+        SmartDashboard.putNumber("t", t);
         SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity);
-        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
 
-        if (vision.getLLValue("ty") ==  8) {
-            if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))
-            || ballVel < 8) {
+        if (vision.getLLValue("tv") ==  1) {
+            if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
                 //Close Shot
-                hood.setAbsoluteAngle(50);
-                flywheel.setPositionTicks(ShooterUtil.velocityToTicks(8));
+                //hood.setAbsoluteAngle(45);
+                //flywheel.setPositionTicks(ShooterUtil.velocityToTicks(8));
             } else if (ballVel > ShooterUtil.getMaxBallVelocity() || hoodAngle < 33) {
                 //Long Shot
-                hood.setAbsoluteAngle(33 + 0.1*dist);
-                flywheel.setPositionTicks(ShooterUtil.velocityToTicks(15));
+                //hood.setAbsoluteAngle(33 + 0.1*dist);
+                //flywheel.setPositionTicks(ShooterUtil.velocityToTicks(15));
             } else {
                 //Calculated Shot
-                hood.setAbsoluteAngle(hoodAngle);
-                flywheel.setPositionTicks(encoderVelocity);
+                //hood.setAbsoluteAngle(hoodAngle);
+                //flywheel.setPositionTicks(encoderVelocity);
             }
         }
     }

@@ -21,5 +21,5 @@
 package org.rivierarobotics.util;
 
 public enum VisionTarget {
-    BOTTOM, TOP, INNER;
+    TOP, INNER
 }

@@ -24,9 +24,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Climb;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -88,9 +85,9 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 2)
                 .whenPressed();*/
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
+            .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
+            .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
         /*new JoystickButton(coDriverButtons, 6)
                 .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
         new JoystickButton(coDriverButtons, 5)
@@ -100,12 +97,14 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 3)
                 .whenPressed();*/
         new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
+            .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
         new JoystickButton(coDriverButtons, 1)
             .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
         new JoystickButton(coDriverButtons, 3)
             .whenPressed(cmds.hood().setAngle(34.5));
-        new JoystickButton(coDriverButtons, 4)
-            .whenPressed(cmds.flywheel().setVelocity(15_900));
+        new JoystickButton(coDriverButtons, 11)
+            .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
+        new JoystickButton(coDriverButtons, 12)
+            .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
     }
 }

@@ -20,10 +20,10 @@
 
 package org.rivierarobotics.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -31,18 +31,17 @@ import org.rivierarobotics.util.VisionUtil;
 @GenerateCreator
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
-    private final DriveTrain driveTrain;
     private final VisionUtil vision;
     private final double extraDistance;
     private final double height;
+    private boolean done;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided DriveTrain driveTrain, @Provided VisionUtil vision, double extraDistance, double height) {
+    public VisionAimTurret(@Provided Turret turret, @Provided VisionUtil vision, double extraDistance, double height) {
         this.turret = turret;
-        this.driveTrain = driveTrain;
         this.vision = vision;
         this.height = height;
         this.extraDistance = extraDistance;
-        addRequirements(turret, driveTrain);
+        addRequirements(turret);
     }
 
     @Override
@@ -55,14 +54,23 @@ public class VisionAimTurret extends CommandBase {
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx)) + 180;
         double tv = vision.getLLValue("tv");
 
-        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
-            turret.getPidController().setP(0.003);
-        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
-            turret.getPidController().setP(0.002);
-        }
+        SmartDashboard.putNumber("turretAngle", turretAngle);
+        SmartDashboard.putNumber("dist", dist);
 
         if (tv == 1) {
-            turret.setAbsolutePosition(turretAngle);
+            turret.setAbsoluteAngle(turretAngle);
+        } else {
+            done = true;
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        turret.setPidEnabled(false);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return done;
     }
 }

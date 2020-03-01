@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
     private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
+    private Command flyingWheelman;
 
     @Override
     public void robotInit() {
@@ -54,6 +56,7 @@ public class Robot extends TimedRobot {
         //chooser.addOption("Flex", commandComponent.auto().pathweaver(Pose2dPath.FLEX));
         //chooser.addOption("Cheeserun", commandComponent.auto().pathweaver(Pose2dPath.CHEESERUN));
         chooser.addOption("4 x 4", commandComponent.auto().forwardAuto());
+        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
     }
 
     @Override
@@ -89,10 +92,14 @@ public class Robot extends TimedRobot {
         globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getNavXGyro().setAngleAdjustment(180);
+        globalComponent.getLimelightServo().setAngle(70);
     }
 
     @Override
     public void teleopPeriodic() {
+        if (!flyingWheelman.isScheduled()) {
+            flyingWheelman.schedule();
+        }
         CommandScheduler.getInstance().run();
     }
 
@@ -107,6 +114,9 @@ public class Robot extends TimedRobot {
     }
 
     private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");
+    private final ShuffleboardTab driveTrainTab = Shuffleboard.getTab("Drive Train");
+    private final NetworkTableEntry turretTargetPos = visionConfTab.add("TurrTargetPos", 0)
+        .getEntry();
     private final NetworkTableEntry turretPositionTicks = visionConfTab.add("TurretPosTicks", 0)
         .getEntry();
     private final NetworkTableEntry turretAbsoluteAngle = visionConfTab.add("TurretAbsAngle", 0)
@@ -128,10 +138,17 @@ public class Robot extends TimedRobot {
     private final NetworkTableEntry flyVel = visionConfTab.add("Fly Vel", 0)
         .getEntry();
 
+    private final NetworkTableEntry leftEnc = driveTrainTab.add("Left Enc", 0)
+        .getEntry();
+    private final NetworkTableEntry rightEnc = driveTrainTab.add("Right Enc", 0)
+        .getEntry();
+
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
+        turretTargetPos.setNumber(turret.getAbsolutePosition());
         turretPositionTicks.setNumber(turret.getPositionTicks());
         turretAbsoluteAngle.setNumber(turret.getAbsoluteAngle());
+        SmartDashboard.putNumber("TurrAbsAng", turret.getAbsoluteAngle());
 
         var hood = globalComponent.getHood();
         hoodPositionTicks.setNumber(hood.getPositionTicks());
@@ -150,6 +167,10 @@ public class Robot extends TimedRobot {
 
         var flywheel = globalComponent.getFlywheel();
         flyVel.setNumber(flywheel.getPositionTicks());
+
+        var dt = globalComponent.getDriveTrain();
+        leftEnc.setNumber(dt.getLeft().getPosition());
+        rightEnc.setNumber(dt.getRight().getPosition());
 
         SmartDashboard.putData(chooser);
     }

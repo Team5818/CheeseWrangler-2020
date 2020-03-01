@@ -85,7 +85,7 @@ public class EncoderAim extends CommandBase {
             turret.getPidController().setP(0.001);
         }
 
-        turret.setAbsolutePosition(turretAngle);
+        turret.setAbsoluteAngle(turretAngle);
 
         double y = ShooterUtil.getYVelocityConstant();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));

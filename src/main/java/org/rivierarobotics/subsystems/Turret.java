@@ -40,9 +40,10 @@ public class Turret extends BasePIDSubsystem {
     private final NavXGyro gyro;
     private final VisionUtil vision;
     public AimMode mode = AimMode.ENCODER;
+    private double absolutePosition;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-        super(new PIDConfig(0.00125, 0.000125, 0.00000, 0.0, 15, 1.0));
+        super(new PIDConfig(0.0015, 0, 0, 0.0, 15, 0.2));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
@@ -84,9 +85,9 @@ public class Turret extends BasePIDSubsystem {
     public double getTxTurret(double distance, double extraDistance) {
         double tx;
         if(vision.getLLValue("tx") + getAbsoluteAngle() > 0) {
-            tx = Math.toRadians(180 - vision.getLLValue("tx") + getAbsoluteAngle());
+            tx = Math.toRadians(-180 + vision.getLLValue("tx") + getAbsoluteAngle());
         } else {
-            tx = Math.toRadians(-180 - vision.getLLValue("tx") + getAbsoluteAngle());
+            tx = Math.toRadians(180 - vision.getLLValue("tx") + getAbsoluteAngle());
         }
         double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance + ShooterUtil.getLLtoTurretX());
         SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
@@ -94,10 +95,15 @@ public class Turret extends BasePIDSubsystem {
         return txTurret;
     }
 
-    public void setAbsolutePosition(double angle) {
+    public double getAbsolutePosition() {
+        return absolutePosition;
+    }
+
+    public void setAbsoluteAngle(double angle) {
         SmartDashboard.putNumber("Turret SetAngle", angle);
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         SmartDashboard.putNumber("turretset", position);
+        absolutePosition = position;
         if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position);
         } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
@@ -126,9 +132,6 @@ public class Turret extends BasePIDSubsystem {
             pidController.setI(0.000125);
         }
     }
-
-
-
 
     @Override
     public void setPower(double pwr) {
