@@ -118,8 +118,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(@Provided CWSensors sensors, Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, sensors, command);
+    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, CW_FRONT_SENSOR, CW_BACK_SENSOR, command);
     }
 
     @Provides
@@ -138,12 +138,6 @@ public class SubsystemModule {
     @Singleton
     public static CameraServo provideCameraServo() {
         return new CameraServo(CAMERA_SERVO);
-    }
-
-    @Provides
-    @Singleton
-    public static CWSensors provideCheeseWheelSensors() {
-        return new CWSensors(CW_FRONT_SENSOR, CW_BACK_SENSOR);
     }
 
     @Provides

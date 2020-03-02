@@ -57,9 +57,9 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-            .whenHeld(cmds.intake().setPower(Side.FRONT));
+            .whenHeld(cmds.collect().continuous(Side.FRONT));
         new JoystickButton(coDriverLeft, 2)
-            .whenHeld(cmds.intake().setPower(Side.BACK));
+            .whenHeld(cmds.collect().continuous(Side.BACK));
         new JoystickButton(coDriverRight, 1)
             .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
         new JoystickButton(coDriverRight, 2)

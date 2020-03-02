@@ -183,9 +183,9 @@ public class Robot extends TimedRobot {
         leftVel.setNumber(dt.getLeft().getVelocity());
         rightVel.setNumber(dt.getLeft().getVelocity());
 
-        var sens = globalComponent.getCWSensors();
-        frontSensor.setNumber(sens.getFrontSensorValue());
-        backSensor.setNumber(sens.getBackSensorValue());
+        var cw = globalComponent.getCheeseWheel();
+        frontSensor.setNumber(cw.getFrontSensorValue());
+        backSensor.setNumber(cw.getBackSensorValue());
 
         SmartDashboard.putData(chooser);
     }

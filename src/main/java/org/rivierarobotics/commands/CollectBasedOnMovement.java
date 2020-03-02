@@ -18,33 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.Side;
 
-public class CWSensors {
-    private final AnalogInput frontSensor;
-    private final AnalogInput backSensor;
+import javax.inject.Inject;
 
-    public CWSensors(int front, int back) {
-        this.frontSensor = new AnalogInput(front);
-        this.backSensor = new AnalogInput(back);
-    }
-
-    public boolean isFrontBallPresent() {
-        return (frontSensor.getValue() < 300 && frontSensor.getValue() > 1);
-    }
-
-    public double getFrontSensorValue() {
-        return frontSensor.getValue();
-    }
-
-
-    public boolean isBackBallPresent() {
-        return (backSensor.getValue() < 300 && backSensor.getValue() > 1);
-    }
-
-    public double getBackSensorValue() {
-        return backSensor.getValue();
+public class CollectBasedOnMovement extends ConditionalCommand {
+    @Inject
+    public CollectBasedOnMovement(DriveTrain driveTrain, CollectInfiniteWedgesCreator collectInfiniteWedgesCreator) {
+        super(collectInfiniteWedgesCreator.create(Side.FRONT),
+            collectInfiniteWedgesCreator.create(Side.BACK),
+            () -> driveTrain.getAvgVelocity() >= 0);
     }
 }

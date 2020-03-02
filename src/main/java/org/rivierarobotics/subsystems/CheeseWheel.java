@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
@@ -32,14 +33,16 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
     private static final double INPUT_RANGE = 4095;
-    private final CWSensors sensors;
+    private final AnalogInput frontSensor;
+    private final AnalogInput backSensor;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
-    public CheeseWheel(int motor, CWSensors sensors, Provider<CheeseWheelControl> command) {
+    public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.0012, 0.0, 0, 0.1, 5, 0.5));
         this.wheelTalon = new WPI_TalonSRX(motor);
+        this.frontSensor = new AnalogInput(frontSensor);
+        this.backSensor = new AnalogInput(backSensor);
         this.command = command;
-        this.sensors = sensors;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
         pidController.enableContinuousInput(0, INPUT_RANGE);
@@ -111,8 +114,21 @@ public class CheeseWheel extends BasePIDSubsystem {
         return diff;
     }
 
-    public CWSensors getSensors() {
-        return sensors;
+
+    public boolean isFrontBallPresent() {
+        return (frontSensor.getValue() < 300 && frontSensor.getValue() > 1);
+    }
+
+    public double getFrontSensorValue() {
+        return frontSensor.getValue();
+    }
+
+    public boolean isBackBallPresent() {
+        return (backSensor.getValue() < 300 && backSensor.getValue() > 1);
+    }
+
+    public double getBackSensorValue() {
+        return backSensor.getValue();
     }
 
     public enum Filled {

@@ -43,8 +43,6 @@ public class NavXGyro {
         navX.setAngleAdjustment(angle);
     }
 
-
-
     public void resetGyro() {
         navX.reset();
     }

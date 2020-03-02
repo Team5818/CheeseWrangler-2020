@@ -34,7 +34,7 @@ import org.rivierarobotics.util.Side;
 import java.util.function.BooleanSupplier;
 
 @GenerateCreator
-public class IntakeSetPower extends CommandBase {
+public class CollectInfiniteWedges extends CommandBase {
     private final Intake intake;
     private final CheeseWheel cheeseWheel;
     private final CheeseWheelCommands cheeseWheelCommands;
@@ -47,15 +47,15 @@ public class IntakeSetPower extends CommandBase {
     private final int direction;
     private double startSeen;
 
-    IntakeSetPower(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
-                   @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
+    CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
+                          @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
         this.intake = intake;
         this.cheeseWheel = cheeseWheel;
         this.cheeseWheelCommands = cheeseWheelCommands;
         if (side == Side.FRONT) {
             frontPower = pwrConstant;
             backPower = 0.0;
-            hasBall = cheeseWheel.getSensors()::isFrontBallPresent;
+            hasBall = cheeseWheel::isFrontBallPresent;
             mode = CheeseWheel.Mode.COLLECT_FRONT;
             direction = -1;
         } else {
@@ -64,7 +64,7 @@ public class IntakeSetPower extends CommandBase {
             }
             frontPower = 0.0;
             backPower = pwrConstant;
-            hasBall = cheeseWheel.getSensors()::isBackBallPresent;
+            hasBall = cheeseWheel::isBackBallPresent;
             mode = CheeseWheel.Mode.COLLECT_BACK;
             direction = 1;
         }

@@ -42,7 +42,6 @@ public class TurretControl extends CommandBase {
 
     @Override
     public void execute() {
-        //TODO uncomment when robot is stable
         turret.setManualPower(0.7 * MathUtil.fitDeadband(coDriverRightJs.getX()));
     }
 

@@ -21,7 +21,7 @@
 package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.IntakeCommands;
+import org.rivierarobotics.commands.CollectionCommands;
 import org.rivierarobotics.commands.LimelightServoCommands;
 import org.rivierarobotics.commands.TurretCommands;
 import org.rivierarobotics.commands.VisionCommands;
@@ -36,7 +36,7 @@ public class TrenchRun extends SequentialCommandGroup {
     @Inject
     public TrenchRun(AutonomousCommands autonomousCommands,
                      VisionCommands visionCommands,
-                     IntakeCommands intakeCommands,
+                     CollectionCommands intakeCommands,
                      LimelightServoCommands limelightServoCommands,
                      TurretCommands turretCommands) {
         addCommands(
@@ -46,7 +46,7 @@ public class TrenchRun extends SequentialCommandGroup {
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOSHOOT),
                 visionCommands.visionAim(VisionTarget.INNER),
 
-                intakeCommands.setPower(Side.BACK),
+                intakeCommands.continuous(Side.BACK),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOCOLLECT),
                 // cheesewheelCommandGroups.autoCollect(false),
 
@@ -58,11 +58,11 @@ public class TrenchRun extends SequentialCommandGroup {
                 visionCommands.visionAim(VisionTarget.INNER),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLL),
-                intakeCommands.setPower(Side.FRONT),
+                intakeCommands.continuous(Side.FRONT),
                 // cheesewheelCommandGroups.autoCollect(true),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLLL),
-                intakeCommands.setPower(Side.FRONT),
+                intakeCommands.continuous(Side.FRONT),
                 // cheesewheelCommandGroups.autoCollect(true),
 
                 autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTEDD));

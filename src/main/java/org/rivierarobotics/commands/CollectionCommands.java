@@ -20,17 +20,27 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
+import javax.inject.Provider;
 
-public class IntakeBasedOnMovement extends ConditionalCommand {
+public class CollectionCommands {
+    private CollectInfiniteWedgesCreator collectInfiniteWedgesCreator;
+    private final Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider;
+
     @Inject
-    public IntakeBasedOnMovement(DriveTrain driveTrain, IntakeSetPowerCreator intakeSetPowerCreator) {
-        super(intakeSetPowerCreator.create(Side.FRONT),
-            intakeSetPowerCreator.create(Side.BACK),
-            () -> driveTrain.getAvgVelocity() >= 0);
+    public CollectionCommands(CollectInfiniteWedgesCreator collectInfiniteWedgesCreator,
+                              Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider) {
+        this.collectInfiniteWedgesCreator = collectInfiniteWedgesCreator;
+        this.intakeBasedOnMovementProvider = intakeBasedOnMovementProvider;
+    }
+
+    public CollectInfiniteWedges continuous(Side side) {
+        return collectInfiniteWedgesCreator.create(side);
+    }
+
+    public CollectBasedOnMovement collectOnMovement() {
+        return intakeBasedOnMovementProvider.get();
     }
 }

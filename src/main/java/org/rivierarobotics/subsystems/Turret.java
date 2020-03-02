@@ -114,20 +114,6 @@ public class Turret extends BasePIDSubsystem {
         return minAngle * getAnglesOrInchesToTicks();
     }
 
-    public void setPIDMode(PIDMode pidMode) {
-        if (pidMode.equals(PIDMode.CLOSE)) {
-            pidController.setP(pidController.getP() * 2);
-        } else if (pidMode.equals(PIDMode.MID)) {
-            pidController.setP(pidController.getP() * 1.5);
-        } else if (pidMode.equals(PIDMode.FAR)) {
-            pidController.setP(pidController.getP() * 0.5);
-            pidController.setI(pidController.getI() * 1.5);
-        } else {
-            pidController.setP(0.00125);
-            pidController.setI(0.000125);
-        }
-    }
-
     @Override
     public void setPower(double pwr) {
         if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
@@ -165,9 +151,5 @@ public class Turret extends BasePIDSubsystem {
 
     public enum AimMode {
         VISION, ENCODER, MOVING, STILL;
-    }
-
-    public enum PIDMode {
-        CLOSE, MID, FAR;
     }
 }

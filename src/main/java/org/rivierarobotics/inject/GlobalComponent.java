@@ -24,7 +24,6 @@ import dagger.Component;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
-import org.rivierarobotics.subsystems.CWSensors;
 import org.rivierarobotics.subsystems.CameraServo;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Climb;
@@ -62,7 +61,6 @@ public abstract class GlobalComponent {
         getLimelightServo();
         getCameraServo();
         getPositionTracker();
-        getCWSensors();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -92,8 +90,6 @@ public abstract class GlobalComponent {
     public abstract LimelightServo getLimelightServo();
 
     public abstract CameraServo getCameraServo();
-
-    public abstract CWSensors getCWSensors();
 
     public abstract PositionTracker getPositionTracker();
 
