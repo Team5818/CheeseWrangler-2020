@@ -29,23 +29,19 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX leftVictor;
-    private final WPI_VictorSPX rightVictor;
+    private final WPI_VictorSPX victor;
     private final Provider<EjectorControl> command;
 
     @Inject
-    public Ejector(int left, int right, Provider<EjectorControl> command) {
+    public Ejector(int id, Provider<EjectorControl> command) {
         this.command = command;
-        this.leftVictor = new WPI_VictorSPX(left);
-        this.rightVictor = new WPI_VictorSPX(right);
-        rightVictor.setInverted(true);
-        NeutralIdleMode.BRAKE.applyTo(leftVictor, rightVictor);
+        this.victor = new WPI_VictorSPX(id);
+        NeutralIdleMode.BRAKE.applyTo(victor);
     }
 
 
     public void setPower(double pwr) {
-        leftVictor.set(pwr);
-        rightVictor.set(pwr);
+        victor.set(pwr);
     }
 
     @Override
