@@ -34,7 +34,7 @@ public class PistonController extends SubsystemBase {
         switch (piston) {
             case TEST:
                 return null;
-//                return testSolenoid;
+                // return testSolenoid;
             default:
                 throw new IllegalArgumentException("Piston invalid");
         }

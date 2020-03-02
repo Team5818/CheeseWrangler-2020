@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.CWCommandGroups;
 import org.rivierarobotics.commands.IntakeCommands;
 import org.rivierarobotics.commands.LimelightServoCommands;
 import org.rivierarobotics.commands.TurretCommands;
@@ -37,7 +36,6 @@ public class TrenchRun extends SequentialCommandGroup {
     @Inject
     public TrenchRun(AutonomousCommands autonomousCommands,
                      VisionCommands visionCommands,
-                     CWCommandGroups cheesewheelCommandGroups,
                      IntakeCommands intakeCommands,
                      LimelightServoCommands limelightServoCommands,
                      TurretCommands turretCommands) {
@@ -50,22 +48,22 @@ public class TrenchRun extends SequentialCommandGroup {
 
                 intakeCommands.setPower(Side.BACK),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOCOLLECT),
-                cheesewheelCommandGroups.autoCollect(false),
+                // cheesewheelCommandGroups.autoCollect(false),
 
-                cheesewheelCommandGroups.autoCollect(false),
+                // cheesewheelCommandGroups.autoCollect(false),
 
-                cheesewheelCommandGroups.autoCollect(false),
+                // cheesewheelCommandGroups.autoCollect(false),
 
                 autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTED),
                 visionCommands.visionAim(VisionTarget.INNER),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLL),
                 intakeCommands.setPower(Side.FRONT),
-                cheesewheelCommandGroups.autoCollect(true),
+                // cheesewheelCommandGroups.autoCollect(true),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLLL),
                 intakeCommands.setPower(Side.FRONT),
-                cheesewheelCommandGroups.autoCollect(true),
+                // cheesewheelCommandGroups.autoCollect(true),
 
                 autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTEDD));
     }

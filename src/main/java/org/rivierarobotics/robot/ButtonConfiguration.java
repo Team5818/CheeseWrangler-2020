@@ -56,46 +56,14 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-
         new JoystickButton(coDriverLeft, 1)
             .whenHeld(cmds.intake().setPower(Side.FRONT));
         new JoystickButton(coDriverLeft, 2)
             .whenHeld(cmds.intake().setPower(Side.BACK));
-
-        // Competition Robot Button Map
-        /*new JoystickButton(driverRight, 1)
-                .whenPressed(cmds.intake().setPower(1.0));
-        new JoystickButton(driverRight, 2)
-                .whenPressed(cmds.intake().setPower(-1.0));
-        new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().invertMode());
-
-        new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.climb().setPosition(Climb.Height.FORTY_FIVE));
-        new JoystickButton(coDriverButtons, 10)
-                .whenPressed(cmds.climb().setPosition(Climb.Height.SIXTY));
-        new JoystickButton(coDriverButtons, 8)
-                .whenPressed(cmds.climb().setPosition(Climb.Height.SEVENTY_TWO));
-        new JoystickButton(coDriverButtons, 11)
-                .whenPressed();
-        new JoystickButton(coDriverButtons, 9)
-                .whenPressed(cmds.climb().lock());
-        new JoystickButton(coDriverLeft, 1)
-                .whenPressed();
-        new JoystickButton(coDriverLeft, 2)
-                .whenPressed();*/
         new JoystickButton(coDriverRight, 1)
             .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
         new JoystickButton(coDriverRight, 2)
             .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
-        /*new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
-        new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.CLIMB));
-        new JoystickButton(coDriverButtons, 4)
-                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
-        new JoystickButton(coDriverButtons, 3)
-                .whenPressed();*/
         new JoystickButton(coDriverButtons, 1)
             .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
         new JoystickButton(coDriverButtons, 2)
@@ -108,7 +76,5 @@ public class ButtonConfiguration {
             .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 12)
             .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
-//        new JoystickButton(coDriverButtons, 7)
-//            .whileHeld(cmds.drive().driveDistance(0.3));
     }
 }

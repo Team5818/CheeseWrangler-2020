@@ -30,7 +30,6 @@ public class CheeseWheelCommands {
     private CWMoveToFreeIndexCreator moveToFreeIndex;
     private CWSetPositionCreator setPositionCreator;
     private CWSetIndexCreator setIndexCreator;
-    private WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator;
     private final NiceShootinTexCreator niceShootinTexCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final CWMoveToNextIndexCreator moveToNextIndexCreator;
@@ -39,7 +38,6 @@ public class CheeseWheelCommands {
     @Inject
     public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
                                CWSetPositionCreator setPositionCreator,
-                               WaitForBallIntakeTriggerCreator waitForBallIntakeTriggerCreator,
                                CWSetIndexCreator setIndexCreator,
                                NiceShootinTexCreator niceShootinTexCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
@@ -48,7 +46,6 @@ public class CheeseWheelCommands {
         this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
-        this.waitForBallIntakeTriggerCreator = waitForBallIntakeTriggerCreator;
         this.niceShootinTexCreator = niceShootinTexCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.moveToNextIndexCreator = moveToNextIndexCreator;
@@ -67,10 +64,6 @@ public class CheeseWheelCommands {
         return setIndexCreator.create(mode, index);
     }
 
-    public WaitForBallIntakeTrigger waitForBall() {
-        return waitForBallIntakeTriggerCreator.create();
-    }
-
     public NiceShootinTex niceShootinTex(int wedges) {
         return niceShootinTexCreator.create(wedges);
     }
@@ -83,7 +76,7 @@ public class CheeseWheelCommands {
         return moveToNextIndexCreator.create(direction);
     }
 
-    public All5Shoot all5Shoot(){
+    public All5Shoot all5Shoot() {
         return all5ShootCreator.create();
     }
 }

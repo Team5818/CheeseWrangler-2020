@@ -23,7 +23,6 @@ package org.rivierarobotics.inject;
 import dagger.Module;
 import dagger.Subcomponent;
 import org.rivierarobotics.autonomous.AutonomousCommands;
-import org.rivierarobotics.commands.CWCommandGroups;
 import org.rivierarobotics.commands.CameraServoCommands;
 import org.rivierarobotics.commands.CheeseWheelCommands;
 import org.rivierarobotics.commands.ClimbCommands;
@@ -56,8 +55,6 @@ public abstract class CommandComponent {
     public abstract VisionCommands vision();
 
     public abstract CheeseWheelCommands cheeseWheel();
-
-    public abstract CWCommandGroups cheeseGroups();
 
     public abstract AutonomousCommands auto();
 

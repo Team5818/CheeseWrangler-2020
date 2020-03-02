@@ -40,15 +40,13 @@ public class VisionUtil {
     }
 
     public final double getLLValue(String key) {
-        //TODO this is a bad idea, make this its own wrapper method - also key == ty probably wasn't working as intended
         return limelight.getEntry(key).getDouble(0);
     }
 
     public final double getActualTY() {
-        //WORKS :)
-        double LLDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
+        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
         return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
-            LLDist + ShooterUtil.getLLtoTurretX()));
+            llDist + ShooterUtil.getLLtoTurretX()));
     }
 
     public final void setLedState(LimelightLedState state) {

@@ -115,11 +115,11 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setPIDMode(PIDMode pidMode) {
-        if(pidMode.equals(PIDMode.CLOSE)) {
+        if (pidMode.equals(PIDMode.CLOSE)) {
             pidController.setP(pidController.getP() * 2);
-         } else if (pidMode.equals(PIDMode.MID)) {
+        } else if (pidMode.equals(PIDMode.MID)) {
             pidController.setP(pidController.getP() * 1.5);
-        } else if(pidMode.equals(PIDMode.FAR)) {
+        } else if (pidMode.equals(PIDMode.FAR)) {
             pidController.setP(pidController.getP() * 0.5);
             pidController.setI(pidController.getI() * 1.5);
         } else {
@@ -141,13 +141,13 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public void setManualPower(double pwr) {
-        SmartDashboard.putNumber("TPow",pwr);
+        SmartDashboard.putNumber("TPow", pwr);
         if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
         } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
-        SmartDashboard.putNumber("TPowS",pwr);
+        SmartDashboard.putNumber("TPowS", pwr);
         super.setManualPower(pwr);
     }
 

@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.CWCommandGroups;
 import org.rivierarobotics.commands.VisionCommands;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -31,13 +30,10 @@ public class FlexRoutine extends SequentialCommandGroup {
 
     @Inject
     public FlexRoutine(AutonomousCommands autonomousCommands,
-                       VisionCommands visionCommands,
-                       CWCommandGroups cheeseWheelCommandGroups) {
+                       VisionCommands visionCommands) {
         addCommands(
             autonomousCommands.pathweaver(Pose2dPath.FLEX),
-            visionCommands.visionAim(VisionTarget.INNER),
-            cheeseWheelCommandGroups.autoCollect(true)
-//            cheeseWheelCommandGroups.shootNext()
+            visionCommands.visionAim(VisionTarget.INNER)
         );
     }
 }

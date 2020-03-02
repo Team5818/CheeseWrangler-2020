@@ -27,7 +27,6 @@ import org.rivierarobotics.util.Side;
 import javax.inject.Inject;
 
 public class IntakeBasedOnMovement extends ConditionalCommand {
-
     @Inject
     public IntakeBasedOnMovement(DriveTrain driveTrain, IntakeSetPowerCreator intakeSetPowerCreator) {
         super(intakeSetPowerCreator.create(Side.FRONT),
