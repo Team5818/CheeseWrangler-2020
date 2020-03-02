@@ -41,8 +41,7 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 5;
     private static final int FLYWHEEL_FALCON = 4;
     private static final int CHEESE_WHEEL_TALON = 6;
-    private static final int EJECTOR_VICTOR_LEFT = 8;
-    private static final int EJECTOR_VICTOR_RIGHT = 28;
+    private static final int EJECTOR_VICTOR = 8;
     private static final int INTAKE_VICTOR_FRONT = 9;
     private static final int INTAKE_VICTOR_BACK = 10;
     private static final int CLIMB_FALCON = 21;
@@ -93,7 +92,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Ejector provideEjector(Provider<EjectorControl> command) {
-        return new Ejector(EJECTOR_VICTOR_LEFT, EJECTOR_VICTOR_RIGHT, command);
+        return new Ejector(EJECTOR_VICTOR, command);
     }
 
     @Provides
