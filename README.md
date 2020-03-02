@@ -1,1 +1,4 @@
-# PracticeBot-Placeholder-2020
+CheeseWrangler-2020
+===================
+
+Team 5818's 2020 season code.
