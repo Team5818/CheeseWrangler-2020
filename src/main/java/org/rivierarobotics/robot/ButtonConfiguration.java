@@ -61,9 +61,9 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 2)
             .whenHeld(cmds.collect().continuous(Side.BACK));
         new JoystickButton(coDriverRight, 1)
-            .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
+            .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
-            .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
+            .whenPressed(cmds.cheeseWheel().shootNWedges(5));
         new JoystickButton(coDriverButtons, 1)
             .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
         new JoystickButton(coDriverButtons, 2)

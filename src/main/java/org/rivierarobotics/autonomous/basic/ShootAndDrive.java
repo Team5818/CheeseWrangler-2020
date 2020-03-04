@@ -33,7 +33,7 @@ public class ShootAndDrive extends SequentialCommandGroup {
     public ShootAndDrive(@Provided DriveCommands drive,
                          @Provided CheeseWheelCommands cheeseWheel) {
         super(
-            cheeseWheel.shootNWedges(VisionTarget.INNER, 5),
+            cheeseWheel.shootNWedges(5),
             drive.driveDistance(-1, 0.25)
         );
     }

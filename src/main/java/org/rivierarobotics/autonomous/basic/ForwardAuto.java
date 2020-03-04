@@ -41,7 +41,7 @@ public class ForwardAuto extends SequentialCommandGroup {
                        @Provided VisionCommands vision,
                        boolean useVisionAim) {
         addCommands(
-            cheeseWheelCommands.shootNWedges(VisionTarget.INNER, 5),
+            cheeseWheelCommands.shootNWedges(5),
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                     commands.driveDistance(-5, 0.25).withTimeout(6.0),
@@ -52,7 +52,7 @@ public class ForwardAuto extends SequentialCommandGroup {
             useVisionAim
                 ? vision.visionAim(VisionTarget.INNER).withTimeout(1.0)
                 : new InstantCommand(),
-            cheeseWheelCommands.shootNWedges(VisionTarget.INNER, 5)
+            cheeseWheelCommands.shootNWedges(5)
         );
     }
 }

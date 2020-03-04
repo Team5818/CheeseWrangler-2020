@@ -31,6 +31,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.RobotShuffleboard;
 import org.rivierarobotics.util.LimelightLedState;
 
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private Command flyingWheelman;
+    private RobotShuffleboard shuffleboard;
 
     @Override
     public void robotInit() {
@@ -55,12 +57,16 @@ public class Robot extends TimedRobot {
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
         flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+        initShuffleboard();
     }
 
     @Override
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
+            if (!flyingWheelman.isScheduled()) {
+                flyingWheelman.schedule();
+            }
             globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
@@ -95,9 +101,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopPeriodic() {
-        if (!flyingWheelman.isScheduled()) {
-            flyingWheelman.schedule();
-        }
         CommandScheduler.getInstance().run();
     }
 
@@ -109,6 +112,9 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         CommandScheduler.getInstance().run();
+    }
+
+    private void initShuffleboard() {
     }
 
     private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");

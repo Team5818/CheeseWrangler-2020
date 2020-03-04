@@ -20,35 +20,37 @@
 
 package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
-public class SubsystemShuffleTab {
-    private Map<String, NetworkTableEntry> entryMap;
-    private ShuffleboardTab tab;
+public class RobotShuffleboard {
+    private Map<String, RobotShuffleboardTab> tabs;
 
-    public SubsystemShuffleTab(String name) {
-        this.tab = Shuffleboard.getTab(name);
-        this.entryMap = new HashMap<>();
-    }
-
-    public void setEntry(String key, Object value) {
-        NetworkTableEntry entry = entryMap.get(key);
-        if (entry == null) {
-            entry = addEntry(key);
+    public RobotShuffleboard(String... tabs) {
+        this.tabs = new HashMap<>(tabs.length);
+        for (String tab : tabs) {
+            this.tabs.put(tab, new RobotShuffleboardTab(tab));
         }
-        assert entry != null;
-        entry.setValue(value);
     }
 
-    public NetworkTableEntry addEntry(String key) {
-        NetworkTableEntry entry = tab.add(key, 0).getEntry();
-        entryMap.put(key, entry);
-        return entry;
+    public RobotShuffleboardTab getTab(String tab) {
+        return tabs.get(tab);
+    }
+
+    public class RobotShuffleboardTab {
+        private ShuffleboardTab tab;
+        private Map<String, NetworkTableEntry> entries;
+
+        public RobotShuffleboardTab(String tab) {
+            this.tab = Shuffleboard.getTab(tab);
+            this.entries = new HashMap<>();
+        }
     }
 }

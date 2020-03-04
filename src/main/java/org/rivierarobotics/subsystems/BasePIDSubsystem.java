@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
-    protected final SubsystemShuffleTab shuffleTab;
     protected final PIDController pidController;
     protected final PIDConfig pidConfig;
     protected final double anglesOrInchesToTicks;
@@ -39,7 +38,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this.pidConfig = pidConfig;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
 
-        this.shuffleTab = new SubsystemShuffleTab(getName());
         this.pidController = new PIDController(pidConfig.getP(), pidConfig.getI(), pidConfig.getD(), 0.005);
         this.pidController.setTolerance(pidConfig.getTolerance());
     }
@@ -102,15 +100,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     protected abstract void setPower(double pwr);
 
-    private void displayShuffleboard() {
-        shuffleTab.setEntry("Position", getPosition());
-        shuffleTab.setEntry("Position Ticks", getPositionTicks());
-        shuffleTab.setEntry("Setpoint", pidController.getSetpoint());
-        shuffleTab.setEntry("At Setpoint", pidController.atSetpoint());
-        shuffleTab.setEntry("PID Enabled", pidEnabled);
-        shuffleTab.setEntry("Error", pidController.getSetpoint() - Math.abs(getPosition()));
-    }
-
     public void resetPidConstants() {
         pidController.setPID(pidConfig.getP(), pidConfig.getI(), pidConfig.getD());
     }
@@ -118,6 +107,5 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         tickPid();
-        // displayShuffleboard();
     }
 }

@@ -68,8 +68,8 @@ public class CheeseWheelCommands {
         return niceShootinTexCreator.create(wedges);
     }
 
-    public ShootNWedges shootNWedges(VisionTarget target, int wedges) {
-        return shootNWedgesCreator.create(target, wedges);
+    public ShootNWedges shootNWedges(int wedges) {
+        return shootNWedgesCreator.create(wedges);
     }
 
     public CWMoveToNextIndex moveToNextIndex(int direction) {
