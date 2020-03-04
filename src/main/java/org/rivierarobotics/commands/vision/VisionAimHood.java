@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -64,9 +63,6 @@ public class VisionAimHood extends CommandBase {
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
-        SmartDashboard.putNumber("YVEL", vy);
-        SmartDashboard.putNumber("t", t);
-        SmartDashboard.putNumber("BallVel", ballVel);
 
         if (vision.getLLValue("tv") ==  1) {
             if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {

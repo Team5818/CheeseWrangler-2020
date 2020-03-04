@@ -23,6 +23,8 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
@@ -69,6 +71,7 @@ public class Turret extends BasePIDSubsystem {
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance + ShooterUtil.getLLtoTurretX());
+        SmartDashboard.putNumber("txTurret", txTurret);
         return txTurret;
     }
 

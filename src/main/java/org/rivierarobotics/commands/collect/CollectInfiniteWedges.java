@@ -80,16 +80,12 @@ public class CollectInfiniteWedges extends CommandBase {
     public void execute() {
         intake.setPower(frontPower, backPower);
         if (!cheeseWheel.getPidController().atSetpoint()) {
-            SmartDashboard.putBoolean("NotAtSetpoint", true);
             return;
         }
-        SmartDashboard.putBoolean("NotAtSetpoint", false);
         if (hasBall.getAsBoolean()) {
-            SmartDashboard.putBoolean("HasBallTriggered", true);
             // if (startSeen == 0) {
             //     startSeen = Timer.getFPGATimestamp();
             // } else if ((Timer.getFPGATimestamp() - startSeen) > 0.125) {
-            SmartDashboard.putBoolean("HasBallSatisfied", true);
             currentSlot.isFilled = true;
             currentSlot = currentSlot.next(direction);
             moveToNext();
@@ -98,7 +94,6 @@ public class CollectInfiniteWedges extends CommandBase {
             //     SmartDashboard.putBoolean("HasBallSatisfied", false);
             // }
         } else {
-            SmartDashboard.putBoolean("HasBallTriggered", false);
             startSeen = 0;
         }
     }

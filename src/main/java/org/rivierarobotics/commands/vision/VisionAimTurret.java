@@ -56,9 +56,6 @@ public class VisionAimTurret extends CommandBase {
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
 
-        SmartDashboard.putNumber("turretAngle (adj)", turretAngleAdj);
-        SmartDashboard.putNumber("dist", dist);
-
         if (tv == 1) {
             turret.setAbsoluteAngle(turretAngleAdj);
         } else {

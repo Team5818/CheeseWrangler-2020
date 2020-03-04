@@ -138,6 +138,8 @@ public class Robot extends TimedRobot {
         .getEntry();
     private final NetworkTableEntry adjustedTy = visionConfTab.add("Adj. ty", 0)
         .getEntry();
+    private final NetworkTableEntry adjustedTx = visionConfTab.add("Adj. tx", 0)
+        .getEntry();
     private final NetworkTableEntry servoAngle = visionConfTab.add("Servo Angle", 0)
         .getEntry();
     private final NetworkTableEntry flyVel = visionConfTab.add("Fly Vel", 0)

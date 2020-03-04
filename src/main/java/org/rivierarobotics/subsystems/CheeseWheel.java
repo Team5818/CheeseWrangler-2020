@@ -96,7 +96,6 @@ public class CheeseWheel extends BasePIDSubsystem {
                 minSlot = allSlot;
                 minDiff = diff;
             }
-            SmartDashboard.putNumber("diff", diff);
         }
         return minSlot;
     }
