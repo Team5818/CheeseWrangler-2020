@@ -18,36 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.commands.LimelightServoCommands;
+import org.rivierarobotics.commands.TurretCommands;
+import org.rivierarobotics.commands.VisionCommands;
+import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
 
-public class CWShootAll extends SequentialCommandGroup {
+public class BasicAuto extends SequentialCommandGroup {
     @Inject
-    public CWShootAll(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
+    public BasicAuto(AutonomousCommands autonomousCommands,
+                     VisionCommands visionCommands,
+                     LimelightServoCommands limelightServoCommands,
+                     TurretCommands turretCommands) {
         addCommands(
-            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
-            cheeseCommands.setClosestHalfIndex(),
-            ejectorCommands.setPower(1.0)
+                limelightServoCommands.setAngle(30),
+                turretCommands.setAngle(180),
+                visionCommands.correctPosition(),
+                autonomousCommands.pathweaver(Pose2dPath.MOVETOSHOOTT),
+                visionCommands.visionAim(VisionTarget.INNER)
         );
-
-        for (int i = 0; i < 5; i++) {
-            addCommands(cheeseCommands.incrementIndex(), new WaitCommand(1));
-        }
-
-        addCommands(
-            ejectorCommands.setPower(0.0),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
-            cheeseCommands.incrementIndex()
-        );
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

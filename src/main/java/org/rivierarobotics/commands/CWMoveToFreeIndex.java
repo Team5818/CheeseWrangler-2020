@@ -20,24 +20,33 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
-import javax.inject.Inject;
+import java.util.Objects;
 
-public class CWShootIndividual extends SequentialCommandGroup {
-    @Inject
-    public CWShootIndividual(CheeseWheelCommands cheeseCommands, EjectorCommands ejectorCommands) {
-        addCommands(
-            cheeseCommands.setMode(CheeseWheel.Mode.SHOOTING),
-            cheeseCommands.setClosestHalfIndex(),
-            ejectorCommands.setPower(1.0),
-            new WaitCommand(0.5),
-            cheeseCommands.incrementIndex(),
-            new WaitCommand(0.5),
-            cheeseCommands.setMode(CheeseWheel.Mode.LAST),
-            cheeseCommands.incrementIndex()
-        );
+@GenerateCreator
+public class CWMoveToFreeIndex extends BasePIDSetPosition<CheeseWheel> {
+    private final CheeseWheel.Mode mode;
+    private final CheeseWheel.Filled filled;
+    private final int direction;
+
+    public CWMoveToFreeIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
+        super(cheeseWheel, 20, 0.0, 2);
+        this.mode = mode;
+        this.filled = filled;
+        this.direction = direction;
+    }
+
+    private CheeseWheel.Mode getMode() {
+        return Objects.requireNonNullElse(mode, subsystem.lastMode);
+    }
+
+    @Override
+    protected void setSetPosition(double position) {
+        positionTicks = subsystem.getClosestSlot(getMode(), filled, 0)
+            .next(direction)
+            .getModePosition(getMode());
     }
 }

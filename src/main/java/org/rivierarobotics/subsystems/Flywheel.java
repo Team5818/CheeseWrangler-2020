@@ -22,35 +22,46 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 public class Flywheel extends BasePIDSubsystem {
-    private final WPI_TalonSRX flywheelTalon;
-    private double position;
+    private final WPI_TalonFX flywheelFalcon;
 
     public Flywheel(int id) {
-        //TODO ryan help
         super(new PIDConfig(0.00075, 0.075, 0.0, 1), 600.0 / 360);
-        flywheelTalon = new WPI_TalonSRX(id);
-        flywheelTalon.configFactoryDefault();
-        flywheelTalon.setInverted(true);
-        flywheelTalon.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
-        flywheelTalon.setNeutralMode(NeutralMode.Coast);
+        flywheelFalcon = new WPI_TalonFX(id);
+        flywheelFalcon.configFactoryDefault();
+        flywheelFalcon.setInverted(false);
+        flywheelFalcon.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, 100);
+        flywheelFalcon.setNeutralMode(NeutralMode.Coast);
+
+        flywheelFalcon.configNominalOutputForward(0);
+        flywheelFalcon.configNominalOutputReverse(0);
+        flywheelFalcon.configPeakOutputForward(1);
+        flywheelFalcon.configPeakOutputReverse(-1);
+
+        flywheelFalcon.config_kP(0, (1023 * 0.1) / 500);
+        flywheelFalcon.config_kI(0, 0);
+        flywheelFalcon.config_kD(0, 0);
+        flywheelFalcon.config_kF(0, (1023.0 * 0.75) / 15900);
     }
 
     @Override
     public double getPositionTicks() {
-        return flywheelTalon.getSensorCollection().getQuadratureVelocity();
-    }
-
-    @Override
-    public void setPositionTicks(double pos) {
-        this.position = pos;
-        super.setPositionTicks(pos);
+        return flywheelFalcon.getSelectedSensorVelocity();
     }
 
     @Override
     public void setPower(double pwr) {
-        flywheelTalon.set(pwr);
+        flywheelFalcon.set(pwr);
+    }
+
+    public void setVelocity(double vel) {
+        if (vel == 0) {
+            flywheelFalcon.set(TalonFXControlMode.Disabled, 0.0);
+        } else {
+            flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
+        }
     }
 }

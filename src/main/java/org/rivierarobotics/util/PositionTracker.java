@@ -26,16 +26,17 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class PositionTracker {
+    static double[] pos = new double[2];
+    static double beforeT = 0;
     private final Timer time;
     private final NavXGyro gyro;
     private final DriveTrain driveTrain;
-    private final double wheelCircumference = 0.32; // meters
     private final VisionUtil vision;
     private final Turret turret;
-    static double[] pos = new double[2];
-    static double beforeT = 0;
     double t;
 
     @Inject
@@ -60,17 +61,30 @@ public class PositionTracker {
     }
 
     public void correctPosition() {
-        //TODO: get field length and the distance from the left side of the field to the scoring goal
-        double fieldLength = ShooterUtil.getFieldLength();
-        double fieldWidthLeftWallToGoal = ShooterUtil.getLeftFieldToGoal();
-        double dist = ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty")));
-        double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
-        if (txTurret >= 0) {
-            pos[0] = fieldWidthLeftWallToGoal - dist * Math.sin(txTurret);
-        } else {
-            pos[0] = dist * Math.sin(Math.abs(txTurret)) + fieldWidthLeftWallToGoal;
+        if (vision.getLLValue("tv") == 0) {
+            return;
         }
-        pos[1] = (fieldLength) - dist * Math.cos(txTurret);
+
+        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY()));
+
+        double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
+        double xFromTarget = dist * Math.sin(Math.abs(txTurret));
+        if ((turret.getAbsoluteAngle() < -90 && turret.getAbsoluteAngle() > -270) || (turret.getAbsoluteAngle() > 90
+             && turret.getAbsoluteAngle() < 270)) {
+            if (txTurret >= 0) {
+                pos[0] = xFromTarget + ShooterUtil.getLeftFieldToCloseGoal();
+            } else {
+                pos[0] = -xFromTarget + ShooterUtil.getLeftFieldToCloseGoal();
+            }
+            pos[1] = dist * Math.cos(txTurret);
+        } else {
+            if (txTurret >= 0) {
+                pos[0] = ShooterUtil.getLeftFieldToFarGoal() - xFromTarget;
+            } else {
+                pos[0] = xFromTarget + ShooterUtil.getLeftFieldToFarGoal();
+            }
+            pos[1] = ShooterUtil.getFieldLength() - dist * Math.cos(txTurret);
+        }
     }
 
     public double[] getPosition() {

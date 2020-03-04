@@ -24,21 +24,13 @@ import javax.inject.Inject;
 
 public class HoodCommands {
     private HoodSetAngleCreator hoodSetAngleCreator;
-    private HoodAlignQuadratureCreator hoodAlignQuadratureCreator;
 
     @Inject
-    public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator,
-                        HoodAlignQuadratureCreator hoodAlignQuadratureCreator) {
+    public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator) {
         this.hoodSetAngleCreator = hoodSetAngleCreator;
-        this.hoodAlignQuadratureCreator = hoodAlignQuadratureCreator;
     }
 
     public HoodSetAngle setAngle(double angle) {
         return hoodSetAngleCreator.create(angle);
     }
-
-    public HoodAlignQuadrature alignQuadrature() {
-        return hoodAlignQuadratureCreator.create();
-    }
-
 }

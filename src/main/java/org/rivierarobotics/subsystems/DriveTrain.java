@@ -30,6 +30,7 @@ import org.rivierarobotics.commands.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -43,21 +44,29 @@ public class DriveTrain extends SubsystemBase {
     private final DifferentialDriveOdometry odometry;
 
     @Inject
-    public DriveTrain(@Sided(Sided.Side.LEFT) DriveTrainSide left,
-                      @Sided(Sided.Side.RIGHT) DriveTrainSide right,
+    public DriveTrain(@Sided(Side.LEFT) DriveTrainSide left,
+                      @Sided(Side.RIGHT) DriveTrainSide right,
                       NavXGyro gyro, DriveControlCreator controlCreator) {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
         this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
-        Rotation2d gyroAngle = Rotation2d.fromDegrees(gyro.getYaw());
-        this.odometry = new DifferentialDriveOdometry(gyroAngle);
+        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }
 
+    public void setVelocity(double velocity) {
+        setVelocity(velocity, velocity);
+    }
+
+    public void setVelocity(double l, double r) {
+        left.setVelocity(l);
+        right.setVelocity(r);
+    }
+
     public void setPower(double l, double r) {
-        left.setPower(l);
-        right.setPower(r);
+        left.setManualPower(l);
+        right.setManualPower(r);
     }
 
     public double getAvgVelocity() {
@@ -65,18 +74,11 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public double getXVelocity() {
-        double tickV = (getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
+        return getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw()));
     }
 
     public double getYVelocity() {
-        double tickV = (getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw())));
-        return (10 * tickV * (1 / 4096.0) * Dimensions.WHEEL_CIRCUMFERENCE);
-    }
-
-    public void setGear(Gear gear) {
-        left.setGear(gear);
-        right.setGear(gear);
+        return getAvgVelocity() * Math.cos(Math.toRadians(gyro.getYaw()));
     }
 
     public DriveTrainSide getLeft() {
@@ -87,22 +89,12 @@ public class DriveTrain extends SubsystemBase {
         return right;
     }
 
-    public void setVelocity(double l, double r) {
-        left.setVelocity(l);
-        right.setVelocity(r);
-    }
-
     public DifferentialDriveKinematics getKinematics() {
         return kinematics;
     }
 
     public Pose2d getPose() {
         return odometry.getPoseMeters();
-    }
-
-    public void resetPose() {
-        left.resetPose();
-        right.resetPose();
     }
 
     public void resetEncoder() {
@@ -113,16 +105,10 @@ public class DriveTrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-        left.setPidPower();
-        right.setPidPower();
         odometry.update(
-                Rotation2d.fromDegrees(gyro.getYaw()),
-                Units.inchesToMeters(left.getPosition()),
-                Units.inchesToMeters(right.getPosition())
+            Rotation2d.fromDegrees(gyro.getYaw()),
+            Units.inchesToMeters(left.getPosition()),
+            Units.inchesToMeters(right.getPosition())
         );
-    }
-
-    public enum Gear {
-        LOW, HIGH, HYBRID;
     }
 }

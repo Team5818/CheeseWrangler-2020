@@ -44,13 +44,17 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this.pidController.setTolerance(pidConfig.getTolerance());
     }
 
+    public void setPidEnabled(boolean pidEnabled) {
+        this.pidEnabled = pidEnabled;
+    }
+
     private void tickPid() {
-        double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
         if (pidEnabled) {
-            if (pidController.atSetpoint()) {
+            double pidPower = Math.min(pidConfig.getRange(), Math.max(-pidConfig.getRange(), pidController.calculate(getPositionTicks())));
+            if (Math.abs(pidController.getSetpoint() - getPositionTicks()) < pidConfig.getTolerance()) {
                 return;
             }
-            SmartDashboard.putNumber("InitPID", pidPower);
+            SmartDashboard.putNumber(getSubsystem() + " InitPID", pidPower);
             if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0 && pidConfig.getF() != 0) {
                 if (pidPower < 0) {
                     setPower(-pidConfig.getF());
@@ -114,6 +118,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         tickPid();
-        displayShuffleboard();
+        // displayShuffleboard();
     }
 }

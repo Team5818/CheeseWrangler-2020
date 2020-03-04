@@ -18,17 +18,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.util;
 
-public enum EncoderType {
-    REV_THROUGH_BORE(2048),
-    ARMABOT_RS7(12),
-    CTRE_MAGENCODER(4096),
-    FALCON_CPR(2048);
-
-    public final int ticksPerRev;
-
-    EncoderType(int ticksPerRev) {
-        this.ticksPerRev = ticksPerRev;
-    }
+public enum Side {
+    LEFT, RIGHT, FRONT, BACK
 }

@@ -24,34 +24,41 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Intake;
 
 @GenerateCreator
-public class CWAutoCollect extends CommandBase {
-    private final CheeseWheel cheeseWheel;
-    private final Intake intake;
-    private final boolean front;
+public class All5Shoot extends CommandBase {
+    private CheeseWheel cheeseWheel;
+    private double halfway;
+    private boolean doneHalf;
+    private double start;
 
-    public CWAutoCollect(@Provided CheeseWheel cheeseWheel, @Provided Intake intake, boolean front) {
+    public All5Shoot(@Provided CheeseWheel cheeseWheel) {
         this.cheeseWheel = cheeseWheel;
-        this.intake = intake;
-        this.front = front;
-        addRequirements(cheeseWheel, intake);
     }
 
     @Override
     public void initialize() {
-        cheeseWheel.setMode(front ? CheeseWheel.Mode.COLLECT_FRONT : CheeseWheel.Mode.COLLECT_BACK);
+        doneHalf = false;
+        start = cheeseWheel.getPositionTicks();
+        halfway = (start + 2048) % 4096;
     }
 
     @Override
     public void execute() {
-        if (cheeseWheel.getIntakeSensorState()) {
-            //TODO move this to the incrementIndex command
-            cheeseWheel.currentIndex += 1;
-            cheeseWheel.currentIndex %= 5;
-            cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
-            //TODO add detection/wait for wood b/n index slots
+        if (!doneHalf && cheeseWheel.getPositionTicks() > halfway) {
+            doneHalf = true;
         }
+        cheeseWheel.setManualPower(1.0);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        cheeseWheel.setManualPower(0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        var pos = cheeseWheel.getPositionTicks();
+        return doneHalf && pos >= start && pos <= halfway;
     }
 }

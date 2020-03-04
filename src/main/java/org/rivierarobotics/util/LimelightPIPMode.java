@@ -18,19 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.util;
 
-import javax.inject.Inject;
+public enum LimelightPIPMode {
+    STANDARD(0), MAIN(1), SECONDARY(2);
 
-public class IntakeCommands {
-    private IntakeSetPowerCreator intakeSetPowerCreator;
+    public final int set;
 
-    @Inject
-    public IntakeCommands(IntakeSetPowerCreator intakeSetPowerCreator) {
-        this.intakeSetPowerCreator = intakeSetPowerCreator;
-    }
-
-    public IntakeSetPower setPower(double power) {
-        return intakeSetPowerCreator.create(power);
+    LimelightPIPMode(int set) {
+        this.set = set;
     }
 }

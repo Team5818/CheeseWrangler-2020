@@ -18,26 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.autonomous.basic;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.CheeseWheelCommands;
+import org.rivierarobotics.commands.DriveCommands;
+import org.rivierarobotics.util.VisionTarget;
 
-import javax.inject.Inject;
+@GenerateCreator
+public class ShootAndDrive extends SequentialCommandGroup {
 
-public class CWIncrementIndex extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-
-    @Inject
-    public CWIncrementIndex(CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
+    public ShootAndDrive(@Provided DriveCommands drive,
+                         @Provided CheeseWheelCommands cheeseWheel) {
+        super(
+            cheeseWheel.shootNWedges(VisionTarget.INNER, 5),
+            drive.driveDistance(-1, 0.25)
+        );
     }
 
-    @Override
-    public void execute() {
-        cheeseWheel.currentIndex += 1;
-        cheeseWheel.currentIndex %= 5;
-        cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
-    }
 }

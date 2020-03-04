@@ -20,54 +20,62 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.autonomous.PathweaverExecutor;
-import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.DriveTrainSide;
-import org.rivierarobotics.subsystems.Flywheel;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.LimelightServo;
-import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.LimelightLedState;
-import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.VisionUtil;
+
+import java.util.Objects;
 
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
+    private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
+    private Command flyingWheelman;
 
     @Override
     public void robotInit() {
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
+        commandComponent = globalComponent.getCommandComponentBuilder().build();
+
         chooser = new SendableChooser<>();
-        
-        chooser.addOption("Flex", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.FLEX));
-        chooser.addOption("CheeseRun", new PathweaverExecutor(globalComponent.getDriveTrain(), Pose2dPath.CHEESERUN));
+        chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
+        chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
+        chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
+        chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
+
+        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
     }
 
     @Override
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
+            globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
     }
 
     @Override
     public void autonomousInit() {
-        autonomousCommand = chooser.getSelected();
-        if (autonomousCommand != null) {
-            autonomousCommand.schedule();
-        }
+        globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getNavXGyro().setAngleAdjustment(180);
+        globalComponent.getDriveTrain().resetEncoder();
+        autonomousCommand = Objects.requireNonNullElseGet(
+            chooser.getSelected(),
+            () -> commandComponent.auto().shootAndDrive()
+        );
+        autonomousCommand.schedule();
     }
 
     @Override
@@ -77,24 +85,19 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        var commandComponent = globalComponent.getCommandComponentBuilder().build();
-        CommandScheduler.getInstance().schedule(commandComponent.hood().alignQuadrature());
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
 
-        globalComponent.getDriveTrain().resetEncoder();
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
-        globalComponent.getNavXGyro().resetGyro();
-        //CommandScheduler.getInstance().schedule(commandComponent.turret().setAngle(0));
-        //CommandScheduler.getInstance().schedule(commandComponent.cameraServo().setAngle(0));
-        globalComponent.getCheeseWheel().setPositionTicks(globalComponent.getCheeseWheel().getIndexPosition(0));
+        globalComponent.getLimelightServo().setAngle(70);
     }
 
     @Override
     public void teleopPeriodic() {
-        globalComponent.getPositionTracker().trackPosition();
+        if (!flyingWheelman.isScheduled()) {
+            flyingWheelman.schedule();
+        }
         CommandScheduler.getInstance().run();
     }
 
@@ -105,29 +108,85 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
+        CommandScheduler.getInstance().run();
     }
 
-    private void displayShuffleboard() {
-        VisionUtil vision = globalComponent.getVisionUtil();
-        NavXGyro navX = globalComponent.getNavXGyro();
-        Turret tt = globalComponent.getTurret();
-        CheeseWheel in = globalComponent.getCheeseWheel();
-        Hood h = globalComponent.getHood();
-        Flywheel fly = globalComponent.getFlywheel();
-        DriveTrainSide left = globalComponent.getDriveTrain().getLeft();
-        LimelightServo servo = globalComponent.getLimelightServo();
+    private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");
+    private final ShuffleboardTab driveTrainTab = Shuffleboard.getTab("Drive Train");
+    private final ShuffleboardTab cheeseTab = Shuffleboard.getTab("Cheese Wheel");
+    private final NetworkTableEntry turretTargetPos = visionConfTab.add("TurrTargetPos", 0)
+        .getEntry();
+    private final NetworkTableEntry turretPositionTicks = visionConfTab.add("TurretPosTicks", 0)
+        .getEntry();
+    private final NetworkTableEntry turretAbsoluteAngle = visionConfTab.add("TurretAbsAngle", 0)
+        .getEntry();
+    private final NetworkTableEntry hoodPositionTicks = visionConfTab.add("HoodPosTicks", 0)
+        .getEntry();
+    private final NetworkTableEntry hoodAbsoluteAngle = visionConfTab.add("HoodAbsAngle", 0)
+        .getEntry();
+    private final NetworkTableEntry gyroYaw = visionConfTab.add("Gyro Yaw", 0)
+        .getEntry();
+    private final NetworkTableEntry ty = visionConfTab.add("ty", 0)
+        .getEntry();
+    private final NetworkTableEntry tx = visionConfTab.add("tx", 0)
+        .getEntry();
+    private final NetworkTableEntry adjustedTy = visionConfTab.add("Adj. ty", 0)
+        .getEntry();
+    private final NetworkTableEntry servoAngle = visionConfTab.add("Servo Angle", 0)
+        .getEntry();
+    private final NetworkTableEntry flyVel = visionConfTab.add("Fly Vel", 0)
+        .getEntry();
 
-        SmartDashboard.putNumber("tv", vision.getLLValue("tv"));
-        SmartDashboard.putNumber("tx", vision.getLLValue("tx"));
-        SmartDashboard.putNumber("ty", vision.getLLValue("ty"));
-        SmartDashboard.putNumber("yaw", navX.getYaw());
-        SmartDashboard.putNumber("AbsTurret", tt.getAbsoluteAngle());
-        SmartDashboard.putNumber("HoodAngle", h.getAbsolutePosition());
-        SmartDashboard.putNumber("Flywheel Velocity", fly.getPositionTicks());
-        SmartDashboard.putNumber("TurretPosTicks", tt.getPositionTicks());
-        SmartDashboard.putNumber("TurretVelocity", tt.getVelocity());
-        SmartDashboard.putNumber("TurretAbsAngle", tt.getAbsoluteAngle());
-        SmartDashboard.putNumber("LLAngle", servo.getAngle());
+    private final NetworkTableEntry leftEnc = driveTrainTab.add("Left Enc", 0)
+        .getEntry();
+    private final NetworkTableEntry rightEnc = driveTrainTab.add("Right Enc", 0)
+        .getEntry();
+
+    private final NetworkTableEntry leftVel = driveTrainTab.add("Left Vel", 0)
+        .getEntry();
+    private final NetworkTableEntry rightVel = driveTrainTab.add("Right Vel", 0)
+        .getEntry();
+
+    private final NetworkTableEntry frontSensor = driveTrainTab.add("Front Sensor", 0)
+        .getEntry();
+    private final NetworkTableEntry backSensor = driveTrainTab.add("Back Sensor", 0)
+        .getEntry();
+
+    private void displayShuffleboard() {
+        var turret = globalComponent.getTurret();
+        turretTargetPos.setNumber(turret.getAbsolutePosition());
+        turretPositionTicks.setNumber(turret.getPositionTicks());
+        turretAbsoluteAngle.setNumber(turret.getAbsoluteAngle());
+        SmartDashboard.putNumber("TurrAbsAng", turret.getAbsoluteAngle());
+
+        var hood = globalComponent.getHood();
+        hoodPositionTicks.setNumber(hood.getPositionTicks());
+        hoodAbsoluteAngle.setNumber(hood.getAbsolutePosition());
+
+        var gyro = globalComponent.getNavXGyro();
+        gyroYaw.setNumber(gyro.getYaw());
+
+        var visionUtil = globalComponent.getVisionUtil();
+        ty.setNumber(visionUtil.getLLValue("ty"));
+        tx.setNumber(visionUtil.getLLValue("tx"));
+        adjustedTy.setNumber(visionUtil.getActualTY());
+
+        var llServo = globalComponent.getLimelightServo();
+        servoAngle.setNumber(llServo.getAngle());
+
+        var flywheel = globalComponent.getFlywheel();
+        flyVel.setNumber(flywheel.getPositionTicks());
+
+        var dt = globalComponent.getDriveTrain();
+        leftEnc.setNumber(dt.getLeft().getPosition());
+        rightEnc.setNumber(dt.getRight().getPosition());
+        leftVel.setNumber(dt.getLeft().getVelocity());
+        rightVel.setNumber(dt.getLeft().getVelocity());
+
+        var cw = globalComponent.getCheeseWheel();
+        frontSensor.setNumber(cw.getFrontSensorValue());
+        backSensor.setNumber(cw.getBackSensorValue());
+
         SmartDashboard.putData(chooser);
     }
 }

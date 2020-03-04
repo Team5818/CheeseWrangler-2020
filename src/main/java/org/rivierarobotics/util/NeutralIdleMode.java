@@ -22,28 +22,20 @@ package org.rivierarobotics.util;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.revrobotics.CANSparkMax;
-import edu.wpi.first.wpilibj.SpeedController;
 
 public enum NeutralIdleMode {
-    BRAKE(CANSparkMax.IdleMode.kBrake, NeutralMode.Brake),
-    COAST(CANSparkMax.IdleMode.kCoast, NeutralMode.Coast);
+    BRAKE(NeutralMode.Brake),
+    COAST(NeutralMode.Coast);
 
-    public final CANSparkMax.IdleMode spark;
     public final NeutralMode ctre;
 
-    NeutralIdleMode(CANSparkMax.IdleMode spark, NeutralMode ctre) {
-        this.spark = spark;
+    NeutralIdleMode(NeutralMode ctre) {
         this.ctre = ctre;
     }
 
-    public void applyTo(SpeedController... controllers) {
-        for (SpeedController controller : controllers) {
-            if (controller instanceof CANSparkMax) {
-                ((CANSparkMax) controller).setIdleMode(this.spark);
-            } else if (controller instanceof BaseMotorController) {
-                ((BaseMotorController) controller).setNeutralMode(this.ctre);
-            }
+    public void applyTo(BaseMotorController... controllers) {
+        for (BaseMotorController controller : controllers) {
+            controller.setNeutralMode(this.ctre);
         }
     }
 }

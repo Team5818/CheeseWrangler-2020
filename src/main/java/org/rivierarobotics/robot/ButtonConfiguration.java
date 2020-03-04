@@ -22,11 +22,9 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
-import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
@@ -39,7 +37,6 @@ public class ButtonConfiguration {
     private final Joystick driverButtons;
     private final Joystick coDriverButtons;
     private final CommandComponent cmds;
-    double angle = 0;
 
     @Inject
     public ButtonConfiguration(@Input(Input.Selector.DRIVER_LEFT) Joystick driverLeft,
@@ -60,58 +57,24 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.FLEX));
+            .whenHeld(cmds.collect().continuous(Side.FRONT));
         new JoystickButton(coDriverLeft, 2)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.CHEESERUN));
+            .whenHeld(cmds.collect().continuous(Side.BACK));
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.cameraServo().setAngle(0));
+            .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 1));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.vision().visionAim(VisionTarget.INNER));
-        new JoystickButton(coDriverButtons, 12)
-            .whenPressed(cmds.turret().setAngle(20));
-        new JoystickButton(coDriverButtons, 11)
-            .whenPressed(cmds.hood().alignQuadrature());
-        /*
-        new JoystickButton(driverLeft, 1)
-        // Competition Robot Button Map
-                .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.LOW));
-        new JoystickButton(driverLeft, 2)
-                .whenPressed(cmds.drive().changeGear(DriveTrain.Gear.HIGH));
-        new JoystickButton(driverRight, 1)
-                .whenPressed(cmds.intake().setPower(1.0));
-        new JoystickButton(driverRight, 2)
-                .whenPressed(cmds.intake().setPower(-1.0));
-        new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().invertMode());
-        new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.climb().setPosition(Climb.Height.FORTY_FIVE));
-        new JoystickButton(coDriverButtons, 10)
-                .whenPressed(cmds.climb().setPosition(Climb.Height.SIXTY));
-        new JoystickButton(coDriverButtons, 8)
-                .whenPressed(cmds.climb().setPosition(Climb.Height.SEVENTY_TWO));
-        new JoystickButton(coDriverButtons, 11)
-                .whenPressed();
-        new JoystickButton(coDriverButtons, 9)
-                .whenPressed(cmds.climb().lock());
-        new JoystickButton(coDriverLeft, 1)
-                .whenPressed();
-        new JoystickButton(coDriverLeft, 2)
-                .whenPressed();
-        new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.cheeseWheel().shootNext());
-        new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.cheeseWheel().shootAll());
-        new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
-        new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.CLIMB));
-        new JoystickButton(coDriverButtons, 4)
-                .whenPressed(cmds.cameraServo().setPosition(LLServoPosition.FRONT_COLLECT));
-        new JoystickButton(coDriverButtons, 3)
-                .whenPressed();
-        new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().incrementIndex());
+            .whenPressed(cmds.cheeseWheel().shootNWedges(VisionTarget.INNER, 5));
         new JoystickButton(coDriverButtons, 1)
-                .whenPressed(cmds.cheeseWheel().decrementIndex());*/
+            .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
+        new JoystickButton(coDriverButtons, 2)
+            .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
+        new JoystickButton(coDriverButtons, 3)
+            .whenPressed(cmds.hood().setAngle(34.5));
+        new JoystickButton(coDriverButtons, 4)
+            .whenPressed(cmds.hood().setAngle(60));
+        new JoystickButton(coDriverButtons, 11)
+            .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
+        new JoystickButton(coDriverButtons, 12)
+            .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
     }
 }

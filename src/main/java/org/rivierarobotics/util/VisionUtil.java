@@ -40,14 +40,21 @@ public class VisionUtil {
     }
 
     public final double getLLValue(String key) {
-        if (key == "ty") {
-            return limelight.getEntry(key).getDouble(0) + limelightServo.getAngle();
-        }
         return limelight.getEntry(key).getDouble(0);
+    }
+
+    public final double getActualTY() {
+        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
+        return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
+            llDist + ShooterUtil.getLLtoTurretX()));
     }
 
     public final void setLedState(LimelightLedState state) {
         limelight.getEntry("ledMode").setNumber(state.set);
+    }
+
+    public final void setPipMode(LimelightPIPMode mode) {
+        limelight.getEntry("stream").setNumber(mode.set);
     }
 
     public final void invertLedState() {

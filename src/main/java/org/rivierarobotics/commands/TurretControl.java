@@ -42,7 +42,7 @@ public class TurretControl extends CommandBase {
 
     @Override
     public void execute() {
-        turret.setManualPower(MathUtil.fitDeadband(coDriverRightJs.getX()));
+        turret.setManualPower(0.7 * MathUtil.fitDeadband(coDriverRightJs.getX()));
     }
 
     @Override

@@ -20,24 +20,23 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Intake;
+import org.rivierarobotics.subsystems.ServoPosition;
 
-@GenerateCreator
-public class IntakeSetPower extends InstantCommand {
-    private final Intake intake;
-    private final double power;
+import javax.inject.Inject;
 
-    public IntakeSetPower(@Provided Intake intake, double power) {
-        this.intake = intake;
-        this.power = power;
-        addRequirements(intake);
+public class CameraServoCommands {
+    private CameraServoSetPositionCreator cameraServoSetPositionCreator;
+
+    @Inject
+    public CameraServoCommands(CameraServoSetPositionCreator cameraServoSetPositionCreator) {
+        this.cameraServoSetPositionCreator = cameraServoSetPositionCreator;
     }
 
-    @Override
-    public void execute() {
-        intake.setPower(power);
+    public CameraServoSetPosition setAngle(double angle) {
+        return cameraServoSetPositionCreator.create(angle);
+    }
+
+    public CameraServoSetPosition setPosition(ServoPosition position) {
+        return cameraServoSetPositionCreator.create(position.angle);
     }
 }

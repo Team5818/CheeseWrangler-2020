@@ -22,22 +22,25 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class Intake extends SubsystemBase {
-    private final IntakeSide left;
-    private final IntakeSide right;
+    private final IntakeSide front;
+    private final IntakeSide back;
 
     @Inject
-    public Intake(@Sided(Sided.Side.LEFT) IntakeSide left,
-                  @Sided(Sided.Side.RIGHT) IntakeSide right) {
-        this.left = left;
-        this.right = right;
+    public Intake(@Sided(Side.FRONT) IntakeSide front,
+                  @Sided(Side.BACK) IntakeSide back) {
+        this.front = front;
+        this.back = back;
     }
 
-    public void setPower(double pwr) {
-        left.setPower(pwr);
-        right.setPower(pwr);
+    public void setPower(double frontPwr, double backPwr) {
+        front.setPower(frontPwr);
+        back.setPower(backPwr);
     }
 }

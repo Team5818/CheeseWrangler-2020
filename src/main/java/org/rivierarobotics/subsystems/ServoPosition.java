@@ -18,28 +18,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
+public enum ServoPosition {
+    FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
 
-import javax.inject.Inject;
+    public final int angle;
 
-public class CWDecrementIndex extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-
-    @Inject
-    public CWDecrementIndex(CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
-    }
-
-    @Override
-    public void execute() {
-        cheeseWheel.currentIndex -= 1;
-        if (cheeseWheel.currentIndex < 0) {
-            cheeseWheel.currentIndex = 4 + cheeseWheel.currentIndex;
-        }
-        cheeseWheel.setPositionTicks(cheeseWheel.getIndexPosition(cheeseWheel.currentIndex));
+    ServoPosition(int angle) {
+        this.angle = angle;
     }
 }

@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands;
 
-import org.rivierarobotics.subsystems.LimelightServo;
+import org.rivierarobotics.subsystems.ServoPosition;
 
 import javax.inject.Inject;
 
@@ -36,7 +36,7 @@ public class LimelightServoCommands {
         return llServoSetPositionCreator.create(angle);
     }
 
-    public LLServoSetPosition setPosition(LimelightServo.Position position) {
+    public LLServoSetPosition setPosition(ServoPosition position) {
         return llServoSetPositionCreator.create(position.angle);
     }
 }

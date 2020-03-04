@@ -21,13 +21,29 @@
 package org.rivierarobotics.util;
 
 public class ShooterUtil {
-
+    //TODO:Update literally everything in this class
     private ShooterUtil() {
     }
 
     public static double getTopHeight() {
-        return 1.63; //diff between robot height and top goal meters
+        return 1.78; //diff between robot height and top goal meters
     }
+
+    public static double getMaxBallVelocity() {
+        //in m/s
+        return 22;
+    }
+
+    public static double getLLtoTurretX() {
+        //meters
+        return 0.203;
+    }
+
+    public static double getLLtoTurretY() {
+        //meters
+        return 0.137;
+    }
+
 
     public static double getDistanceFromOuterToInnerTarget() {
         //meters
@@ -47,24 +63,32 @@ public class ShooterUtil {
     }
 
     public static double getMaxFlywheelVelocity() {
-        return 350; //encoder value
+        return 19880; //encoder value
     }
 
     public static double getMaxHoodAngle() {
-        return 42; //degrees
+        return 66; //degrees
     }
 
+    public static double getMinHoodAngle() {
+        return 33;
+    }
+
+    //TODO: Change this for the new robot once we do ball trials <- graph vel on the x and ticks per second on the y and get an equation
     public static double velocityToTicks(double vel) {
-        return ((vel - 0.86) / .003) * (1 / 600.0) * 4.4 * 12;
+        return (1077.97 * vel - 4034);
     }
 
     public static double getFieldLength() {
-        return 7.31; //meters
+        return 16; //meters
     }
 
-    public static double getLeftFieldToGoal() {
-        return 0.9; //meters
+    public static double getLeftFieldToFarGoal() {
+        return 5.8; //meters
     }
 
+    public static double getLeftFieldToCloseGoal() {
+        return 2.44; // meters
+    }
 
 }

@@ -22,59 +22,30 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.CheeseWheelControl;
+import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem {
-    public final double diff = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
-    private final DigitalInput intakeSensor;
-    private final DigitalInput outputSensor;
     private final Provider<CheeseWheelControl> command;
-    public int currentIndex = 0;
-    public Mode mode = Mode.COLLECT_FRONT;
+    private static final double INPUT_RANGE = 4095;
+    private final AnalogInput frontSensor;
+    private final AnalogInput backSensor;
     public Mode lastMode = Mode.COLLECT_FRONT;
 
-    public CheeseWheel(int motor, int sensorOne, int sensorTwo, Provider<CheeseWheelControl> command) {
-        super(new PIDConfig(0, 0, 0, 1));
+    public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
+        super(new PIDConfig(0.0012, 0.0, 0, 0.1, 5, 0.5));
         this.wheelTalon = new WPI_TalonSRX(motor);
-        this.intakeSensor = new DigitalInput(sensorOne);
-        this.outputSensor = new DigitalInput(sensorTwo);
+        this.frontSensor = new AnalogInput(frontSensor);
+        this.backSensor = new AnalogInput(backSensor);
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-    }
-
-    public boolean getIntakeSensorState() {
-        return intakeSensor.get();
-    }
-
-    public boolean getOutputSensorState() {
-        return outputSensor.get();
-    }
-
-    public void setMode(Mode mode) {
-        if (mode == Mode.LAST) {
-            this.mode = lastMode;
-        } else {
-            this.lastMode = this.mode;
-            this.mode = mode;
-        }
-    }
-
-    public double getIndexPosition(int index) {
-        return mode.offset + (index * diff);
-    }
-
-    public double getRelativeIndex() {
-        return (getPositionTicks() - mode.offset) / diff;
-    }
-
-    @Override
-    public double getPositionTicks() {
-        return wheelTalon.getSensorCollection().getPulseWidthPosition();
+        pidController.enableContinuousInput(0, INPUT_RANGE);
     }
 
     @Override
@@ -90,14 +61,81 @@ public class CheeseWheel extends BasePIDSubsystem {
         super.periodic();
     }
 
-    public enum Mode {
-        //TODO set offsets from bottom to position
-        SHOOTING(0), COLLECT_FRONT(0), COLLECT_BACK(0), CLIMB(0), LAST(0);
-
-        public final int offset;
-
-        Mode(int offset) {
-            this.offset = offset;
+    @Override
+    public double getPositionTicks() {
+        int base = wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
+        while (base < 0) {
+            base += 4096;
         }
+        return base;
+    }
+
+    public double getClosestIndexAngle(Mode mode, Filled filled, int direction) {
+        return getClosestSlot(mode, filled, direction).getModePosition(mode);
+    }
+
+    public CheeseSlot getClosestSlot(Mode mode, Filled filled, int direction) {
+        this.lastMode = mode;
+        CheeseSlot[] allSlots = CheeseSlot.values();
+        CheeseSlot minSlot = allSlots[0];
+        double minDiff = Double.MAX_VALUE;
+
+        for (CheeseSlot allSlot : allSlots) {
+            if (filled != Filled.DONT_CARE && (filled == Filled.YES) != allSlot.isFilled) {
+                continue;
+            }
+
+            double diff = allSlot.getModePosition(mode) - getPositionTicks();
+            diff = correctDiffForGap(diff);
+            if (0 != direction && ((int) Math.signum(diff)) != direction) {
+                // only take those with same direction
+                continue;
+            }
+            diff = Math.abs(diff);
+            if (diff < minDiff) {
+                minSlot = allSlot;
+                minDiff = diff;
+            }
+            SmartDashboard.putNumber("diff", diff);
+        }
+        return minSlot;
+    }
+
+    // Handles continuous input gap
+    public double correctDiffForGap(double diff) {
+        diff %= INPUT_RANGE;
+        if (Math.abs(diff) > INPUT_RANGE / 2) {
+            if (diff > 0) {
+                return diff - INPUT_RANGE;
+            } else {
+                return diff + INPUT_RANGE;
+            }
+        }
+        return diff;
+    }
+
+
+    public boolean isFrontBallPresent() {
+        return (frontSensor.getValue() < 300 && frontSensor.getValue() > 1);
+    }
+
+    public double getFrontSensorValue() {
+        return frontSensor.getValue();
+    }
+
+    public boolean isBackBallPresent() {
+        return (backSensor.getValue() < 300 && backSensor.getValue() > 1);
+    }
+
+    public double getBackSensorValue() {
+        return backSensor.getValue();
+    }
+
+    public enum Filled {
+        YES, NO, DONT_CARE
+    }
+
+    public enum Mode {
+        COLLECT_FRONT, COLLECT_BACK, FIX_FRONT, FIX_BACK, SHOOTING
     }
 }

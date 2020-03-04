@@ -20,26 +20,17 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.MathUtil;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 
-public class CWSetClosestHalfIndex extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
-
+public class CollectBasedOnMovement extends ConditionalCommand {
     @Inject
-    public CWSetClosestHalfIndex(CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
-    }
-
-    @Override
-    public void execute() {
-        double closestIndexPos = cheeseWheel.getIndexPosition((int) Math.round(cheeseWheel.getRelativeIndex()));
-        double diffTicks = cheeseWheel.getPositionTicks() - closestIndexPos;
-        double halfIndexDiff = MathUtil.minAbsCompare(diffTicks - (cheeseWheel.diff / 2), diffTicks + (cheeseWheel.diff / 2));
-        cheeseWheel.setPositionTicks(cheeseWheel.getPositionTicks() + halfIndexDiff);
+    public CollectBasedOnMovement(DriveTrain driveTrain, CollectInfiniteWedgesCreator collectInfiniteWedgesCreator) {
+        super(collectInfiniteWedgesCreator.create(Side.FRONT),
+            collectInfiniteWedgesCreator.create(Side.BACK),
+            () -> driveTrain.getAvgVelocity() >= 0);
     }
 }

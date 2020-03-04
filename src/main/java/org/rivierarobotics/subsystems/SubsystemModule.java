@@ -29,6 +29,7 @@ import org.rivierarobotics.commands.HoodControl;
 import org.rivierarobotics.commands.TurretControl;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
@@ -36,40 +37,44 @@ import javax.inject.Singleton;
 
 @Module
 public class SubsystemModule {
-    private static final int TURRET_TALON = 13;
-    private static final int HOOD_TALON = 10;
-    private static final int FLYWHEEL_TALON = 11;
-    private static final int CHEESE_WHEEL_TALON = 7;
-    private static final int EJECTOR_TALON = 17;
-    private static final int INTAKE_LEFT_TALON = 18;
-    private static final int INTAKE_RIGHT_TALON = 19;
-    private static final int CLIMB_TALON = 20;
+    private static final int TURRET_TALON = 7;
+    private static final int HOOD_TALON = 5;
+    private static final int FLYWHEEL_FALCON = 4;
+    private static final int CHEESE_WHEEL_TALON = 6;
+    private static final int EJECTOR_VICTOR = 8;
+    private static final int INTAKE_VICTOR_FRONT = 9;
+    private static final int INTAKE_VICTOR_BACK = 10;
+    private static final int CLIMB_FALCON = 21;
 
-    private static final int HOOD_LIMIT_SWITCH = 0;
-    private static final int INDEX_SENSOR_INTAKE = 9;
-    private static final int INDEX_SENSOR_OUTPUT = 10;
     private static final int LIMELIGHT_SERVO = 1;
+    private static final int CAMERA_SERVO = 0;
+    private static final int CW_FRONT_SENSOR = 1;
+    private static final int CW_BACK_SENSOR = 0;
 
-    private static final DriveTrainSide.MotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
-        new DriveTrainSide.MotorIds(1, 2, 3);
-    private static final DriveTrainSide.MotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
-        new DriveTrainSide.MotorIds(4, 5, 6);
+    private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
+        new DTMotorIds(
+            1, 0,
+            0, 1);
+    private static final DTMotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
+        new DTMotorIds(
+            13, 14,
+            2, 4);
 
     private SubsystemModule() {
     }
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.LEFT)
+    @Sided(Side.LEFT)
     public static DriveTrainSide provideDriveSideLeft() {
-        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, false);
+        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, true);
     }
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.RIGHT)
+    @Sided(Side.RIGHT)
     public static DriveTrainSide provideDriveSideRight() {
-        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, true);
+        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, false);
     }
 
     @Provides
@@ -80,41 +85,41 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Hood provideHood(Provider<HoodControl> command) {
-        return new Hood(HOOD_TALON, HOOD_LIMIT_SWITCH, command);
+    public static Hood provideHood(LimelightServo servo, Provider<HoodControl> command) {
+        return new Hood(HOOD_TALON, servo, command);
     }
 
     @Provides
     @Singleton
     public static Ejector provideEjector(Provider<EjectorControl> command) {
-        return new Ejector(EJECTOR_TALON, command);
+        return new Ejector(EJECTOR_VICTOR, command);
     }
 
     @Provides
     @Singleton
     public static Flywheel provideFlywheel() {
-        return new Flywheel(FLYWHEEL_TALON);
+        return new Flywheel(FLYWHEEL_FALCON);
     }
 
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.LEFT)
-    public static IntakeSide provideIntakeSideLeft() {
-        return new IntakeSide(INTAKE_LEFT_TALON, true);
+    @Sided(Side.FRONT)
+    public static IntakeSide provideIntakeSideFront() {
+        return new IntakeSide(INTAKE_VICTOR_FRONT, false);
     }
 
     @Provides
     @Singleton
-    @Sided(Sided.Side.RIGHT)
-    public static IntakeSide provideIntakeSideRight() {
-        return new IntakeSide(INTAKE_RIGHT_TALON, false);
+    @Sided(Side.BACK)
+    public static IntakeSide provideIntakeSideBack() {
+        return new IntakeSide(INTAKE_VICTOR_BACK, true);
     }
 
     @Provides
     @Singleton
     public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, INDEX_SENSOR_INTAKE, INDEX_SENSOR_OUTPUT, command);
+        return new CheeseWheel(CHEESE_WHEEL_TALON, CW_FRONT_SENSOR, CW_BACK_SENSOR, command);
     }
 
     @Provides
@@ -131,7 +136,13 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
+    public static CameraServo provideCameraServo() {
+        return new CameraServo(CAMERA_SERVO);
+    }
+
+    @Provides
+    @Singleton
     public static Climb provideClimb() {
-        return new Climb(CLIMB_TALON);
+        return new Climb(CLIMB_FALCON);
     }
 }

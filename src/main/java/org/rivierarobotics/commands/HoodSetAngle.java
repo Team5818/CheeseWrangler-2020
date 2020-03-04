@@ -27,7 +27,7 @@ import org.rivierarobotics.subsystems.Hood;
 @GenerateCreator
 public class HoodSetAngle extends BasePIDSetPosition<Hood> {
     public HoodSetAngle(@Provided Hood hood, double angle) {
-        super(hood, 0.15, angle);
+        super(hood, 1, angle, 1.0);
     }
 
     @Override
@@ -37,6 +37,6 @@ public class HoodSetAngle extends BasePIDSetPosition<Hood> {
 
     @Override
     protected void setPositionTicks(double position) {
-        this.subsystem.setAbsolutePosition(position);
+        this.subsystem.setAbsoluteAngle(position);
     }
 }

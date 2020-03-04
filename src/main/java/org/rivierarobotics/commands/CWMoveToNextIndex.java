@@ -23,35 +23,31 @@ package org.rivierarobotics.commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
-public class HoodAlignQuadrature extends CommandBase {
-    private final Hood hood;
+public class CWMoveToNextIndex extends CommandBase {
 
-    public HoodAlignQuadrature(@Provided Hood hood) {
-        this.hood = hood;
-        addRequirements(hood);
+    private final CheeseWheel cheeseWheel;
+    private CheeseSlot currentSlot;
+    private final int direction;
+
+    public CWMoveToNextIndex(@Provided CheeseWheel cheeseWheel, int direction) {
+        this.cheeseWheel = cheeseWheel;
+        this.direction = direction;
+        addRequirements(cheeseWheel);
     }
 
     @Override
-    public void execute() {
-        //TODO why do we need this if?
-        if (isFinished()) {
-            return;
-        }
-        hood.setManualPower(0.15);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        hood.setManualPower(0.0);
-        hood.getHoodTalon().getSensorCollection().setQuadraturePosition(0, 100);
+    public void initialize() {
+        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0)
+            .next(direction);
+        cheeseWheel.setPositionTicks(currentSlot.getModePosition(CheeseWheel.Mode.COLLECT_FRONT));
     }
 
     @Override
     public boolean isFinished() {
-        // switch is false when triggered
-        return !hood.getLimit().get();
+        return cheeseWheel.getPidController().atSetpoint();
     }
 }

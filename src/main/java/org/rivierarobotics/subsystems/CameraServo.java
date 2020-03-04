@@ -18,25 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import org.rivierarobotics.util.PositionTracker;
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import javax.inject.Inject;
 
-public class CorrectPosition extends InstantCommand {
-
-    PositionTracker tracker;
+public class CameraServo extends SubsystemBase {
+    private final Servo servo;
 
     @Inject
-    public CorrectPosition(PositionTracker tracker) {
-        this.tracker = tracker;
+    public CameraServo(int id) {
+        this.servo = new Servo(id);
     }
 
-    @Override
-    public void execute() {
-        tracker.correctPosition();
+    //TODO redo these two methods for camera specific servo
+    public double getAngle() {
+        return (servo.getPosition() - 0.5) * -240.0;
     }
 
+    public void setAngle(double angle) {
+        this.servo.set(0.5 - (angle * 1 / 240.0));
+    }
 }

@@ -21,75 +21,62 @@
 package org.rivierarobotics.commands;
 
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class CheeseWheelCommands {
-    private Provider<CWIncrementIndex> incrementIndexProvider;
-    private Provider<CWDecrementIndex> decrementIndexProvider;
-    private Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider;
-    private Provider<CWShootAll> shootAllProvider;
-    private Provider<CWShootIndividual> shootIndividualProvider;
+    private CWMoveToFreeIndexCreator moveToFreeIndex;
     private CWSetPositionCreator setPositionCreator;
-    private CWSetModeCreator setModeCreator;
-    private CWInvertModeCreator invertModeCreator;
-    private CWAutoCollectCreator autoCollectCreator;
+    private CWSetIndexCreator setIndexCreator;
+    private final NiceShootinTexCreator niceShootinTexCreator;
+    private final ShootNWedgesCreator shootNWedgesCreator;
+    private final CWMoveToNextIndexCreator moveToNextIndexCreator;
+    private All5ShootCreator all5ShootCreator;
 
     @Inject
-    public CheeseWheelCommands(Provider<CWIncrementIndex> incrementIndexProvider,
-                               Provider<CWDecrementIndex> decrementIndexProvider,
-                               Provider<CWSetClosestHalfIndex> setClosestHalfIndexProvider,
-                               Provider<CWShootAll> shootAllProvider,
-                               Provider<CWShootIndividual> shootIndividualProvider,
+    public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
                                CWSetPositionCreator setPositionCreator,
-                               CWSetModeCreator setModeCreator,
-                               CWInvertModeCreator invertModeCreator,
-                               CWAutoCollectCreator autoCollectCreator) {
-        this.incrementIndexProvider = incrementIndexProvider;
-        this.decrementIndexProvider = decrementIndexProvider;
-        this.setClosestHalfIndexProvider = setClosestHalfIndexProvider;
-        this.shootAllProvider = shootAllProvider;
-        this.shootIndividualProvider = shootIndividualProvider;
+                               CWSetIndexCreator setIndexCreator,
+                               NiceShootinTexCreator niceShootinTexCreator,
+                               ShootNWedgesCreator shootNWedgesCreator,
+                               CWMoveToNextIndexCreator moveToNextIndexCreator,
+                               All5ShootCreator all5ShootCreator) {
+        this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
-        this.setModeCreator = setModeCreator;
-        this.invertModeCreator = invertModeCreator;
-        this.autoCollectCreator = autoCollectCreator;
+        this.setIndexCreator = setIndexCreator;
+        this.niceShootinTexCreator = niceShootinTexCreator;
+        this.shootNWedgesCreator = shootNWedgesCreator;
+        this.moveToNextIndexCreator = moveToNextIndexCreator;
+        this.all5ShootCreator = all5ShootCreator;
     }
 
-    public CWIncrementIndex incrementIndex() {
-        return incrementIndexProvider.get();
-    }
-
-    public CWDecrementIndex decrementIndex() {
-        return decrementIndexProvider.get();
-    }
-
-    public CWSetClosestHalfIndex setClosestHalfIndex() {
-        return setClosestHalfIndexProvider.get();
-    }
-
-    public CWShootAll shootAll() {
-        return shootAllProvider.get();
-    }
-
-    public CWShootIndividual shootNext() {
-        return shootIndividualProvider.get();
+    public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
+        return moveToFreeIndex.create(mode, filled, direction);
     }
 
     public CWSetPosition setPosition(int ticks) {
         return setPositionCreator.create(ticks);
     }
 
-    public CWSetMode setMode(CheeseWheel.Mode mode) {
-        return setModeCreator.create(mode);
+    public CWSetIndex setIndex(CheeseWheel.Mode mode, CheeseSlot index) {
+        return setIndexCreator.create(mode, index);
     }
 
-    public CWInvertMode invertMode() {
-        return invertModeCreator.create();
+    public NiceShootinTex niceShootinTex(int wedges) {
+        return niceShootinTexCreator.create(wedges);
     }
 
-    public CWAutoCollect autoCollect(boolean front) {
-        return autoCollectCreator.create(front);
+    public ShootNWedges shootNWedges(VisionTarget target, int wedges) {
+        return shootNWedgesCreator.create(target, wedges);
+    }
+
+    public CWMoveToNextIndex moveToNextIndex(int direction) {
+        return moveToNextIndexCreator.create(direction);
+    }
+
+    public All5Shoot all5Shoot() {
+        return all5ShootCreator.create();
     }
 }

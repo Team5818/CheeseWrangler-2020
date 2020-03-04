@@ -20,28 +20,26 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-
 public class Climb extends BasePIDSubsystem {
-    private final WPI_TalonSRX climbTalon;
+    // private final WPI_TalonSRX climbTalon;
 
     public Climb(int id) {
         super(new PIDConfig(0, 0, 0, 1));
-        this.climbTalon = new WPI_TalonSRX(id);
-        climbTalon.configFactoryDefault();
-        climbTalon.setSensorPhase(true);
-        climbTalon.setNeutralMode(NeutralMode.Brake);
+        //        this.climbTalon = new WPI_TalonSRX(id);
+        //        climbTalon.configFactoryDefault();
+        //        climbTalon.setSensorPhase(true);
+        //        climbTalon.setNeutralMode(NeutralMode.Brake);
     }
 
     @Override
     public double getPositionTicks() {
-        return climbTalon.getSensorCollection().getPulseWidthPosition();
+        //        return climbTalon.getSensorCollection().getPulseWidthPosition();
+        throw new UnsupportedOperationException();
     }
 
     @Override
     protected void setPower(double pwr) {
-        climbTalon.set(pwr);
+        //        climbTalon.set(pwr);
     }
 
     public enum Height {

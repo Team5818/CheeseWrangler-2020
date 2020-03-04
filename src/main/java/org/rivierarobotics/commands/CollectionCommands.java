@@ -20,31 +20,27 @@
 
 package org.rivierarobotics.commands;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.Side;
 
-@GenerateCreator
-public class CWInvertMode extends InstantCommand {
-    private final CheeseWheel cheeseWheel;
+import javax.inject.Inject;
+import javax.inject.Provider;
 
-    public CWInvertMode(@Provided CheeseWheel cheeseWheel) {
-        this.cheeseWheel = cheeseWheel;
-        addRequirements(cheeseWheel);
+public class CollectionCommands {
+    private CollectInfiniteWedgesCreator collectInfiniteWedgesCreator;
+    private final Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider;
+
+    @Inject
+    public CollectionCommands(CollectInfiniteWedgesCreator collectInfiniteWedgesCreator,
+                              Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider) {
+        this.collectInfiniteWedgesCreator = collectInfiniteWedgesCreator;
+        this.intakeBasedOnMovementProvider = intakeBasedOnMovementProvider;
     }
 
-    @Override
-    public void execute() {
-        switch (cheeseWheel.mode) {
-            case COLLECT_FRONT:
-                cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_BACK);
-                break;
-            case COLLECT_BACK:
-                cheeseWheel.setMode(CheeseWheel.Mode.COLLECT_FRONT);
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid Cheese Wheel mode");
-        }
+    public CollectInfiniteWedges continuous(Side side) {
+        return collectInfiniteWedgesCreator.create(side);
+    }
+
+    public CollectBasedOnMovement collectOnMovement() {
+        return intakeBasedOnMovementProvider.get();
     }
 }
