@@ -35,13 +35,17 @@ public class RobotShuffleboard {
 
     public RobotShuffleboard(String... tabs) {
         this.tabs = new HashMap<>(tabs.length);
-        for (String tab : tabs) {
-            this.tabs.put(tab, new RobotShuffleboardTab(tab));
-        }
+        addTab(tabs);
     }
 
     public RobotShuffleboardTab getTab(String tab) {
         return tabs.get(tab);
+    }
+
+    public void addTab(String... tabs) {
+        for (String tab : tabs) {
+            this.tabs.put(tab, new RobotShuffleboardTab(tab));
+        }
     }
 
     public class RobotShuffleboardTab {
@@ -51,6 +55,28 @@ public class RobotShuffleboard {
         public RobotShuffleboardTab(String tab) {
             this.tab = Shuffleboard.getTab(tab);
             this.entries = new HashMap<>();
+        }
+
+        public void addEntry(String... keys) {
+            for (String key : keys) {
+                NetworkTableEntry entry = tab.add(key, 0).getEntry();
+                entries.put(key, entry);
+            }
+        }
+
+        public RobotShuffleboardTab setEntry(String key, double value) {
+            NetworkTableEntry entry = entries.get(key);
+            if (entry == null) {
+//                addEntry(key);
+//                setEntry(key, value);
+                return this;
+            }
+            entry.setNumber(value);
+            return this;
+        }
+
+        public NetworkTableEntry getEntry(String title) {
+            return entries.get(title);
         }
     }
 }

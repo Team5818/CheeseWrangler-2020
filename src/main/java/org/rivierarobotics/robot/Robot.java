@@ -115,85 +115,46 @@ public class Robot extends TimedRobot {
     }
 
     private void initShuffleboard() {
+        shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
+        shuffleboard.getTab("Vision Conf")
+            .addEntry("TurrTargetPos", "TurretAbsAngle", "TurretAbsTicks", "HoodPosTicks", "HoodPosAngle",
+                "Gyro Yaw", "tx", "ty", "Adj. ty", "Servo Angle", "Fly Vel");
+        shuffleboard.getTab("Drive Train")
+            .addEntry("Left Enc", "Right Enc", "Left Vel", "Right Vel");
+        shuffleboard.getTab("Cheese Wheel")
+            .addEntry("Front Sensor", "Back Sensor");
     }
-
-    private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");
-    private final ShuffleboardTab driveTrainTab = Shuffleboard.getTab("Drive Train");
-    private final ShuffleboardTab cheeseTab = Shuffleboard.getTab("Cheese Wheel");
-    private final NetworkTableEntry turretTargetPos = visionConfTab.add("TurrTargetPos", 0)
-        .getEntry();
-    private final NetworkTableEntry turretPositionTicks = visionConfTab.add("TurretPosTicks", 0)
-        .getEntry();
-    private final NetworkTableEntry turretAbsoluteAngle = visionConfTab.add("TurretAbsAngle", 0)
-        .getEntry();
-    private final NetworkTableEntry hoodPositionTicks = visionConfTab.add("HoodPosTicks", 0)
-        .getEntry();
-    private final NetworkTableEntry hoodAbsoluteAngle = visionConfTab.add("HoodAbsAngle", 0)
-        .getEntry();
-    private final NetworkTableEntry gyroYaw = visionConfTab.add("Gyro Yaw", 0)
-        .getEntry();
-    private final NetworkTableEntry ty = visionConfTab.add("ty", 0)
-        .getEntry();
-    private final NetworkTableEntry tx = visionConfTab.add("tx", 0)
-        .getEntry();
-    private final NetworkTableEntry adjustedTy = visionConfTab.add("Adj. ty", 0)
-        .getEntry();
-    private final NetworkTableEntry adjustedTx = visionConfTab.add("Adj. tx", 0)
-        .getEntry();
-    private final NetworkTableEntry servoAngle = visionConfTab.add("Servo Angle", 0)
-        .getEntry();
-    private final NetworkTableEntry flyVel = visionConfTab.add("Fly Vel", 0)
-        .getEntry();
-
-    private final NetworkTableEntry leftEnc = driveTrainTab.add("Left Enc", 0)
-        .getEntry();
-    private final NetworkTableEntry rightEnc = driveTrainTab.add("Right Enc", 0)
-        .getEntry();
-
-    private final NetworkTableEntry leftVel = driveTrainTab.add("Left Vel", 0)
-        .getEntry();
-    private final NetworkTableEntry rightVel = driveTrainTab.add("Right Vel", 0)
-        .getEntry();
-
-    private final NetworkTableEntry frontSensor = driveTrainTab.add("Front Sensor", 0)
-        .getEntry();
-    private final NetworkTableEntry backSensor = driveTrainTab.add("Back Sensor", 0)
-        .getEntry();
 
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
-        turretTargetPos.setNumber(turret.getAbsolutePosition());
-        turretPositionTicks.setNumber(turret.getPositionTicks());
-        turretAbsoluteAngle.setNumber(turret.getAbsoluteAngle());
-        SmartDashboard.putNumber("TurrAbsAng", turret.getAbsoluteAngle());
-
         var hood = globalComponent.getHood();
-        hoodPositionTicks.setNumber(hood.getPositionTicks());
-        hoodAbsoluteAngle.setNumber(hood.getAbsolutePosition());
-
         var gyro = globalComponent.getNavXGyro();
-        gyroYaw.setNumber(gyro.getYaw());
-
         var visionUtil = globalComponent.getVisionUtil();
-        ty.setNumber(visionUtil.getLLValue("ty"));
-        tx.setNumber(visionUtil.getLLValue("tx"));
-        adjustedTy.setNumber(visionUtil.getActualTY());
-
         var llServo = globalComponent.getLimelightServo();
-        servoAngle.setNumber(llServo.getAngle());
-
         var flywheel = globalComponent.getFlywheel();
-        flyVel.setNumber(flywheel.getPositionTicks());
-
         var dt = globalComponent.getDriveTrain();
-        leftEnc.setNumber(dt.getLeft().getPosition());
-        rightEnc.setNumber(dt.getRight().getPosition());
-        leftVel.setNumber(dt.getLeft().getVelocity());
-        rightVel.setNumber(dt.getLeft().getVelocity());
-
         var cw = globalComponent.getCheeseWheel();
-        frontSensor.setNumber(cw.getFrontSensorValue());
-        backSensor.setNumber(cw.getBackSensorValue());
+
+        shuffleboard.getTab("Vision Conf")
+            .setEntry("TurrTargetPos", turret.getAbsolutePosition())
+            .setEntry("TurrAbsAngle", turret.getPositionTicks())
+            .setEntry("TurrAbsTicks", turret.getAbsoluteAngle())
+            .setEntry("HoodPosTicks", hood.getPositionTicks())
+            .setEntry("HoodPosAngle", hood.getAbsolutePosition())
+            .setEntry("Gyro Angle", gyro.getYaw())
+            .setEntry("tx", visionUtil.getLLValue("tx"))
+            .setEntry("ty", visionUtil.getLLValue("ty"))
+            .setEntry("Adj. ty", visionUtil.getActualTY())
+            .setEntry("Servo Angle", llServo.getAngle())
+            .setEntry("Fly Vel", flywheel.getPositionTicks());
+        shuffleboard.getTab("Drive Train")
+            .setEntry("Left Enc", dt.getLeft().getPosition())
+            .setEntry("Right Enc", dt.getRight().getPosition())
+            .setEntry("Left Vel", dt.getLeft().getVelocity())
+            .setEntry("Right Vel", dt.getRight().getVelocity());
+        shuffleboard.getTab("Cheese Wheel")
+            .setEntry("Front Sensor", cw.getFrontSensorValue())
+            .setEntry("Back Sensor", cw.getBackSensorValue());
 
         SmartDashboard.putData(chooser);
     }
