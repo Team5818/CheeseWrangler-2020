@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -39,7 +40,6 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
-    public AimMode mode = AimMode.ENCODER;
     private double absolutePosition;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
@@ -54,28 +54,13 @@ public class Turret extends BasePIDSubsystem {
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
-    public double getVelocity() {
-        double pos = turretTalon.getSensorCollection().getPulseWidthVelocity();
-        if (mode == AimMode.VISION) {
-            pos = -vision.getLLValue("tx") * getAnglesOrInchesToTicks();
-        }
-        SmartDashboard.putNumber("Position", pos);
-        SmartDashboard.putBoolean("atSetpoint", getPidController().atSetpoint());
-        SmartDashboard.putNumber("setpoint", getPidController().getSetpoint());
-        return pos;
-    }
-
     @Override
     public double getPositionTicks() {
-        if (mode == AimMode.MOVING) {
-            return turretTalon.getSensorCollection().getPulseWidthVelocity();
-        } else {
             return turretTalon.getSensorCollection().getPulseWidthPosition();
-        }
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + gyro.getYaw() % 360);
+        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + MathUtil.wrapToCircle(gyro.getYaw()));
     }
 
     public double getAngle() {
@@ -85,8 +70,6 @@ public class Turret extends BasePIDSubsystem {
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance + ShooterUtil.getLLtoTurretX());
-        SmartDashboard.putNumber("Modified tx", Math.toDegrees(tx));
-        SmartDashboard.putNumber("txTurret", Math.toDegrees(txTurret));
         return txTurret;
     }
 
@@ -95,9 +78,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public void setAbsoluteAngle(double angle) {
-        SmartDashboard.putNumber("Turret SetAngle", angle);
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
-        SmartDashboard.putNumber("turretset", position);
         absolutePosition = position;
         if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position);
@@ -121,19 +102,16 @@ public class Turret extends BasePIDSubsystem {
         } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
-        SmartDashboard.putNumber("RSetPowerT", pwr);
         turretTalon.set(pwr);
     }
 
     @Override
     public void setManualPower(double pwr) {
-        SmartDashboard.putNumber("TPow", pwr);
         if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
         } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
-        SmartDashboard.putNumber("TPowS", pwr);
         super.setManualPower(pwr);
     }
 
@@ -145,11 +123,4 @@ public class Turret extends BasePIDSubsystem {
         super.periodic();
     }
 
-    public void changeAimMode(AimMode mode) {
-        this.mode = mode;
-    }
-
-    public enum AimMode {
-        VISION, ENCODER, MOVING, STILL;
-    }
 }

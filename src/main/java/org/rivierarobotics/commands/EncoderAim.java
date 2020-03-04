@@ -29,6 +29,7 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -62,28 +63,12 @@ public class EncoderAim extends CommandBase {
     public void execute() {
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
-        double zFromGoal = pos[0] - ShooterUtil.getLeftFieldToCloseGoal();
+        double zFromGoal = pos[0];
         double dist = Math.sqrt(Math.pow(xFromGoal + extraDistance, 2) + Math.pow(zFromGoal, 2));
-        SmartDashboard.putNumber("dist", dist);
-        double t = ShooterUtil.getTConstant();
-        // - driveTrain.getYVelocity()
-        double vx = (extraDistance + xFromGoal) / t;
-        // - driveTrain.getXVelocity()
+        double t = ShooterUtil.getTConstant() - driveTrain.getYVelocity();
+        double vx = (extraDistance + xFromGoal) / t - driveTrain.getXVelocity();
         double vz = zFromGoal / t;
-        double turretAngle = Math.toDegrees(Math.atan2(vz, vx)) + 180;
-        turret.changeAimMode(Turret.AimMode.STILL);
-
-        limelightServo.setAngle(Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
-            Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2)))) - 10);
-
-        //TODO: Get an equation that can model the change in P for the change in angle
-        if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 3) {
-            turret.getPidController().setP(0.004);
-        } else if (Math.abs(turret.getAbsoluteAngle() - turretAngle) < 6) {
-            turret.getPidController().setP(0.002);
-        } else {
-            turret.getPidController().setP(0.001);
-        }
+        double turretAngle = MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(vz, vx)));
 
         turret.setAbsoluteAngle(turretAngle);
 
@@ -92,10 +77,6 @@ public class EncoderAim extends CommandBase {
         double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
-
-        SmartDashboard.putNumber("BallVel", ballVel);
-        SmartDashboard.putNumber("FlyVel", encoderVelocity);
-        SmartDashboard.putNumber("HoodAngleMath", hoodAngle);
 
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot

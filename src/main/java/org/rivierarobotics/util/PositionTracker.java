@@ -66,25 +66,24 @@ public class PositionTracker {
         }
 
         double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY()));
-
-        double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
-        double xFromTarget = dist * Math.sin(Math.abs(txTurret));
-        if ((turret.getAbsoluteAngle() < -90 && turret.getAbsoluteAngle() > -270) || (turret.getAbsoluteAngle() > 90
-             && turret.getAbsoluteAngle() < 270)) {
-            if (txTurret >= 0) {
-                pos[0] = xFromTarget + ShooterUtil.getLeftFieldToCloseGoal();
-            } else {
-                pos[0] = -xFromTarget + ShooterUtil.getLeftFieldToCloseGoal();
-            }
-            pos[1] = dist * Math.cos(txTurret);
+        double turretAngle = turret.getAbsoluteAngle();
+        double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
+        double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
+        if(turretAngle >= 0 && turretAngle < 90) {
+            pos[0] = -xFromTarget;
+            pos[1] = yFromTarget;
+        } else if (turretAngle >= 90 && turretAngle < 180) {
+            pos[0] = ShooterUtil.getLeftFieldToBallCollect() - ShooterUtil.getLeftFieldToCloseGoal() - xFromTarget;
+            pos[1] = ShooterUtil.getFieldLength() - yFromTarget;
+        } else if (turretAngle >= 180 && turretAngle < 270) {
+            pos[0] = ShooterUtil.getLeftFieldToBallCollect() - ShooterUtil.getLeftFieldToCloseGoal() + xFromTarget;
+            pos[1] = ShooterUtil.getFieldLength() - yFromTarget;
         } else {
-            if (txTurret >= 0) {
-                pos[0] = ShooterUtil.getLeftFieldToFarGoal() - xFromTarget;
-            } else {
-                pos[0] = xFromTarget + ShooterUtil.getLeftFieldToFarGoal();
-            }
-            pos[1] = ShooterUtil.getFieldLength() - dist * Math.cos(txTurret);
+            pos[0] = xFromTarget;
+            pos[1] = yFromTarget;
         }
+
+
     }
 
     public double[] getPosition() {

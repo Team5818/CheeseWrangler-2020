@@ -46,7 +46,12 @@ public class MathUtil {
     }
 
     public static double wrapToCircle(double angle) {
-        return angle % 360;
+        angle %= 360;
+        if(angle < 0) {
+            return 360 + angle;
+        } else {
+            return angle;
+        }
     }
 
     public static double limit(double value, double max) {

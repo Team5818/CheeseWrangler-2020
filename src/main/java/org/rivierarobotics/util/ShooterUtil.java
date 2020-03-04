@@ -21,7 +21,7 @@
 package org.rivierarobotics.util;
 
 public class ShooterUtil {
-    //TODO:Update literally everything in this class
+
     private ShooterUtil() {
     }
 
@@ -74,7 +74,6 @@ public class ShooterUtil {
         return 33;
     }
 
-    //TODO: Change this for the new robot once we do ball trials <- graph vel on the x and ticks per second on the y and get an equation
     public static double velocityToTicks(double vel) {
         return (1077.97 * vel - 4034);
     }
@@ -90,5 +89,10 @@ public class ShooterUtil {
     public static double getLeftFieldToCloseGoal() {
         return 2.44; // meters
     }
+
+    public static double getLeftFieldToBallCollect() {
+        return 2.778; // meters
+    }
+
 
 }
