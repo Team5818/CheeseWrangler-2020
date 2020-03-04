@@ -20,10 +20,7 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -31,8 +28,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.RobotShuffleboard;
 import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 import java.util.Objects;
 

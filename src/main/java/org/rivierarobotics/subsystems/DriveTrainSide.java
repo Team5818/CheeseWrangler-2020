@@ -33,22 +33,22 @@ public class DriveTrainSide extends SubsystemBase {
     private static final double FEED_FORWARD = 1.0 / MAX_VELOCITY;
     private final PIDController pidController;
     private final boolean invert;
-    private WPI_TalonFX tl;
-    private WPI_TalonFX tr;
+    private WPI_TalonFX left;
+    private WPI_TalonFX right;
     private Encoder shaftEncoder;
     private boolean pidEnabled;
     private final double pidRange;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        this.tl = new WPI_TalonFX(motors.topLeft);
-        this.tr = new WPI_TalonFX(motors.topRight);
+        this.left = new WPI_TalonFX(motors.left);
+        this.right = new WPI_TalonFX(motors.right);
         this.invert = invert;
         this.pidController = new PIDController(0, 0, 0, 0.02);
         this.pidController.setTolerance(5);
         this.pidRange = 1.0;
 
-        setupMotors(tl, tr);
-        NeutralIdleMode.BRAKE.applyTo(tl, tr);
+        setupMotors(left, right);
+        NeutralIdleMode.BRAKE.applyTo(left, right);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         // meters / ticks
@@ -64,8 +64,8 @@ public class DriveTrainSide extends SubsystemBase {
     }
 
     public void setPower(double pwr) {
-        tl.set(pwr);
-        tr.set(pwr);
+        left.set(pwr);
+        right.set(pwr);
     }
 
     public double getPosition() {
@@ -100,7 +100,7 @@ public class DriveTrainSide extends SubsystemBase {
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {
-        mode.applyTo(tl, tr);
+        mode.applyTo(left, right);
     }
 
     public void resetEncoder() {

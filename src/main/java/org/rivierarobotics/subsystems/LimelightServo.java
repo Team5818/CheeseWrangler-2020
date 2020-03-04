@@ -27,16 +27,10 @@ import edu.wpi.first.wpiutil.math.MathUtil;
 import javax.inject.Inject;
 
 public class LimelightServo extends SubsystemBase {
-
     private static final double MAX_SERVO_ANGLE = 0.3;
     private static final double MIN_SERVO_ANGLE = 0;
     private static final int MAX_ANGLE = 80;
     private static final double ANGLE_PER_TICK = MAX_ANGLE / (MAX_SERVO_ANGLE - MIN_SERVO_ANGLE);
-
-    public static double getMaxAngle() {
-        return MAX_ANGLE;
-    }
-
     private final Servo servo;
 
     @Inject
@@ -51,5 +45,9 @@ public class LimelightServo extends SubsystemBase {
     public void setAngle(double angle) {
         angle = MathUtil.clamp(angle, 0, 80);
         this.servo.set((angle / ANGLE_PER_TICK) + MIN_SERVO_ANGLE);
+    }
+
+    public static double getMaxAngle() {
+        return MAX_ANGLE;
     }
 }

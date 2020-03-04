@@ -20,26 +20,12 @@
 
 package org.rivierarobotics.subsystems;
 
-public class Climb extends BasePIDSubsystem {
-    // private final WPI_TalonSRX climbTalon;
+public enum ClimbHeight {
+    FORTY_FIVE(0), SIXTY(0), SEVENTY_TWO(0);
 
-    public Climb(int id) {
-        super(new PIDConfig(0, 0, 0, 1));
-        //        this.climbTalon = new WPI_TalonSRX(id);
-        //        climbTalon.configFactoryDefault();
-        //        climbTalon.setSensorPhase(true);
-        //        climbTalon.setNeutralMode(NeutralMode.Brake);
+    public final int position;
+
+    ClimbHeight(int position) {
+        this.position = position;
     }
-
-    @Override
-    public double getPositionTicks() {
-        //        return climbTalon.getSensorCollection().getPulseWidthPosition();
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    protected void setPower(double pwr) {
-        //        climbTalon.set(pwr);
-    }
-
 }

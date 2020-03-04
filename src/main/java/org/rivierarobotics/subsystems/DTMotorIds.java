@@ -21,14 +21,14 @@
 package org.rivierarobotics.subsystems;
 
 public class DTMotorIds {
-    public final int topLeft;
-    public final int topRight;
+    public final int left;
+    public final int right;
     public final int encoderA;
     public final int encoderB;
 
-    public DTMotorIds(int topLeft, int topRight, int encoderA, int encoderB) {
-        this.topLeft = topLeft;
-        this.topRight = topRight;
+    public DTMotorIds(int left, int right, int encoderA, int encoderB) {
+        this.left = left;
+        this.right = right;
         this.encoderA = encoderA;
         this.encoderB = encoderB;
     }

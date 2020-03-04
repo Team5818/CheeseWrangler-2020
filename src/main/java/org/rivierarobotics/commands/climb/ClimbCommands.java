@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands.climb;
 
-import org.rivierarobotics.subsystems.Climb;
+import org.rivierarobotics.subsystems.ClimbHeight;
 
 import javax.inject.Inject;
 
@@ -42,7 +42,7 @@ public class ClimbCommands {
         return climbSetPositionCreator.create(position);
     }
 
-    public ClimbSetPosition setPosition(Climb.Height height) {
+    public ClimbSetPosition setPosition(ClimbHeight height) {
         return climbSetPositionCreator.create(height.position);
     }
 

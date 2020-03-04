@@ -18,17 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
-
-import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
-import edu.wpi.first.wpilibj.shuffleboard.SuppliedValueWidget;
+package org.rivierarobotics.util;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.BooleanSupplier;
-import java.util.function.DoubleSupplier;
 
 public class RobotShuffleboard {
     private Map<String, RobotShuffleboardTab> tabs;
@@ -45,38 +38,6 @@ public class RobotShuffleboard {
     public void addTab(String... tabs) {
         for (String tab : tabs) {
             this.tabs.put(tab, new RobotShuffleboardTab(tab));
-        }
-    }
-
-    public class RobotShuffleboardTab {
-        private ShuffleboardTab tab;
-        private Map<String, NetworkTableEntry> entries;
-
-        public RobotShuffleboardTab(String tab) {
-            this.tab = Shuffleboard.getTab(tab);
-            this.entries = new HashMap<>();
-        }
-
-        public void addEntry(String... keys) {
-            for (String key : keys) {
-                NetworkTableEntry entry = tab.add(key, 0).getEntry();
-                entries.put(key, entry);
-            }
-        }
-
-        public RobotShuffleboardTab setEntry(String key, double value) {
-            NetworkTableEntry entry = entries.get(key);
-            if (entry == null) {
-//                addEntry(key);
-//                setEntry(key, value);
-                return this;
-            }
-            entry.setNumber(value);
-            return this;
-        }
-
-        public NetworkTableEntry getEntry(String title) {
-            return entries.get(title);
         }
     }
 }

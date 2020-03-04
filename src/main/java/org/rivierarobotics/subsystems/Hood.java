@@ -34,7 +34,7 @@ public class Hood extends BasePIDSubsystem {
     private static final double LOWER_SOFT = 2158;
     private static final double HIGHER_HARD = 2410;
     private static final double HIGHER_SOFT = 2250;
-    private static final double zeroTicks = 2786;
+    private static final double ZERO_TICKS = 2786;
     private final WPI_TalonSRX hoodTalon;
     private final LimelightServo servo;
     private final Provider<HoodControl> command;
@@ -82,13 +82,13 @@ public class Hood extends BasePIDSubsystem {
     }
 
     public double getAbsolutePosition() {
-        return (zeroTicks - getPositionTicks()) * 360 / 4096;
+        return (ZERO_TICKS - getPositionTicks()) * 360 / 4096;
     }
 
     public void setAbsoluteAngle(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
         if (angle >= 33 && angle <= 66) {
-            double value = zeroTicks - angle * getAnglesOrInchesToTicks();
+            double value = ZERO_TICKS - angle * getAnglesOrInchesToTicks();
             SmartDashboard.putNumber("Hood SetTicks", value);
             setPositionTicks(value);
         } else {

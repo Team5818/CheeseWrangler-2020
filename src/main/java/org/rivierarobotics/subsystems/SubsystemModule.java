@@ -52,13 +52,9 @@ public class SubsystemModule {
     private static final int CW_BACK_SENSOR = 0;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
-        new DTMotorIds(
-            1, 0,
-            0, 1);
+        new DTMotorIds(1, 0, 0, 1);
     private static final DTMotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
-        new DTMotorIds(
-            13, 14,
-            2, 4);
+        new DTMotorIds(13, 14, 2, 4);
 
     private SubsystemModule() {
     }
