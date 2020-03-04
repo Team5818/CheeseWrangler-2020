@@ -22,8 +22,8 @@ package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.collect.CollectionCommands;
-import org.rivierarobotics.commands.vision.LimelightServoCommands;
 import org.rivierarobotics.commands.turret.TurretCommands;
+import org.rivierarobotics.commands.vision.LimelightServoCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;

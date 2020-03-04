@@ -55,7 +55,7 @@ public class Turret extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-            return turretTalon.getSensorCollection().getPulseWidthPosition();
+        return turretTalon.getSensorCollection().getPulseWidthPosition();
     }
 
     public double getAbsoluteAngle() {
@@ -121,5 +121,4 @@ public class Turret extends BasePIDSubsystem {
         }
         super.periodic();
     }
-
 }

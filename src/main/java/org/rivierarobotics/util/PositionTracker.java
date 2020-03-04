@@ -69,7 +69,7 @@ public class PositionTracker {
         double turretAngle = turret.getAbsoluteAngle();
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
-        if(turretAngle >= 0 && turretAngle < 90) {
+        if (turretAngle >= 0 && turretAngle < 90) {
             pos[0] = -xFromTarget;
             pos[1] = yFromTarget;
         } else if (turretAngle >= 90 && turretAngle < 180) {
