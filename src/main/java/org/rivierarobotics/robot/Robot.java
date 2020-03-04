@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
         displayShuffleboard();
         if (isEnabled()) {
             if (!flyingWheelman.isScheduled()) {
-                flyingWheelman.schedule();
+                //flyingWheelman.schedule();
             }
             globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -96,7 +96,7 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getLimelightServo().setAngle(70);
+        globalComponent.getLimelightServo().setAngle(45);
     }
 
     @Override
