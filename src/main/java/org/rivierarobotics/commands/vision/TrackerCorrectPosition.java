@@ -18,37 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.vision;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import org.rivierarobotics.util.PositionTracker;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class TrackerCorrectPosition extends InstantCommand {
+    PositionTracker tracker;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
-    }
-
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public TrackerCorrectPosition(PositionTracker tracker) {
+        this.tracker = tracker;
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public void execute() {
+        tracker.correctPosition();
     }
 }

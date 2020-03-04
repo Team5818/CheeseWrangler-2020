@@ -18,22 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.vision.VisionCommands;
-import org.rivierarobotics.util.VisionTarget;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.subsystems.Climb;
 
-import javax.inject.Inject;
-
-public class FlexRoutine extends SequentialCommandGroup {
-
-    @Inject
-    public FlexRoutine(AutonomousCommands autonomousCommands,
-                       VisionCommands visionCommands) {
-        addCommands(
-            autonomousCommands.pathweaver(Pose2dPath.FLEX),
-            visionCommands.visionAim(VisionTarget.INNER)
-        );
+@GenerateCreator
+public class ClimbSetPosition extends BasePIDSetPosition<Climb> {
+    public ClimbSetPosition(@Provided Climb climb, double position) {
+        super(climb, 20, position, 2);
     }
 }

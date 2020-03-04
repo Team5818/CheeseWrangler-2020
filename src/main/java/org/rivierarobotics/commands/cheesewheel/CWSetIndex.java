@@ -18,37 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.cheesewheel;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+@GenerateCreator
+public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
+    private final CheeseSlot index;
+    private final CheeseWheel.Mode mode;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
-
-    @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
-    }
-
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseSlot index) {
+        super(cheeseWheel, 40, index.getModePosition(mode), 2);
+        this.index = index;
+        this.mode = mode;
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    protected void setSetPosition(double position) {
+        positionTicks = index.getModePosition(mode);
     }
 }

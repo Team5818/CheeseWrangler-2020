@@ -18,37 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.vision;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class PositionReset extends CommandBase {
+    private final PositionTracker tracker;
+    private final VisionUtil vision;
+    boolean finished = false;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
-    }
-
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public PositionReset(PositionTracker tracker, VisionUtil vision) {
+        this.tracker = tracker;
+        this.vision = vision;
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
+    public void execute() {
+        if (vision.getLLValue("tv") == 1) {
+            tracker.correctPosition();
+            finished = true;
         }
-        super.periodic();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return finished;
     }
 }

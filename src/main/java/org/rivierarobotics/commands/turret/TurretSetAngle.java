@@ -18,37 +18,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.turret;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.subsystems.Turret;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+@GenerateCreator
+public class TurretSetAngle extends BasePIDSetPosition<Turret> {
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
-
-    @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
+    public TurretSetAngle(@Provided Turret turret, double angle) {
+        super(turret, 1, angle, 2);
+        addRequirements(turret);
     }
 
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    protected double getPositionTicks() {
+        return subsystem.getAbsoluteAngle();
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    protected void setPositionTicks(double angle) {
+        subsystem.setAbsoluteAngle(angle);
     }
 }

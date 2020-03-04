@@ -1,0 +1,64 @@
+/*
+ * This file is part of CheeseWrangler-2020, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.rivierarobotics.commands.climb;
+
+import org.rivierarobotics.subsystems.Climb;
+
+import javax.inject.Inject;
+
+public class ClimbCommands {
+    private final ClimbSetPositionCreator climbSetPositionCreator;
+    private final ClimbLockCreator climbLockCreator;
+    private final ClimbSetPowerCreator climbSetPowerCreator;
+
+    @Inject
+    public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
+                         ClimbLockCreator climbLockCreator,
+                         ClimbSetPowerCreator climbSetPowerCreator) {
+        this.climbSetPositionCreator = climbSetPositionCreator;
+        this.climbLockCreator = climbLockCreator;
+        this.climbSetPowerCreator = climbSetPowerCreator;
+    }
+
+    public ClimbSetPosition setPosition(double position) {
+        return climbSetPositionCreator.create(position);
+    }
+
+    public ClimbSetPosition setPosition(Climb.Height height) {
+        return climbSetPositionCreator.create(height.position);
+    }
+
+    public ClimbLock lock() {
+        return climbLockCreator.create(true);
+    }
+
+    public ClimbLock unlock() {
+        return climbLockCreator.create(false);
+    }
+
+    public ClimbLock setLock(boolean lock) {
+        return climbLockCreator.create(lock);
+    }
+
+    public ClimbSetPower setPower(double power) {
+        return climbSetPowerCreator.create(power);
+    }
+}

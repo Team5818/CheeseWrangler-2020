@@ -18,37 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.cheesewheel;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class CheeseWheelControl extends CommandBase {
+    private final CheeseWheel cheeseWheel;
+    private final Joystick coDriverLeftJs;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
-    }
-
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public CheeseWheelControl(@Input(Input.Selector.CODRIVER_LEFT) Joystick coDriverLeftJs,
+                              CheeseWheel cheeseWheel) {
+        this.cheeseWheel = cheeseWheel;
+        this.coDriverLeftJs = coDriverLeftJs;
+        addRequirements(cheeseWheel);
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public void execute() {
+        cheeseWheel.setManualPower(MathUtil.fitDeadband(coDriverLeftJs.getY()));
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

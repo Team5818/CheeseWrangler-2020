@@ -18,37 +18,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.ejector;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Ejector;
 
-import javax.inject.Inject;
-import javax.inject.Provider;
+@GenerateCreator
+public class EjectorSetPower extends CommandBase {
+    private final Ejector ejector;
+    private final double power;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
-
-    @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
-    }
-
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public EjectorSetPower(@Provided Ejector ejector, double power) {
+        this.ejector = ejector;
+        this.power = power;
+        addRequirements(ejector);
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public void execute() {
+        ejector.setPower(power);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        ejector.setPower(0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

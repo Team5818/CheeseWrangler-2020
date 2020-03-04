@@ -24,7 +24,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import org.rivierarobotics.commands.CheeseWheelControl;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Provider;

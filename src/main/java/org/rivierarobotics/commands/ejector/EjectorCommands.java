@@ -18,37 +18,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
-
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+package org.rivierarobotics.commands.ejector;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class EjectorCommands {
+    private final EjectorSetPowerCreator ejectorSetPowerCreator;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
+    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator) {
+        this.ejectorSetPowerCreator = ejectorSetPowerCreator;
     }
 
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
-    }
-
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public EjectorSetPower setPower(double power) {
+        return ejectorSetPowerCreator.create(power);
     }
 }

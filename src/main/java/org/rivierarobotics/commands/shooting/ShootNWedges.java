@@ -18,23 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous.basic;
+package org.rivierarobotics.commands.shooting;
 
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
-import org.rivierarobotics.commands.drive.DriveCommands;
+import org.rivierarobotics.commands.ejector.EjectorCommands;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
 @GenerateCreator
-public class ShootAndDrive extends SequentialCommandGroup {
-
-    public ShootAndDrive(@Provided DriveCommands drive,
-                         @Provided CheeseWheelCommands cheeseWheel) {
+public class ShootNWedges extends ParallelRaceGroup {
+    public ShootNWedges(@Provided EjectorCommands ejectorCommands,
+                        @Provided CheeseWheelCommands cheeseWheelCommands,
+                        int wedges) {
         super(
-            cheeseWheel.shootNWedges(5),
-            drive.driveDistance(-1, 0.25)
+            new SequentialCommandGroup(
+                cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0),
+                new ParallelRaceGroup(
+                    ejectorCommands.setPower(1.0),
+                    wedges == 5
+                        ? cheeseWheelCommands.all5Shoot().withTimeout(4.0)
+                        : cheeseWheelCommands.niceShootinTex(wedges)
+                )
+            )
         );
     }
-
 }

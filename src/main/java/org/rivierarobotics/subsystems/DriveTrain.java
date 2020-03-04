@@ -26,7 +26,7 @@ import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.DriveControlCreator;
+import org.rivierarobotics.commands.drive.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.NavXGyro;

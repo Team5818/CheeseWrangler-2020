@@ -18,22 +18,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.vision.VisionCommands;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionTarget;
 
-import javax.inject.Inject;
+@GenerateCreator
+public class VisionAim extends ParallelCommandGroup {
 
-public class FlexRoutine extends SequentialCommandGroup {
-
-    @Inject
-    public FlexRoutine(AutonomousCommands autonomousCommands,
-                       VisionCommands visionCommands) {
-        addCommands(
-            autonomousCommands.pathweaver(Pose2dPath.FLEX),
-            visionCommands.visionAim(VisionTarget.INNER)
-        );
+    public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
+        if (target == VisionTarget.TOP) {
+            addCommands(//vision.autoAimHood(0, ShooterUtil.getTopHeight()),
+                vision.autoAimTurret(0, ShooterUtil.getTopHeight()));
+        } else {
+            addCommands(//vision.autoAimHood(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()),
+                vision.autoAimTurret(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()));
+        }
     }
 }

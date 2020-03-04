@@ -18,37 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.vision;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import org.rivierarobotics.subsystems.ServoPosition;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class LimelightServoCommands {
+    private LLServoSetPositionCreator llServoSetPositionCreator;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
+    public LimelightServoCommands(LLServoSetPositionCreator llServoSetPositionCreator) {
+        this.llServoSetPositionCreator = llServoSetPositionCreator;
     }
 
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public LLServoSetPosition setAngle(double angle) {
+        return llServoSetPositionCreator.create(angle);
     }
 
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public LLServoSetPosition setPosition(ServoPosition position) {
+        return llServoSetPositionCreator.create(position.angle);
     }
 }

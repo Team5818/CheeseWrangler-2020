@@ -18,37 +18,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.collect;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class CollectionCommands {
+    private CollectInfiniteWedgesCreator collectInfiniteWedgesCreator;
+    private final Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
+    public CollectionCommands(CollectInfiniteWedgesCreator collectInfiniteWedgesCreator,
+                              Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider) {
+        this.collectInfiniteWedgesCreator = collectInfiniteWedgesCreator;
+        this.intakeBasedOnMovementProvider = intakeBasedOnMovementProvider;
     }
 
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public CollectInfiniteWedges continuous(Side side) {
+        return collectInfiniteWedgesCreator.create(side);
     }
 
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public CollectBasedOnMovement collectOnMovement() {
+        return intakeBasedOnMovementProvider.get();
     }
 }

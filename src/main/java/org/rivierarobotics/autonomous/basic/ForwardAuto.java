@@ -25,10 +25,10 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.CheeseWheelCommands;
-import org.rivierarobotics.commands.CollectionCommands;
-import org.rivierarobotics.commands.DriveCommands;
-import org.rivierarobotics.commands.VisionCommands;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
+import org.rivierarobotics.commands.collect.CollectionCommands;
+import org.rivierarobotics.commands.drive.DriveCommands;
+import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 

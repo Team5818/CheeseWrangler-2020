@@ -18,22 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.commands.cheesewheel;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import org.rivierarobotics.commands.vision.VisionCommands;
-import org.rivierarobotics.util.VisionTarget;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.subsystems.CheeseWheel;
 
-import javax.inject.Inject;
-
-public class FlexRoutine extends SequentialCommandGroup {
-
-    @Inject
-    public FlexRoutine(AutonomousCommands autonomousCommands,
-                       VisionCommands visionCommands) {
-        addCommands(
-            autonomousCommands.pathweaver(Pose2dPath.FLEX),
-            visionCommands.visionAim(VisionTarget.INNER)
-        );
+@GenerateCreator
+public class CWSetPosition extends BasePIDSetPosition<CheeseWheel> {
+    public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks) {
+        super(cheeseWheel, 40, ticks, 2);
     }
 }

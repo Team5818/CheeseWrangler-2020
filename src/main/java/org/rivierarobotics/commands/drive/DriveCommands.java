@@ -18,37 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.drive;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
 import org.rivierarobotics.util.NeutralIdleMode;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class DriveCommands {
+    private DriveSetNeutralIdleCreator driveSetNeutralIdleCreator;
+    private DriveDistanceCreator driveDistanceCreator;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
+    public DriveCommands(DriveSetNeutralIdleCreator driveSetNeutralIdleCreator,
+                         DriveDistanceCreator driveDistanceCreator) {
+        this.driveDistanceCreator = driveDistanceCreator;
+        this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
     }
 
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public DriveDistance driveDistance(double finalDistance, double power) {
+        return driveDistanceCreator.create(finalDistance, power);
     }
 
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {
+        return driveSetNeutralIdleCreator.create(mode);
     }
 }

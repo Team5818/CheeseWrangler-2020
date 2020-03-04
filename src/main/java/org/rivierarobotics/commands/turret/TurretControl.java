@@ -18,37 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.turret;
 
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
-public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
-    private final Provider<EjectorControl> command;
+public class TurretControl extends CommandBase {
+    private final Turret turret;
+    private final Joystick coDriverRightJs;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
-        this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
-    }
-
-
-    public void setPower(double pwr) {
-        victor.set(pwr);
+    public TurretControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
+                         Turret turret) {
+        this.turret = turret;
+        this.coDriverRightJs = coDriverRightJs;
+        addRequirements(turret);
     }
 
     @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
+    public void execute() {
+        turret.setManualPower(0.7 * MathUtil.fitDeadband(coDriverRightJs.getX()));
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }
