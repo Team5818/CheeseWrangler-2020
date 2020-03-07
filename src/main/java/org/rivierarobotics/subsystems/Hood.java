@@ -61,9 +61,9 @@ public class Hood extends SubsystemBase {
         hoodTalon.configPeakOutputForward(1);
         hoodTalon.configPeakOutputReverse(-1);
 
-        hoodTalon.config_kP(SLOT_IDX, (0.05 * 1023));
+        hoodTalon.config_kP(SLOT_IDX, (0.6 * 1023 / 400));
         hoodTalon.config_kI(SLOT_IDX, 0);
-        hoodTalon.config_kD(SLOT_IDX, (0.035 * 1023));
+        hoodTalon.config_kD(SLOT_IDX, 0);
         hoodTalon.config_kF(SLOT_IDX, 0);
 
         hoodTalon.configMotionCruiseVelocity(800);

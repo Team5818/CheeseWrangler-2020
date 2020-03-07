@@ -72,7 +72,6 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getNavXGyro().setAngleAdjustment(180);
         globalComponent.getDriveTrain().resetEncoder();
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
