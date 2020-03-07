@@ -20,24 +20,31 @@
 
 package org.rivierarobotics.commands.hood;
 
+import org.rivierarobotics.subsystems.HoodPosition;
+
 import javax.inject.Inject;
+import javax.inject.Provider;
 
 public class HoodCommands {
     private HoodSetAngleCreator hoodSetAngleCreator;
-    private final SetTrenchCreator setTrenchCreator;
+    private final Provider<ToggleTrenchMode> toggleTrenchModeProvider;
 
     @Inject
     public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator,
-                        SetTrenchCreator setTrenchCreator) {
+                        Provider<ToggleTrenchMode> toggleTrenchModeProvider) {
         this.hoodSetAngleCreator = hoodSetAngleCreator;
-        this.setTrenchCreator = setTrenchCreator;
+        this.toggleTrenchModeProvider = toggleTrenchModeProvider;
     }
 
     public HoodSetAngle setAngle(double angle) {
         return hoodSetAngleCreator.create(angle);
     }
 
-    public SetTrench setTrenchMode(boolean set) {
-        return setTrenchCreator.create(set);
+    public HoodSetAngle setAngle(HoodPosition position) {
+        return hoodSetAngleCreator.create(position.ticks);
+    }
+
+    public ToggleTrenchMode toggleTrenchMode() {
+        return toggleTrenchModeProvider.get();
     }
 }

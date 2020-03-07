@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands.vision;
 
-import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
@@ -69,7 +69,7 @@ public class VisionCommands {
         return correctPositionProvider.get();
     }
 
-    public LimelightLedSetState limelightSetState(LimelightLedState state) {
+    public LimelightLedSetState limelightSetState(LimelightLEDState state) {
         return limelightLedSetStateCreator.create(state);
     }
 }

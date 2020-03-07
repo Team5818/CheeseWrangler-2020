@@ -21,7 +21,9 @@
 package org.rivierarobotics.subsystems;
 
 public enum ServoPosition {
-    FRONT_COLLECT(0), BACK_COLLECT(0), CLIMB(0);
+    FRONT_COLLECT(0),
+    BACK_COLLECT(0),
+    CLIMB(0);
 
     public final int angle;
 

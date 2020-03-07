@@ -20,29 +20,39 @@
 
 package org.rivierarobotics.commands.hood;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.subsystems.HoodPosition;
 
-@GenerateCreator
-public class HoodSetAngle extends CommandBase {
+import javax.inject.Inject;
+
+public class ToggleTrenchMode extends SequentialCommandGroup {
+    private final HoodCommands hoodCommands;
+    private final TurretCommands turretCommands;
     private final Hood hood;
-    private final double angle;
 
-    public HoodSetAngle(@Provided Hood hood, double angle) {
+    @Inject
+    public ToggleTrenchMode(HoodCommands hoodCommands, TurretCommands turretCommands, Hood hood) {
+        this.hoodCommands = hoodCommands;
+        this.turretCommands = turretCommands;
         this.hood = hood;
-        this.angle = angle;
     }
 
     @Override
     public void initialize() {
-        hood.setAbsoluteAngle(angle);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(hood.getAbsolutePosition(), angle, 0.1);
+        if (hood.isTrench) {
+            addCommands(
+                turretCommands.setAngle(0),
+                new WaitCommand(1.0),
+                hoodCommands.setAngle(HoodPosition.BACK_TRENCH)
+            );
+        } else {
+            addCommands(
+                hoodCommands.setAngle(HoodPosition.MIDDLE)
+            );
+        }
+        hood.isTrench = !hood.isTrench;
     }
 }

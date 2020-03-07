@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RobotShuffleboard;
 
 import java.util.Objects;
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
             if (!flyingWheelman.isScheduled()) {
                 flyingWheelman.schedule();
             }
-            globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
+            globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
     }
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_OFF);
+        globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_OFF);
     }
 
     @Override

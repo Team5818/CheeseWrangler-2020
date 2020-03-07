@@ -33,9 +33,8 @@ import javax.inject.Provider;
 
 public class Hood extends SubsystemBase {
     private static final double ZERO_TICKS = 2786;
-    private static final double FORWARD = 2605;
-    private static final double BACK_DEFAULT = 2232;
-    private static final double BACK_TRENCH = 2026;
+    private static final double TICKS_PER_DEGREE = 4096.0 / 360;
+    private static final int SLOT_IDX = 0;
     public boolean isTrench = false;
     private final WPI_TalonSRX hoodTalon;
     private final LimelightServo servo;
@@ -45,8 +44,12 @@ public class Hood extends SubsystemBase {
         this.servo = servo;
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
+        setupHoodTalon();
+    }
+
+    private final void setupHoodTalon() {
         hoodTalon.configFactoryDefault();
-        hoodTalon.selectProfileSlot(0, 0);
+        hoodTalon.selectProfileSlot(SLOT_IDX, 0);
         hoodTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10);
         hoodTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
         hoodTalon.setSensorPhase(false);
@@ -58,10 +61,10 @@ public class Hood extends SubsystemBase {
         hoodTalon.configPeakOutputForward(1);
         hoodTalon.configPeakOutputReverse(-1);
 
-        hoodTalon.config_kP(0, (0.05 * 1023));
-        hoodTalon.config_kI(0, 0);
-        hoodTalon.config_kD(0, (0.035 * 1023));
-        hoodTalon.config_kF(0, 0);
+        hoodTalon.config_kP(SLOT_IDX, (0.05 * 1023));
+        hoodTalon.config_kI(SLOT_IDX, 0);
+        hoodTalon.config_kD(SLOT_IDX, (0.035 * 1023));
+        hoodTalon.config_kF(SLOT_IDX, 0);
 
         hoodTalon.configMotionCruiseVelocity(800);
         hoodTalon.configMotionAcceleration(800);
@@ -81,24 +84,33 @@ public class Hood extends SubsystemBase {
     }
 
     private double limitPower(double pwr) {
-        double back = isTrench ? BACK_TRENCH : BACK_DEFAULT;
-        double pos = (getPositionTicks() - back) / (FORWARD - back);
-        double curvedPwr = Math.pow(Math.E, -(1/2.0) * (pos * pos)) * pwr;
+        double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
+        double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
+        double curvedPwr = Math.pow(Math.E, -(5.0 / 8) * (pos * pos)) * pwr;
         SmartDashboard.putNumber("curvedpwr", curvedPwr);
         SmartDashboard.putNumber("pos", pos);
-        return curvedPwr;
+        if (limitSafety(curvedPwr)) {
+            return curvedPwr;
+        } else {
+            return 0.0;
+        }
+    }
+
+    private boolean limitSafety(double pwr) {
+        double back = (isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks);
+        return (pwr > 0 && getPositionTicks() > back) || (pwr < 0 && getPositionTicks() < HoodPosition.FORWARD.ticks);
     }
 
     public double getAbsolutePosition() {
-        return (ZERO_TICKS - getPositionTicks()) * 360 / 4096;
+        return (ZERO_TICKS - getPositionTicks()) / TICKS_PER_DEGREE;
     }
 
     public void setAbsoluteAngle(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
-        double ticks = ZERO_TICKS - (angle * (4096.0 / 360));
+        double ticks = ZERO_TICKS - (angle * (TICKS_PER_DEGREE));
         if (ticks > 0) {
-            ticks = Math.min(ticks, FORWARD);
-            ticks = Math.max(ticks, isTrench ? BACK_TRENCH : BACK_DEFAULT);
+            ticks = Math.min(ticks, HoodPosition.FORWARD.ticks);
+            ticks = Math.max(ticks, isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks);
             SmartDashboard.putNumber("ticksAng", ticks);
             hoodTalon.set(ControlMode.MotionMagic, ticks);
         }

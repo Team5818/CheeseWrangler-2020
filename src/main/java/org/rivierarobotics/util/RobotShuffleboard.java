@@ -31,14 +31,17 @@ public class RobotShuffleboard {
         addTab(tabs);
     }
 
-    public RobotShuffleboardTab getTab(String tab) {
-        return tabs.get(tab);
+    public RobotShuffleboardTab getTab(String tabName) {
+        if (tabs.get(tabName) == null) {
+            addTab(tabName);
+        }
+        return tabs.get(tabName);
     }
 
     public void addTab(String... toAdd) {
-        for (String tab : toAdd) {
-            if (!tabs.containsKey(tab)) {
-                tabs.put(tab, new RobotShuffleboardTab(tab));
+        for (String tabName : toAdd) {
+            if (!tabs.containsKey(tabName)) {
+                tabs.put(tabName, new RobotShuffleboardTab(tabName));
             }
         }
     }

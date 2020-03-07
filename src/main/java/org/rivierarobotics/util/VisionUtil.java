@@ -49,7 +49,7 @@ public class VisionUtil {
             llDist + ShooterUtil.getLLtoTurretX()));
     }
 
-    public final void setLedState(LimelightLedState state) {
+    public final void setLedState(LimelightLEDState state) {
         limelight.getEntry("ledMode").setNumber(state.set);
     }
 

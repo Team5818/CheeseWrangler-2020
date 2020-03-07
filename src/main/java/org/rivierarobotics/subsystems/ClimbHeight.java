@@ -21,7 +21,9 @@
 package org.rivierarobotics.subsystems;
 
 public enum ClimbHeight {
-    FORTY_FIVE(0), SIXTY(0), SEVENTY_TWO(0);
+    FORTY_FIVE(0),
+    SIXTY(0),
+    SEVENTY_TWO(0);
 
     public final int position;
 

@@ -18,26 +18,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.VisionUtil;
+public enum HoodPosition {
+    FORWARD(2605),
+    BACK_DEFAULT(2232),
+    BACK_TRENCH(2026),
+    MIDDLE(2350);
 
-@GenerateCreator
-public class LimelightLedSetState extends InstantCommand {
-    private final VisionUtil vision;
-    private final LimelightLEDState ledState;
+    public final int ticks;
 
-    public LimelightLedSetState(@Provided VisionUtil vision, LimelightLEDState ledState) {
-        this.ledState = ledState;
-        this.vision = vision;
-    }
-
-    @Override
-    public void execute() {
-        vision.setLedState(ledState);
+    HoodPosition(int ticks) {
+        this.ticks = ticks;
     }
 }

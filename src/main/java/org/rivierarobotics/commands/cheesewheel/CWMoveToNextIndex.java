@@ -28,7 +28,6 @@ import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class CWMoveToNextIndex extends CommandBase {
-
     private final CheeseWheel cheeseWheel;
     private CheeseSlot currentSlot;
     private final int direction;
@@ -41,7 +40,8 @@ public class CWMoveToNextIndex extends CommandBase {
 
     @Override
     public void initialize() {
-        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0)
+        currentSlot = cheeseWheel
+            .getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0)
             .next(direction);
         cheeseWheel.setPositionTicks(currentSlot.getModePosition(CheeseWheel.Mode.COLLECT_FRONT));
     }

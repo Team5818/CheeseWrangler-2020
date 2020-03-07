@@ -20,10 +20,10 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.util.NeutralIdleMode;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
@@ -36,7 +36,7 @@ public class Ejector extends SubsystemBase {
     public Ejector(int id, Provider<EjectorControl> command) {
         this.command = command;
         this.victor = new WPI_VictorSPX(id);
-        NeutralIdleMode.BRAKE.applyTo(victor);
+        victor.setNeutralMode(NeutralMode.Brake);
     }
 
 
