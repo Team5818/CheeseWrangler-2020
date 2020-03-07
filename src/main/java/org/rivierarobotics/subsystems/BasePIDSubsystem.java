@@ -38,7 +38,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this.pidConfig = pidConfig;
         this.anglesOrInchesToTicks = anglesOrInchesToTicks;
 
-        this.pidController = new PIDController(pidConfig.getP(), pidConfig.getI(), pidConfig.getD(), 0.005);
+        this.pidController = new PIDController(pidConfig.getP(), pidConfig.getI(), pidConfig.getD());
         this.pidController.setTolerance(pidConfig.getTolerance());
     }
 

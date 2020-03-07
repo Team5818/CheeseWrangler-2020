@@ -42,7 +42,7 @@ public class HoodControl extends CommandBase {
 
     @Override
     public void execute() {
-        hood.setManualPower(0.5 * -MathUtil.fitDeadband(coDriverRightJs.getY()));
+        hood.setPower(0.5 * -MathUtil.fitDeadband(coDriverRightJs.getY()));
     }
 
     @Override

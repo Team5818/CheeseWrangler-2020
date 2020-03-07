@@ -24,13 +24,20 @@ import javax.inject.Inject;
 
 public class HoodCommands {
     private HoodSetAngleCreator hoodSetAngleCreator;
+    private final SetTrenchCreator setTrenchCreator;
 
     @Inject
-    public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator) {
+    public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator,
+                        SetTrenchCreator setTrenchCreator) {
         this.hoodSetAngleCreator = hoodSetAngleCreator;
+        this.setTrenchCreator = setTrenchCreator;
     }
 
     public HoodSetAngle setAngle(double angle) {
         return hoodSetAngleCreator.create(angle);
+    }
+
+    public SetTrench setTrenchMode(boolean set) {
+        return setTrenchCreator.create(set);
     }
 }

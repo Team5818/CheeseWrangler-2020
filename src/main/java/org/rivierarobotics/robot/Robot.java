@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
         flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
-        initShuffleboard();
+        shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Robot extends TimedRobot {
         displayShuffleboard();
         if (isEnabled()) {
             if (!flyingWheelman.isScheduled()) {
-                //flyingWheelman.schedule();
+                flyingWheelman.schedule();
             }
             globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -109,17 +109,6 @@ public class Robot extends TimedRobot {
     @Override
     public void disabledPeriodic() {
         CommandScheduler.getInstance().run();
-    }
-
-    private void initShuffleboard() {
-        shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
-        shuffleboard.getTab("Vision Conf")
-            .addEntry("TurrTargetPos", "TurretAbsAngle", "TurretAbsTicks", "HoodPosTicks", "HoodPosAngle",
-                "Gyro Yaw", "tx", "ty", "Adj. ty", "Servo Angle", "Fly Vel");
-        shuffleboard.getTab("Drive Train")
-            .addEntry("Left Enc", "Right Enc", "Left Vel", "Right Vel");
-        shuffleboard.getTab("Cheese Wheel")
-            .addEntry("Front Sensor", "Back Sensor");
     }
 
     private void displayShuffleboard() {

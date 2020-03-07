@@ -20,24 +20,31 @@
 
 package org.rivierarobotics.commands.hood;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
-public class HoodSetAngle extends BasePIDSetPosition<Hood> {
+public class HoodSetAngle extends CommandBase {
+    private final Hood hood;
+    private final double angle;
+
     public HoodSetAngle(@Provided Hood hood, double angle) {
-        super(hood, 1, angle, 1.0);
+        this.hood = hood;
+        this.angle = angle;
     }
 
     @Override
-    protected double getPositionTicks() {
-        return this.subsystem.getAbsolutePosition();
+    public void execute() {
+        hood.setAbsoluteAngle(angle);
     }
 
     @Override
-    protected void setPositionTicks(double position) {
-        this.subsystem.setAbsoluteAngle(position);
+    public boolean isFinished() {
+        return MathUtil.isWithinTolerance(hood.getAbsolutePosition(), angle, 0.1);
     }
 }

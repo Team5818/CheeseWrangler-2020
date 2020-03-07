@@ -28,25 +28,27 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RobotShuffleboardTab {
-    private ShuffleboardTab tab;
-    private Map<String, NetworkTableEntry> entries;
+    private final ShuffleboardTab tab;
+    private final Map<String, NetworkTableEntry> entries;
 
     public RobotShuffleboardTab(String tab) {
         this.tab = Shuffleboard.getTab(tab);
         this.entries = new HashMap<>();
     }
 
-    public void addEntry(String... keys) {
+    public NetworkTableEntry addEntry(String... keys) {
+        NetworkTableEntry entry = null;
         for (String key : keys) {
-            NetworkTableEntry entry = tab.add(key, 0).getEntry();
+            entry = tab.add(key, 0).getEntry();
             entries.put(key, entry);
         }
+        return entry;
     }
 
     public RobotShuffleboardTab setEntry(String key, double value) {
         NetworkTableEntry entry = entries.get(key);
-        if (entry == null) {
-            return this;
+        while (entry == null) {
+            entry = addEntry(key);
         }
         entry.setNumber(value);
         return this;

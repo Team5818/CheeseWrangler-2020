@@ -20,65 +20,73 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpiutil.math.MathUtil;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.hood.HoodControl;
 
 import javax.inject.Provider;
 
-public class Hood extends BasePIDSubsystem {
-    private static final double LOWER_HARD = 2028;
-    private static final double LOWER_SOFT = 2158;
-    private static final double HIGHER_HARD = 2410;
-    private static final double HIGHER_SOFT = 2250;
+public class Hood extends SubsystemBase {
     private static final double ZERO_TICKS = 2786;
+    private static final double FORWARD = 2605;
+    private static final double BACK_DEFAULT = 2232;
+    private static final double BACK_TRENCH = 2026;
+    public boolean isTrench = false;
     private final WPI_TalonSRX hoodTalon;
     private final LimelightServo servo;
     private final Provider<HoodControl> command;
 
     public Hood(int motorId, LimelightServo servo, Provider<HoodControl> command) {
-        super(new PIDConfig(0.0015, 0.0, 0.0, 0.0, 10, 0.4), 4096 / 360.0);
         this.servo = servo;
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         hoodTalon.configFactoryDefault();
+        hoodTalon.selectProfileSlot(0, 0);
+        hoodTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10);
+        hoodTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
         hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
         hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+
+        hoodTalon.configNominalOutputForward(0);
+        hoodTalon.configNominalOutputReverse(0);
+        hoodTalon.configPeakOutputForward(1);
+        hoodTalon.configPeakOutputReverse(-1);
+
+        hoodTalon.config_kP(0, (0.05 * 1023));
+        hoodTalon.config_kI(0, 0);
+        hoodTalon.config_kD(0, (0.035 * 1023));
+        hoodTalon.config_kF(0, 0);
+
+        hoodTalon.configMotionCruiseVelocity(800);
+        hoodTalon.configMotionAcceleration(800);
     }
 
     public final WPI_TalonSRX getHoodTalon() {
         return hoodTalon;
     }
 
-    @Override
     public double getPositionTicks() {
         return hoodTalon.getSensorCollection().getPulseWidthPosition();
     }
 
-    @Override
     public void setPower(double pwr) {
         pwr = limitPower(pwr);
-        hoodTalon.set(pwr);
-    }
-
-    @Override
-    public void setManualPower(double pwr) {
-        pwr = limitPower(pwr);
-        super.setManualPower(pwr);
+        hoodTalon.set(ControlMode.PercentOutput, pwr);
     }
 
     private double limitPower(double pwr) {
-        double sign = Math.signum(pwr);
-        if (pwr <= 0 && getPositionTicks() < LOWER_SOFT) {
-            pwr = MathUtil.clamp(pwr, 0.6 * -(getPositionTicks() - LOWER_HARD) / (LOWER_SOFT - LOWER_HARD), 0);
-        } else if (pwr > 0 && getPositionTicks() > HIGHER_SOFT) {
-            pwr = MathUtil.clamp(pwr, 0, 0.6 * (HIGHER_HARD - getPositionTicks()) / (HIGHER_HARD - HIGHER_SOFT));
-        }
-        return sign * MathUtil.clamp(Math.abs(pwr), 0, 0.6);
+        double back = isTrench ? BACK_TRENCH : BACK_DEFAULT;
+        double pos = (getPositionTicks() - back) / (FORWARD - back);
+        double curvedPwr = Math.pow(Math.E, -(1/2.0) * (pos * pos)) * pwr;
+        SmartDashboard.putNumber("curvedpwr", curvedPwr);
+        SmartDashboard.putNumber("pos", pos);
+        return curvedPwr;
     }
 
     public double getAbsolutePosition() {
@@ -87,12 +95,12 @@ public class Hood extends BasePIDSubsystem {
 
     public void setAbsoluteAngle(double angle) {
         SmartDashboard.putNumber("SetHoodAngle", angle);
-        if (angle >= 33 && angle <= 66) {
-            double value = ZERO_TICKS - angle * getAnglesOrInchesToTicks();
-            SmartDashboard.putNumber("Hood SetTicks", value);
-            setPositionTicks(value);
-        } else {
-            setPositionTicks(0);
+        double ticks = ZERO_TICKS - (angle * (4096.0 / 360));
+        if (ticks > 0) {
+            ticks = Math.min(ticks, FORWARD);
+            ticks = Math.max(ticks, isTrench ? BACK_TRENCH : BACK_DEFAULT);
+            SmartDashboard.putNumber("ticksAng", ticks);
+            hoodTalon.set(ControlMode.MotionMagic, ticks);
         }
     }
 
