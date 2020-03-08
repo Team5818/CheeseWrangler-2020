@@ -93,7 +93,6 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getLimelightServo().setAngle(45);
     }
 
     @Override
@@ -120,13 +119,11 @@ public class Robot extends TimedRobot {
         var hood = globalComponent.getHood();
         var gyro = globalComponent.getNavXGyro();
         var visionUtil = globalComponent.getVisionUtil();
-        var llServo = globalComponent.getLimelightServo();
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
 
         shuffleboard.getTab("Vision Conf")
-            .setEntry("TurrTargetPos", turret.getAbsolutePosition())
             .setEntry("TurrAbsAngle", turret.getAbsoluteAngle())
             .setEntry("TurrAbsTicks", turret.getPositionTicks())
             .setEntry("HoodPosTicks", hood.getPositionTicks())
@@ -135,7 +132,6 @@ public class Robot extends TimedRobot {
             .setEntry("tx", visionUtil.getLLValue("tx"))
             .setEntry("ty", visionUtil.getLLValue("ty"))
             .setEntry("Adj. ty", visionUtil.getActualTY())
-            .setEntry("Servo Angle", llServo.getAngle())
             .setEntry("Fly Vel", flywheel.getPositionTicks());
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
@@ -144,7 +140,8 @@ public class Robot extends TimedRobot {
             .setEntry("Right Vel", dt.getRight().getVelocity());
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Front Sensor", cw.getFrontSensorValue())
-            .setEntry("Back Sensor", cw.getBackSensorValue());
+            .setEntry("Back Sensor", cw.getBackSensorValue())
+            .setEntry("PositionTicks", cw.getPositionTicks());
 
         SmartDashboard.putData(chooser);
     }

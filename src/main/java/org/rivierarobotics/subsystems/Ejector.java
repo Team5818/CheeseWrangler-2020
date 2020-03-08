@@ -20,28 +20,39 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.ejector.EjectorControl;
+import org.rivierarobotics.inject.Sided;
+import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
+import javax.inject.Singleton;
 
+@Singleton
 public class Ejector extends SubsystemBase {
-    private final WPI_VictorSPX victor;
+    private final EjectorSide left;
+    private final EjectorSide right;
     private final Provider<EjectorControl> command;
 
     @Inject
-    public Ejector(int id, Provider<EjectorControl> command) {
+    public Ejector(@Sided(Side.LEFT) EjectorSide left,
+                  @Sided(Side.RIGHT) EjectorSide right,
+                   Provider<EjectorControl> command) {
+        this.left = left;
+        this.right = right;
         this.command = command;
-        this.victor = new WPI_VictorSPX(id);
-        victor.setNeutralMode(NeutralMode.Brake);
     }
 
-
     public void setPower(double pwr) {
-        victor.set(pwr);
+        setPower(pwr, pwr);
+    }
+
+    public void setPower(double leftPwr, double rightPwr) {
+        //TODO change this to reflect shooting offset
+        left.setPower(leftPwr);
+        right.setPower(MathUtil.fitDeadband(rightPwr - 0.1, 0.1));
     }
 
     @Override

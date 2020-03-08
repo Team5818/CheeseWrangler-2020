@@ -41,7 +41,6 @@ public class Turret extends BasePIDSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
-    private double absolutePosition;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.2));
@@ -75,13 +74,8 @@ public class Turret extends BasePIDSubsystem {
         return txTurret;
     }
 
-    public double getAbsolutePosition() {
-        return absolutePosition;
-    }
-
     public void setAbsoluteAngle(double angle) {
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
-        absolutePosition = position;
         if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position);
         } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {

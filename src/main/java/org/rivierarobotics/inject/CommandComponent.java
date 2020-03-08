@@ -32,7 +32,6 @@ import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.commands.hood.HoodCommands;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.commands.vision.CameraServoCommands;
-import org.rivierarobotics.commands.vision.LimelightServoCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 
 @Subcomponent
@@ -54,8 +53,6 @@ public abstract class CommandComponent {
     public abstract CheeseWheelCommands cheeseWheel();
 
     public abstract AutonomousCommands auto();
-
-    public abstract LimelightServoCommands limelightServo();
 
     public abstract CameraServoCommands cameraServo();
 

@@ -18,25 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.subsystems;
 
-import org.rivierarobotics.subsystems.ServoPosition;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 
-import javax.inject.Inject;
+public class EjectorSide {
+    private final WPI_VictorSPX ejectorVictor;
 
-public class LimelightServoCommands {
-    private LLServoSetPositionCreator llServoSetPositionCreator;
-
-    @Inject
-    public LimelightServoCommands(LLServoSetPositionCreator llServoSetPositionCreator) {
-        this.llServoSetPositionCreator = llServoSetPositionCreator;
+    public EjectorSide(int id, boolean inverted) {
+        ejectorVictor = new WPI_VictorSPX(id);
+        ejectorVictor.configFactoryDefault();
+        ejectorVictor.setInverted(inverted);
+        ejectorVictor.setNeutralMode(NeutralMode.Brake);
     }
 
-    public LLServoSetPosition setAngle(double angle) {
-        return llServoSetPositionCreator.create(angle);
-    }
-
-    public LLServoSetPosition setPosition(ServoPosition position) {
-        return llServoSetPositionCreator.create(position.angle);
+    public void setPower(double pwr) {
+        ejectorVictor.set(pwr);
     }
 }

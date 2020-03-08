@@ -20,14 +20,12 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PositionTracker;
@@ -43,13 +41,11 @@ public class EncoderAim extends CommandBase {
     private final Turret turret;
     private final PositionTracker tracker;
     private final double extraDistance;
-    private final LimelightServo limelightServo;
 
     public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
                       @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
-                      @Provided LimelightServo limelightServo, double extraDistance) {
+                      double extraDistance) {
         this.hood = hood;
-        this.limelightServo = limelightServo;
         this.driveTrain = dt;
         this.flywheel = flywheel;
         this.vision = vision;
@@ -93,9 +89,6 @@ public class EncoderAim extends CommandBase {
         }
 
     }
-
-
-
 
     @Override
     public boolean isFinished() {

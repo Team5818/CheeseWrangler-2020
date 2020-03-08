@@ -41,12 +41,12 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 5;
     private static final int FLYWHEEL_FALCON = 4;
     private static final int CHEESE_WHEEL_TALON = 6;
-    private static final int EJECTOR_VICTOR = 8;
+    private static final int EJECTOR_VICTOR_LEFT = 8;
+    private static final int EJECTOR_VICTOR_RIGHT = 11;
     private static final int INTAKE_VICTOR_FRONT = 9;
     private static final int INTAKE_VICTOR_BACK = 10;
     private static final int CLIMB_FALCON = 21;
 
-    private static final int LIMELIGHT_SERVO = 1;
     private static final int CAMERA_SERVO = 0;
     private static final int CW_FRONT_SENSOR = 1;
     private static final int CW_BACK_SENSOR = 0;
@@ -81,14 +81,22 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Hood provideHood(LimelightServo servo, Provider<HoodControl> command) {
-        return new Hood(HOOD_TALON, servo, command);
+    public static Hood provideHood(Provider<HoodControl> command) {
+        return new Hood(HOOD_TALON, command);
     }
 
     @Provides
     @Singleton
-    public static Ejector provideEjector(Provider<EjectorControl> command) {
-        return new Ejector(EJECTOR_VICTOR, command);
+    @Sided(Side.LEFT)
+    public static EjectorSide provideEjectorLeft() {
+        return new EjectorSide(EJECTOR_VICTOR_LEFT, false);
+    }
+
+    @Provides
+    @Singleton
+    @Sided(Side.RIGHT)
+    public static EjectorSide provideEjectorRight() {
+        return new EjectorSide(EJECTOR_VICTOR_RIGHT, false);
     }
 
     @Provides
@@ -116,12 +124,6 @@ public class SubsystemModule {
     @Singleton
     public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
         return new CheeseWheel(CHEESE_WHEEL_TALON, CW_FRONT_SENSOR, CW_BACK_SENSOR, command);
-    }
-
-    @Provides
-    @Singleton
-    public static LimelightServo provideLimelightServo() {
-        return new LimelightServo(LIMELIGHT_SERVO);
     }
 
     @Provides

@@ -39,11 +39,9 @@ public class Hood extends SubsystemBase {
     private static final int SLOT_IDX = 0;
     public boolean isTrench = false;
     private final WPI_TalonSRX hoodTalon;
-    private final LimelightServo servo;
     private final Provider<HoodControl> command;
 
-    public Hood(int motorId, LimelightServo servo, Provider<HoodControl> command) {
-        this.servo = servo;
+    public Hood(int motorId, Provider<HoodControl> command) {
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         setupHoodTalon();
@@ -128,7 +126,6 @@ public class Hood extends SubsystemBase {
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }
-        servo.setAngle(95 - getAbsoluteAngle());
         super.periodic();
     }
 }

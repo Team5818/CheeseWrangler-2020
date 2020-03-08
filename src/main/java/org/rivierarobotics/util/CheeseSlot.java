@@ -35,11 +35,11 @@ public enum CheeseSlot {
     public boolean isFilled;
 
     public static final double INDEX_DIFF = 4096.0 / 5;
-    private static final double frontOffset = 1000;
+    private static final double frontOffset = 50;
     private static final double backOffset = (frontOffset + INDEX_DIFF * 2) + 30;
     private static final double frontFixOffset = 577;
     private static final double backFixOffset = 3090;
-    private static final double shootOffset = 3870;
+    private static final double shootOffset = 2920;
     private static final int NUMBER_OF_SLOTS = values().length;
 
     private static double boundPosition(double pos) {

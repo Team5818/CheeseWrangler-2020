@@ -32,7 +32,6 @@ import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Intake;
-import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
@@ -56,7 +55,6 @@ public abstract class GlobalComponent {
         getNavXGyro();
         getButtonConfiguration();
         getVisionUtil();
-        getLimelightServo();
         getCameraServo();
         getPositionTracker();
     }
@@ -82,8 +80,6 @@ public abstract class GlobalComponent {
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
-
-    public abstract LimelightServo getLimelightServo();
 
     public abstract CameraServo getCameraServo();
 
