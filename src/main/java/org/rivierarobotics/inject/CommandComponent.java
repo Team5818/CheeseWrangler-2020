@@ -30,7 +30,6 @@ import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.commands.hood.HoodCommands;
-import org.rivierarobotics.commands.piston.PistonCommands;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.commands.vision.CameraServoCommands;
 import org.rivierarobotics.commands.vision.LimelightServoCommands;
@@ -39,8 +38,6 @@ import org.rivierarobotics.commands.vision.VisionCommands;
 @Subcomponent
 public abstract class CommandComponent {
     public abstract DriveCommands drive();
-
-    public abstract PistonCommands piston();
 
     public abstract HoodCommands hood();
 

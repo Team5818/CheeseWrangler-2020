@@ -28,11 +28,13 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.hood.HoodControl;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Provider;
 
 public class Hood extends SubsystemBase {
-    private static final double ZERO_TICKS = 2786;
+    private static final double ZERO_TICKS = 1762;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
     private static final int SLOT_IDX = 0;
     public boolean isTrench = false;
@@ -61,7 +63,7 @@ public class Hood extends SubsystemBase {
         hoodTalon.configPeakOutputForward(1);
         hoodTalon.configPeakOutputReverse(-1);
 
-        hoodTalon.config_kP(SLOT_IDX, (0.6 * 1023 / 400));
+        hoodTalon.config_kP(SLOT_IDX, (1.5 * 1023 / 400));
         hoodTalon.config_kI(SLOT_IDX, 0);
         hoodTalon.config_kD(SLOT_IDX, 0);
         hoodTalon.config_kF(SLOT_IDX, 0);
@@ -74,6 +76,14 @@ public class Hood extends SubsystemBase {
         return hoodTalon;
     }
 
+    public static double getTicksPerDegree() {
+        return TICKS_PER_DEGREE;
+    }
+
+    public static double getZeroTicks() {
+        return ZERO_TICKS;
+    }
+
     public double getPositionTicks() {
         return hoodTalon.getSensorCollection().getPulseWidthPosition();
     }
@@ -84,11 +94,9 @@ public class Hood extends SubsystemBase {
     }
 
     private double limitPower(double pwr) {
-        double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
-        double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
-        double curvedPwr = Math.pow(Math.E, -(5.0 / 8) * (pos * pos)) * pwr;
-        SmartDashboard.putNumber("curvedpwr", curvedPwr);
-        SmartDashboard.putNumber("pos", pos);
+        double pos = (getPositionTicks() - HoodPosition.BACK_DEFAULT.ticks)
+            / (HoodPosition.FORWARD.ticks - HoodPosition.BACK_DEFAULT.ticks);
+        double curvedPwr = Math.pow(Math.E, -(4.0 / 8) * (pos * pos)) * pwr;
         if (limitSafety(curvedPwr)) {
             return curvedPwr;
         } else {
@@ -97,23 +105,22 @@ public class Hood extends SubsystemBase {
     }
 
     private boolean limitSafety(double pwr) {
-        double back = (isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks);
-        return (pwr > 0 && getPositionTicks() > back) || (pwr < 0 && getPositionTicks() < HoodPosition.FORWARD.ticks);
+        return !(getPositionTicks() <= HoodPosition.BACK_DEFAULT.ticks && pwr < 0)
+            && !(getPositionTicks() >= HoodPosition.FORWARD.ticks && pwr > 0);
     }
 
-    public double getAbsolutePosition() {
-        return (ZERO_TICKS - getPositionTicks()) / TICKS_PER_DEGREE;
+    public double getAbsoluteAngle() {
+        return (getPositionTicks() - ZERO_TICKS) / TICKS_PER_DEGREE;
     }
 
     public void setAbsoluteAngle(double angle) {
-        SmartDashboard.putNumber("SetHoodAngle", angle);
-        double ticks = ZERO_TICKS - (angle * (TICKS_PER_DEGREE));
-        if (ticks > 0) {
-            ticks = Math.min(ticks, HoodPosition.FORWARD.ticks);
-            ticks = Math.max(ticks, isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks);
-            SmartDashboard.putNumber("ticksAng", ticks);
-            hoodTalon.set(ControlMode.MotionMagic, ticks);
-        }
+        Robot.getShuffleboard().getTab("Vision Conf").setEntry("SetHoodAngle", angle);
+        double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
+        double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
+        Robot.getShuffleboard().getTab("Vision Conf").setEntry("ticksAngSet", ticks);
+        ticks = MathUtil.limit(ticks, back, HoodPosition.FORWARD.ticks);
+        Robot.getShuffleboard().getTab("Vision Conf").setEntry("ticksAng", ticks);
+        hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 
     @Override
@@ -121,7 +128,7 @@ public class Hood extends SubsystemBase {
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }
-        servo.setAngle(95 - getAbsolutePosition());
+        servo.setAngle(95 - getAbsoluteAngle());
         super.periodic();
     }
 }

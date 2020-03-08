@@ -20,29 +20,35 @@
 
 package org.rivierarobotics.commands.hood;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.HoodPosition;
 import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
 public class HoodSetAngle extends CommandBase {
     private final Hood hood;
     private final double angle;
+    private double start;
 
     public HoodSetAngle(@Provided Hood hood, double angle) {
         this.hood = hood;
-        this.angle = angle;
+        this.angle = MathUtil.limit(angle, HoodPosition.BACK_DEFAULT.angle, HoodPosition.FORWARD.angle);
+        addRequirements(hood);
     }
 
     @Override
     public void initialize() {
         hood.setAbsoluteAngle(angle);
+        start = Timer.getFPGATimestamp();
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(hood.getAbsolutePosition(), angle, 0.1);
+        return MathUtil.isWithinTolerance(hood.getAbsoluteAngle(), angle, 0.5)
+            || (Timer.getFPGATimestamp() - start) > 2;
     }
 }

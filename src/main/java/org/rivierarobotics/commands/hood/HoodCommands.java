@@ -41,7 +41,7 @@ public class HoodCommands {
     }
 
     public HoodSetAngle setAngle(HoodPosition position) {
-        return hoodSetAngleCreator.create(position.ticks);
+        return hoodSetAngleCreator.create(position.angle);
     }
 
     public ToggleTrenchMode toggleTrenchMode() {

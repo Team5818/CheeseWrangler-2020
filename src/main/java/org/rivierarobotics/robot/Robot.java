@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private Command flyingWheelman;
-    private RobotShuffleboard shuffleboard;
+    private static RobotShuffleboard shuffleboard;
 
     @Override
     public void robotInit() {
@@ -55,6 +55,7 @@ public class Robot extends TimedRobot {
 
         flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
+        globalComponent.getNavXGyro().resetGyro();
     }
 
     @Override
@@ -62,7 +63,7 @@ public class Robot extends TimedRobot {
         displayShuffleboard();
         if (isEnabled()) {
             if (!flyingWheelman.isScheduled()) {
-                flyingWheelman.schedule();
+                // flyingWheelman.schedule();
             }
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -110,6 +111,10 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
     }
 
+    public static RobotShuffleboard getShuffleboard() {
+        return shuffleboard;
+    }
+
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
         var hood = globalComponent.getHood();
@@ -122,10 +127,10 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Vision Conf")
             .setEntry("TurrTargetPos", turret.getAbsolutePosition())
-            .setEntry("TurrAbsAngle", turret.getPositionTicks())
-            .setEntry("TurrAbsTicks", turret.getAbsoluteAngle())
+            .setEntry("TurrAbsAngle", turret.getAbsoluteAngle())
+            .setEntry("TurrAbsTicks", turret.getPositionTicks())
             .setEntry("HoodPosTicks", hood.getPositionTicks())
-            .setEntry("HoodPosAngle", hood.getAbsolutePosition())
+            .setEntry("HoodPosAngle", hood.getAbsoluteAngle())
             .setEntry("Gyro Angle", gyro.getYaw())
             .setEntry("tx", visionUtil.getLLValue("tx"))
             .setEntry("ty", visionUtil.getLLValue("ty"))

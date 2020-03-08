@@ -20,39 +20,50 @@
 
 package org.rivierarobotics.commands.hood;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.HoodPosition;
+import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
 
-public class ToggleTrenchMode extends SequentialCommandGroup {
-    private final HoodCommands hoodCommands;
-    private final TurretCommands turretCommands;
+public class ToggleTrenchMode extends CommandBase {
+    private final Turret turret;
     private final Hood hood;
+    private Command setTurret;
+    private Command setHood;
 
     @Inject
-    public ToggleTrenchMode(HoodCommands hoodCommands, TurretCommands turretCommands, Hood hood) {
-        this.hoodCommands = hoodCommands;
-        this.turretCommands = turretCommands;
+    public ToggleTrenchMode(Turret turret, Hood hood, TurretCommands turretCommands, HoodCommands hoodCommands) {
+        this.turret = turret;
         this.hood = hood;
+        setTurret = turretCommands.setAngle(0);
+        setHood = hoodCommands.setAngle(HoodPosition.BACK_TRENCH);
+        addRequirements(turret, hood);
     }
 
     @Override
     public void initialize() {
-        if (hood.isTrench) {
-            addCommands(
-                turretCommands.setAngle(0),
-                new WaitCommand(1.0),
-                hoodCommands.setAngle(HoodPosition.BACK_TRENCH)
-            );
-        } else {
-            addCommands(
-                hoodCommands.setAngle(HoodPosition.MIDDLE)
-            );
+        setTurret.schedule();
+    }
+
+    @Override
+    public void execute() {
+        if (!hood.isTrench && setTurret.isFinished()) {
+            hood.isTrench = true;
+            setHood.schedule();
         }
-        hood.isTrench = !hood.isTrench;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        hood.isTrench = false;
+    }
+
+    @Override
+    public boolean isFinished() {
+        return hood.getPositionTicks() > HoodPosition.BACK_DEFAULT.ticks && setHood.isFinished();
     }
 }

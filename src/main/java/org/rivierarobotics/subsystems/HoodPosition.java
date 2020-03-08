@@ -22,13 +22,15 @@ package org.rivierarobotics.subsystems;
 
 public enum HoodPosition {
     FORWARD(2605),
-    BACK_DEFAULT(2232),
+    BACK_DEFAULT(2250),
     BACK_TRENCH(2026),
     MIDDLE(2350);
 
     public final int ticks;
+    public final double angle;
 
     HoodPosition(int ticks) {
         this.ticks = ticks;
+        this.angle = (ticks - Hood.getZeroTicks()) / Hood.getTicksPerDegree();
     }
 }

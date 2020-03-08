@@ -61,7 +61,7 @@ public class Turret extends BasePIDSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return ((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + MathUtil.wrapToCircle(gyro.getYaw()));
+        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + (gyro.getYaw()));
     }
 
     public double getAngle() {

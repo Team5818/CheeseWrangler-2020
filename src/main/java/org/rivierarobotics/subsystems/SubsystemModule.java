@@ -120,12 +120,6 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static PistonController providePistonController() {
-        return new PistonController();
-    }
-
-    @Provides
-    @Singleton
     public static LimelightServo provideLimelightServo() {
         return new LimelightServo(LIMELIGHT_SERVO);
     }
