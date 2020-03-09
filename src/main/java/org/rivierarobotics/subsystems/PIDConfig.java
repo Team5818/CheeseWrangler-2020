@@ -37,13 +37,13 @@ public class PIDConfig {
         this.pidRange = pidRange;
     }
 
-    public PIDConfig(double kP, double kI, double kD, double pidRange) {
+    public PIDConfig(double kP, double kI, double kD, double kF) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
-        this.kF = 0;
+        this.kF = kF;
         this.tolerance = 0;
-        this.pidRange = pidRange;
+        this.pidRange = 1.0;
     }
 
     public double getP() {

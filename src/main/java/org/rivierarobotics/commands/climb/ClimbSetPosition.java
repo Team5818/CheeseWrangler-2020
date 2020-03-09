@@ -23,6 +23,8 @@ package org.rivierarobotics.commands.climb;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.commands.MotionMagicSetPosition;
+import org.rivierarobotics.subsystems.BasePIDSubsystem;
 import org.rivierarobotics.subsystems.Climb;
 
 @GenerateCreator

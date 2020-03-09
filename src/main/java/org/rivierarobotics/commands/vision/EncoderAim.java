@@ -66,7 +66,7 @@ public class EncoderAim extends CommandBase {
         double vz = zFromGoal / t;
         double turretAngle = MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(vz, vx)));
 
-        turret.setAbsoluteAngle(turretAngle);
+        turret.setAngle(turretAngle);
 
         double y = ShooterUtil.getYVelocityConstant();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
@@ -77,15 +77,15 @@ public class EncoderAim extends CommandBase {
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot
             hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
-            flywheel.setPositionTicks(encoderVelocity);
+            flywheel.setVelocity(encoderVelocity);
         } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < ShooterUtil.getMinHoodAngle()) {
             //Long Shot
             hood.setAbsoluteAngle(hoodAngle);
-            flywheel.setPositionTicks(ShooterUtil.getMaxFlywheelVelocity());
+            flywheel.setVelocity(ShooterUtil.getMaxFlywheelVelocity());
         } else {
             //Calculated Shot
             hood.setAbsoluteAngle(hoodAngle);
-            flywheel.setPositionTicks(encoderVelocity);
+            flywheel.setVelocity(encoderVelocity);
         }
 
     }

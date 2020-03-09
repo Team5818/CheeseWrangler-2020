@@ -110,5 +110,7 @@ public class DriveTrain extends SubsystemBase {
             Units.inchesToMeters(left.getPosition()),
             Units.inchesToMeters(right.getPosition())
         );
+        left.tickPid();
+        right.tickPid();
     }
 }

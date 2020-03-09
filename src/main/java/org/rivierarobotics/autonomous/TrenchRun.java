@@ -38,7 +38,7 @@ public class TrenchRun extends SequentialCommandGroup {
                      CollectionCommands intakeCommands,
                      TurretCommands turretCommands) {
         addCommands(
-                turretCommands.setAngle(180),
+                turretCommands.setAbsoluteAngle(180),
                 visionCommands.correctPosition(),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOSHOOT),
                 visionCommands.visionAim(VisionTarget.INNER),

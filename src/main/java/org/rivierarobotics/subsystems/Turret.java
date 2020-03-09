@@ -23,7 +23,6 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.util.MathUtil;
@@ -33,7 +32,7 @@ import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
-public class Turret extends BasePIDSubsystem {
+public class Turret extends BasePIDSubsystem implements RRSubsystem {
     private static final double zeroTicks = 3793;
     private static final double maxAngle = 25;
     private static final double minAngle = -243.7;
@@ -74,7 +73,7 @@ public class Turret extends BasePIDSubsystem {
         return txTurret;
     }
 
-    public void setAbsoluteAngle(double angle) {
+    public void setAngle(double angle) {
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position);

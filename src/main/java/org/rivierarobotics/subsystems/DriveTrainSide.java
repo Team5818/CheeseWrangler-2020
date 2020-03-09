@@ -24,31 +24,30 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.util.NeutralIdleMode;
 
-public class DriveTrainSide extends SubsystemBase {
+public class DriveTrainSide implements RRSubsystem {
     // same units as distance per pulse
     private static final double MAX_VELOCITY = 5.7912;
     private static final double FEED_FORWARD = 1.0 / MAX_VELOCITY;
     private final PIDController pidController;
-    private final boolean invert;
-    private WPI_TalonFX left;
-    private WPI_TalonFX right;
+    private WPI_TalonFX leftMotor;
+    private WPI_TalonFX rightMotor;
     private Encoder shaftEncoder;
+    private final boolean invert;
     private boolean pidEnabled;
     private final double pidRange;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        this.left = new WPI_TalonFX(motors.left);
-        this.right = new WPI_TalonFX(motors.right);
+        this.leftMotor = new WPI_TalonFX(motors.left);
+        this.rightMotor = new WPI_TalonFX(motors.right);
         this.invert = invert;
         this.pidController = new PIDController(0, 0, 0, 0.02);
         this.pidController.setTolerance(5);
         this.pidRange = 1.0;
 
-        setupMotors(left, right);
-        NeutralIdleMode.BRAKE.applyTo(left, right);
+        setupMotors(leftMotor, rightMotor);
+        NeutralIdleMode.BRAKE.applyTo(leftMotor, rightMotor);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         // meters / ticks
@@ -63,9 +62,15 @@ public class DriveTrainSide extends SubsystemBase {
         }
     }
 
+    @Override
+    public double getPositionTicks() {
+        return shaftEncoder.getRaw();
+    }
+
+    @Override
     public void setPower(double pwr) {
-        left.set(pwr);
-        right.set(pwr);
+        leftMotor.set(pwr);
+        rightMotor.set(pwr);
     }
 
     public double getPosition() {
@@ -86,7 +91,7 @@ public class DriveTrainSide extends SubsystemBase {
         setPower(pwr);
     }
 
-    private void tickPid() {
+    public void tickPid() {
         if (pidEnabled) {
             double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPosition())));
             pidPower += pidController.getSetpoint() * FEED_FORWARD;
@@ -94,13 +99,8 @@ public class DriveTrainSide extends SubsystemBase {
         }
     }
 
-    @Override
-    public void periodic() {
-        tickPid();
-    }
-
     public void setNeutralIdle(NeutralIdleMode mode) {
-        mode.applyTo(left, right);
+        mode.applyTo(leftMotor, rightMotor);
     }
 
     public void resetEncoder() {

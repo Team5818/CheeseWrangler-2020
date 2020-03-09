@@ -20,25 +20,24 @@
 
 package org.rivierarobotics.commands.turret;
 
-import javax.inject.Inject;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.subsystems.Turret;
 
-public class TurretCommands {
-    private TurretSetAbsoluteAngleCreator turretSetAbsoluteAngleCreator;
-    private TurretSetRelativeAngleCreator turretSetRelativeAngleCreator;
-
-    @Inject
-    public TurretCommands(TurretSetAbsoluteAngleCreator turretAbsoluteSetAngleCreator,
-                          TurretSetRelativeAngleCreator turretSetRelativeAngleCreator) {
-        this.turretSetRelativeAngleCreator = turretSetRelativeAngleCreator;
-        this.turretSetAbsoluteAngleCreator = turretAbsoluteSetAngleCreator;
+@GenerateCreator
+public class TurretSetRelativeAngle extends BasePIDSetPosition<Turret> {
+    public TurretSetRelativeAngle(@Provided Turret turret, double angle) {
+        super(turret, 1, angle, 2);
+        addRequirements(turret);
     }
 
-    public TurretSetAbsoluteAngle setAbsoluteAngle(double angle) {
-        return turretSetAbsoluteAngleCreator.create(angle);
+    protected double getPositionTicks() {
+        return subsystem.getAngle();
     }
 
-    public TurretSetRelativeAngle setRelativeAngle(double angle) {
-        return turretSetRelativeAngleCreator.create(angle);
+    @Override
+    protected void setPositionTicks(double angle) {
+        subsystem.setAngle(angle);
     }
-
 }

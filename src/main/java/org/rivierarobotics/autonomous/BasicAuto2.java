@@ -34,7 +34,7 @@ public class BasicAuto2 extends SequentialCommandGroup {
                       VisionCommands visionCommands,
                       TurretCommands turretCommands) {
         addCommands(
-                turretCommands.setAngle(180),
+                turretCommands.setAbsoluteAngle(180),
                 visionCommands.correctPosition(),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOSHOOTTMID),
                 visionCommands.visionAim(VisionTarget.INNER)

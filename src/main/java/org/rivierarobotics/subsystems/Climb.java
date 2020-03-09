@@ -20,11 +20,11 @@
 
 package org.rivierarobotics.subsystems;
 
-public class Climb extends BasePIDSubsystem {
+public class Climb extends BasePIDSubsystem implements RRSubsystem {
     // private final WPI_TalonSRX climbTalon;
 
     public Climb(int id) {
-        super(new PIDConfig(0, 0, 0, 1));
+        super(new PIDConfig(0, 0, 0, 0));
         //        this.climbTalon = new WPI_TalonSRX(id);
         //        climbTalon.configFactoryDefault();
         //        climbTalon.setSensorPhase(true);
@@ -38,7 +38,7 @@ public class Climb extends BasePIDSubsystem {
     }
 
     @Override
-    protected void setPower(double pwr) {
+    public void setPower(double pwr) {
         //        climbTalon.set(pwr);
     }
 

@@ -23,17 +23,16 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorUtil;
 
 import javax.inject.Provider;
 
-public class Hood extends SubsystemBase {
+public class Hood extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 1762;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
     private static final int SLOT_IDX = 0;
@@ -44,30 +43,10 @@ public class Hood extends SubsystemBase {
     public Hood(int motorId, Provider<HoodControl> command) {
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
-        setupHoodTalon();
-    }
-
-    private final void setupHoodTalon() {
-        hoodTalon.configFactoryDefault();
-        hoodTalon.selectProfileSlot(SLOT_IDX, 0);
-        hoodTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 10);
-        hoodTalon.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 10);
+        MotorUtil.setupMotionMagic(hoodTalon, FeedbackDevice.PulseWidthEncodedPosition,
+            new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800);
         hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
-        hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-
-        hoodTalon.configNominalOutputForward(0);
-        hoodTalon.configNominalOutputReverse(0);
-        hoodTalon.configPeakOutputForward(1);
-        hoodTalon.configPeakOutputReverse(-1);
-
-        hoodTalon.config_kP(SLOT_IDX, (1.5 * 1023 / 400));
-        hoodTalon.config_kI(SLOT_IDX, 0);
-        hoodTalon.config_kD(SLOT_IDX, 0);
-        hoodTalon.config_kF(SLOT_IDX, 0);
-
-        hoodTalon.configMotionCruiseVelocity(800);
-        hoodTalon.configMotionAcceleration(800);
     }
 
     public final WPI_TalonSRX getHoodTalon() {
@@ -92,8 +71,8 @@ public class Hood extends SubsystemBase {
     }
 
     private double limitPower(double pwr) {
-        double pos = (getPositionTicks() - HoodPosition.BACK_DEFAULT.ticks)
-            / (HoodPosition.FORWARD.ticks - HoodPosition.BACK_DEFAULT.ticks);
+        double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
+        double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
         double curvedPwr = Math.pow(Math.E, -(4.0 / 8) * (pos * pos)) * pwr;
         if (limitSafety(curvedPwr)) {
             return curvedPwr;

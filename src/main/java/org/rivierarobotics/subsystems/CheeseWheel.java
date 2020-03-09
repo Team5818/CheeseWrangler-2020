@@ -23,13 +23,12 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Provider;
 
-public class CheeseWheel extends BasePIDSubsystem {
+public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
     private static final double INPUT_RANGE = 4095;
@@ -49,7 +48,7 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     @Override
-    protected void setPower(double pwr) {
+    public void setPower(double pwr) {
         wheelTalon.set(pwr);
     }
 

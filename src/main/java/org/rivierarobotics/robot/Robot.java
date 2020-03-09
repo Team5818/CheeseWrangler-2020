@@ -28,18 +28,19 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RobotShuffleboard;
 
 import java.util.Objects;
 
 public class Robot extends TimedRobot {
+    private static RobotShuffleboard shuffleboard;
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private Command flyingWheelman;
-    private static RobotShuffleboard shuffleboard;
 
     @Override
     public void robotInit() {
@@ -53,8 +54,8 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
+        shuffleboard = new RobotShuffleboard();
         flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
-        shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
         globalComponent.getNavXGyro().resetGyro();
     }
 
@@ -63,7 +64,7 @@ public class Robot extends TimedRobot {
         displayShuffleboard();
         if (isEnabled()) {
             if (!flyingWheelman.isScheduled()) {
-                // flyingWheelman.schedule();
+                flyingWheelman.schedule();
             }
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -110,10 +111,6 @@ public class Robot extends TimedRobot {
         CommandScheduler.getInstance().run();
     }
 
-    public static RobotShuffleboard getShuffleboard() {
-        return shuffleboard;
-    }
-
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
         var hood = globalComponent.getHood();
@@ -123,26 +120,34 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
 
-        shuffleboard.getTab("Vision Conf")
-            .setEntry("TurrAbsAngle", turret.getAbsoluteAngle())
-            .setEntry("TurrAbsTicks", turret.getPositionTicks())
-            .setEntry("HoodPosTicks", hood.getPositionTicks())
-            .setEntry("HoodPosAngle", hood.getAbsoluteAngle())
-            .setEntry("Gyro Angle", gyro.getYaw())
+        shuffleboard.getTab("Turret/Hood")
+            .setEntry("Hood Position Ticks", hood.getPositionTicks())
+            .setEntry("Hood Absolute Angle", hood.getAbsoluteAngle())
+            .setEntry("Turret Absolute Angle", turret.getAbsoluteAngle())
+            .setEntry("Turret Position Ticks", turret.getPositionTicks());
+
+        shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))
             .setEntry("ty", visionUtil.getLLValue("ty"))
             .setEntry("Adj. ty", visionUtil.getActualTY())
-            .setEntry("Fly Vel", flywheel.getPositionTicks());
+            .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
+            .setEntry("Gyro Angle", gyro.getYaw());
+
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
             .setEntry("Right Enc", dt.getRight().getPosition())
             .setEntry("Left Vel", dt.getLeft().getVelocity())
             .setEntry("Right Vel", dt.getRight().getVelocity());
+
         shuffleboard.getTab("Cheese Wheel")
+            .setEntry("Position Ticks", cw.getPositionTicks())
             .setEntry("Front Sensor", cw.getFrontSensorValue())
-            .setEntry("Back Sensor", cw.getBackSensorValue())
-            .setEntry("PositionTicks", cw.getPositionTicks());
+            .setEntry("Back Sensor", cw.getBackSensorValue());
 
         SmartDashboard.putData(chooser);
+    }
+
+    public static RobotShuffleboard getShuffleboard() {
+        return shuffleboard;
     }
 }

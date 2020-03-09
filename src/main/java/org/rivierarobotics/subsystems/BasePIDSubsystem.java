@@ -98,7 +98,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         pidController.setSetpoint(position);
     }
 
-    protected abstract void setPower(double pwr);
+    public abstract void setPower(double pwr);
 
     public void resetPidConstants() {
         pidController.setPID(pidConfig.getP(), pidConfig.getI(), pidConfig.getD());

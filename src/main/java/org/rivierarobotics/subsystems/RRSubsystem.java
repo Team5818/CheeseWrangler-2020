@@ -18,27 +18,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.turret;
+package org.rivierarobotics.subsystems;
 
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.BasePIDSetPosition;
-import org.rivierarobotics.subsystems.Turret;
+public interface RRSubsystem {
+    double getPositionTicks();
 
-@GenerateCreator
-public class TurretSetAngle extends BasePIDSetPosition<Turret> {
-
-    public TurretSetAngle(@Provided Turret turret, double angle) {
-        super(turret, 1, angle, 2);
-        addRequirements(turret);
-    }
-
-    protected double getPositionTicks() {
-        return subsystem.getAbsoluteAngle();
-    }
-
-    @Override
-    protected void setPositionTicks(double angle) {
-        subsystem.setAbsoluteAngle(angle);
-    }
+    void setPower(double pwr);
 }
