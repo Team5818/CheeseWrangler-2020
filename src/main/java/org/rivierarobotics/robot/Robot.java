@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RobotShuffleboard;
 
@@ -64,7 +63,7 @@ public class Robot extends TimedRobot {
         displayShuffleboard();
         if (isEnabled()) {
             if (!flyingWheelman.isScheduled()) {
-                flyingWheelman.schedule();
+                // flyingWheelman.schedule();
             }
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -89,6 +88,9 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
+        if (shuffleboard == null) {
+            shuffleboard = new RobotShuffleboard();
+        }
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -120,11 +122,11 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
 
-        shuffleboard.getTab("Turret/Hood")
-            .setEntry("Hood Position Ticks", hood.getPositionTicks())
-            .setEntry("Hood Absolute Angle", hood.getAbsoluteAngle())
-            .setEntry("Turret Absolute Angle", turret.getAbsoluteAngle())
-            .setEntry("Turret Position Ticks", turret.getPositionTicks());
+        shuffleboard.getTab("TurretHood")
+            .setEntry("Hood Pos Ticks", hood.getPositionTicks())
+            .setEntry("Hood Abs Angle", hood.getAbsoluteAngle())
+            .setEntry("Turret Abs Angle", turret.getAbsoluteAngle())
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks());
 
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))

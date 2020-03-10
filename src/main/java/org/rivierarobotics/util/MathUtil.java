@@ -86,4 +86,16 @@ public class MathUtil {
     public static boolean isWithinTolerance(double value, double target, double tolerance) {
         return Math.abs(value - target) < tolerance;
     }
+
+    public static double ticksPer100msToRPM(double ticksRate, double ticksPerRev) {
+        return ticksPerRev * (600 / ticksPerRev);
+    }
+
+    public static double metersPerSecToTicksPer100ms(double metersPerSecond, double ticksPerMeter) {
+        return metersPerSecond * (1.0 / 10) * ticksPerMeter;
+    }
+
+    public static double ticksPer100msToMetersPerSec(double ticksPer100ms, double ticksPerMeter) {
+        return (ticksPer100ms * 10) / ticksPerMeter;
+    }
 }

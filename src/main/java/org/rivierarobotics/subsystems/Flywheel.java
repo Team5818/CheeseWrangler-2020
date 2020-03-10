@@ -32,8 +32,8 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
 
     public Flywheel(int id) {
         flywheelFalcon = new WPI_TalonFX(id);
-        MotorUtil.setupMotionMagic(flywheelFalcon, FeedbackDevice.IntegratedSensor,
-            new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
+            new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         flywheelFalcon.setInverted(false);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
     }

@@ -55,12 +55,10 @@ public class PathweaverExecutor extends CommandBase {
     public void initialize() {
         startTimestamp = Timer.getFPGATimestamp();
         driveTrain.resetEncoder();
-        SmartDashboard.putString("isInit", "YES");
     }
 
     @Override
     public void execute() {
-        SmartDashboard.putNumber("isRunning", Timer.getFPGATimestamp());
         Pose2d current = driveTrain.getPose();
         Trajectory.State goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
         SmartDashboard.putString("CurrentPose", current.toString());

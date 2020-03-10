@@ -26,10 +26,6 @@ import java.util.Map;
 public class RobotShuffleboard {
     private final Map<String, RobotShuffleboardTab> tabs;
 
-    public RobotShuffleboard() {
-        this.tabs = new HashMap<>();
-    }
-
     public RobotShuffleboard(String... tabs) {
         this.tabs = new HashMap<>(tabs.length);
         for (String tabName : tabs) {
@@ -44,11 +40,11 @@ public class RobotShuffleboard {
         return tabs.get(tabName);
     }
 
-    public RobotShuffleboardTab addTab(String tabName) {
-        RobotShuffleboardTab toAdd  =  new RobotShuffleboardTab(tabName);
-        if (!tabs.containsKey(tabName)) {
-            tabs.put(tabName, toAdd);
+    public void addTab(String... tabNames) {
+        for (String tab : tabNames) {
+            if (!tabs.containsKey(tab)) {
+                tabs.put(tab, new RobotShuffleboardTab(tab));
+            }
         }
-        return toAdd;
     }
 }

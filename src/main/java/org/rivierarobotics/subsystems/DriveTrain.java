@@ -65,8 +65,8 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void setPower(double l, double r) {
-        left.setManualPower(l);
-        right.setManualPower(r);
+        left.setPower(l);
+        right.setPower(r);
     }
 
     public double getAvgVelocity() {
@@ -110,7 +110,5 @@ public class DriveTrain extends SubsystemBase {
             Units.inchesToMeters(left.getPosition()),
             Units.inchesToMeters(right.getPosition())
         );
-        left.tickPid();
-        right.tickPid();
     }
 }

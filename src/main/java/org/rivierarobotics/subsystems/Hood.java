@@ -43,8 +43,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     public Hood(int motorId, Provider<HoodControl> command) {
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
-        MotorUtil.setupMotionMagic(hoodTalon, FeedbackDevice.PulseWidthEncodedPosition,
-            new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+            new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, hoodTalon);
         hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
     }
@@ -91,12 +91,12 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAbsoluteAngle(double angle) {
-        Robot.getShuffleboard().getTab("Vision Conf").setEntry("SetHoodAngle", angle);
+        Robot.getShuffleboard().getTab("TurretHood").setEntry("SetHoodAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
         double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
-        Robot.getShuffleboard().getTab("Vision Conf").setEntry("ticksAngSet", ticks);
+        Robot.getShuffleboard().getTab("TurretHood").setEntry("ticksAngSet", ticks);
         ticks = MathUtil.limit(ticks, back, HoodPosition.FORWARD.ticks);
-        Robot.getShuffleboard().getTab("Vision Conf").setEntry("ticksAng", ticks);
+        Robot.getShuffleboard().getTab("TurretHood").setEntry("ticksAng", ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 

@@ -23,32 +23,43 @@ package org.rivierarobotics.util;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import org.rivierarobotics.subsystems.PIDConfig;
 
 public class MotorUtil {
     private MotorUtil() {
     }
-    
-    public static <T extends BaseMotorController> void setupMotionMagic(T motor, FeedbackDevice sensor, PIDConfig pidConfig, int maxVel) {
-        motor.configFactoryDefault();
-        motor.selectProfileSlot(0, 0);
-        motor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, 10);
-        motor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, 10);
-        motor.configSelectedFeedbackSensor(sensor, 0, 100);
 
-        motor.configNominalOutputForward(0);
-        motor.configNominalOutputReverse(0);
-        motor.configPeakOutputForward(pidConfig.getRange());
-        motor.configPeakOutputReverse(-pidConfig.getRange());
+    @SafeVarargs
+    public static <T extends BaseMotorController> void setInverted(boolean invert, T... motors) {
+        for (T motor : motors) {
+            motor.setInverted(invert);
+        }
+    }
 
-        motor.config_kP(0, pidConfig.getP());
-        motor.config_kI(0, pidConfig.getI());
-        motor.config_kD(0, pidConfig.getD());
-        motor.config_kF(0, pidConfig.getF());
+    @SafeVarargs
+    public static <T extends BaseMotorController> void setupMotionMagic(FeedbackDevice sensor, PIDConfig pidConfig, int maxVel, T... motors) {
+        for (T motor : motors) {
+            motor.configFactoryDefault();
+            motor.selectProfileSlot(0, 0);
+            motor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, 10);
+            motor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, 10);
+            motor.configSelectedFeedbackSensor(sensor, 0, 100);
 
-        if (maxVel != 0) {
-            motor.configMotionCruiseVelocity(maxVel);
-            motor.configMotionAcceleration(maxVel);
+            motor.configNominalOutputForward(0);
+            motor.configNominalOutputReverse(0);
+            motor.configPeakOutputForward(pidConfig.getRange());
+            motor.configPeakOutputReverse(-pidConfig.getRange());
+
+            motor.config_kP(0, pidConfig.getP());
+            motor.config_kI(0, pidConfig.getI());
+            motor.config_kD(0, pidConfig.getD());
+            motor.config_kF(0, pidConfig.getF());
+
+            if (maxVel != 0) {
+                motor.configMotionCruiseVelocity(maxVel);
+                motor.configMotionAcceleration(maxVel);
+            }
         }
     }
 }
