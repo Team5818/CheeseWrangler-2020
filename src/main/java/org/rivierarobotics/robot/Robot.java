@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RobotShuffleboard;
 
@@ -63,10 +64,12 @@ public class Robot extends TimedRobot {
         displayShuffleboard();
         if (isEnabled()) {
             if (!flyingWheelman.isScheduled()) {
-                // flyingWheelman.schedule();
+                flyingWheelman.schedule();
             }
+
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
+            globalComponent.getBallTracker().checkIfEmpty();
         }
     }
 
@@ -121,6 +124,10 @@ public class Robot extends TimedRobot {
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
+        var bt = globalComponent.getBallTracker();
+        boolean[] bta = globalComponent.getBallTracker().getBallArray();
+
+        
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
@@ -131,9 +138,14 @@ public class Robot extends TimedRobot {
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))
             .setEntry("ty", visionUtil.getLLValue("ty"))
-            .setEntry("Adj. ty", visionUtil.getActualTY())
+            .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAbsoluteAngle()))
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
-            .setEntry("Gyro Angle", gyro.getYaw());
+            .setEntry("Gyro Angle", gyro.getYaw())
+            .setEntry("index0", bta[0])
+            .setEntry("index0", bta[1])
+            .setEntry("index0", bta[2])
+            .setEntry("index0", bta[3])
+            .setEntry("index0", bta[4]);
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
@@ -143,8 +155,15 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
-            .setEntry("Front Sensor", cw.getFrontSensorValue())
-            .setEntry("Back Sensor", cw.getBackSensorValue());
+            .setEntry("F Sensor Val", cw.getFrontSensorValue())
+            .setEntry("B Sensor Val", cw.getBackSensorValue())
+            .setEntry("F Ball", cw.isFrontBallPresent())
+            .setEntry("B Ball", cw.isBackBallPresent())
+            .setEntry("At Position", cw.getPidController().atSetpoint())
+            .setEntry("Angle", cw.getAdjustedAngle(0))
+            .setEntry("ShooterIndex", cw.getIndex(CheeseWheel.AngleOffset.SHOOTING))
+            .setEntry("CollectFrontIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+            .setEntry("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK));
 
         SmartDashboard.putData(chooser);
     }

@@ -23,6 +23,7 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
@@ -30,13 +31,15 @@ import org.rivierarobotics.util.VisionUtil;
 @GenerateCreator
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
+    private final Hood hood;
     private final VisionUtil vision;
     private final double extraDistance;
     private final double height;
     private boolean done;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided VisionUtil vision, double extraDistance, double height) {
+    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, double extraDistance, double height) {
         this.turret = turret;
+        this.hood = hood;
         this.vision = vision;
         this.height = height;
         this.extraDistance = extraDistance;
@@ -46,7 +49,7 @@ public class VisionAimTurret extends CommandBase {
     @Override
     public void execute() {
         double t = ShooterUtil.getTConstant();
-        double dist = height / Math.tan(Math.toRadians(vision.getActualTY()));
+        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAbsoluteAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
         double vz = dist * Math.sin(txTurret) / t;

@@ -68,7 +68,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
-        double txTurret = Math.atan2(distance * Math.sin(tx), distance * Math.cos(tx) + extraDistance + ShooterUtil.getLLtoTurretX());
+        double txTurret = Math.atan2(distance * Math.sin(tx) - ShooterUtil.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
         SmartDashboard.putNumber("txTurret", txTurret);
         return txTurret;
     }

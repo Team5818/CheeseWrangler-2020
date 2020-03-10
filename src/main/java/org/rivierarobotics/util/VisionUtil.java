@@ -40,10 +40,8 @@ public class VisionUtil {
         return limelight.getEntry(key).getDouble(0);
     }
 
-    public final double getActualTY() {
-        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty")));
-        return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
-            llDist + ShooterUtil.getLLtoTurretX()));
+    public final double getActualTY(double hoodAbsPos) {
+        return getLLValue("ty") + (90 - hoodAbsPos);
     }
 
     public final void setLedState(LimelightLEDState state) {

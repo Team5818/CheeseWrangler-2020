@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -57,17 +58,17 @@ public class ButtonConfiguration {
 
     public void initTeleop() {
         new JoystickButton(coDriverLeft, 1)
-            .whenHeld(cmds.collect().continuous(Side.FRONT));
+            .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT));
         new JoystickButton(coDriverLeft, 2)
-            .whenHeld(cmds.collect().continuous(Side.BACK));
+            .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK));
         new JoystickButton(coDriverRight, 1)
             .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
             .whenPressed(cmds.cheeseWheel().shootNWedges(5));
         new JoystickButton(coDriverButtons, 1)
-            .whenPressed(cmds.cheeseWheel().moveToNextIndex(-1));
+            .whenPressed(cmds.cheeseWheel().moveToNextIndexCancel(1, CheeseWheel.AngleOffset.COLLECT_FRONT), true);
         new JoystickButton(coDriverButtons, 2)
-            .whenPressed(cmds.cheeseWheel().moveToNextIndex(1));
+            .whenPressed(cmds.cheeseWheel().moveToNextIndexCancel(-1, CheeseWheel.AngleOffset.COLLECT_FRONT), true);
         new JoystickButton(coDriverButtons, 3)
             .whenPressed(cmds.hood().setAngle(55));
         new JoystickButton(coDriverButtons, 4)

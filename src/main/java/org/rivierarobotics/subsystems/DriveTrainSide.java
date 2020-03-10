@@ -40,7 +40,7 @@ public class DriveTrainSide implements RRSubsystem {
         this.slaveRight = new WPI_TalonFX(motors.right);
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(1023 * 0.2, 0, 0,0), 0, masterLeft, slaveRight);
+            new PIDConfig(1023 * 0.2, 0, 0, 0), 0, masterLeft, slaveRight);
         MotorUtil.setInverted(invert, masterLeft, slaveRight);
         NeutralIdleMode.BRAKE.applyTo(masterLeft, slaveRight);
         slaveRight.follow(masterLeft);

@@ -35,6 +35,7 @@ public class Ejector extends SubsystemBase {
     private final EjectorSide left;
     private final EjectorSide right;
     private final Provider<EjectorControl> command;
+    private boolean isActive;
 
     @Inject
     public Ejector(@Sided(Side.LEFT) EjectorSide left,
@@ -53,6 +54,10 @@ public class Ejector extends SubsystemBase {
         //TODO change this to reflect shooting offset
         left.setPower(leftPwr);
         right.setPower(MathUtil.fitDeadband(rightPwr - 0.1, 0.1));
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     @Override

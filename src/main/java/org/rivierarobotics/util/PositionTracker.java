@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
@@ -32,20 +33,18 @@ import javax.inject.Singleton;
 public class PositionTracker {
     static double[] pos = new double[2];
     static double beforeT = 0;
-    private final Timer time;
-    private final NavXGyro gyro;
     private final DriveTrain driveTrain;
+    private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
     double t;
 
     @Inject
-    public PositionTracker(DriveTrain dt, NavXGyro gyro, VisionUtil vision, Turret turret) {
+    public PositionTracker(DriveTrain dt, NavXGyro gyro, VisionUtil vision, Turret turret, Hood hood) {
         this.turret = turret;
         this.vision = vision;
-        this.gyro = gyro;
         this.driveTrain = dt;
-        time = new Timer();
+        this.hood = hood;
     }
 
     public void trackPosition() {
@@ -65,7 +64,8 @@ public class PositionTracker {
             return;
         }
 
-        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY()));
+        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY()
+            / Math.tan(Math.toRadians(vision.getActualTY(hood.getAbsoluteAngle())));
         double turretAngle = turret.getAbsoluteAngle();
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
@@ -82,8 +82,6 @@ public class PositionTracker {
             pos[0] = xFromTarget;
             pos[1] = yFromTarget;
         }
-
-
     }
 
     public double[] getPosition() {

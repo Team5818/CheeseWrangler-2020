@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -43,7 +44,7 @@ public class TrenchRun extends SequentialCommandGroup {
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOSHOOT),
                 visionCommands.visionAim(VisionTarget.INNER),
 
-                intakeCommands.continuous(Side.BACK),
+                intakeCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK),
                 autonomousCommands.pathweaver(Pose2dPath.MOVETOCOLLECT),
                 // cheesewheelCommandGroups.autoCollect(false),
 
@@ -55,11 +56,11 @@ public class TrenchRun extends SequentialCommandGroup {
                 visionCommands.visionAim(VisionTarget.INNER),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLL),
-                intakeCommands.continuous(Side.FRONT),
+                intakeCommands.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT),
                 // cheesewheelCommandGroups.autoCollect(true),
 
                 autonomousCommands.pathweaver(Pose2dPath.NEXTBALLLL),
-                intakeCommands.continuous(Side.FRONT),
+                intakeCommands.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT),
                 // cheesewheelCommandGroups.autoCollect(true),
 
                 autonomousCommands.pathweaver(Pose2dPath.SHOOTCOLLECTEDD));

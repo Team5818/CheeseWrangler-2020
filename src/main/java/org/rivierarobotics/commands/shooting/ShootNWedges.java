@@ -35,11 +35,11 @@ public class ShootNWedges extends ParallelRaceGroup {
                         int wedges) {
         super(
             new SequentialCommandGroup(
-                cheeseWheelCommands.moveToFreeIndex(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0),
+                cheeseWheelCommands.moveToNextIndexCancel(-1, CheeseWheel.AngleOffset.SHOOTING),
                 new ParallelRaceGroup(
                     ejectorCommands.setPower(1.0),
                     wedges == 5
-                        ? cheeseWheelCommands.all5Shoot().withTimeout(4.0)
+                        ? cheeseWheelCommands.all5Shoot().withTimeout(2.5)
                         : cheeseWheelCommands.niceShootinTex(wedges)
                 )
             )

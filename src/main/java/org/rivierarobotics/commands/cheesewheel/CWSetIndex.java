@@ -20,25 +20,36 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
-public class CWSetIndex extends BasePIDSetPosition<CheeseWheel> {
-    private final CheeseSlot index;
-    private final CheeseWheel.Mode mode;
+public class CWSetIndex extends CommandBase {
+    private final CheeseWheel cheeseWheel;
+    private final CheeseWheel.AngleOffset mode;
+    private final int direction;
+    private final int index;
+    private double start;
 
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.Mode mode, CheeseSlot index) {
-        super(cheeseWheel, 40, index.getModePosition(mode), 2);
-        this.index = index;
+    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.AngleOffset mode, int index, int direction) {
+        this.cheeseWheel = cheeseWheel;
+        this.direction = direction;
         this.mode = mode;
+        this.index = index;
+        addRequirements(cheeseWheel);
     }
 
     @Override
-    protected void setSetPosition(double position) {
-        positionTicks = index.getModePosition(mode);
+    public void initialize() {
+        start = Timer.getFPGATimestamp();
+        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode), mode, direction));
+    }
+
+    @Override
+    public boolean isFinished() {
+        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 2;
     }
 }

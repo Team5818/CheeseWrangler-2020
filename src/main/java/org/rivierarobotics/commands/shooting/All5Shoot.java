@@ -28,8 +28,7 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 @GenerateCreator
 public class All5Shoot extends CommandBase {
     private CheeseWheel cheeseWheel;
-    private double halfway;
-    private boolean doneHalf;
+    private boolean done;
     private double start;
 
     public All5Shoot(@Provided CheeseWheel cheeseWheel) {
@@ -38,16 +37,13 @@ public class All5Shoot extends CommandBase {
 
     @Override
     public void initialize() {
-        doneHalf = false;
+        done = false;
         start = cheeseWheel.getPositionTicks();
-        halfway = (start + 2048) % 4096;
     }
 
     @Override
     public void execute() {
-        if (!doneHalf && cheeseWheel.getPositionTicks() > halfway) {
-            doneHalf = true;
-        }
+
         cheeseWheel.setManualPower(1.0);
     }
 
@@ -59,6 +55,6 @@ public class All5Shoot extends CommandBase {
     @Override
     public boolean isFinished() {
         var pos = cheeseWheel.getPositionTicks();
-        return doneHalf && pos >= start && pos <= halfway;
+        return done;
     }
 }

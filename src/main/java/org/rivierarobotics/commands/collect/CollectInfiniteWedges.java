@@ -20,15 +20,13 @@
 
 package org.rivierarobotics.commands.collect;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
-import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.Side;
+import org.rivierarobotics.util.BallTracker;
 
 import java.util.function.BooleanSupplier;
 
@@ -40,66 +38,64 @@ public class CollectInfiniteWedges extends CommandBase {
     private final double frontPower;
     private final double backPower;
     private static final double pwrConstant = 1.0;
-    private CheeseSlot currentSlot;
     private final BooleanSupplier hasBall;
-    private final CheeseWheel.Mode mode;
+    private final CheeseWheel.AngleOffset mode;
+    private final BallTracker ballTracker;
     private final int direction;
-    private double startSeen;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
-                          @Provided CheeseWheelCommands cheeseWheelCommands, Side side) {
+                          @Provided CheeseWheelCommands cheeseWheelCommands, @Provided BallTracker ballTracker, CheeseWheel.AngleOffset mode) {
         this.intake = intake;
         this.cheeseWheel = cheeseWheel;
+        this.ballTracker = ballTracker;
         this.cheeseWheelCommands = cheeseWheelCommands;
-        if (side == Side.FRONT) {
+        this.mode = mode;
+        if (mode.equals(CheeseWheel.AngleOffset.COLLECT_FRONT)) {
             frontPower = pwrConstant;
             backPower = 0.0;
             hasBall = cheeseWheel::isFrontBallPresent;
-            mode = CheeseWheel.Mode.COLLECT_FRONT;
             direction = -1;
         } else {
-            if (side != Side.BACK) {
-                throw new IllegalArgumentException("Invalid side: " + side);
+            if (mode != CheeseWheel.AngleOffset.COLLECT_BACK) {
+                throw new IllegalArgumentException("Invalid side");
             }
             frontPower = 0.0;
             backPower = pwrConstant;
             hasBall = cheeseWheel::isBackBallPresent;
-            mode = CheeseWheel.Mode.COLLECT_BACK;
             direction = 1;
         }
-        addRequirements(intake, cheeseWheel);
+        addRequirements(intake);
     }
 
     @Override
     public void initialize() {
-        currentSlot = cheeseWheel.getClosestSlot(mode, CheeseWheel.Filled.DONT_CARE, 0);
-        moveToNext();
+        if (!ballTracker.frontOnIndex) {
+            moveToNext();
+        }
     }
 
     @Override
     public void execute() {
         intake.setPower(frontPower, backPower);
+
         if (!cheeseWheel.getPidController().atSetpoint()) {
             return;
         }
-        if (hasBall.getAsBoolean()) {
-            // if (startSeen == 0) {
-            //     startSeen = Timer.getFPGATimestamp();
-            // } else if ((Timer.getFPGATimestamp() - startSeen) > 0.125) {
-            currentSlot.isFilled = true;
-            currentSlot = currentSlot.next(direction);
+        if (mode.equals(CheeseWheel.AngleOffset.COLLECT_BACK) && !ballTracker.backOnIndex) {
+            return;
+        }
+        if (mode.equals(CheeseWheel.AngleOffset.COLLECT_FRONT) && !ballTracker.frontOnIndex) {
+            return;
+        }
+
+        if (cheeseWheel.isFrontBallPresent()) {
             moveToNext();
-            startSeen = 0;
-            // } else {
-            //     SmartDashboard.putBoolean("HasBallSatisfied", false);
-            // }
-        } else {
-            startSeen = 0;
         }
     }
 
     private void moveToNext() {
-        cheeseWheel.setPositionTicks(currentSlot.getModePosition(mode));
+        cheeseWheelCommands.moveToNextIndex(direction, mode).schedule();
+        //cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode) + direction,mode));
     }
 
     @Override

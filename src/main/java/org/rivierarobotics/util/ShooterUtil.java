@@ -44,6 +44,11 @@ public class ShooterUtil {
         return 0.137;
     }
 
+    public static double getLLtoTurretZ() {
+        //meters
+        return 0.1778;
+    }
+
 
     public static double getDistanceFromOuterToInnerTarget() {
         //meters
@@ -52,6 +57,10 @@ public class ShooterUtil {
 
     public static double getYVelocityConstant() {
         return Math.sqrt(getTopHeight() * 2 * 10); //  meters/second
+    }
+
+    public static double getExtraVelocity() {
+        return 0.5 * 0.2 * Math.pow(getTConstant(), 2);
     }
 
     public static double getBallMass() {

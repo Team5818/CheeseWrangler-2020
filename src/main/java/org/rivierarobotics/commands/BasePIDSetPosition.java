@@ -54,7 +54,7 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
         double err = Math.abs(getPositionTicks() - positionTicks);
         boolean isInError = err < maxErrorTicks;
         SmartDashboard.putBoolean(subsystem.getName() + " isWithinError", isInError);
-        return isInError || (Timer.getFPGATimestamp() - start) > timeout;
+        return (isInError && Timer.getFPGATimestamp() - start > 0.2) || (Timer.getFPGATimestamp() - start) > timeout;
     }
 
     protected double getPositionTicks() {

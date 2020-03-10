@@ -54,6 +54,15 @@ public class RobotShuffleboardTab {
         return this;
     }
 
+    public RobotShuffleboardTab setEntry(String key, boolean value) {
+        NetworkTableEntry entry = entries.get(key);
+        while (entry == null) {
+            entry = addEntry(key);
+        }
+        entry.setBoolean(value);
+        return this;
+    }
+
     public NetworkTableEntry getEntry(String title) {
         return entries.get(title);
     }
