@@ -52,6 +52,8 @@ public class RobotShuffleboardTab {
         }
         if (value instanceof Double) {
             entry.setNumber((double) value);
+        } else if (value instanceof Integer) {
+            entry.setNumber((int) value);
         } else if (value instanceof Boolean) {
             entry.setBoolean((boolean) value);
         } else if (value instanceof String) {

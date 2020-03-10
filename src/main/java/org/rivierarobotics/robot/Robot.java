@@ -124,7 +124,6 @@ public class Robot extends TimedRobot {
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
-        var bt = globalComponent.getBallTracker();
         boolean[] bta = globalComponent.getBallTracker().getBallArray();
 
         shuffleboard.getTab("TurretHood")
@@ -138,12 +137,7 @@ public class Robot extends TimedRobot {
             .setEntry("ty", visionUtil.getLLValue("ty"))
             .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
-            .setEntry("Gyro Angle", gyro.getYaw())
-            .setEntry("index0", bta[0])
-            .setEntry("index0", bta[1])
-            .setEntry("index0", bta[2])
-            .setEntry("index0", bta[3])
-            .setEntry("index0", bta[4]);
+            .setEntry("Gyro Angle", gyro.getYaw());
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
@@ -153,15 +147,20 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
+            .setEntry("At Position", cw.getPidController().atSetpoint())
+            .setEntry("Angle", cw.getAngle())
             .setEntry("F Sensor Val", cw.getFrontSensorValue())
             .setEntry("B Sensor Val", cw.getBackSensorValue())
             .setEntry("F Ball", cw.isFrontBallPresent())
             .setEntry("B Ball", cw.isBackBallPresent())
-            .setEntry("At Position", cw.getPidController().atSetpoint())
-            .setEntry("Angle", cw.getAdjustedAngle(0))
             .setEntry("ShooterIndex", cw.getIndex(CheeseWheel.AngleOffset.SHOOTING))
             .setEntry("CollectFrontIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
-            .setEntry("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK));
+            .setEntry("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
+            .setEntry("Index 0", bta[0])
+            .setEntry("Index 1", bta[1])
+            .setEntry("Index 2", bta[2])
+            .setEntry("Index 3", bta[3])
+            .setEntry("Index 4", bta[4]);
 
         SmartDashboard.putData(chooser);
     }

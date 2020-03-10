@@ -37,7 +37,7 @@ public class CheeseWheelCommands {
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final CWMoveToNextIndexCreator moveToNextIndexCreator;
     private All5ShootCreator all5ShootCreator;
-    private CheeseWheelCommandCancelerCreator cheeseWheelCommandCancelerCreator;
+    private CWMoveToNextIndexInterruptCreator moveToNextInterruptCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
@@ -46,18 +46,18 @@ public class CheeseWheelCommands {
                                ShootNWedgesCreator shootNWedgesCreator,
                                CWMoveToNextIndexCreator moveToNextIndexCreator,
                                All5ShootCreator all5ShootCreator,
-                               CheeseWheelCommandCancelerCreator cheeseWheelCommandCancelerCreator) {
+                               CWMoveToNextIndexInterruptCreator moveToNextInterruptCreator) {
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
         this.niceShootinTexCreator = niceShootinTexCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.moveToNextIndexCreator = moveToNextIndexCreator;
         this.all5ShootCreator = all5ShootCreator;
-        this.cheeseWheelCommandCancelerCreator = cheeseWheelCommandCancelerCreator;
+        this.moveToNextInterruptCreator = moveToNextInterruptCreator;
     }
 
     public CWMoveToNextIndexInterrupt moveToNextIndexCancel(int direction, CheeseWheel.AngleOffset mode) {
-        return cheeseWheelCommandCancelerCreator.create(direction, mode);
+        return moveToNextInterruptCreator.create(direction, mode);
     }
 
     public CWSetPosition setPosition(int ticks) {

@@ -74,6 +74,10 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return min;
     }
 
+    public double getAngle() {
+        return getAdjustedAngle(0);
+    }
+
     public double getAdjustedAngle(double adjAngle) {
         return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) / getAnglesOrInchesToTicks() + adjAngle);
     }

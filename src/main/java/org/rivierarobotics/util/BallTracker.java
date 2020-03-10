@@ -45,28 +45,24 @@ public class BallTracker {
             return;
         }
 
-        frontOnIndex = (cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(CheeseWheel.AngleOffset.COLLECT_FRONT))) % 72 < 6
-            || (cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(CheeseWheel.AngleOffset.COLLECT_FRONT))) % 72 > 66;
-        backOnIndex = cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(CheeseWheel.AngleOffset.COLLECT_BACK)) % 72 < 6
-            || cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(CheeseWheel.AngleOffset.COLLECT_BACK)) % 72 > 66;
-        boolean shooterOnIndex = cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(CheeseWheel.AngleOffset.SHOOTING)) % 72 < 6
-            || cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(CheeseWheel.AngleOffset.SHOOTING)) % 72 > 66;
+        frontOnIndex = getOnIndex(CheeseWheel.AngleOffset.COLLECT_FRONT);
+        backOnIndex = getOnIndex(CheeseWheel.AngleOffset.COLLECT_BACK);
+        boolean shooterOnIndex = getOnIndex(CheeseWheel.AngleOffset.SHOOTING);
 
-        if (frontOnIndex) {
-            if (!cheeseWheel.isFrontBallPresent()) {
-                hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT)] = false;
-            }
+        if (frontOnIndex && !cheeseWheel.isFrontBallPresent()) {
+            hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT)] = false;
         }
-        if (backOnIndex) {
-            if (!cheeseWheel.isBackBallPresent()) {
-                hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK)] = false;
-            }
+        if (backOnIndex && !cheeseWheel.isBackBallPresent()) {
+            hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK)] = false;
         }
-        if (shooterOnIndex) {
-            if (ejector.isActive()) {
-                hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.SHOOTING)] = false;
-            }
+        if (shooterOnIndex && ejector.isActive()) {
+            hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.SHOOTING)] = false;
         }
+    }
+
+    public boolean getOnIndex(CheeseWheel.AngleOffset offset) {
+        double adjIndex = cheeseWheel.getAdjustedAngle(cheeseWheel.getAngleOffset(offset)) % 72;
+        return adjIndex < 6 || adjIndex > 66;
     }
 
     public boolean[] getBallArray() {
@@ -77,25 +73,26 @@ public class BallTracker {
         hasBall[index] = true;
     }
 
-    public int getClosestIndex(CheeseWheel.AngleOffset mode, Direction direction, Boolean ball) {
+    public int getClosestIndex(CheeseWheel.AngleOffset mode, Direction direction, boolean ball) {
         int startingIndex = cheeseWheel.getIndex(mode);
         int indexDiff = 5;
         int minDex = 0;
         int searchDirection;
 
-        if (direction.equals(Direction.ANY)) {
-            for (int i = 0; i < 5; i++) {
-                if (hasBall[i] = ball && startingIndex - i < indexDiff) {
-                    minDex = i;
+        switch (direction) {
+            case ANY:
+                for (int i = 0; i < 5; i++) {
+                    if (hasBall[i] = ball && startingIndex - i < indexDiff) {
+                        minDex = i;
+                    }
                 }
-            }
-            return minDex;
-        }
-
-        if (direction.equals(Direction.BACKWARD)) {
-            searchDirection = -1;
-        } else {
-            searchDirection = 1;
+                return minDex;
+            case BACKWARD:
+                searchDirection = -1;
+                break;
+            default:
+                searchDirection = 1;
+                break;
         }
 
         int currentIndex = startingIndex;
@@ -106,7 +103,7 @@ public class BallTracker {
                 currentIndex -= 5;
             }
 
-            if (hasBall[currentIndex] = ball) {
+            if (hasBall[currentIndex] == ball) {
                 return currentIndex;
             }
 
