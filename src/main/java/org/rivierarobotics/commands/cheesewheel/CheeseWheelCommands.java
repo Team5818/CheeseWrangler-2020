@@ -39,6 +39,7 @@ public class CheeseWheelCommands {
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final CWMoveToNextIndexCreator moveToNextIndexCreator;
     private All5ShootCreator all5ShootCreator;
+    private CheeseWheelCommandCancelerCreator cheeseWheelCommandCancelerCreator;
 
     @Inject
     public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
@@ -47,7 +48,8 @@ public class CheeseWheelCommands {
                                NiceShootinTexCreator niceShootinTexCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
                                CWMoveToNextIndexCreator moveToNextIndexCreator,
-                               All5ShootCreator all5ShootCreator) {
+                               All5ShootCreator all5ShootCreator,
+                               CheeseWheelCommandCancelerCreator cheeseWheelCommandCancelerCreator) {
         this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
@@ -55,18 +57,23 @@ public class CheeseWheelCommands {
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.moveToNextIndexCreator = moveToNextIndexCreator;
         this.all5ShootCreator = all5ShootCreator;
+        this.cheeseWheelCommandCancelerCreator = cheeseWheelCommandCancelerCreator;
     }
 
     public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
         return moveToFreeIndex.create(mode, filled, direction);
     }
 
+    public CheeseWheelCommandCanceler moveToNextIndexCancel(int direction, CheeseWheel.AngleOffset mode) {
+        return cheeseWheelCommandCancelerCreator.create(direction, mode);
+    }
+
     public CWSetPosition setPosition(int ticks) {
         return setPositionCreator.create(ticks);
     }
 
-    public CWSetIndex setIndex(CheeseWheel.Mode mode, CheeseSlot index) {
-        return setIndexCreator.create(mode, index);
+    public CWSetIndex setIndex(CheeseWheel.AngleOffset mode, int index, int direction) {
+        return setIndexCreator.create(mode, index, direction);
     }
 
     public NiceShootinTex niceShootinTex(int wedges) {
@@ -77,8 +84,8 @@ public class CheeseWheelCommands {
         return shootNWedgesCreator.create(wedges);
     }
 
-    public CWMoveToNextIndex moveToNextIndex(int direction) {
-        return moveToNextIndexCreator.create(direction);
+    public CWMoveToNextIndex moveToNextIndex(int direction,CheeseWheel.AngleOffset mode) {
+        return moveToNextIndexCreator.create(direction, mode);
     }
 
     public All5Shoot all5Shoot() {

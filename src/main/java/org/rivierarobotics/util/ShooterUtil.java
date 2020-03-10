@@ -44,6 +44,11 @@ public class ShooterUtil {
         return 0.137;
     }
 
+    public static double getLLtoTurretZ() {
+        //meters
+        return 0.1778;
+    }
+
 
     public static double getDistanceFromOuterToInnerTarget() {
         //meters

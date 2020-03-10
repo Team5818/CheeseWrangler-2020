@@ -31,6 +31,7 @@ import javax.inject.Provider;
 public class Ejector extends SubsystemBase {
     private final WPI_VictorSPX victor;
     private final Provider<EjectorControl> command;
+    private boolean isActive;
 
     @Inject
     public Ejector(int id, Provider<EjectorControl> command) {
@@ -41,7 +42,12 @@ public class Ejector extends SubsystemBase {
 
 
     public void setPower(double pwr) {
+        isActive = pwr > 0;
         victor.set(pwr);
+    }
+
+    public boolean isActive() {
+        return isActive;
     }
 
     @Override

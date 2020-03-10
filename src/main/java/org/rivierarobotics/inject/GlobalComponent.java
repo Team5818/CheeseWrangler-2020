@@ -36,6 +36,7 @@ import org.rivierarobotics.subsystems.LimelightServo;
 import org.rivierarobotics.subsystems.PistonController;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.BallTracker;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionUtil;
@@ -61,6 +62,7 @@ public abstract class GlobalComponent {
         getLimelightServo();
         getCameraServo();
         getPositionTracker();
+        getBallTracker();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -88,6 +90,8 @@ public abstract class GlobalComponent {
     public abstract VisionUtil getVisionUtil();
 
     public abstract LimelightServo getLimelightServo();
+
+    public abstract BallTracker getBallTracker();
 
     public abstract CameraServo getCameraServo();
 

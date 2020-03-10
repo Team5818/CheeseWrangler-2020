@@ -23,9 +23,11 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Provider;
 
@@ -34,18 +36,19 @@ public class CheeseWheel extends BasePIDSubsystem {
     private final Provider<CheeseWheelControl> command;
     private static final double INPUT_RANGE = 4095;
     private final AnalogInput frontSensor;
-    private final AnalogInput backSensor;
+    private final DigitalOutput backSensor;
+    private final double zeroTicks = 3725;
     public Mode lastMode = Mode.COLLECT_FRONT;
+    public boolean isRunning;
 
     public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
-        super(new PIDConfig(0.0012, 0.0, 0, 0.1, 5, 0.5));
+        super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.frontSensor = new AnalogInput(frontSensor);
-        this.backSensor = new AnalogInput(backSensor);
+        this.backSensor = new DigitalOutput(9);
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-        pidController.enableContinuousInput(0, INPUT_RANGE);
     }
 
     @Override
@@ -63,10 +66,7 @@ public class CheeseWheel extends BasePIDSubsystem {
 
     @Override
     public double getPositionTicks() {
-        int base = wheelTalon.getSensorCollection().getPulseWidthPosition() % 4096;
-        while (base < 0) {
-            base += 4096;
-        }
+        int base = wheelTalon.getSensorCollection().getPulseWidthPosition();
         return base;
     }
 
@@ -100,6 +100,63 @@ public class CheeseWheel extends BasePIDSubsystem {
         return minSlot;
     }
 
+    public int getIndex(AngleOffset mode) {
+        double cwAngle = getAdjustedAngle(getAngleOffset(mode));
+        int min = 360;
+        double minAngle = 360;
+        for (int i = 0; i < 6; i++) {
+            if (minAngle > Math.abs(cwAngle - (i * 72))) {
+                minAngle = Math.abs(cwAngle - (i * 72));
+                if (i == 5) {
+                    return 0;
+                }
+                min = i;
+            }
+        }
+        return min;
+    }
+
+    public boolean CommandIsRunning() {
+        return isRunning;
+    }
+
+    public double getAdjustedAngle(double adjAngle) {
+        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) / getAnglesOrInchesToTicks() + adjAngle);
+    }
+
+    public double getAngleAdded(int index, AngleOffset mode, int direction) {
+        SmartDashboard.putNumber("setIndex", index);
+        double angleOff = index * 72 - getAdjustedAngle(getAngleOffset(mode));
+        if (Math.abs(angleOff) > 180) {
+            if(angleOff < 0) {
+                angleOff += 360;
+            } else if(angleOff > 0) {
+                angleOff -= 360;
+            }
+        }
+
+        if(direction > 0) {
+            if(angleOff < 0) {
+                return angleOff + 360;
+            }
+        } else if (direction < 0) {
+            if(angleOff > 0) {
+                return angleOff - 360;
+            }
+        }
+
+
+
+        return angleOff;
+    }
+
+
+    public void addAngle(double angle) {
+        SmartDashboard.putNumber("CWSetPosition", wheelTalon.getSensorCollection().getPulseWidthPosition() + angle * getAnglesOrInchesToTicks());
+        isRunning = true;
+        setPositionTicks(wheelTalon.getSensorCollection().getPulseWidthPosition() + angle * getAnglesOrInchesToTicks());
+    }
+
     // Handles continuous input gap
     public double correctDiffForGap(double diff) {
         diff %= INPUT_RANGE;
@@ -115,7 +172,7 @@ public class CheeseWheel extends BasePIDSubsystem {
 
 
     public boolean isFrontBallPresent() {
-        return (frontSensor.getValue() < 300 && frontSensor.getValue() > 1);
+        return (frontSensor.getValue() < 260 && frontSensor.getValue() > 100);
     }
 
     public double getFrontSensorValue() {
@@ -123,11 +180,11 @@ public class CheeseWheel extends BasePIDSubsystem {
     }
 
     public boolean isBackBallPresent() {
-        return (backSensor.getValue() < 300 && backSensor.getValue() > 1);
+        return true;
     }
 
-    public double getBackSensorValue() {
-        return backSensor.getValue();
+    public boolean getBackSensorValue() {
+        return backSensor.get();
     }
 
     public enum Filled {
@@ -137,4 +194,21 @@ public class CheeseWheel extends BasePIDSubsystem {
     public enum Mode {
         COLLECT_FRONT, COLLECT_BACK, FIX_FRONT, FIX_BACK, SHOOTING
     }
+
+    public enum AngleOffset {
+        SHOOTING, COLLECT_FRONT, COLLECT_BACK
+    }
+
+    public double getAngleOffset(AngleOffset offset) {
+        if(offset.equals(AngleOffset.SHOOTING)) {
+            return 36;
+        } else if(offset.equals(AngleOffset.COLLECT_FRONT)) {
+            return 106;
+        } else if(offset.equals(AngleOffset.COLLECT_BACK)) {
+            return 253;
+        } else {
+            return 0;
+        }
+    }
+
 }

@@ -29,6 +29,7 @@ import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -47,7 +48,7 @@ public class ForwardAuto extends SequentialCommandGroup {
                     commands.driveDistance(-5, 0.25).withTimeout(6.0),
                     commands.driveDistance(5, 0.5).withTimeout(6.0)
                 ),
-                intake.continuous(Side.BACK)
+                intake.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
             ),
             useVisionAim
                 ? vision.visionAim(VisionTarget.INNER).withTimeout(1.0)

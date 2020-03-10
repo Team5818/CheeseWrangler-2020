@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands.collect;
 
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.Side;
 
@@ -29,8 +30,8 @@ import javax.inject.Inject;
 public class CollectBasedOnMovement extends ConditionalCommand {
     @Inject
     public CollectBasedOnMovement(DriveTrain driveTrain, CollectInfiniteWedgesCreator collectInfiniteWedgesCreator) {
-        super(collectInfiniteWedgesCreator.create(Side.FRONT),
-            collectInfiniteWedgesCreator.create(Side.BACK),
-            () -> driveTrain.getAvgVelocity() >= 0);
+        super(collectInfiniteWedgesCreator.create(CheeseWheel.AngleOffset.COLLECT_FRONT),
+            collectInfiniteWedgesCreator.create(CheeseWheel.AngleOffset.COLLECT_BACK),
+           () -> driveTrain.getAvgVelocity() >= 0);
     }
 }

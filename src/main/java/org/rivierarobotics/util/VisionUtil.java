@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.LimelightServo;
 
 import javax.inject.Inject;
@@ -31,11 +32,11 @@ import javax.inject.Singleton;
 @Singleton
 public class VisionUtil {
     private final NetworkTable limelight;
-    private final LimelightServo limelightServo;
+    private final Hood hood;
 
     @Inject
-    public VisionUtil(LimelightServo limelightServo) {
-        this.limelightServo = limelightServo;
+    public VisionUtil(Hood hood) {
+        this.hood = hood;
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
@@ -44,9 +45,10 @@ public class VisionUtil {
     }
 
     public final double getActualTY() {
-        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
-        return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
-            llDist + ShooterUtil.getLLtoTurretX()));
+//        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
+//        return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
+//            llDist + ShooterUtil.getLLtoTurretX()));
+        return getLLValue("ty") + (90 - hood.getAbsolutePosition());
     }
 
     public final void setLedState(LimelightLEDState state) {

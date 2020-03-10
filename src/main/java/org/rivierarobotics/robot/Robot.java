@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DigitalOutput;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,6 +30,8 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.BallTracker;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RobotShuffleboard;
 
@@ -53,7 +57,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
-        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+//        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
     }
 
@@ -61,11 +65,12 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
-            if (!flyingWheelman.isScheduled()) {
-                flyingWheelman.schedule();
-            }
+//            if (!flyingWheelman.isScheduled()) {
+//                flyingWheelman.schedule();
+//            }
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
+            globalComponent.getBallTracker().checkIfEmpty();
         }
     }
 
@@ -92,7 +97,7 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getLimelightServo().setAngle(45);
+//        globalComponent.getLimelightServo().setAngle(45);
     }
 
     @Override
@@ -119,6 +124,23 @@ public class Robot extends TimedRobot {
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
+        var bt = globalComponent.getBallTracker();
+        boolean[] bta = globalComponent.getBallTracker().getBallArray();
+
+        SmartDashboard.putNumber("CWAngle", cw.getAdjustedAngle(0));
+        SmartDashboard.putNumber("cwtick", cw.getPositionTicks());
+        SmartDashboard.putNumber("ShooterIndex", cw.getIndex(CheeseWheel.AngleOffset.SHOOTING));
+        SmartDashboard.putNumber("CollectFrontIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT));
+        SmartDashboard.putNumber("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK));
+        SmartDashboard.putBoolean("SensorFront", cw.isFrontBallPresent());
+        SmartDashboard.putBoolean("SensorBack", cw.isBackBallPresent());
+        SmartDashboard.putBoolean("CW AT POSITION?!??!", cw.getPidController().atSetpoint());
+        SmartDashboard.putBoolean("NEWSENS", cw.getBackSensorValue());
+        SmartDashboard.putBoolean("index0", bta[0]);
+        SmartDashboard.putBoolean("index1", bta[1]);
+        SmartDashboard.putBoolean("index2", bta[2]);
+        SmartDashboard.putBoolean("index3", bta[3]);
+        SmartDashboard.putBoolean("index4", bta[4]);
 
         shuffleboard.getTab("Vision Conf")
             .setEntry("TurrTargetPos", turret.getAbsolutePosition())
@@ -138,8 +160,7 @@ public class Robot extends TimedRobot {
             .setEntry("Left Vel", dt.getLeft().getVelocity())
             .setEntry("Right Vel", dt.getRight().getVelocity());
         shuffleboard.getTab("Cheese Wheel")
-            .setEntry("Front Sensor", cw.getFrontSensorValue())
-            .setEntry("Back Sensor", cw.getBackSensorValue());
+            .setEntry("Front Sensor", cw.getFrontSensorValue());
 
         SmartDashboard.putData(chooser);
     }

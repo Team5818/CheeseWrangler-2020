@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -29,25 +31,29 @@ import org.rivierarobotics.util.CheeseSlot;
 @GenerateCreator
 public class CWMoveToNextIndex extends CommandBase {
     private final CheeseWheel cheeseWheel;
-    private CheeseSlot currentSlot;
     private final int direction;
+    private double start;
+    private CheeseWheel.AngleOffset mode;
 
-    public CWMoveToNextIndex(@Provided CheeseWheel cheeseWheel, int direction) {
+    public CWMoveToNextIndex(@Provided CheeseWheel cheeseWheel, int direction, CheeseWheel.AngleOffset mode) {
         this.cheeseWheel = cheeseWheel;
         this.direction = direction;
+        this.mode = mode;
         addRequirements(cheeseWheel);
     }
 
     @Override
     public void initialize() {
-        currentSlot = cheeseWheel
-            .getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0)
-            .next(direction);
-        cheeseWheel.setPositionTicks(currentSlot.getModePosition(CheeseWheel.Mode.COLLECT_FRONT));
+        start = Timer.getFPGATimestamp();
+        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode) + direction,mode, direction));
     }
 
     @Override
     public boolean isFinished() {
-        return cheeseWheel.getPidController().atSetpoint();
+        if((cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 10){
+            cheeseWheel.isRunning = false;
+        }
+        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 10;
     }
+
 }

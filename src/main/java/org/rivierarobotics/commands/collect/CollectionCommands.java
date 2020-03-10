@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.collect;
 
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
@@ -36,7 +37,7 @@ public class CollectionCommands {
         this.intakeBasedOnMovementProvider = intakeBasedOnMovementProvider;
     }
 
-    public CollectInfiniteWedges continuous(Side side) {
+    public CollectInfiniteWedges continuous(CheeseWheel.AngleOffset side) {
         return collectInfiniteWedgesCreator.create(side);
     }
 
