@@ -27,12 +27,10 @@ import org.rivierarobotics.commands.shooting.NiceShootinTexCreator;
 import org.rivierarobotics.commands.shooting.ShootNWedges;
 import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Inject;
 
 public class CheeseWheelCommands {
-    private CWMoveToFreeIndexCreator moveToFreeIndex;
     private CWSetPositionCreator setPositionCreator;
     private CWSetIndexCreator setIndexCreator;
     private final NiceShootinTexCreator niceShootinTexCreator;
@@ -42,15 +40,13 @@ public class CheeseWheelCommands {
     private CheeseWheelCommandCancelerCreator cheeseWheelCommandCancelerCreator;
 
     @Inject
-    public CheeseWheelCommands(CWMoveToFreeIndexCreator moveToFreeIndex,
-                               CWSetPositionCreator setPositionCreator,
+    public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWSetIndexCreator setIndexCreator,
                                NiceShootinTexCreator niceShootinTexCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
                                CWMoveToNextIndexCreator moveToNextIndexCreator,
                                All5ShootCreator all5ShootCreator,
                                CheeseWheelCommandCancelerCreator cheeseWheelCommandCancelerCreator) {
-        this.moveToFreeIndex = moveToFreeIndex;
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
         this.niceShootinTexCreator = niceShootinTexCreator;
@@ -58,10 +54,6 @@ public class CheeseWheelCommands {
         this.moveToNextIndexCreator = moveToNextIndexCreator;
         this.all5ShootCreator = all5ShootCreator;
         this.cheeseWheelCommandCancelerCreator = cheeseWheelCommandCancelerCreator;
-    }
-
-    public CWMoveToFreeIndex moveToFreeIndex(CheeseWheel.Mode mode, CheeseWheel.Filled filled, int direction) {
-        return moveToFreeIndex.create(mode, filled, direction);
     }
 
     public CheeseWheelCommandCanceler moveToNextIndexCancel(int direction, CheeseWheel.AngleOffset mode) {
@@ -84,7 +76,7 @@ public class CheeseWheelCommands {
         return shootNWedgesCreator.create(wedges);
     }
 
-    public CWMoveToNextIndex moveToNextIndex(int direction,CheeseWheel.AngleOffset mode) {
+    public CWMoveToNextIndex moveToNextIndex(int direction, CheeseWheel.AngleOffset mode) {
         return moveToNextIndexCreator.create(direction, mode);
     }
 

@@ -31,7 +31,6 @@ public class CollectBasedOnMovement extends ConditionalCommand {
     @Inject
     public CollectBasedOnMovement(DriveTrain driveTrain, CollectInfiniteWedgesCreator collectInfiniteWedgesCreator) {
         super(collectInfiniteWedgesCreator.create(CheeseWheel.AngleOffset.COLLECT_FRONT),
-            collectInfiniteWedgesCreator.create(CheeseWheel.AngleOffset.COLLECT_BACK),
-           () -> driveTrain.getAvgVelocity() >= 0);
+            collectInfiniteWedgesCreator.create(CheeseWheel.AngleOffset.COLLECT_BACK), () -> driveTrain.getAvgVelocity() >= 0);
     }
 }

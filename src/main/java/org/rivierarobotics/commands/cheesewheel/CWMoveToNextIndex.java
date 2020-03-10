@@ -21,12 +21,10 @@
 package org.rivierarobotics.commands.cheesewheel;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class CWMoveToNextIndex extends CommandBase {
@@ -45,14 +43,11 @@ public class CWMoveToNextIndex extends CommandBase {
     @Override
     public void initialize() {
         start = Timer.getFPGATimestamp();
-        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode) + direction,mode, direction));
+        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode) + direction, mode, direction));
     }
 
     @Override
     public boolean isFinished() {
-        if((cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 10){
-            cheeseWheel.isRunning = false;
-        }
         return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 10;
     }
 

@@ -39,7 +39,7 @@ public class ShootNWedges extends ParallelRaceGroup {
                 new ParallelRaceGroup(
                     ejectorCommands.setPower(1.0),
                     wedges == 5
-                        ? cheeseWheelCommands.all5Shoot().withTimeout(4.0)
+                        ? cheeseWheelCommands.all5Shoot().withTimeout(2.5)
                         : cheeseWheelCommands.niceShootinTex(wedges)
                 )
             )

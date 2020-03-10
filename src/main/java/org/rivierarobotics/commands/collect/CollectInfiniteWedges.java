@@ -20,8 +20,6 @@
 
 package org.rivierarobotics.commands.collect;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -29,8 +27,6 @@ import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.util.BallTracker;
-import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.Side;
 
 import java.util.function.BooleanSupplier;
 
@@ -46,7 +42,6 @@ public class CollectInfiniteWedges extends CommandBase {
     private final CheeseWheel.AngleOffset mode;
     private final BallTracker ballTracker;
     private final int direction;
-    private double startSeen;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
                           @Provided CheeseWheelCommands cheeseWheelCommands, @Provided BallTracker ballTracker, CheeseWheel.AngleOffset mode) {
@@ -74,8 +69,7 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void initialize() {
-        int currentSlot = cheeseWheel.getIndex(mode);
-        if(!ballTracker.frontOnIndex) {
+        if (!ballTracker.FRONT_ON_INDEX) {
             moveToNext();
         }
     }
@@ -83,17 +77,24 @@ public class CollectInfiniteWedges extends CommandBase {
     @Override
     public void execute() {
         intake.setPower(frontPower, backPower);
-        if (!cheeseWheel.getPidController().atSetpoint() && !ballTracker.frontOnIndex) {
+
+        if (!cheeseWheel.getPidController().atSetpoint()) {
             return;
         }
+        if (mode.equals(CheeseWheel.AngleOffset.COLLECT_BACK) && !ballTracker.BACK_ON_INDEX) {
+            return;
+        }
+        if (mode.equals(CheeseWheel.AngleOffset.COLLECT_FRONT) && !ballTracker.FRONT_ON_INDEX) {
+            return;
+        }
+
         if (cheeseWheel.isFrontBallPresent()) {
-            ballTracker.addBall(cheeseWheel.getIndex(mode));
             moveToNext();
         }
     }
 
     private void moveToNext() {
-        cheeseWheelCommands.moveToNextIndex(direction,mode).schedule();
+        cheeseWheelCommands.moveToNextIndex(direction, mode).schedule();
         //cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode) + direction,mode));
     }
 

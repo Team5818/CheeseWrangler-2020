@@ -24,9 +24,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class CWSetIndex extends CommandBase {
@@ -47,14 +45,11 @@ public class CWSetIndex extends CommandBase {
     @Override
     public void initialize() {
         start = Timer.getFPGATimestamp();
-        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode),mode, direction));
+        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode), mode, direction));
     }
 
     @Override
     public boolean isFinished() {
-        if((cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 2){
-            cheeseWheel.isRunning = false;
-        }
         return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 2;
     }
 }

@@ -57,7 +57,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
-//        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+//      flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         shuffleboard = new RobotShuffleboard("Vision Conf", "Drive Train", "Cheese Wheel");
     }
 
@@ -116,13 +116,13 @@ public class Robot extends TimedRobot {
     }
 
     private void displayShuffleboard() {
-        var turret = globalComponent.getTurret();
-        var hood = globalComponent.getHood();
-        var gyro = globalComponent.getNavXGyro();
-        var visionUtil = globalComponent.getVisionUtil();
-        var llServo = globalComponent.getLimelightServo();
-        var flywheel = globalComponent.getFlywheel();
-        var dt = globalComponent.getDriveTrain();
+        final var turret = globalComponent.getTurret();
+        final var hood = globalComponent.getHood();
+        final var gyro = globalComponent.getNavXGyro();
+        final var visionUtil = globalComponent.getVisionUtil();
+        final var llServo = globalComponent.getLimelightServo();
+        final var flywheel = globalComponent.getFlywheel();
+        final var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
         var bt = globalComponent.getBallTracker();
         boolean[] bta = globalComponent.getBallTracker().getBallArray();
@@ -135,7 +135,6 @@ public class Robot extends TimedRobot {
         SmartDashboard.putBoolean("SensorFront", cw.isFrontBallPresent());
         SmartDashboard.putBoolean("SensorBack", cw.isBackBallPresent());
         SmartDashboard.putBoolean("CW AT POSITION?!??!", cw.getPidController().atSetpoint());
-        SmartDashboard.putBoolean("NEWSENS", cw.getBackSensorValue());
         SmartDashboard.putBoolean("index0", bta[0]);
         SmartDashboard.putBoolean("index1", bta[1]);
         SmartDashboard.putBoolean("index2", bta[2]);

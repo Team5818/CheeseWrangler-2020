@@ -47,7 +47,7 @@ public class VisionUtil {
     public final double getActualTY() {
 //        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
 //        return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
-//            llDist + ShooterUtil.getLLtoTurretX()));
+//        llDist + ShooterUtil.getLLtoTurretX()));
         return getLLValue("ty") + (90 - hood.getAbsolutePosition());
     }
 

@@ -23,37 +23,28 @@ package org.rivierarobotics.commands.shooting;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.subsystems.Ejector;
 
 @GenerateCreator
 public class NiceShootinTex extends CommandBase {
     private final CheeseWheel cheeseWheel;
     private final int slots;
-    private CheeseSlot currentSlot;
-    private int direction;
+    private CheeseWheelCommands cheeseWheelCommands;
     private int shotSlots;
+    private final Ejector ejector;
 
-    public NiceShootinTex(@Provided CheeseWheel cheeseWheel,
-                          int slots) {
+    public NiceShootinTex(@Provided CheeseWheel cheeseWheel, @Provided CheeseWheelCommands cheeseWheelCommands,
+                          @Provided Ejector ejector, int slots) {
         this.cheeseWheel = cheeseWheel;
+        this.ejector = ejector;
+        this.cheeseWheelCommands = cheeseWheelCommands;
         this.slots = slots;
     }
 
     @Override
     public void initialize() {
-        shotSlots = 0;
-        currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0);
-        if (!currentSlot.isFilled) {
-            // we have to use whatever is closest
-            currentSlot = cheeseWheel.getClosestSlot(CheeseWheel.Mode.COLLECT_FRONT, CheeseWheel.Filled.DONT_CARE, 0);
-        }
-        // assume (from ShootNWedges) that we already moved to this slot!
-        // go to the next one...
-        currentSlot = currentSlot.next(1);
-        var diff = currentSlot.getModePosition(CheeseWheel.Mode.COLLECT_FRONT) - cheeseWheel.getPositionTicks();
-        diff = cheeseWheel.correctDiffForGap(diff);
-        direction = 1; //(int) Math.signum(diff);
         moveToNext();
     }
 
@@ -63,19 +54,20 @@ public class NiceShootinTex extends CommandBase {
             return;
         }
         shotSlots++;
-        currentSlot.isFilled = false;
-        currentSlot = currentSlot.next(direction);
         if (!isFinished()) {
             moveToNext();
         }
     }
 
     private void moveToNext() {
-        cheeseWheel.setPositionTicks(currentSlot.getModePosition(CheeseWheel.Mode.COLLECT_FRONT));
+        cheeseWheelCommands.moveToNextIndex(-1, CheeseWheel.AngleOffset.SHOOTING);
     }
 
     @Override
     public boolean isFinished() {
+        if (shotSlots == slots) {
+            ejector.setPower(0);
+        }
         return shotSlots == slots;
     }
 }
