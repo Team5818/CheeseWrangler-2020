@@ -86,11 +86,11 @@ public class Hood extends SubsystemBase implements RRSubsystem {
             && !(getPositionTicks() >= HoodPosition.FORWARD.ticks && pwr > 0);
     }
 
-    public double getAbsoluteAngle() {
+    public double getAngle() {
         return (getPositionTicks() - ZERO_TICKS) / TICKS_PER_DEGREE;
     }
 
-    public void setAbsoluteAngle(double angle) {
+    public void setAngle(double angle) {
         Robot.getShuffleboard().getTab("TurretHood").setEntry("SetHoodAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
         double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;

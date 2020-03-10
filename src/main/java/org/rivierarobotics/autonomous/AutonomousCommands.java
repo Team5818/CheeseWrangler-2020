@@ -30,27 +30,20 @@ import javax.inject.Provider;
 
 public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;
-    private Provider<TrenchRun> trenchRunProvider;
     private ForwardAutoCreator forwardAutoCreator;
     private ShootAndDriveCreator shootAndDriveCreator;
 
     @Inject
     public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
-                              Provider<TrenchRun> trenchRunProvider,
                               ForwardAutoCreator forwardAutoCreator,
                               ShootAndDriveCreator shootAndDriveCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
-        this.trenchRunProvider = trenchRunProvider;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
         return pathweaverExecutorCreator.create(path);
-    }
-
-    public TrenchRun trenchRun() {
-        return trenchRunProvider.get();
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {

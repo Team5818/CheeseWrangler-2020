@@ -49,7 +49,7 @@ public class VisionAimTurret extends CommandBase {
     @Override
     public void execute() {
         double t = ShooterUtil.getTConstant();
-        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAbsoluteAngle())));
+        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
         double vz = dist * Math.sin(txTurret) / t;

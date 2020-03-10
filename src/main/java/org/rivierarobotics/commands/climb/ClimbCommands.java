@@ -20,21 +20,18 @@
 
 package org.rivierarobotics.commands.climb;
 
-import org.rivierarobotics.subsystems.ClimbHeight;
+import org.rivierarobotics.subsystems.ClimbPosition;
 
 import javax.inject.Inject;
 
 public class ClimbCommands {
     private final ClimbSetPositionCreator climbSetPositionCreator;
-    private final ClimbLockCreator climbLockCreator;
     private final ClimbSetPowerCreator climbSetPowerCreator;
 
     @Inject
     public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
-                         ClimbLockCreator climbLockCreator,
                          ClimbSetPowerCreator climbSetPowerCreator) {
         this.climbSetPositionCreator = climbSetPositionCreator;
-        this.climbLockCreator = climbLockCreator;
         this.climbSetPowerCreator = climbSetPowerCreator;
     }
 
@@ -42,20 +39,8 @@ public class ClimbCommands {
         return climbSetPositionCreator.create(position);
     }
 
-    public ClimbSetPosition setPosition(ClimbHeight height) {
+    public ClimbSetPosition setPosition(ClimbPosition height) {
         return climbSetPositionCreator.create(height.position);
-    }
-
-    public ClimbLock lock() {
-        return climbLockCreator.create(true);
-    }
-
-    public ClimbLock unlock() {
-        return climbLockCreator.create(false);
-    }
-
-    public ClimbLock setLock(boolean lock) {
-        return climbLockCreator.create(lock);
     }
 
     public ClimbSetPower setPower(double power) {

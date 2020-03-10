@@ -24,26 +24,25 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
 public class All5Shoot extends CommandBase {
     private CheeseWheel cheeseWheel;
-    private boolean done;
     private double start;
 
     public All5Shoot(@Provided CheeseWheel cheeseWheel) {
         this.cheeseWheel = cheeseWheel;
+        addRequirements(cheeseWheel);
     }
 
     @Override
     public void initialize() {
-        done = false;
         start = cheeseWheel.getPositionTicks();
     }
 
     @Override
     public void execute() {
-
         cheeseWheel.setManualPower(1.0);
     }
 
@@ -54,7 +53,6 @@ public class All5Shoot extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        var pos = cheeseWheel.getPositionTicks();
-        return done;
+        return MathUtil.isWithinTolerance(cheeseWheel.getPositionTicks(), start + 4096, 15);
     }
 }

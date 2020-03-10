@@ -55,7 +55,7 @@ public class VisionAimHood extends CommandBase {
     public void execute() {
         double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
         double t = ShooterUtil.getTConstant();   //time constant
-        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAbsoluteAngle())));
+        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
         double vz = (dist * Math.sin(txTurret)) / t;

@@ -30,7 +30,7 @@ import org.rivierarobotics.util.MathUtil;
 @GenerateCreator
 public class HoodSetAngle extends MotionMagicSetPosition<Hood> {
     public HoodSetAngle(@Provided Hood hood, double angle) {
-        super(hood, hood::getAbsoluteAngle, hood::setAbsoluteAngle,
+        super(hood, hood::getAngle, hood::setAngle,
             MathUtil.limit(angle, HoodPosition.BACK_DEFAULT.angle, HoodPosition.FORWARD.angle), 0.5, 2);
     }
 }

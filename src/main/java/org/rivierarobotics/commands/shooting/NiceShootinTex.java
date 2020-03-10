@@ -24,22 +24,27 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
+import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
 
 @GenerateCreator
 public class NiceShootinTex extends CommandBase {
     private final CheeseWheel cheeseWheel;
+    private final EjectorCommands ejectorCommands;
     private final int slots;
     private CheeseWheelCommands cheeseWheelCommands;
     private int shotSlots;
     private final Ejector ejector;
 
-    public NiceShootinTex(@Provided CheeseWheel cheeseWheel, @Provided CheeseWheelCommands cheeseWheelCommands,
-                          @Provided Ejector ejector, int slots) {
+    public NiceShootinTex(@Provided CheeseWheel cheeseWheel,
+                          @Provided CheeseWheelCommands cheeseWheelCommands,
+                          @Provided Ejector ejector,
+                          @Provided EjectorCommands ejectorCommands, int slots) {
         this.cheeseWheel = cheeseWheel;
         this.ejector = ejector;
         this.cheeseWheelCommands = cheeseWheelCommands;
+        this.ejectorCommands = ejectorCommands;
         this.slots = slots;
     }
 
@@ -60,14 +65,16 @@ public class NiceShootinTex extends CommandBase {
     }
 
     private void moveToNext() {
-        cheeseWheelCommands.moveToNextIndex(-1, CheeseWheel.AngleOffset.SHOOTING);
+        cheeseWheelCommands.moveToNextIndex(-1, CheeseWheel.AngleOffset.SHOOTING).schedule();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        ejectorCommands.setPower(0).schedule();
     }
 
     @Override
     public boolean isFinished() {
-        if (shotSlots == slots) {
-            ejector.setPower(0);
-        }
         return shotSlots == slots;
     }
 }

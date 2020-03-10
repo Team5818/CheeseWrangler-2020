@@ -40,4 +40,9 @@ public class FlywheelSetPower extends InstantCommand {
     public void execute() {
         flywheel.setPower(power);
     }
+
+    @Override
+    public void end(boolean interrupted) {
+        flywheel.setPower(0);
+    }
 }

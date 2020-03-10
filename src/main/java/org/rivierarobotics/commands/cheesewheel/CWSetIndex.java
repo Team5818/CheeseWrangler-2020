@@ -30,26 +30,27 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 public class CWSetIndex extends CommandBase {
     private final CheeseWheel cheeseWheel;
     private final CheeseWheel.AngleOffset mode;
-    private final int direction;
     private final int index;
+    private final int direction;
     private double start;
 
     public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.AngleOffset mode, int index, int direction) {
         this.cheeseWheel = cheeseWheel;
+        this.index = index;
         this.direction = direction;
         this.mode = mode;
-        this.index = index;
         addRequirements(cheeseWheel);
     }
 
     @Override
     public void initialize() {
         start = Timer.getFPGATimestamp();
-        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(cheeseWheel.getIndex(mode), mode, direction));
+        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(index, mode, direction));
     }
 
     @Override
     public boolean isFinished() {
-        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 2;
+        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2)
+            || Timer.getFPGATimestamp() - start > 2;
     }
 }

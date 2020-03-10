@@ -26,13 +26,12 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
 @GenerateCreator
-public class CheeseWheelCommandCanceler extends InstantCommand {
-
+public class CWMoveToNextIndexInterrupt extends InstantCommand {
     private final CheeseWheelCommands commands;
     private final int direction;
     private final CheeseWheel.AngleOffset mode;
 
-    public CheeseWheelCommandCanceler(@Provided CheeseWheelCommands commands, int direction, CheeseWheel.AngleOffset mode) {
+    public CWMoveToNextIndexInterrupt(@Provided CheeseWheelCommands commands, int direction, CheeseWheel.AngleOffset mode) {
         this.commands = commands;
         this.direction = direction;
         this.mode = mode;

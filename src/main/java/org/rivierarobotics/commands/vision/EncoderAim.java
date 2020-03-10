@@ -73,15 +73,15 @@ public class EncoderAim extends CommandBase {
 
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot >:(
-            hood.setAbsoluteAngle(ShooterUtil.getMaxHoodAngle());
+            hood.setAngle(ShooterUtil.getMaxHoodAngle());
             flywheel.setVelocity(encoderVelocity);
         } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < ShooterUtil.getMinHoodAngle()) {
             //Long Shot
-            hood.setAbsoluteAngle(hoodAngle);
+            hood.setAngle(hoodAngle);
             flywheel.setVelocity(ShooterUtil.getMaxFlywheelVelocity());
         } else {
             //Calculated Shot
-            hood.setAbsoluteAngle(hoodAngle);
+            hood.setAngle(hoodAngle);
             flywheel.setVelocity(encoderVelocity);
         }
     }

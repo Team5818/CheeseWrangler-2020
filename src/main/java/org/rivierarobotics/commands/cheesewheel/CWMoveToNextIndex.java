@@ -48,7 +48,8 @@ public class CWMoveToNextIndex extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2) || Timer.getFPGATimestamp() - start > 10;
+        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2)
+            || Timer.getFPGATimestamp() - start > 10;
     }
 
 }

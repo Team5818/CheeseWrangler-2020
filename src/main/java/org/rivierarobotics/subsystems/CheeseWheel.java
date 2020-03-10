@@ -103,7 +103,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public void addAngle(double angle) {
-        setPositionTicks(wheelTalon.getSensorCollection().getPulseWidthPosition() + angle * getAnglesOrInchesToTicks());
+        setPositionTicks(getPositionTicks() + angle * getAnglesOrInchesToTicks());
     }
 
     public boolean isFrontBallPresent() {

@@ -18,26 +18,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.climb;
+package org.rivierarobotics.subsystems;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Climb;
+public enum ClimbPosition {
+    FORTY_FIVE(0),
+    SIXTY(0),
+    SEVENTY_TWO(0);
 
-@GenerateCreator
-public class ClimbLock extends InstantCommand {
-    private final Climb climb;
-    private final boolean lock;
+    public final int position;
 
-    public ClimbLock(@Provided Climb climb, boolean lock) {
-        this.climb = climb;
-        this.lock = lock;
-        addRequirements(climb);
-    }
-
-    @Override
-    public void execute() {
-        //TODO implement "climb locking", whatever that means
+    ClimbPosition(int position) {
+        this.position = position;
     }
 }

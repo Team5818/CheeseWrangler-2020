@@ -38,7 +38,6 @@ public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> exten
     protected final double timeout;
     private double start;
 
-    // Measurements do not need to be in ticks if get/set methods are overridden, but are in ticks by default
     public MotionMagicSetPosition(T subsystem, DoubleSupplier getPosition, DoubleConsumer setPosition,
                                   double setpoint, double maxErrorTicks, double timeout) {
         this.subsystem = subsystem;

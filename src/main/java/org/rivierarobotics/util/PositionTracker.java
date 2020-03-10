@@ -67,7 +67,7 @@ public class PositionTracker {
         }
 
         double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY()
-            / Math.tan(Math.toRadians(vision.getActualTY(hood.getAbsoluteAngle())));
+            / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double turretAngle = turret.getAbsoluteAngle();
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));

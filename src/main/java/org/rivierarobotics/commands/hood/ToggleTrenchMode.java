@@ -24,39 +24,41 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.HoodPosition;
-import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
 public class ToggleTrenchMode extends SequentialCommandGroup {
-    private final Turret turret;
     private final Hood hood;
     private final TurretCommands turretCommands;
     private final HoodCommands hoodCommands;
+    private boolean hoodMoved = false;
 
     @Inject
-    public ToggleTrenchMode(Turret turret, Hood hood, TurretCommands turretCommands, HoodCommands hoodCommands) {
-        this.turret = turret;
+    public ToggleTrenchMode(Hood hood, TurretCommands turretCommands, HoodCommands hoodCommands) {
         this.hood = hood;
         this.turretCommands = turretCommands;
         this.hoodCommands = hoodCommands;
-        addRequirements(turret, hood);
     }
 
     @Override
     public void initialize() {
-        turret.setAngle(0);
-        hood.setAbsoluteAngle(HoodPosition.FORWARD.angle);
+        turretCommands.setRelativeAngle(0).schedule();
+        if (!hood.isTrench) {
+            hoodCommands.setAngle(HoodPosition.BACK_TRENCH).schedule();
+        } else {
+            hoodCommands.setAngle(HoodPosition.FORWARD).schedule();
+        }
+        hoodMoved = true;
     }
 
     @Override
-    public void execute() {
-        MathUtil.isWithinTolerance(turret.getAbsoluteAngle(), HoodPosition.FORWARD.ticks, 20);
+    public void end(boolean interrupted) {
+        hood.isTrench = false;
     }
 
     @Override
     public boolean isFinished() {
-        return false;
+        return MathUtil.isWithinTolerance(hood.getAngle(), HoodPosition.BACK_TRENCH.angle, 2) && hoodMoved;
     }
 }

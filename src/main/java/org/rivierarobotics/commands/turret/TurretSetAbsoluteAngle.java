@@ -32,6 +32,7 @@ public class TurretSetAbsoluteAngle extends BasePIDSetPosition<Turret> {
         addRequirements(turret);
     }
 
+    @Override
     protected double getPositionTicks() {
         return subsystem.getAbsoluteAngle();
     }

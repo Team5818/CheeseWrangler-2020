@@ -56,7 +56,7 @@ public class CheeseWheelCommands {
         this.cheeseWheelCommandCancelerCreator = cheeseWheelCommandCancelerCreator;
     }
 
-    public CheeseWheelCommandCanceler moveToNextIndexCancel(int direction, CheeseWheel.AngleOffset mode) {
+    public CWMoveToNextIndexInterrupt moveToNextIndexCancel(int direction, CheeseWheel.AngleOffset mode) {
         return cheeseWheelCommandCancelerCreator.create(direction, mode);
     }
 

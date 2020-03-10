@@ -45,9 +45,4 @@ public class EjectorSetPower extends CommandBase {
     public void end(boolean interrupted) {
         ejector.setPower(0);
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }
