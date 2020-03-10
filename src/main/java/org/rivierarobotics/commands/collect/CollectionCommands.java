@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands.collect;
 
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 import javax.inject.Provider;

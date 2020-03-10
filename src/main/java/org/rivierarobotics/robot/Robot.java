@@ -127,8 +127,6 @@ public class Robot extends TimedRobot {
         var bt = globalComponent.getBallTracker();
         boolean[] bta = globalComponent.getBallTracker().getBallArray();
 
-        
-
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
             .setEntry("Hood Abs Angle", hood.getAbsoluteAngle())

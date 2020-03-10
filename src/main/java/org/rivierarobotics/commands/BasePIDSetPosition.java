@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.subsystems.BasePIDSubsystem;
 
@@ -52,9 +51,8 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
     @Override
     public boolean isFinished() {
         double err = Math.abs(getPositionTicks() - positionTicks);
-        boolean isInError = err < maxErrorTicks;
-        SmartDashboard.putBoolean(subsystem.getName() + " isWithinError", isInError);
-        return (isInError && Timer.getFPGATimestamp() - start > 0.2) || (Timer.getFPGATimestamp() - start) > timeout;
+        return (err < maxErrorTicks && Timer.getFPGATimestamp() - start > 0.2)
+            || (Timer.getFPGATimestamp() - start) > timeout;
     }
 
     protected double getPositionTicks() {

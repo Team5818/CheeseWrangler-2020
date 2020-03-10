@@ -25,29 +25,32 @@ import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
 public class PathweaverExecutor extends CommandBase {
     private final DriveTrain driveTrain;
     private final RamseteController controller;
     private final Trajectory trajectory;
+    private final RobotShuffleboardTab tab;
     private double startTimestamp;
 
     public PathweaverExecutor(@Provided DriveTrain driveTrain, Pose2dPath path) {
         this.driveTrain = driveTrain;
         this.controller = new RamseteController();
         this.trajectory = generateTrajectory(path);
+        tab = Robot.getShuffleboard().getTab("Pathweaver");
         addRequirements(driveTrain);
     }
 
     private Trajectory generateTrajectory(Pose2dPath path) {
-        var traj = path.getTrajectory();
+        final var traj = path.getTrajectory();
         return traj.relativeTo(traj.getInitialPose());
     }
 
@@ -61,12 +64,12 @@ public class PathweaverExecutor extends CommandBase {
     public void execute() {
         Pose2d current = driveTrain.getPose();
         Trajectory.State goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
-        SmartDashboard.putString("CurrentPose", current.toString());
-        SmartDashboard.putString("GoalPose", goal.toString());
+        tab.setEntry("CurrentPose", current.toString());
+        tab.setEntry("GoalPose", goal.toString());
         ChassisSpeeds adjustedSpeeds = controller.calculate(current, goal);
         DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.getKinematics().toWheelSpeeds(adjustedSpeeds);
-        SmartDashboard.putNumber("wleft", wheelSpeeds.leftMetersPerSecond);
-        SmartDashboard.putNumber("wright", wheelSpeeds.rightMetersPerSecond);
+        tab.setEntry("Left Vel Set", wheelSpeeds.leftMetersPerSecond);
+        tab.setEntry("Right Vel Set", wheelSpeeds.rightMetersPerSecond);
         driveTrain.setVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
     }
 

@@ -30,7 +30,6 @@ import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator

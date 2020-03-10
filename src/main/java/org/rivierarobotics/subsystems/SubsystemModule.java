@@ -24,7 +24,6 @@ import dagger.Module;
 import dagger.Provides;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
-import org.rivierarobotics.commands.ejector.EjectorControl;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.inject.Sided;

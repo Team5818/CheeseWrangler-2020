@@ -30,25 +30,22 @@ import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.ShooterUtil;
-import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
 public class EncoderAim extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
-    private final VisionUtil vision;
     private final Turret turret;
     private final PositionTracker tracker;
     private final double extraDistance;
 
     public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
-                      @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
+                      @Provided Turret turret, @Provided PositionTracker tracker,
                       double extraDistance) {
         this.hood = hood;
         this.driveTrain = dt;
         this.flywheel = flywheel;
-        this.vision = vision;
         this.turret = turret;
         this.tracker = tracker;
         this.extraDistance = extraDistance;
@@ -66,15 +63,13 @@ public class EncoderAim extends CommandBase {
         double vz = zFromGoal / t;
         double turretAngle = MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(vz, vx)));
 
-        turret.setAngle(turretAngle);
-
         double y = ShooterUtil.getYVelocityConstant();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
 
-        double adjustedHoodAngle = 90 - hoodAngle;
+        turret.setAngle(turretAngle);
 
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot >:(
@@ -89,7 +84,6 @@ public class EncoderAim extends CommandBase {
             hood.setAbsoluteAngle(hoodAngle);
             flywheel.setVelocity(encoderVelocity);
         }
-
     }
 
     @Override

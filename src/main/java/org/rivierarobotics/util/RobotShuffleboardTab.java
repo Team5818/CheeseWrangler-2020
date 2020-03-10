@@ -45,21 +45,18 @@ public class RobotShuffleboardTab {
         return entry;
     }
 
-    public RobotShuffleboardTab setEntry(String key, double value) {
+    public <T> RobotShuffleboardTab setEntry(String key, T value) {
         NetworkTableEntry entry = entries.get(key);
         while (entry == null) {
             entry = addEntry(key);
         }
-        entry.setNumber(value);
-        return this;
-    }
-
-    public RobotShuffleboardTab setEntry(String key, boolean value) {
-        NetworkTableEntry entry = entries.get(key);
-        while (entry == null) {
-            entry = addEntry(key);
+        if (value instanceof Double) {
+            entry.setNumber((double) value);
+        } else if (value instanceof Boolean) {
+            entry.setBoolean((boolean) value);
+        } else if (value instanceof String) {
+            entry.setString((String) value);
         }
-        entry.setBoolean(value);
         return this;
     }
 

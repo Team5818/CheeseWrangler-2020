@@ -21,7 +21,6 @@
 package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
@@ -52,7 +51,6 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
             if (Math.abs(pidController.getSetpoint() - getPositionTicks()) < pidConfig.getTolerance()) {
                 return;
             }
-            SmartDashboard.putNumber(getSubsystem() + " InitPID", pidPower);
             if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0 && pidConfig.getF() != 0) {
                 if (pidPower < 0) {
                     setPower(-pidConfig.getF());

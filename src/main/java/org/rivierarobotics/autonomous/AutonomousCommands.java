@@ -30,32 +30,17 @@ import javax.inject.Provider;
 
 public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;
-    private Provider<FlexRoutine> flexRoutineProvider;
-    private Provider<FlexTapeRoutine> flexTapeProvider;
     private Provider<TrenchRun> trenchRunProvider;
-    private Provider<BasicAuto> basicAutoProvider;
-    private Provider<BasicAuto2> basicAuto2Provider;
-    private Provider<BasicAuto3> basicAuto3Provider;
     private ForwardAutoCreator forwardAutoCreator;
     private ShootAndDriveCreator shootAndDriveCreator;
 
     @Inject
-    public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
-                              Provider<FlexTapeRoutine> flexTapeProvider,
-                              PathweaverExecutorCreator pathweaverExecutorCreator,
+    public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
                               Provider<TrenchRun> trenchRunProvider,
-                              Provider<BasicAuto> basicAutoProvider,
-                              Provider<BasicAuto2> basicAuto2Provider,
-                              Provider<BasicAuto3> basicAuto3Provider,
                               ForwardAutoCreator forwardAutoCreator,
                               ShootAndDriveCreator shootAndDriveCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
-        this.flexRoutineProvider = flexRoutineProvider;
-        this.flexTapeProvider = flexTapeProvider;
         this.trenchRunProvider = trenchRunProvider;
-        this.basicAutoProvider = basicAutoProvider;
-        this.basicAuto2Provider = basicAuto2Provider;
-        this.basicAuto3Provider = basicAuto3Provider;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
     }
@@ -64,28 +49,8 @@ public class AutonomousCommands {
         return pathweaverExecutorCreator.create(path);
     }
 
-    public FlexRoutine flex() {
-        return flexRoutineProvider.get();
-    }
-
-    public FlexTapeRoutine flexTape() {
-        return flexTapeProvider.get();
-    }
-
     public TrenchRun trenchRun() {
         return trenchRunProvider.get();
-    }
-
-    public BasicAuto basicAuto() {
-        return basicAutoProvider.get();
-    }
-
-    public BasicAuto2 basicAuto2() {
-        return basicAuto2Provider.get();
-    }
-
-    public BasicAuto3 basicAuto3() {
-        return basicAuto3Provider.get();
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {

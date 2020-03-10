@@ -32,6 +32,7 @@ import java.util.Locale;
 
 public enum Pose2dPath {
     // An underscore indicates a camelCase filename, keep all lowercase filenames and uppercase enums otherwise
+    //TODO do something about all these paths - do they work? if so rename, if not delete & redo
     FLEX, CHEESERUN, FLEX_TAPE,
     MOVETOSHOOT, MOVETOCOLLECT, SHOOTCOLLECTED, NEXTBALLL, NEXTBALLLL, SHOOTCOLLECTEDD,
     MOVETOSHOOTT, MOVETOSHOOTTMID, MOVETOSHOOTTRIGHT;

@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.collect;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
 

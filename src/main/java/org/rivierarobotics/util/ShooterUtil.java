@@ -21,7 +21,6 @@
 package org.rivierarobotics.util;
 
 public class ShooterUtil {
-
     private ShooterUtil() {
     }
 
@@ -48,7 +47,6 @@ public class ShooterUtil {
         //meters
         return 0.1778;
     }
-
 
     public static double getDistanceFromOuterToInnerTarget() {
         //meters
@@ -102,6 +100,4 @@ public class ShooterUtil {
     public static double getLeftFieldToBallCollect() {
         return 2.778; // meters
     }
-
-
 }

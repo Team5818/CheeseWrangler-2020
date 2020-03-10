@@ -28,7 +28,6 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class VisionAim extends ParallelCommandGroup {
-
     public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
         if (target == VisionTarget.TOP) {
             addCommands(//vision.autoAimHood(0, ShooterUtil.getTopHeight()),

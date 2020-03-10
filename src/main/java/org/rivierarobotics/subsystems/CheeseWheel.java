@@ -23,8 +23,8 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Provider;
@@ -35,6 +35,8 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final AnalogInput frontSensor;
     private final AnalogInput backSensor;
     private final double zeroTicks = 3725;
+    private final double ballMax = 260;
+    private final double ballMin = 100;
 
     public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
@@ -49,14 +51,6 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     @Override
     public void setPower(double pwr) {
         wheelTalon.set(pwr);
-    }
-
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
     }
 
     @Override
@@ -85,7 +79,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getAngleAdded(int index, AngleOffset mode, int direction) {
-        SmartDashboard.putNumber("setIndex", index);
+        Robot.getShuffleboard().getTab("Cheese Wheel").setEntry("Set Index", index);
         double angleOff = index * 72 - getAdjustedAngle(getAngleOffset(mode));
         if (Math.abs(angleOff) > 180) {
             if (angleOff < 0) {
@@ -108,13 +102,12 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return angleOff;
     }
 
-
     public void addAngle(double angle) {
         setPositionTicks(wheelTalon.getSensorCollection().getPulseWidthPosition() + angle * getAnglesOrInchesToTicks());
     }
 
     public boolean isFrontBallPresent() {
-        return (frontSensor.getValue() < 260 && frontSensor.getValue() > 100);
+        return (frontSensor.getValue() < ballMax && frontSensor.getValue() > ballMin);
     }
 
     public double getFrontSensorValue() {
@@ -122,26 +115,31 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public boolean isBackBallPresent() {
-        return (backSensor.getValue() < 260 && backSensor.getValue() > 100);
+        return (backSensor.getValue() < ballMax && backSensor.getValue() > ballMin);
     }
 
     public double getBackSensorValue() {
         return backSensor.getValue();
     }
 
-    public enum AngleOffset {
-        SHOOTING, COLLECT_FRONT, COLLECT_BACK
+    public double getAngleOffset(AngleOffset offset) {
+        return offset.angle;
     }
 
-    public double getAngleOffset(AngleOffset offset) {
-        if (offset.equals(AngleOffset.SHOOTING)) {
-            return 36;
-        } else if (offset.equals(AngleOffset.COLLECT_FRONT)) {
-            return 106;
-        } else if (offset.equals(AngleOffset.COLLECT_BACK)) {
-            return 253;
-        } else {
-            return 0;
+    public enum AngleOffset {
+        SHOOTING(36), COLLECT_FRONT(106), COLLECT_BACK(253);
+
+        public final int angle;
+        AngleOffset(int angle) {
+            this.angle = angle;
         }
+    }
+
+    @Override
+    public void periodic() {
+        if (getDefaultCommand() == null) {
+            setDefaultCommand(command.get());
+        }
+        super.periodic();
     }
 }

@@ -23,7 +23,6 @@ package org.rivierarobotics.util;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import org.rivierarobotics.subsystems.PIDConfig;
 
 public class MotorUtil {
