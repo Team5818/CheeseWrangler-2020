@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.hood;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.subsystems.Hood;
@@ -28,7 +29,7 @@ import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
-public class ToggleTrenchMode extends SequentialCommandGroup {
+public class ToggleTrenchMode extends CommandBase {
     private final Hood hood;
     private final TurretCommands turretCommands;
     private final HoodCommands hoodCommands;
@@ -45,6 +46,7 @@ public class ToggleTrenchMode extends SequentialCommandGroup {
     public void initialize() {
         turretCommands.setRelativeAngle(0).schedule();
         if (!hood.isTrench) {
+            hood.isTrench = true;
             hoodCommands.setAngle(HoodPosition.BACK_TRENCH).schedule();
         } else {
             hoodCommands.setAngle(HoodPosition.FORWARD).schedule();

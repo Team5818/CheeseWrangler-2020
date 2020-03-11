@@ -63,10 +63,8 @@ public class DriveTrainSide implements RRSubsystem {
         return shaftEncoder.getDistance();
     }
 
-    // Returns in meters per second
     public double getVelocity() {
-        return MathUtil.ticksPer100msToMetersPerSec(
-            masterLeft.getSelectedSensorVelocity() * MOTOR_TO_WHEEL_RATIO, TICKS_PER_METER);
+        return shaftEncoder.getRate();
     }
 
     public void setVelocity(double vel) {
