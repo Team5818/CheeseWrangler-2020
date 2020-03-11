@@ -25,6 +25,7 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MotorUtil;
 
 public class Flywheel extends SubsystemBase implements RRSubsystem {
@@ -49,6 +50,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public void setVelocity(double vel) {
+        Robot.getShuffleboard().getTab("Vision").setEntry("Flywheel Set Vel", vel);
         if (vel == 0) {
             flywheelFalcon.set(TalonFXControlMode.Disabled, 0.0);
         } else {

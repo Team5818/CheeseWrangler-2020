@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.shooting;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -31,20 +32,15 @@ import org.rivierarobotics.subsystems.Ejector;
 @GenerateCreator
 public class NiceShootinTex extends CommandBase {
     private final CheeseWheel cheeseWheel;
-    private final EjectorCommands ejectorCommands;
     private final int slots;
     private CheeseWheelCommands cheeseWheelCommands;
     private int shotSlots;
-    private final Ejector ejector;
 
     public NiceShootinTex(@Provided CheeseWheel cheeseWheel,
                           @Provided CheeseWheelCommands cheeseWheelCommands,
-                          @Provided Ejector ejector,
-                          @Provided EjectorCommands ejectorCommands, int slots) {
+                          int slots) {
         this.cheeseWheel = cheeseWheel;
-        this.ejector = ejector;
         this.cheeseWheelCommands = cheeseWheelCommands;
-        this.ejectorCommands = ejectorCommands;
         this.slots = slots;
     }
 
@@ -66,11 +62,6 @@ public class NiceShootinTex extends CommandBase {
 
     private void moveToNext() {
         cheeseWheelCommands.moveToNextIndex(-1, CheeseWheel.AngleOffset.SHOOTING).schedule();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        ejectorCommands.setPower(0).schedule();
     }
 
     @Override

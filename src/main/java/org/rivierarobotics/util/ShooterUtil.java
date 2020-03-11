@@ -82,7 +82,7 @@ public class ShooterUtil {
     }
 
     public static double velocityToTicks(double vel) {
-        return (1077.97 * vel - 4034);
+        return (1077.97 * vel);
     }
 
     public static double getFieldLength() {

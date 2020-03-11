@@ -42,7 +42,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     private final VisionUtil vision;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-        super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.2));
+        super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.5));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;

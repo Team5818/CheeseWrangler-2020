@@ -30,8 +30,8 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 
 @GenerateCreator
 public class ShootNWedges extends ParallelRaceGroup {
-    public ShootNWedges(@Provided EjectorCommands ejectorCommands,
-                        @Provided CheeseWheelCommands cheeseWheelCommands,
+    public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
+                        @Provided EjectorCommands ejectorCommands,
                         int wedges) {
         super(
             new SequentialCommandGroup(

@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands.ejector;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Ejector;
@@ -43,6 +44,11 @@ public class EjectorSetPower extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        ejector.setPower(0);
+        ejector.setPower(0.0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }
