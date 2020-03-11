@@ -26,7 +26,6 @@ import org.rivierarobotics.autonomous.basic.ShootAndDrive;
 import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class AutonomousCommands {
     private PathweaverExecutorCreator pathweaverExecutorCreator;

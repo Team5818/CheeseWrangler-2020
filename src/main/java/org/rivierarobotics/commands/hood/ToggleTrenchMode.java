@@ -21,7 +21,6 @@
 package org.rivierarobotics.commands.hood;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.rivierarobotics.commands.turret.TurretCommands;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.HoodPosition;

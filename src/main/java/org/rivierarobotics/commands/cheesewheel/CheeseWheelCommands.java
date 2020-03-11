@@ -22,8 +22,6 @@ package org.rivierarobotics.commands.cheesewheel;
 
 import org.rivierarobotics.commands.shooting.All5Shoot;
 import org.rivierarobotics.commands.shooting.All5ShootCreator;
-import org.rivierarobotics.commands.shooting.NiceShootinTex;
-import org.rivierarobotics.commands.shooting.NiceShootinTexCreator;
 import org.rivierarobotics.commands.shooting.ShootNWedges;
 import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
 import org.rivierarobotics.subsystems.CheeseWheel;
@@ -33,7 +31,6 @@ import javax.inject.Inject;
 public class CheeseWheelCommands {
     private CWSetPositionCreator setPositionCreator;
     private CWSetIndexCreator setIndexCreator;
-    private final NiceShootinTexCreator niceShootinTexCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final CWMoveToNextIndexCreator moveToNextIndexCreator;
     private All5ShootCreator all5ShootCreator;
@@ -42,14 +39,12 @@ public class CheeseWheelCommands {
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWSetIndexCreator setIndexCreator,
-                               NiceShootinTexCreator niceShootinTexCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
                                CWMoveToNextIndexCreator moveToNextIndexCreator,
                                All5ShootCreator all5ShootCreator,
                                CWMoveToNextIndexInterruptCreator moveToNextInterruptCreator) {
         this.setPositionCreator = setPositionCreator;
         this.setIndexCreator = setIndexCreator;
-        this.niceShootinTexCreator = niceShootinTexCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.moveToNextIndexCreator = moveToNextIndexCreator;
         this.all5ShootCreator = all5ShootCreator;
@@ -66,10 +61,6 @@ public class CheeseWheelCommands {
 
     public CWSetIndex setIndex(CheeseWheel.AngleOffset mode, int index, int direction) {
         return setIndexCreator.create(mode, index, direction);
-    }
-
-    public NiceShootinTex niceShootinTex(int wedges) {
-        return niceShootinTexCreator.create(wedges);
     }
 
     public ShootNWedges shootNWedges(int wedges) {

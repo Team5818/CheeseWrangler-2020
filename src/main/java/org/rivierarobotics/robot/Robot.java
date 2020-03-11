@@ -63,9 +63,9 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
-//            if (!flyingWheelman.isScheduled()) {
-//                flyingWheelman.schedule();
-//            }
+            //if (!flyingWheelman.isScheduled()) {
+            //    flyingWheelman.schedule();
+            //}
 
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();

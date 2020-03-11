@@ -28,8 +28,6 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.util.BallTracker;
 
-import java.util.function.BooleanSupplier;
-
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
     private final Intake intake;

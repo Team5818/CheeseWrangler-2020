@@ -20,13 +20,15 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
 @GenerateCreator
-public class CWMoveToNextIndexInterrupt extends InstantCommand {
+public class  CWMoveToNextIndexInterrupt extends InstantCommand {
     private final CheeseWheelCommands commands;
     private final int direction;
     private final CheeseWheel.AngleOffset mode;
@@ -39,6 +41,7 @@ public class CWMoveToNextIndexInterrupt extends InstantCommand {
 
     @Override
     public void initialize() {
+        SmartDashboard.putNumber("isRunning", Timer.getFPGATimestamp());
         commands.moveToNextIndex(direction, mode).schedule();
     }
 }

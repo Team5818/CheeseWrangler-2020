@@ -58,11 +58,11 @@ public class EncoderAim extends CommandBase {
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
         double zFromGoal = pos[0];
-        double dist = Math.sqrt(Math.pow(xFromGoal + extraDistance, 2) + Math.pow(zFromGoal, 2));
         double t = ShooterUtil.getTConstant();
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getXVelocity();
         double vz = zFromGoal / t;
         double turretAngle = MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(vz, vx)));
+        double dist = Math.sqrt(Math.pow(xFromGoal + extraDistance, 2) + Math.pow(zFromGoal, 2));
 
         double y = ShooterUtil.getYVelocityConstant();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
@@ -72,16 +72,15 @@ public class EncoderAim extends CommandBase {
 
         turret.setAngle(turretAngle);
 
+        SmartDashboard.putNumber("Dist", dist);
         SmartDashboard.putNumber("TurretAngleAdj", turretAngle);
         SmartDashboard.putNumber("vx", vx);
         SmartDashboard.putNumber("vz", vz);
-        SmartDashboard.putNumber("Dist", dist);
         SmartDashboard.putNumber("hoodAngle", hoodAngle);
         SmartDashboard.putNumber("VXZ", vxz);
         SmartDashboard.putNumber("VY", y);
         SmartDashboard.putNumber("t", t);
         SmartDashboard.putNumber("ballVel", ballVel);
-
 
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot >:(
