@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
         shuffleboard = new RobotShuffleboard();
-        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+        //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         globalComponent.getNavXGyro().resetGyro();
     }
 
@@ -63,9 +63,9 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
-            if (!flyingWheelman.isScheduled()) {
-                flyingWheelman.schedule();
-            }
+//            if (!flyingWheelman.isScheduled()) {
+//                flyingWheelman.schedule();
+//            }
 
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -77,6 +77,7 @@ public class Robot extends TimedRobot {
     public void autonomousInit() {
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getDriveTrain().resetEncoder();
+        globalComponent.getPositionTracker().reset();
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
             () -> commandComponent.auto().shootAndDrive()

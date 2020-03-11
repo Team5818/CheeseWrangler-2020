@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.vision;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -71,18 +72,29 @@ public class EncoderAim extends CommandBase {
 
         turret.setAngle(turretAngle);
 
+        SmartDashboard.putNumber("TurretAngleAdj", turretAngle);
+        SmartDashboard.putNumber("vx", vx);
+        SmartDashboard.putNumber("vz", vz);
+        SmartDashboard.putNumber("Dist", dist);
+        SmartDashboard.putNumber("hoodAngle", hoodAngle);
+        SmartDashboard.putNumber("VXZ", vxz);
+        SmartDashboard.putNumber("VY", y);
+        SmartDashboard.putNumber("t", t);
+        SmartDashboard.putNumber("ballVel", ballVel);
+
+
         if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
             //Close Shot >:(
-            hood.setAngle(ShooterUtil.getMaxHoodAngle());
-            flywheel.setVelocity(encoderVelocity);
+            //hood.setAngle(ShooterUtil.getMaxHoodAngle());
+            //flywheel.setVelocity(encoderVelocity);
         } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < ShooterUtil.getMinHoodAngle()) {
             //Long Shot
-            hood.setAngle(hoodAngle);
-            flywheel.setVelocity(ShooterUtil.getMaxFlywheelVelocity());
+            //hood.setAngle(hoodAngle);
+            //flywheel.setVelocity(ShooterUtil.getMaxFlywheelVelocity());
         } else {
             //Calculated Shot
-            hood.setAngle(hoodAngle);
-            flywheel.setVelocity(encoderVelocity);
+            //hood.setAngle(hoodAngle);
+            //flywheel.setVelocity(encoderVelocity);
         }
     }
 

@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.vision;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -57,6 +58,10 @@ public class VisionAimTurret extends CommandBase {
         double tv = vision.getLLValue("tv");
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
+
+        SmartDashboard.putNumber("TurretAngleAdj", turretAngle);
+        SmartDashboard.putNumber("vx", vx);
+        SmartDashboard.putNumber("vz", vz);
 
         if (tv == 1) {
             turret.setAngle(turretAngleAdj);

@@ -30,10 +30,10 @@ import org.rivierarobotics.util.VisionTarget;
 public class VisionAim extends ParallelCommandGroup {
     public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
         if (target == VisionTarget.TOP) {
-            addCommands(//vision.autoAimHood(0, ShooterUtil.getTopHeight()),
+            addCommands(vision.autoAimHood(0, ShooterUtil.getTopHeight()),
                 vision.autoAimTurret(0, ShooterUtil.getTopHeight()));
         } else {
-            addCommands(//vision.autoAimHood(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()),
+            addCommands(vision.autoAimHood(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()),
                 vision.autoAimTurret(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()));
         }
     }

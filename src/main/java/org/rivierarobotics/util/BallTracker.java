@@ -82,7 +82,7 @@ public class BallTracker {
         switch (direction) {
             case ANY:
                 for (int i = 0; i < 5; i++) {
-                    if (hasBall[i] = ball && startingIndex - i < indexDiff) {
+                    if (hasBall[i] == ball && startingIndex - i < indexDiff) {
                         minDex = i;
                     }
                 }
