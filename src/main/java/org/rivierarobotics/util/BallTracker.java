@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
 
@@ -33,11 +34,16 @@ public class BallTracker {
     private boolean[] hasBall = {true, true, true, true, true};
     public boolean frontOnIndex;
     public boolean backOnIndex;
+    public boolean shooterOnIndex;
 
     @Inject
     public BallTracker(CheeseWheel cheeseWheel, Ejector ejector) {
         this.cheeseWheel = cheeseWheel;
         this.ejector = ejector;
+    }
+
+    public boolean shooterOnIndex() {
+        return shooterOnIndex;
     }
 
     public void checkIfEmpty() {
@@ -47,7 +53,9 @@ public class BallTracker {
 
         frontOnIndex = getOnIndex(CheeseWheel.AngleOffset.COLLECT_FRONT);
         backOnIndex = getOnIndex(CheeseWheel.AngleOffset.COLLECT_BACK);
-        boolean shooterOnIndex = getOnIndex(CheeseWheel.AngleOffset.SHOOTING);
+        shooterOnIndex = getOnIndex(CheeseWheel.AngleOffset.SHOOTING);
+
+        SmartDashboard.putBoolean("ShootOnIndex",shooterOnIndex);
 
         if (frontOnIndex && !cheeseWheel.isFrontBallPresent()) {
             hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT)] = false;

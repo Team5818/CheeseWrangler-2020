@@ -53,7 +53,7 @@ public class Ejector extends SubsystemBase {
     public void setPower(double leftPwr, double rightPwr) {
         //TODO change this to reflect shooting offset
         left.setPower(leftPwr);
-        right.setPower(MathUtil.fitDeadband(rightPwr - 0.1, 0.1));
+        right.setPower(rightPwr);
     }
 
     public boolean isActive() {

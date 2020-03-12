@@ -75,15 +75,15 @@ public class VisionAimHood extends CommandBase {
         if (vision.getLLValue("tv") ==  1) {
             if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
                 //Close Shot
-                hood.setAngle(hoodAngle);
+                hood.setAngle(90 - hoodAngle);
                 flywheel.setVelocity(ShooterUtil.velocityToTicks(8));
-            } else if (ballVel > ShooterUtil.getMaxBallVelocity() || hoodAngle < 33) {
+            } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
                 //Long Shot
                 hood.setAngle(90 - (33 + 0.1 * dist));
                 flywheel.setVelocity(ShooterUtil.velocityToTicks(15));
             } else {
                 //Calculated Shot
-                hood.setAngle(hoodAngle);
+                hood.setAngle(90-hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
             }
         }
