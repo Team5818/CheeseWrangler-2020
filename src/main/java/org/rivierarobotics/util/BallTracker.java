@@ -31,7 +31,7 @@ import javax.inject.Singleton;
 public class BallTracker {
     private final CheeseWheel cheeseWheel;
     private final Ejector ejector;
-    private boolean[] hasBall = {true, true, true, true, true};
+    private boolean[] hasBall = { true, true, true, true, true };
     public boolean frontOnIndex;
     public boolean backOnIndex;
     public boolean shooterOnIndex;
@@ -55,7 +55,7 @@ public class BallTracker {
         backOnIndex = getOnIndex(CheeseWheel.AngleOffset.COLLECT_BACK);
         shooterOnIndex = getOnIndex(CheeseWheel.AngleOffset.SHOOTING);
 
-        SmartDashboard.putBoolean("ShootOnIndex",shooterOnIndex);
+        SmartDashboard.putBoolean("ShootOnIndex", shooterOnIndex);
 
         if (frontOnIndex && !cheeseWheel.isFrontBallPresent()) {
             hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT)] = false;

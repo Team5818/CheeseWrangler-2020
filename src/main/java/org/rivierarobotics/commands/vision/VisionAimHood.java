@@ -83,7 +83,7 @@ public class VisionAimHood extends CommandBase {
                 flywheel.setVelocity(ShooterUtil.velocityToTicks(15));
             } else {
                 //Calculated Shot
-                hood.setAngle(90-hoodAngle);
+                hood.setAngle(90 - hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
             }
         }

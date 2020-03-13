@@ -34,23 +34,23 @@ import org.rivierarobotics.util.BallTracker;
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
-                        @Provided EjectorCommands ejectorCommands, @Provided BallTracker ballTracker,
+                        @Provided EjectorCommands ejectorCommands,
                         int wedges) {
         // No idea why this works, but it just does
 
-         SmartDashboard.putBoolean("I ran no", true);
-            for (int i = 0; i < wedges; i++) {
-                addCommands(
-                    new SequentialCommandGroup(
-                        ejectorCommands.setPower(1),
-                        new WaitCommand(0.2),
-                        ejectorCommands.setPower(1),
-                        cheeseWheelCommands.moveToNextIndexCancel(-1, CheeseWheel.AngleOffset.SHOOTING)
-                    ), new SequentialCommandGroup(
-                        new WaitCommand(0.4),
-                        ejectorCommands.setPower(0.0)
-                    )
-                );
-            }
+        SmartDashboard.putBoolean("I ran no", true);
+        for (int i = 0; i < wedges; i++) {
+            addCommands(
+                new SequentialCommandGroup(
+                    ejectorCommands.setPower(1),
+                    new WaitCommand(0.2),
+                    ejectorCommands.setPower(1),
+                    cheeseWheelCommands.moveToNextIndexCancel(-1, CheeseWheel.AngleOffset.SHOOTING)
+                ), new SequentialCommandGroup(
+                    new WaitCommand(0.4),
+                    ejectorCommands.setPower(0.0)
+                )
+            );
         }
     }
+}
