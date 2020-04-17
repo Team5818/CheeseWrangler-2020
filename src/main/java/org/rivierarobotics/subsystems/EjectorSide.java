@@ -22,18 +22,27 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 
 public class EjectorSide {
     private final WPI_VictorSPX ejectorVictor;
+    private final MechLogger logger;
 
-    public EjectorSide(int id, boolean inverted) {
+    public EjectorSide(int id, boolean invert) {
         ejectorVictor = new WPI_VictorSPX(id);
         ejectorVictor.configFactoryDefault();
-        ejectorVictor.setInverted(inverted);
+        ejectorVictor.setInverted(invert);
         ejectorVictor.setNeutralMode(NeutralMode.Brake);
+        logger = Logging.getLogger(getClass(), invert ? "left" : "right");
     }
 
     public void setPower(double pwr) {
+        logger.powerChange(pwr);
         ejectorVictor.set(pwr);
+    }
+
+    public double getPower() {
+        return ejectorVictor.get();
     }
 }

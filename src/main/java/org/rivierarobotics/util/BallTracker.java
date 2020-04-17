@@ -20,10 +20,11 @@
 
 package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
 
+import java.util.Arrays;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -31,7 +32,7 @@ import javax.inject.Singleton;
 public class BallTracker {
     private final CheeseWheel cheeseWheel;
     private final Ejector ejector;
-    private boolean[] hasBall = { true, true, true, true, true };
+    private boolean[] hasBall;
     public boolean frontOnIndex;
     public boolean backOnIndex;
     public boolean shooterOnIndex;
@@ -40,6 +41,8 @@ public class BallTracker {
     public BallTracker(CheeseWheel cheeseWheel, Ejector ejector) {
         this.cheeseWheel = cheeseWheel;
         this.ejector = ejector;
+        this.hasBall = new boolean[5];
+        Arrays.fill(hasBall, true);
     }
 
     public boolean shooterOnIndex() {
@@ -55,7 +58,7 @@ public class BallTracker {
         backOnIndex = getOnIndex(CheeseWheel.AngleOffset.COLLECT_BACK);
         shooterOnIndex = getOnIndex(CheeseWheel.AngleOffset.SHOOTING);
 
-        SmartDashboard.putBoolean("ShootOnIndex", shooterOnIndex);
+        Robot.getShuffleboard().getTab("Cheese Wheel").setEntry("ShootOnIndex", shooterOnIndex);
 
         if (frontOnIndex && !cheeseWheel.isFrontBallPresent()) {
             hasBall[cheeseWheel.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT)] = false;

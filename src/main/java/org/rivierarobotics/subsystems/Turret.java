@@ -27,7 +27,7 @@ import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
@@ -68,7 +68,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
-        double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterUtil.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
+        double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
         Robot.getShuffleboard().getTab("TurretHood").setEntry("txTurret", txTurret);
         return txTurret;
     }
@@ -76,8 +76,10 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     public void setAngle(double angle) {
         double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
         if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
+            logger.setpointChange(position);
             setPositionTicks(position);
         } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
+            logger.setpointChange(position - 4096);
             setPositionTicks(position - 4096);
         }
     }
@@ -90,24 +92,25 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
         return minAngle * getAnglesOrInchesToTicks();
     }
 
-    @Override
-    public void setPower(double pwr) {
+    private double limitPowerToRange(double pwr) {
         if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
         } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
+        return pwr;
+    }
+
+    @Override
+    public void setPower(double pwr) {
+        pwr = limitPowerToRange(pwr);
+        logger.powerChange(pwr);
         turretTalon.set(pwr);
     }
 
     @Override
     public void setManualPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
-            pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
-            pwr = 0;
-        }
-        super.setManualPower(pwr);
+        super.setManualPower(limitPowerToRange(pwr));
     }
 
     @Override

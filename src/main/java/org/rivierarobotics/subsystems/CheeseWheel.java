@@ -63,14 +63,16 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         int min = 360;
         double minAngle = 360;
         for (int i = 0; i < 6; i++) {
-            if (minAngle > Math.abs(cwAngle - (i * 72))) {
-                minAngle = Math.abs(cwAngle - (i * 72));
+            double ang = Math.abs(cwAngle - (i * 72));
+            if (minAngle > ang) {
+                minAngle = ang;
                 if (i == 5) {
                     return 0;
                 }
                 min = i;
             }
         }
+        logger.stateChange("slot_index", min);
         return min;
     }
 
@@ -111,7 +113,9 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public boolean isFrontBallPresent() {
-        return (frontSensor.getValue() < ballMax && frontSensor.getValue() > ballMin);
+        boolean frontBall = frontSensor.getValue() < ballMax && frontSensor.getValue() > ballMin;
+        logger.stateChange("front_ball_present", frontBall);
+        return frontBall;
     }
 
     public double getFrontSensorValue() {
@@ -119,7 +123,9 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public boolean isBackBallPresent() {
-        return (backSensor.getValue() < ballMax && backSensor.getValue() > ballMin);
+        boolean backBall = backSensor.getValue() < ballMax && backSensor.getValue() > ballMin;
+        logger.stateChange("back_ball_present", backBall);
+        return backBall;
     }
 
     public double getBackSensorValue() {

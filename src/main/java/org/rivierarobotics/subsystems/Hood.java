@@ -25,20 +25,24 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 1762;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
-    private static final int SLOT_IDX = 0;
     public boolean isTrench = false;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
+    private final MechLogger logger;
+    private final RobotShuffleboardTab shuffleTab;
 
     public Hood(int motorId, Provider<HoodControl> command) {
         this.command = command;
@@ -47,6 +51,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
             new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, hoodTalon);
         hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
+        logger = Logging.getLogger(getClass());
+        shuffleTab = Robot.getShuffleboard().getTab("TurretHood");
     }
 
     public final WPI_TalonSRX getHoodTalon() {
@@ -66,11 +72,13 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPower(double pwr) {
-        pwr = limitPower(pwr);
+        pwr = curvePower(pwr);
+        logger.powerChange(pwr);
         hoodTalon.set(ControlMode.PercentOutput, pwr);
     }
 
-    private double limitPower(double pwr) {
+    // Applies a bell curve power ramp for safety
+    private double curvePower(double pwr) {
         double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
         double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
         double curvedPwr = Math.pow(Math.E, -(4.0 / 8) * (pos * pos)) * pwr;
@@ -91,12 +99,13 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
-        Robot.getShuffleboard().getTab("TurretHood").setEntry("SetHoodAngle", angle);
+        shuffleTab.setEntry("SetHoodAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
         double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
-        Robot.getShuffleboard().getTab("TurretHood").setEntry("ticksAngSet", ticks);
+        shuffleTab.setEntry("ticksAngSet", ticks);
         ticks = MathUtil.limit(ticks, back, HoodPosition.FORWARD.ticks);
-        Robot.getShuffleboard().getTab("TurretHood").setEntry("ticksAng", ticks);
+        shuffleTab.setEntry("ticksAng", ticks);
+        logger.setpointChange(ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 
