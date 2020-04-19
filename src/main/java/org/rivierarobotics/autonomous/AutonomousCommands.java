@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.advanced.ShootLoop;
+import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
 import org.rivierarobotics.autonomous.basic.ForwardAuto;
 import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
 import org.rivierarobotics.autonomous.basic.ShootAndDrive;
@@ -28,17 +30,20 @@ import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 import javax.inject.Inject;
 
 public class AutonomousCommands {
-    private PathweaverExecutorCreator pathweaverExecutorCreator;
-    private ForwardAutoCreator forwardAutoCreator;
-    private ShootAndDriveCreator shootAndDriveCreator;
+    private final PathweaverExecutorCreator pathweaverExecutorCreator;
+    private final ForwardAutoCreator forwardAutoCreator;
+    private final ShootAndDriveCreator shootAndDriveCreator;
+    private final ShootLoopCreator shootLoopCreator;
 
     @Inject
     public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
                               ForwardAutoCreator forwardAutoCreator,
-                              ShootAndDriveCreator shootAndDriveCreator) {
+                              ShootAndDriveCreator shootAndDriveCreator,
+                              ShootLoopCreator shootLoopCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
+        this.shootLoopCreator = shootLoopCreator;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
@@ -53,4 +58,7 @@ public class AutonomousCommands {
         return shootAndDriveCreator.create();
     }
 
+    public ShootLoop shootLoop(Pose2dPath loop) {
+        return shootLoopCreator.create(loop);
+    }
 }

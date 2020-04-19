@@ -38,7 +38,6 @@ public class ShootNWedges extends SequentialCommandGroup {
                         int wedges) {
         // No idea why this works, but it just does
 
-        SmartDashboard.putBoolean("I ran no", true);
         for (int i = 0; i < wedges; i++) {
             addCommands(
                 new SequentialCommandGroup(

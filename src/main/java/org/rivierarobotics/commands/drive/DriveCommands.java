@@ -25,14 +25,17 @@ import org.rivierarobotics.util.NeutralIdleMode;
 import javax.inject.Inject;
 
 public class DriveCommands {
-    private DriveSetNeutralIdleCreator driveSetNeutralIdleCreator;
-    private DriveDistanceCreator driveDistanceCreator;
+    private final DriveSetNeutralIdleCreator driveSetNeutralIdleCreator;
+    private final SpinInPlaceCreator spinInPlaceCreator;
+    private final DriveDistanceCreator driveDistanceCreator;
 
     @Inject
     public DriveCommands(DriveSetNeutralIdleCreator driveSetNeutralIdleCreator,
-                         DriveDistanceCreator driveDistanceCreator) {
+                         DriveDistanceCreator driveDistanceCreator,
+                         SpinInPlaceCreator spinInPlaceCreator) {
         this.driveDistanceCreator = driveDistanceCreator;
         this.driveSetNeutralIdleCreator = driveSetNeutralIdleCreator;
+        this.spinInPlaceCreator = spinInPlaceCreator;
     }
 
     public DriveDistance driveDistance(double finalDistance, double power) {
@@ -41,5 +44,13 @@ public class DriveCommands {
 
     public DriveSetNeutralIdle setNeutralIdle(NeutralIdleMode mode) {
         return driveSetNeutralIdleCreator.create(mode);
+    }
+
+    public SpinInPlace spinFor(double degreesToSpin) {
+        return spinInPlaceCreator.create(degreesToSpin, false);
+    }
+
+    public SpinInPlace rotateTo(double degreesHeading) {
+        return spinInPlaceCreator.create(degreesHeading, true);
     }
 }
