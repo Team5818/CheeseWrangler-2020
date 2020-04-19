@@ -26,15 +26,22 @@ import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator
-public class TurretSetRelativeAngle extends BasePIDSetPosition<Turret> {
-    public TurretSetRelativeAngle(@Provided Turret turret, double angle) {
+public class TurretSetAngle extends BasePIDSetPosition<Turret> {
+    private final boolean isAbsolute;
+
+    public TurretSetAngle(@Provided Turret turret, double angle, boolean isAbsolute) {
         super(turret, 1, angle, 2);
+        this.isAbsolute = isAbsolute;
         addRequirements(turret);
     }
 
     @Override
     protected double getPositionTicks() {
-        return subsystem.getAngle();
+        if (isAbsolute) {
+            return subsystem.getAbsoluteAngle();
+        } else {
+            return subsystem.getAngle();
+        }
     }
 
     @Override

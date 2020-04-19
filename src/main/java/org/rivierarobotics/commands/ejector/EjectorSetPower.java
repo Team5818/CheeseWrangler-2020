@@ -49,7 +49,6 @@ public class EjectorSetPower extends InstantCommand {
     @Override
     public void execute() {
         if (!ballTracker.shooterOnIndex && power > 0) {
-            SmartDashboard.putNumber("IRANP", Timer.getFPGATimestamp());
             cheeseWheelCommands.moveToNextIndexCancel(-1, CheeseWheel.AngleOffset.SHOOTING);
             ejector.setPower(0);
         } else {

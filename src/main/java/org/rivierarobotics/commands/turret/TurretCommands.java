@@ -23,22 +23,18 @@ package org.rivierarobotics.commands.turret;
 import javax.inject.Inject;
 
 public class TurretCommands {
-    private TurretSetAbsoluteAngleCreator turretSetAbsoluteAngleCreator;
-    private TurretSetRelativeAngleCreator turretSetRelativeAngleCreator;
+    private final TurretSetAngleCreator turretSetAngleCreator;
 
     @Inject
-    public TurretCommands(TurretSetAbsoluteAngleCreator turretAbsoluteSetAngleCreator,
-                          TurretSetRelativeAngleCreator turretSetRelativeAngleCreator) {
-        this.turretSetRelativeAngleCreator = turretSetRelativeAngleCreator;
-        this.turretSetAbsoluteAngleCreator = turretAbsoluteSetAngleCreator;
+    public TurretCommands(TurretSetAngleCreator turretSetAngleCreator) {
+        this.turretSetAngleCreator = turretSetAngleCreator;
     }
 
-    public TurretSetAbsoluteAngle setAbsoluteAngle(double angle) {
-        return turretSetAbsoluteAngleCreator.create(angle);
+    public TurretSetAngle setAbsoluteAngle(double angle) {
+        return turretSetAngleCreator.create(angle, true);
     }
 
-    public TurretSetRelativeAngle setRelativeAngle(double angle) {
-        return turretSetRelativeAngleCreator.create(angle);
+    public TurretSetAngle setRelativeAngle(double angle) {
+        return turretSetAngleCreator.create(angle, false);
     }
-
 }
