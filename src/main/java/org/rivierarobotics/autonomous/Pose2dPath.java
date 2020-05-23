@@ -26,8 +26,11 @@ import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 public enum Pose2dPath {
@@ -51,35 +54,55 @@ public enum Pose2dPath {
     LEFT_CENTER_BALL_TO_SHOOT,
     TRENCH_END_TO_SHOOT;
 
-    private final Path trajectoryJson;
+    private Path trajectoryJson;
     private Trajectory trajectory;
+    private String id;
 
     Pose2dPath() {
-        var id = name().toLowerCase(Locale.US);
+        id = name().toLowerCase(Locale.US);
         var builder = new StringBuilder(id);
         for (int i = builder.indexOf("_"); i != -1; i = builder.indexOf("_", i)) {
             builder.setCharAt(i + 1, Character.toUpperCase(builder.charAt(i + 1)));
             builder.deleteCharAt(i);
         }
         id = builder.toString();
-        trajectoryJson = Filesystem.getDeployDirectory().toPath().resolve("paths/" + id + ".wpilib.json");
+        trajectoryJson = getPath();
         if (!Files.exists(trajectoryJson)) {
             throw new IllegalStateException("No path JSON for " + id);
         }
     }
 
+    private Path getPath() {
+        return Filesystem.getDeployDirectory().toPath().resolve("paths/" + id + ".wpilib.json");
+    }
+
     public Trajectory getTrajectory() {
         if (trajectory == null) {
-            trajectory = loadTrajectory();
+            trajectory = loadTrajectory(trajectoryJson);
         }
         return trajectory;
     }
 
-    private Trajectory loadTrajectory() {
+    private static Trajectory loadTrajectory(Path trajectoryJson) {
         try {
             return TrajectoryUtil.fromPathweaverJson(trajectoryJson);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public static Trajectory group(Pose2dPath... paths) {
+        Trajectory traj = null;
+        StringBuilder sb = new StringBuilder();
+        try {
+            for (Pose2dPath path : paths) {
+                String fullJson = Files.readString(path.getPath(), StandardCharsets.UTF_8);
+                sb.append(sb.length() == 0 ? fullJson : fullJson.substring(fullJson.indexOf("Name\n") + 4));
+            }
+            traj = TrajectoryUtil.deserializeTrajectory(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return traj;
     }
 }
