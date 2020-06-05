@@ -30,16 +30,17 @@ afterEvaluate {
 val includeDesktopSupport = true
 val platform = wpi.platforms.javaClass.getDeclaredField("desktop").get(null) as String
 
-tasks.register("launchSimulation") {
+tasks.register("windowsLaunchSim") {
     doLast {
         project.exec{
             workingDir = file("./build/")
-            val fileType = if (platform.contains("windows")) ".bat" else ".sh"
-            commandLine("cmd", "/C", "start", "gradlerio_simulateJava$fileType")
+            commandLine("cmd", "/C", "start", "gradlerio_simulateJava.bat")
         }
     }
 }
-tasks.getByName("simulateJava").finalizedBy(tasks.getByName("launchSimulation"))
+if (platform.contains("windows")) {
+    tasks.getByName("simulateJava").finalizedBy(tasks.getByName("windowsLaunchSim"))
+}
 
 dependencies {
     for (depJni: String in (wpi.deps.wpilibJni(platform) + wpi.deps.vendor.jni(platform))) {
