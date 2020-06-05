@@ -27,7 +27,26 @@ afterEvaluate {
     }
 }
 
+val includeDesktopSupport = true
+val platform = wpi.platforms.javaClass.getDeclaredField("desktop").get(null) as String
+
+tasks.register("launchSimulation") {
+    doLast {
+        project.exec{
+            workingDir = file("./build/")
+            val fileType = if (platform.contains("windows")) ".bat" else ".sh"
+            commandLine("cmd", "/C", "start", "gradlerio_simulateJava$fileType")
+        }
+    }
+}
+tasks.getByName("simulateJava").finalizedBy(tasks.getByName("launchSimulation"))
+
 dependencies {
+    for (depJni: String in (wpi.deps.wpilibJni(platform) + wpi.deps.vendor.jni(platform))) {
+        nativeDesktopZip(depJni)
+    }
+    simulation("edu.wpi.first.halsim:halsim_gui:${wpi.wpilibVersion}:$platform@zip")
+
     implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
     commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
         compileOnly(lib("annotations"))
