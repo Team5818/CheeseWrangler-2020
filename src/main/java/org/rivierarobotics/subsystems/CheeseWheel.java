@@ -53,6 +53,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
+        logger.powerChange(pwr);
         wheelTalon.set(pwr);
     }
 

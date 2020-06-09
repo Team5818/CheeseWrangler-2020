@@ -58,14 +58,11 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
             }
             if (Math.abs(pidPower) < pidConfig.getF() && pidPower != 0 && pidConfig.getF() != 0) {
                 if (pidPower < 0) {
-                    logger.powerChange(-pidConfig.getF());
                     setPower(-pidConfig.getF());
                 } else if (pidPower > 0) {
-                    logger.powerChange(pidConfig.getF());
                     setPower(pidConfig.getF());
                 }
             } else {
-                logger.powerChange(pidPower);
                 setPower(pidPower);
             }
         }

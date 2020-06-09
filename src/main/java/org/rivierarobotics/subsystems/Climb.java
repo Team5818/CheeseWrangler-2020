@@ -39,7 +39,7 @@ public class Climb extends BasePIDSubsystem implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
+        //        logger.powerChange(pwr);
         //        climbTalon.set(pwr);
     }
-
 }
