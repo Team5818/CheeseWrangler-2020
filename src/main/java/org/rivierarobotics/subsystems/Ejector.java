@@ -35,7 +35,6 @@ public class Ejector extends SubsystemBase {
     private final EjectorSide left;
     private final EjectorSide right;
     private final Provider<EjectorControl> command;
-    private boolean isActive;
 
     @Inject
     public Ejector(@Sided(Side.LEFT) EjectorSide left,
@@ -57,7 +56,7 @@ public class Ejector extends SubsystemBase {
     }
 
     public boolean isActive() {
-        return isActive;
+        return left.getPower() != 0 || right.getPower() != 0;
     }
 
     @Override

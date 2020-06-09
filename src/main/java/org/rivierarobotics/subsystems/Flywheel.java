@@ -25,18 +25,24 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalcon;
+    private final MechLogger logger;
+    private final RobotShuffleboard shuffleboard;
 
-    public Flywheel(int id) {
+    public Flywheel(int id, RobotShuffleboard shuffleboard) {
         flywheelFalcon = new WPI_TalonFX(id);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         flywheelFalcon.setInverted(false);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
+        logger = Logging.getLogger(getClass());
+        this.shuffleboard = shuffleboard;
     }
 
     @Override
@@ -46,11 +52,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
+        logger.powerChange(pwr);
         flywheelFalcon.set(pwr);
     }
 
     public void setVelocity(double vel) {
-        Robot.getShuffleboard().getTab("Vision").setEntry("Flywheel Set Vel", vel);
+        shuffleboard.getTab("Vision").setEntry("Flywheel Set Vel", vel);
+        logger.setpointChange(vel);
         if (vel == 0) {
             flywheelFalcon.set(TalonFXControlMode.Disabled, 0.0);
         } else {

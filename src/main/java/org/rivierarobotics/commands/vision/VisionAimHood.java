@@ -24,38 +24,43 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
 public class VisionAimHood extends CommandBase {
     private final Hood hood;
-    private final DriveTrain driveTrain;
     private final Flywheel flywheel;
     private final VisionUtil vision;
     private final Turret turret;
+    private final RobotShuffleboardTab shuffleTab;
     private final double extraDistance;
     private final double height;
 
-    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, double extraDistance, double height) {
-        this.hood = hd;
-        this.driveTrain = dt;
-        this.flywheel = fly;
+    public VisionAimHood(@Provided Hood hood, @Provided Flywheel flywheel, @Provided VisionUtil vision,
+                         @Provided Turret turret, @Provided RobotShuffleboard shuffleboard,
+                         double extraDistance, double height) {
+        this.hood = hood;
+        this.flywheel = flywheel;
         this.vision = vision;
         this.turret = turret;
         this.extraDistance = extraDistance;
         this.height = height;
+        this.shuffleTab = shuffleboard.getTab("VisionAim");
         addRequirements(hood, flywheel);
     }
 
     @Override
     public void execute() {
-        double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
-        double t = ShooterUtil.getTConstant();   //time constant
+        double vy = ShooterConstants.getYVelocityConstant();  //Vy constant
+        double t = ShooterConstants.getTConstant();   //time constant
         double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
@@ -63,24 +68,24 @@ public class VisionAimHood extends CommandBase {
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)) + (0.5 * 0.2 * t * t);
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+        double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
 
-        SmartDashboard.putNumber("Dist", dist);
-        SmartDashboard.putNumber("hoodAngle", hoodAngle);
-        SmartDashboard.putNumber("VXZ", vxz);
-        SmartDashboard.putNumber("VY", vy);
-        SmartDashboard.putNumber("t", t);
-        SmartDashboard.putNumber("ballVel", ballVel);
+        shuffleTab.setEntry("Dist", dist)
+                .setEntry("hoodAngle", hoodAngle)
+                .setEntry("VXZ", vxz)
+                .setEntry("VY", vy)
+                .setEntry("t", t)
+                .setEntry("ballVel", ballVel);
 
         if (vision.getLLValue("tv") ==  1) {
-            if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+            if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot
                 hood.setAngle(90 - hoodAngle);
-                flywheel.setVelocity(ShooterUtil.velocityToTicks(8));
-            } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(8));
+            } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot
                 hood.setAngle(90 - (33 + 0.1 * dist));
-                flywheel.setVelocity(ShooterUtil.velocityToTicks(15));
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(15));
             } else {
                 //Calculated Shot
                 hood.setAngle(90 - hoodAngle);

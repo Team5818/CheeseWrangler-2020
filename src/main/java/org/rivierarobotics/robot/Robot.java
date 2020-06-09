@@ -35,7 +35,6 @@ import org.rivierarobotics.util.RobotShuffleboard;
 import java.util.Objects;
 
 public class Robot extends TimedRobot {
-    private static RobotShuffleboard shuffleboard;
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
     private Command autonomousCommand;
@@ -54,7 +53,6 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
-        shuffleboard = new RobotShuffleboard();
         //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         globalComponent.getNavXGyro().resetGyro();
     }
@@ -92,9 +90,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (shuffleboard == null) {
-            shuffleboard = new RobotShuffleboard();
-        }
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -125,6 +120,7 @@ public class Robot extends TimedRobot {
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
+        var shuffleboard = globalComponent.getShuffleboard();
         boolean[] bta = globalComponent.getBallTracker().getBallArray();
 
         shuffleboard.getTab("TurretHood")
@@ -164,9 +160,5 @@ public class Robot extends TimedRobot {
             .setEntry("Index 4", bta[4]);
 
         SmartDashboard.putData(chooser);
-    }
-
-    public static RobotShuffleboard getShuffleboard() {
-        return shuffleboard;
     }
 }

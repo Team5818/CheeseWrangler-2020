@@ -62,7 +62,7 @@ public class PositionTracker {
             return;
         }
 
-        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY()
+        double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
             / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double turretAngle = turret.getAbsoluteAngle();
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
@@ -71,11 +71,11 @@ public class PositionTracker {
             pos[0] = -xFromTarget;
             pos[1] = yFromTarget;
         } else if (turretAngle >= 90 && turretAngle < 180) {
-            pos[0] = ShooterUtil.getLeftFieldToBallCollect() - ShooterUtil.getLeftFieldToCloseGoal() - xFromTarget;
-            pos[1] = ShooterUtil.getFieldLength() - yFromTarget;
+            pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() - xFromTarget;
+            pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
         } else if (turretAngle >= 180 && turretAngle < 270) {
-            pos[0] = ShooterUtil.getLeftFieldToBallCollect() - ShooterUtil.getLeftFieldToCloseGoal() + xFromTarget;
-            pos[1] = ShooterUtil.getFieldLength() - yFromTarget;
+            pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() + xFromTarget;
+            pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
         } else {
             pos[0] = xFromTarget;
             pos[1] = yFromTarget;

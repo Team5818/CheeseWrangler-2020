@@ -30,7 +30,7 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PositionTracker;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 
 @GenerateCreator
 public class EncoderAim extends CommandBase {
@@ -58,17 +58,17 @@ public class EncoderAim extends CommandBase {
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
         double zFromGoal = pos[0];
-        double t = ShooterUtil.getTConstant();
+        double t = ShooterConstants.getTConstant();
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getXVelocity();
         double vz = zFromGoal / t;
         double turretAngle = MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(vz, vx)));
         double dist = Math.sqrt(Math.pow(xFromGoal + extraDistance, 2) + Math.pow(zFromGoal, 2));
 
-        double y = ShooterUtil.getYVelocityConstant();
+        double y = ShooterConstants.getYVelocityConstant();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+        double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
 
         turret.setAngle(turretAngle);
 
@@ -82,11 +82,11 @@ public class EncoderAim extends CommandBase {
         SmartDashboard.putNumber("t", t);
         SmartDashboard.putNumber("ballVel", ballVel);
 
-        if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
+        if (dist < ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(ShooterConstants.getMaxHoodAngle()))) {
             //Close Shot >:(
             //hood.setAngle(ShooterUtil.getMaxHoodAngle());
             //flywheel.setVelocity(encoderVelocity);
-        } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < ShooterUtil.getMinHoodAngle()) {
+        } else if (vxz > ShooterConstants.getMaxBallVelocity() || hoodAngle < ShooterConstants.getMinHoodAngle()) {
             //Long Shot
             //hood.setAngle(hoodAngle);
             //flywheel.setVelocity(ShooterUtil.getMaxFlywheelVelocity());

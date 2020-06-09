@@ -20,13 +20,15 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -34,22 +36,25 @@ public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final Hood hood;
     private final VisionUtil vision;
+    private final RobotShuffleboardTab shuffleTab;
     private final double extraDistance;
     private final double height;
-    private boolean done;
+    private boolean isFinished;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, double extraDistance, double height) {
+    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard,
+                           double extraDistance, double height) {
         this.turret = turret;
         this.hood = hood;
         this.vision = vision;
         this.height = height;
         this.extraDistance = extraDistance;
+        this.shuffleTab = shuffleboard.getTab("VisionAim");
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        double t = ShooterUtil.getTConstant();
+        double t = ShooterConstants.getTConstant();
         double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
@@ -58,14 +63,14 @@ public class VisionAimTurret extends CommandBase {
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
 
-        SmartDashboard.putNumber("TurretAngleAdj", turretAngle);
-        SmartDashboard.putNumber("vx", vx);
-        SmartDashboard.putNumber("vz", vz);
+        shuffleTab.setEntry("TurretAngleAdj", turretAngle)
+                .setEntry("vx", vx)
+                .setEntry("vz", vz);
 
         if (vision.getLLValue("tv") == 1) {
             turret.setAngle(turretAngleAdj);
         } else {
-            done = true;
+            isFinished = true;
         }
     }
 
@@ -76,6 +81,6 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return done;
+        return isFinished;
     }
 }
