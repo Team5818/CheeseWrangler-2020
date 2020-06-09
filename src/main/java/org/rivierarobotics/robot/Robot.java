@@ -44,6 +44,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        shuffleboard = new RobotShuffleboard();
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
@@ -54,7 +55,6 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
-        shuffleboard = new RobotShuffleboard();
         //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         globalComponent.getNavXGyro().resetGyro();
     }
