@@ -31,6 +31,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
@@ -41,11 +42,11 @@ public class PathweaverExecutor extends CommandBase {
     private final RobotShuffleboardTab tab;
     private double startTimestamp;
 
-    public PathweaverExecutor(@Provided DriveTrain driveTrain, Pose2dPath path) {
+    public PathweaverExecutor(@Provided DriveTrain driveTrain, @Provided RobotShuffleboard shuffleboard, Pose2dPath path) {
         this.driveTrain = driveTrain;
         this.controller = new RamseteController();
         this.trajectory = generateTrajectory(path);
-        tab = Robot.getShuffleboard().getTab("Pathweaver");
+        this.tab = shuffleboard.getTab("Pathweaver");
         addRequirements(driveTrain);
     }
 

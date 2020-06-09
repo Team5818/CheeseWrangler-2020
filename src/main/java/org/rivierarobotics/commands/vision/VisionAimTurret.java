@@ -26,6 +26,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
@@ -40,14 +41,14 @@ public class VisionAimTurret extends CommandBase {
     private final double height;
     private boolean isFinished;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision,
+    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard,
                            double extraDistance, double height) {
         this.turret = turret;
         this.hood = hood;
         this.vision = vision;
         this.height = height;
         this.extraDistance = extraDistance;
-        this.shuffleTab = Robot.getShuffleboard().getTab("VisionAim");
+        this.shuffleTab = shuffleboard.getTab("VisionAim");
         addRequirements(turret);
     }
 

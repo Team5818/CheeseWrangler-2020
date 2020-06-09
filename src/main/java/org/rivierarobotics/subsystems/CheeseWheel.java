@@ -26,24 +26,27 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 import javax.inject.Provider;
 
 public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
+    private final RobotShuffleboard shuffleboard;
     private final AnalogInput frontSensor;
     private final AnalogInput backSensor;
     private final double zeroTicks = 3725;
     private final double ballMax = 260;
     private final double ballMin = 100;
 
-    public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
+    public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {
         super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.frontSensor = new AnalogInput(frontSensor);
         this.backSensor = new AnalogInput(backSensor);
         this.command = command;
+        this.shuffleboard = shuffleboard;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
@@ -85,7 +88,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getAngleAdded(int index, AngleOffset mode, int direction) {
-        Robot.getShuffleboard().getTab("Cheese Wheel").setEntry("Set Index", index);
+        shuffleboard.getTab("Cheese Wheel").setEntry("Set Index", index);
         double angleOff = index * 72 - getAdjustedAngle(getAngleOffset(mode));
         if (Math.abs(angleOff) > 180) {
             if (angleOff < 0) {

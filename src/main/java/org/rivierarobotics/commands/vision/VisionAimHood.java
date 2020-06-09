@@ -29,6 +29,7 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
@@ -43,7 +44,8 @@ public class VisionAimHood extends CommandBase {
     private final double extraDistance;
     private final double height;
 
-    public VisionAimHood(@Provided Hood hood, @Provided Flywheel flywheel, @Provided VisionUtil vision, @Provided Turret turret,
+    public VisionAimHood(@Provided Hood hood, @Provided Flywheel flywheel, @Provided VisionUtil vision,
+                         @Provided Turret turret, @Provided RobotShuffleboard shuffleboard,
                          double extraDistance, double height) {
         this.hood = hood;
         this.flywheel = flywheel;
@@ -51,7 +53,7 @@ public class VisionAimHood extends CommandBase {
         this.turret = turret;
         this.extraDistance = extraDistance;
         this.height = height;
-        this.shuffleTab = Robot.getShuffleboard().getTab("VisionAim");
+        this.shuffleTab = shuffleboard.getTab("VisionAim");
         addRequirements(hood, flywheel);
     }
 

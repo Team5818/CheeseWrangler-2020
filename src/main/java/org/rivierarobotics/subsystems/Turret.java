@@ -24,9 +24,9 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import org.rivierarobotics.commands.turret.TurretControl;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -37,15 +37,17 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     private static final double maxAngle = 25;
     private static final double minAngle = -243.7;
     private final WPI_TalonSRX turretTalon;
+    private final RobotShuffleboard shuffleboard;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
 
-    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
+    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.5));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
+        this.shuffleboard = shuffleboard;
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
@@ -69,7 +71,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
-        Robot.getShuffleboard().getTab("TurretHood").setEntry("txTurret", txTurret);
+        shuffleboard.getTab("TurretHood").setEntry("txTurret", txTurret);
         return txTurret;
     }
 

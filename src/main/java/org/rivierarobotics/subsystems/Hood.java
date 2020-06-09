@@ -31,6 +31,7 @@ import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Provider;
@@ -44,7 +45,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     private final MechLogger logger;
     private final RobotShuffleboardTab shuffleTab;
 
-    public Hood(int motorId, Provider<HoodControl> command) {
+    public Hood(int motorId, Provider<HoodControl> command, RobotShuffleboard shuffleboard) {
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
@@ -52,7 +53,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
         logger = Logging.getLogger(getClass());
-        shuffleTab = Robot.getShuffleboard().getTab("TurretHood");
+        shuffleTab = shuffleboard.getTab("TurretHood");
     }
 
     public final WPI_TalonSRX getHoodTalon() {
