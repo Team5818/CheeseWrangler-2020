@@ -18,31 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.ejector;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Ejector;
+import edu.wpi.first.wpilibj.DigitalInput;
 
-@GenerateCreator
-public class EjectorSetPower extends InstantCommand {
-    private final Ejector ejector;
-    private final double power;
+public enum CheeseSlot {
+    // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
+    ZERO, ONE, TWO, THREE, FOUR;
 
-    public EjectorSetPower(@Provided Ejector ejector, double power) {
-        this.ejector = ejector;
-        this.power = power;
-        addRequirements(ejector);
+    private static final int SENSOR_DIO_PIN_OFFSET = 5;
+    private final DigitalInput sensor;
+
+    CheeseSlot() {
+        this.sensor = new DigitalInput(this.ordinal() + SENSOR_DIO_PIN_OFFSET);
     }
 
-    @Override
-    public void execute() {
-        ejector.setPower(power);
+    public boolean hasBall() {
+        return sensor.get();
     }
 
-    @Override
-    public void end(boolean interrupted) {
-        ejector.setPower(0.0);
+    public static CheeseSlot slotOfNum(int num) {
+        for (CheeseSlot slot : CheeseSlot.values()) {
+            if (slot.ordinal() == num) {
+                return slot;
+            }
+        }
+        return null;
     }
 }

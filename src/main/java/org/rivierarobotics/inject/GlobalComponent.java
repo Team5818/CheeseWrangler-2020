@@ -34,7 +34,6 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.BallTracker;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.RobotShuffleboard;
@@ -60,7 +59,6 @@ public abstract class GlobalComponent {
         getVisionUtil();
         getCameraServo();
         getPositionTracker();
-        getBallTracker();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -86,8 +84,6 @@ public abstract class GlobalComponent {
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
-
-    public abstract BallTracker getBallTracker();
 
     public abstract CameraServo getCameraServo();
 

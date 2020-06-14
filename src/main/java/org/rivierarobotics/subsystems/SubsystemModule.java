@@ -48,8 +48,6 @@ public class SubsystemModule {
     private static final int CLIMB_FALCON = 21;
 
     private static final int CAMERA_SERVO = 0;
-    private static final int CW_FRONT_SENSOR = 1;
-    private static final int CW_BACK_SENSOR = 0;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(1, 0, 0, 1);
@@ -122,8 +120,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command, @Provided RobotShuffleboard shuffleboard) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, CW_FRONT_SENSOR, CW_BACK_SENSOR, command, shuffleboard);
+    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, command);
     }
 
     @Provides

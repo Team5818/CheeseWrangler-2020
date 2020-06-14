@@ -20,37 +20,14 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
 @GenerateCreator
-public class CWSetIndex extends CommandBase {
-    private final CheeseWheel cheeseWheel;
-    private final CheeseWheel.AngleOffset mode;
-    private final int index;
-    private final int direction;
-    private double start;
-
-    public CWSetIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.AngleOffset mode, int index, int direction) {
-        this.cheeseWheel = cheeseWheel;
-        this.index = index;
-        this.direction = direction;
-        this.mode = mode;
-        addRequirements(cheeseWheel);
-    }
-
-    @Override
-    public void initialize() {
-        start = Timer.getFPGATimestamp();
-        cheeseWheel.addAngle(cheeseWheel.getAngleAdded(index, mode, direction));
-    }
-
-    @Override
-    public boolean isFinished() {
-        return (cheeseWheel.getPidController().atSetpoint() && Timer.getFPGATimestamp() - start > 0.2)
-            || Timer.getFPGATimestamp() - start > 2;
+public class CWCycleSlot extends BasePIDSetPosition<CheeseWheel> {
+    public CWCycleSlot(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requireOpen) {
+        super(cheeseWheel, 10, cheeseWheel.getTickPosOfSlot(cheeseWheel.getClosestSlot(mode, direction, requireOpen)), 10);
     }
 }

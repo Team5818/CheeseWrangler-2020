@@ -61,11 +61,11 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + (gyro.getYaw()));
+        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) * (1 / getTicksPerAngleOrInch()) + (gyro.getYaw()));
     }
 
     public double getAngle() {
-        return (getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks());
+        return (getPositionTicks() - zeroTicks) * (1 / getTicksPerAngleOrInch());
     }
 
     public double getTxTurret(double distance, double extraDistance) {
@@ -76,7 +76,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
-        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
+        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getTicksPerAngleOrInch());
         if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             logger.setpointChange(position);
             setPositionTicks(position);
@@ -87,11 +87,11 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getMaxAngleInTicks() {
-        return maxAngle * getAnglesOrInchesToTicks();
+        return maxAngle * getTicksPerAngleOrInch();
     }
 
     public double getMinAngleInTicks() {
-        return minAngle * getAnglesOrInchesToTicks();
+        return minAngle * getTicksPerAngleOrInch();
     }
 
     private double limitPowerToRange(double pwr) {

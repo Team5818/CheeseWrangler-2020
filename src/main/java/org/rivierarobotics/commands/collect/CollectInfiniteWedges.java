@@ -26,7 +26,6 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
-import org.rivierarobotics.util.BallTracker;
 
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
@@ -37,28 +36,25 @@ public class CollectInfiniteWedges extends CommandBase {
     private final double backPower;
     private static final double pwrConstant = 1.0;
     private final CheeseWheel.AngleOffset mode;
-    private final BallTracker ballTracker;
-    private final int direction;
+    private final CheeseWheel.Direction direction;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
                           @Provided CheeseWheelCommands cheeseWheelCommands,
-                          @Provided BallTracker ballTracker, CheeseWheel.AngleOffset mode) {
+                          CheeseWheel.AngleOffset mode) {
         this.intake = intake;
         this.cheeseWheel = cheeseWheel;
-        this.ballTracker = ballTracker;
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.mode = mode;
+        this.direction = mode.getAssocDir();
 
         switch (mode) {
             case COLLECT_FRONT:
                 frontPower = pwrConstant;
                 backPower = 0.0;
-                direction = -1;
                 break;
             case COLLECT_BACK:
                 frontPower = 0.0;
                 backPower = pwrConstant;
-                direction = 1;
                 break;
             default:
                 throw new IllegalArgumentException("Invalid side");
@@ -69,7 +65,7 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void initialize() {
-        if (!ballTracker.frontOnIndex) {
+        if (!cheeseWheel.onSlot(mode) || cheeseWheel.getClosestSlot(mode, direction, false).hasBall()) {
             moveToNext();
         }
     }
@@ -78,19 +74,17 @@ public class CollectInfiniteWedges extends CommandBase {
     public void execute() {
         intake.setPower(frontPower, backPower);
 
-        if (!cheeseWheel.getPidController().atSetpoint()
-            || (mode == CheeseWheel.AngleOffset.COLLECT_BACK && !ballTracker.backOnIndex)
-            || (mode == CheeseWheel.AngleOffset.COLLECT_FRONT && !ballTracker.frontOnIndex)) {
-            return;
-        }
-
-        if (cheeseWheel.isFrontBallPresent()) {
+        if (cheeseWheel.onSlot(mode)) {
+            if (cheeseWheel.getClosestSlot(mode, direction, false).hasBall()) {
+                moveToNext();
+            }
+        } else {
             moveToNext();
         }
     }
 
     private void moveToNext() {
-        cheeseWheelCommands.moveToNextIndex(direction, mode).schedule();
+        cheeseWheelCommands.cycleSlot(direction, mode, true).schedule();
     }
 
     @Override

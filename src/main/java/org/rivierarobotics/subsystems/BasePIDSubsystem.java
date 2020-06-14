@@ -28,7 +28,7 @@ import org.rivierarobotics.appjack.MechLogger;
 public abstract class BasePIDSubsystem extends SubsystemBase {
     protected final PIDController pidController;
     protected final PIDConfig pidConfig;
-    protected final double anglesOrInchesToTicks;
+    protected final double ticksPerAngleOrInch;
     protected boolean pidEnabled = false;
     protected final MechLogger logger;
 
@@ -36,9 +36,9 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         this(pidConfig, 4096.0 / 360);
     }
 
-    public BasePIDSubsystem(PIDConfig pidConfig, double anglesOrInchesToTicks) {
+    public BasePIDSubsystem(PIDConfig pidConfig, double ticksPerAngleOrInch) {
         this.pidConfig = pidConfig;
-        this.anglesOrInchesToTicks = anglesOrInchesToTicks;
+        this.ticksPerAngleOrInch = ticksPerAngleOrInch;
 
         this.pidController = new PIDController(pidConfig.getP(), pidConfig.getI(), pidConfig.getD());
         this.pidController.setTolerance(pidConfig.getTolerance());
@@ -76,17 +76,17 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         return pidConfig;
     }
 
-    public final double getAnglesOrInchesToTicks() {
-        return anglesOrInchesToTicks;
+    public final double getTicksPerAngleOrInch() {
+        return ticksPerAngleOrInch;
     }
 
     public double getPosition() {
-        return getPositionTicks() / anglesOrInchesToTicks;
+        return getPositionTicks() / ticksPerAngleOrInch;
     }
 
     public void setPosition(double position) {
         setPidEnabled(true);
-        position *= anglesOrInchesToTicks;
+        position *= ticksPerAngleOrInch;
         logger.setpointChange(position);
         pidController.setSetpoint(position);
     }

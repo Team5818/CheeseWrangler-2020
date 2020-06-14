@@ -67,7 +67,6 @@ public class Robot extends TimedRobot {
 
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
-            globalComponent.getBallTracker().checkIfEmpty();
         }
     }
 
@@ -121,7 +120,6 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
         var shuffleboard = globalComponent.getShuffleboard();
-        boolean[] bta = globalComponent.getBallTracker().getBallArray();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
@@ -144,20 +142,7 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
-            .setEntry("At Position", cw.getPidController().atSetpoint())
-            .setEntry("Angle", cw.getAngle())
-            .setEntry("F Sensor Val", cw.getFrontSensorValue())
-            .setEntry("B Sensor Val", cw.getBackSensorValue())
-            .setEntry("F Ball", cw.isFrontBallPresent())
-            .setEntry("B Ball", cw.isBackBallPresent())
-            .setEntry("ShooterIndex", cw.getIndex(CheeseWheel.AngleOffset.SHOOTING))
-            .setEntry("CollectFrontIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
-            .setEntry("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
-            .setEntry("Index 0", bta[0])
-            .setEntry("Index 1", bta[1])
-            .setEntry("Index 2", bta[2])
-            .setEntry("Index 3", bta[3])
-            .setEntry("Index 4", bta[4]);
+            .setEntry("At Position", cw.getPidController().atSetpoint());
 
         SmartDashboard.putData(chooser);
     }

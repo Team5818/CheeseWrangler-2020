@@ -25,50 +25,44 @@ import org.rivierarobotics.commands.shooting.All5ShootCreator;
 import org.rivierarobotics.commands.shooting.ShootNWedges;
 import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
 import javax.inject.Inject;
 
 public class CheeseWheelCommands {
-    private CWSetPositionCreator setPositionCreator;
-    private CWSetIndexCreator setIndexCreator;
+    private final CWSetPositionCreator setPositionCreator;
+    private final CWCycleSlotCreator cycleSlotCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
-    private final CWMoveToNextIndexCreator moveToNextIndexCreator;
-    private All5ShootCreator all5ShootCreator;
-    private CWMoveToNextIndexInterruptCreator moveToNextInterruptCreator;
+    private final CWMoveSlotToIndexCreator moveSlotToIndexCreator;
+    private final All5ShootCreator all5ShootCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
-                               CWSetIndexCreator setIndexCreator,
+                               CWCycleSlotCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
-                               CWMoveToNextIndexCreator moveToNextIndexCreator,
-                               All5ShootCreator all5ShootCreator,
-                               CWMoveToNextIndexInterruptCreator moveToNextInterruptCreator) {
+                               CWMoveSlotToIndexCreator moveSlotToIndexCreator,
+                               All5ShootCreator all5ShootCreator) {
         this.setPositionCreator = setPositionCreator;
-        this.setIndexCreator = setIndexCreator;
+        this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
-        this.moveToNextIndexCreator = moveToNextIndexCreator;
+        this.moveSlotToIndexCreator = moveSlotToIndexCreator;
         this.all5ShootCreator = all5ShootCreator;
-        this.moveToNextInterruptCreator = moveToNextInterruptCreator;
     }
 
-    public CWMoveToNextIndexInterrupt moveToNextIndexCancel(int direction, CheeseWheel.AngleOffset mode) {
-        return moveToNextInterruptCreator.create(direction, mode);
+    public CWCycleSlot cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requireOpen) {
+        return cycleSlotCreator.create(direction, mode, requireOpen);
     }
 
     public CWSetPosition setPosition(int ticks) {
         return setPositionCreator.create(ticks);
     }
 
-    public CWSetIndex setIndex(CheeseWheel.AngleOffset mode, int index, int direction) {
-        return setIndexCreator.create(mode, index, direction);
+    public CWMoveSlotToIndex moveSlotToIndex(CheeseWheel.AngleOffset mode, CheeseSlot slot, CheeseWheel.Direction direction) {
+        return moveSlotToIndexCreator.create(mode, slot, direction);
     }
 
     public ShootNWedges shootNWedges(int wedges) {
         return shootNWedgesCreator.create(wedges);
-    }
-
-    public CWMoveToNextIndex moveToNextIndex(int direction, CheeseWheel.AngleOffset mode) {
-        return moveToNextIndexCreator.create(direction, mode);
     }
 
     public All5Shoot all5Shoot() {
