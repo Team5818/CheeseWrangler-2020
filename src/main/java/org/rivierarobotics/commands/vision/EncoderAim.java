@@ -28,9 +28,7 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.PositionTracker;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.*;
 
 @GenerateCreator
 public class EncoderAim extends CommandBase {
@@ -39,22 +37,29 @@ public class EncoderAim extends CommandBase {
     private final Flywheel flywheel;
     private final Turret turret;
     private final PositionTracker tracker;
-    private final double extraDistance;
+    private final VisionTarget target;
 
     public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
-                      @Provided Turret turret, @Provided PositionTracker tracker,
-                      double extraDistance) {
+                      @Provided Turret turret, @Provided PositionTracker tracker, VisionTarget target) {
         this.hood = hood;
         this.driveTrain = dt;
         this.flywheel = flywheel;
         this.turret = turret;
         this.tracker = tracker;
-        this.extraDistance = extraDistance;
+        this.target = target;
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
+
+        double extraDistance;
+        if(target == VisionTarget.INNER) {
+            extraDistance = ShooterUtil.getDistanceFromOuterToInnerTarget();
+        } else {
+            extraDistance = 0;
+        }
+
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
         double zFromGoal = pos[0];
@@ -82,19 +87,24 @@ public class EncoderAim extends CommandBase {
         SmartDashboard.putNumber("t", t);
         SmartDashboard.putNumber("ballVel", ballVel);
 
-        if (dist < ShooterUtil.getTopHeight() / Math.tan(Math.toRadians(ShooterUtil.getMaxHoodAngle()))) {
-            //Close Shot >:(
-            //hood.setAngle(ShooterUtil.getMaxHoodAngle());
-            //flywheel.setVelocity(encoderVelocity);
-        } else if (vxz > ShooterUtil.getMaxBallVelocity() || hoodAngle < ShooterUtil.getMinHoodAngle()) {
+        if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+            //Close Shot
+            hood.setAngle(90 - hoodAngle);
+            flywheel.setVelocity(ShooterUtil.velocityToTicks(9));
+        } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
             //Long Shot
-            //hood.setAngle(hoodAngle);
-            //flywheel.setVelocity(ShooterUtil.getMaxFlywheelVelocity());
+            hood.setAngle(90 - (33 + 0.1 * dist));
+            flywheel.setVelocity(ShooterUtil.velocityToTicks(15));
         } else {
             //Calculated Shot
-            //hood.setAngle(hoodAngle);
-            //flywheel.setVelocity(encoderVelocity);
+            hood.setAngle(90 - hoodAngle);
+            flywheel.setVelocity(encoderVelocity);
         }
+
+        turret.setAngle(turretAngle);
+
+
+
     }
 
     @Override
