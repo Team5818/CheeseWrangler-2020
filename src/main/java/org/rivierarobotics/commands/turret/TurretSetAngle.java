@@ -23,6 +23,7 @@ package org.rivierarobotics.commands.turret;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.subsystems.BasePIDSubsystem;
 import org.rivierarobotics.subsystems.Turret;
 
 @GenerateCreator

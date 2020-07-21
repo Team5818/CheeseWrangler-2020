@@ -20,33 +20,35 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.ShooterUtil;
-import org.rivierarobotics.util.VisionUtil;
+import org.rivierarobotics.util.*;
 
 import javax.inject.Provider;
 
-public class Turret extends BasePIDSubsystem implements RRSubsystem {
-    private static final double zeroTicks = 3793;
-    private static final double maxAngle = 25;
-    private static final double minAngle = -243.7;
+public class Turret extends SubsystemBase implements RRSubsystem {
+    private static final double ZERO_TICKS = 3793;
+    private static final double MAX_ANGLE = 25;
+    private static final double MIN_ANGLE = -243.7;
+    private final double TICKS_PER_DEGREE = 4096.0 / 360;
+    private final double DEGREES_PER_TICK = 360 / 4096;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
-        super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.5));
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
         turretTalon = new WPI_TalonSRX(id);
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+                new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
         turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
@@ -59,11 +61,11 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks()) + (gyro.getYaw()));
+        return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK + (gyro.getYaw()));
     }
 
     public double getAngle() {
-        return (getPositionTicks() - zeroTicks) * (1 / getAnglesOrInchesToTicks());
+        return (getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK;
     }
 
     public double getTxTurret(double distance, double extraDistance) {
@@ -73,33 +75,64 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
         return txTurret;
     }
 
+    public void setPositionTicks(int positionTicks) {
+
+        /*
+        //!!Experimental Version of Code!!
+        //Please do not attempt to move the turret with this code until tested thoroughly. Entry 'PosTicks' should
+        //display a value within the limits of the turret in ticks. If not, please don't use the code ;)
+
+        double ticks = MathUtil.limit(
+                ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        Robot.getShuffleboard().getTab("Turret").setEntry("PosTicks", ticks);
+        //turretTalon.set(ControlMode.MotionMagic, ticks);
+        */
+    }
+
     public void setAngle(double angle) {
-        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getAnglesOrInchesToTicks());
-        if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
+        /*
+        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * TICKS_PER_DEGREE);
+        if (position < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
             setPositionTicks(position);
-        } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
+        } else if (position - 4096 < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
             setPositionTicks(position - 4096);
         }
+        */
+
+        /*
+        //!!Experimental Version of Code!!
+        //Please do not attempt to move the turret with this code until tested thoroughly. Also, the 'ticksAng' entry
+        //should display ticks within the limits of the turret. If not, please don't use the code ;)
+
+        Robot.getShuffleboard().getTab("Turret").setEntry("SetTurretAngle", angle);
+        double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
+        Robot.getShuffleboard().getTab("Turret").setEntry("SetTurAngInTicks", ticks);
+
+        ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        Robot.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
+        //turretTalon.set(ControlMode.MotionMagic, ticks);
+         */
     }
 
     public double getMaxAngleInTicks() {
-        return maxAngle * getAnglesOrInchesToTicks();
+        return MAX_ANGLE * TICKS_PER_DEGREE;
     }
 
     public double getMinAngleInTicks() {
-        return minAngle * getAnglesOrInchesToTicks();
+        return MIN_ANGLE * TICKS_PER_DEGREE;
     }
 
     @Override
     public void setPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
+        if (pwr <= 0 && getPositionTicks() - ZERO_TICKS < getMinAngleInTicks()) {
             pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
+        } else if (pwr > 0 && getPositionTicks() - ZERO_TICKS > getMaxAngleInTicks()) {
             pwr = 0;
         }
-        turretTalon.set(pwr);
+        turretTalon.set(ControlMode.PercentOutput, pwr);
     }
 
+    /*
     @Override
     public void setManualPower(double pwr) {
         if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
@@ -109,6 +142,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
         }
         super.setManualPower(pwr);
     }
+    */
 
     @Override
     public void periodic() {
