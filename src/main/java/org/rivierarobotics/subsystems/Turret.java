@@ -27,7 +27,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.util.*;
+import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
@@ -35,8 +39,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 3793;
     private static final double MAX_ANGLE = 25;
     private static final double MIN_ANGLE = -243.7;
-    private final double TICKS_PER_DEGREE = 4096.0 / 360;
-    private final double DEGREES_PER_TICK = 360 / 4096;
+    private static final double TICKS_PER_DEGREE = 4096.0 / 360;
+    private static final double DEGREES_PER_TICK = 360.0 / 4096;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;

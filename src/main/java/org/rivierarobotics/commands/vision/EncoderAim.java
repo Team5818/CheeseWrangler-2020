@@ -28,7 +28,10 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.*;
+import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class EncoderAim extends CommandBase {
@@ -54,7 +57,7 @@ public class EncoderAim extends CommandBase {
     public void execute() {
 
         double extraDistance;
-        if(target == VisionTarget.INNER) {
+        if (target == VisionTarget.INNER) {
             extraDistance = ShooterUtil.getDistanceFromOuterToInnerTarget();
         } else {
             extraDistance = 0;

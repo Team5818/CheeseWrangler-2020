@@ -38,7 +38,11 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final double zeroTicks = 3725;
     private final double ballMax = 260;
     private final double ballMin = 100;
-    private final DigitalInput sensorZero, sensorOne, sensorTwo, sensorThree, sensorFour;
+    private final DigitalInput sensorZero;
+    private final DigitalInput sensorOne;
+    private final DigitalInput sensorTwo;
+    private final DigitalInput sensorThree;
+    private final DigitalInput sensorFour;
 
     public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
@@ -155,7 +159,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
             return sensorTwo.get();
         } else if (sensorNumber == 3) {
             return sensorThree.get();
-        } else if (sensorNumber == 4){
+        } else if (sensorNumber == 4) {
             return sensorFour.get();
         } else {
             return false;
