@@ -157,11 +157,11 @@ public class Robot extends TimedRobot {
             .setEntry("ShooterIndex", cw.getIndex(CheeseWheel.AngleOffset.SHOOTING))
             .setEntry("CollectFrontIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
             .setEntry("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
-            .setEntry("Index 0", bta[0])
-            .setEntry("Index 1", bta[1])
-            .setEntry("Index 2", bta[2])
-            .setEntry("Index 3", bta[3])
-            .setEntry("Index 4", bta[4]);
+            .setEntry("Index 0", cw.getSensorValue(0))
+            .setEntry("Index 1", cw.getSensorValue(1))
+            .setEntry("Index 2", cw.getSensorValue(2))
+            .setEntry("Index 3", cw.getSensorValue(3))
+            .setEntry("Index 4", cw.getSensorValue(4));
 
         SmartDashboard.putData(chooser);
     }

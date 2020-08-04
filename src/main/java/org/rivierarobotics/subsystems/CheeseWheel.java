@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj.AnalogInput;
+import edu.wpi.first.wpilibj.DigitalInput;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
@@ -37,12 +38,18 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final double zeroTicks = 3725;
     private final double ballMax = 260;
     private final double ballMin = 100;
+    private final DigitalInput sensorZero, sensorOne, sensorTwo, sensorThree, sensorFour;
 
     public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.frontSensor = new AnalogInput(frontSensor);
         this.backSensor = new AnalogInput(backSensor);
+        sensorZero = new DigitalInput(5);
+        sensorOne = new DigitalInput(6);
+        sensorTwo = new DigitalInput(7);
+        sensorThree = new DigitalInput(8);
+        sensorFour = new DigitalInput(9);
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
@@ -136,6 +143,22 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         public final int angle;
         AngleOffset(int angle) {
             this.angle = angle;
+        }
+    }
+
+    public boolean getSensorValue(int sensorNumber) {
+        if (sensorNumber == 0) {
+            return sensorZero.get();
+        } else if (sensorNumber == 1) {
+            return sensorOne.get();
+        } else if (sensorNumber == 2) {
+            return sensorTwo.get();
+        } else if (sensorNumber == 3) {
+            return sensorThree.get();
+        } else if (sensorNumber == 4){
+            return sensorFour.get();
+        } else {
+            return false;
         }
     }
 

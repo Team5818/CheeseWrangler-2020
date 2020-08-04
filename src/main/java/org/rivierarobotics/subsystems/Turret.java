@@ -76,17 +76,12 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPositionTicks(int positionTicks) {
-
-        /*
         //!!Experimental Version of Code!!
-        //Please do not attempt to move the turret with this code until tested thoroughly. Entry 'PosTicks' should
-        //display a value within the limits of the turret in ticks. If not, please don't use the code ;)
 
         double ticks = MathUtil.limit(
                 ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
         Robot.getShuffleboard().getTab("Turret").setEntry("PosTicks", ticks);
         //turretTalon.set(ControlMode.MotionMagic, ticks);
-        */
     }
 
     public void setAngle(double angle) {
@@ -96,13 +91,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setPositionTicks(position);
         } else if (position - 4096 < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
             setPositionTicks(position - 4096);
-        }
-        */
+        } */
 
-        /*
         //!!Experimental Version of Code!!
-        //Please do not attempt to move the turret with this code until tested thoroughly. Also, the 'ticksAng' entry
-        //should display ticks within the limits of the turret. If not, please don't use the code ;)
 
         Robot.getShuffleboard().getTab("Turret").setEntry("SetTurretAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
@@ -111,7 +102,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
         Robot.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
         //turretTalon.set(ControlMode.MotionMagic, ticks);
-         */
     }
 
     public double getMaxAngleInTicks() {
