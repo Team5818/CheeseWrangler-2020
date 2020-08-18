@@ -22,9 +22,11 @@ package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RobotShuffleboardTab {
@@ -43,6 +45,15 @@ public class RobotShuffleboardTab {
             entries.put(key, entry);
         }
         return entry;
+    }
+
+    public void clear() {
+        List<ShuffleboardComponent<?>> components = tab.getComponents();
+        for (ShuffleboardComponent<?> component : components) {
+            NetworkTableEntry entry = entries.get(component.getTitle());
+            entry.delete();
+        }
+        entries.clear();
     }
 
     public <T> RobotShuffleboardTab setEntry(String key, T value) {

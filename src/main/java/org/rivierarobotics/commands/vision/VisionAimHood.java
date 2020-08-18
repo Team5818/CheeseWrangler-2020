@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -65,26 +66,28 @@ public class VisionAimHood extends CommandBase {
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
 
-        SmartDashboard.putNumber("Dist", dist);
-        SmartDashboard.putNumber("hoodAngle", hoodAngle);
-        SmartDashboard.putNumber("VXZ", vxz);
-        SmartDashboard.putNumber("VY", vy);
-        SmartDashboard.putNumber("t", t);
-        SmartDashboard.putNumber("ballVel", ballVel);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("Dist", dist);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle", hoodAngle);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("vx", vx);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
 
         if (vision.getLLValue("tv") ==  1) {
             if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
                 //Close Shot
                 hood.setAngle(90 - hoodAngle);
-                flywheel.setVelocity(ShooterUtil.velocityToTicks(8));
+                flywheel.setVelocity(ShooterUtil.getShooterMinVelocity());
+                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
             } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
                 //Long Shot
                 hood.setAngle(90 - (33 + 0.1 * dist));
-                flywheel.setVelocity(ShooterUtil.velocityToTicks(15));
+                flywheel.setVelocity(ShooterUtil.getShooterMaxVelocity());
+                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
             } else {
                 //Calculated Shot
                 hood.setAngle(90 - hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
+                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
             }
         }
     }

@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.ShooterUtil;
@@ -58,9 +59,10 @@ public class VisionAimTurret extends CommandBase {
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
 
-        SmartDashboard.putNumber("TurretAngleAdj", turretAngle);
-        SmartDashboard.putNumber("vx", vx);
-        SmartDashboard.putNumber("vz", vz);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("TurretAngleAdj", turretAngleAdj);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("turretAngle", turretAngle);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("txTurret", txTurret);
+        Robot.getShuffleboard().getTab("Auto Aim").setEntry("turretVZ", vz);
 
         if (vision.getLLValue("tv") == 1) {
             turret.setAngle(turretAngleAdj);
