@@ -36,29 +36,20 @@ public class RobotShuffleboardTab {
         this.entries = new HashMap<>();
     }
 
-    public NetworkTableEntry addEntry(String... keys) {
-        NetworkTableEntry entry = null;
-        for (String key : keys) {
-            entry = tab.add(key, 0).getEntry();
-            entries.put(key, entry);
+    public <T> RobotShuffleboardTab setEntry(String key, T value) {
+        if (!entries.containsKey(key)) {
+            entries.put(key, tab.add(key, value).getEntry());
+        } else {
+            entries.get(key).setValue(value);
         }
-        return entry;
+        return this;
     }
 
-    public <T> RobotShuffleboardTab setEntry(String key, T value) {
-        NetworkTableEntry entry = entries.get(key);
-        while (entry == null) {
-            entry = addEntry(key);
+    public RobotShuffleboardTab clear() {
+        for (NetworkTableEntry entry : entries.values()) {
+            entry.delete();
         }
-        if (value instanceof Double) {
-            entry.setNumber((double) value);
-        } else if (value instanceof Integer) {
-            entry.setNumber((int) value);
-        } else if (value instanceof Boolean) {
-            entry.setBoolean((boolean) value);
-        } else if (value instanceof String) {
-            entry.setString((String) value);
-        }
+        entries.clear();
         return this;
     }
 

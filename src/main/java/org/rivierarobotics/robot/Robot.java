@@ -28,9 +28,9 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CameraFlip;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.RobotShuffleboard;
 
 import java.util.Objects;
 
@@ -40,6 +40,7 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private Command flyingWheelman;
+    private Thread cameraThread;
 
     @Override
     public void robotInit() {
@@ -54,6 +55,11 @@ public class Robot extends TimedRobot {
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
         //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+        if (cameraThread == null) {
+            cameraThread = new CameraFlip();
+            cameraThread.start();
+        }
+
         globalComponent.getNavXGyro().resetGyro();
     }
 
@@ -142,7 +148,12 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
-            .setEntry("At Position", cw.getPidController().atSetpoint());
+            .setEntry("At Position", cw.getPidController().atSetpoint())
+            .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
+            .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
+            .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
+            .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
+            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall());
 
         SmartDashboard.putData(chooser);
     }

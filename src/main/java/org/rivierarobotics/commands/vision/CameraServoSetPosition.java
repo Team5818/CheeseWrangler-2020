@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CameraServo;
+import org.rivierarobotics.util.CameraFlip;
 
 @GenerateCreator
 public class CameraServoSetPosition extends InstantCommand {
@@ -38,6 +39,7 @@ public class CameraServoSetPosition extends InstantCommand {
 
     @Override
     public void execute() {
+        CameraFlip.DO_FLIP = position > 95;
         servo.setAngle(position);
     }
 }
