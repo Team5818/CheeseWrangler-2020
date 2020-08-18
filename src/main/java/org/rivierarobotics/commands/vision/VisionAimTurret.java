@@ -64,11 +64,15 @@ public class VisionAimTurret extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("txTurret", txTurret);
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("turretVZ", vz);
 
-        if (vision.getLLValue("tv") == 1) {
-            turret.setAngle(turretAngleAdj);
-        } else {
-            done = true;
+        if(turret.isAutoAimEnabled()) {
+            if (vision.getLLValue("tv") == 1) {
+                turret.setAngle(turretAngleAdj);
+            } else {
+                done = true;
+            }
         }
+
+
     }
 
     @Override

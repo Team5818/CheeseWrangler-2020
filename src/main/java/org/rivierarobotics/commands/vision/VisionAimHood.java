@@ -72,24 +72,28 @@ public class VisionAimHood extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
 
-        if (vision.getLLValue("tv") ==  1) {
-            if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
-                //Close Shot
-                hood.setAngle(90 - hoodAngle);
-                flywheel.setVelocity(ShooterUtil.getShooterMinVelocity());
-                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
-            } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
-                //Long Shot
-                hood.setAngle(90 - (33 + 0.1 * dist));
-                flywheel.setVelocity(ShooterUtil.getShooterMaxVelocity());
-                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
-            } else {
-                //Calculated Shot
-                hood.setAngle(90 - hoodAngle);
-                flywheel.setVelocity(encoderVelocity);
-                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+
+        if(turret.isAutoAimEnabled()) {
+            if (vision.getLLValue("tv") ==  1) {
+                if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+                    //Close Shot
+                    hood.setAngle(90 - hoodAngle);
+                    flywheel.setVelocity(ShooterUtil.getShooterMinVelocity());
+                    Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
+                } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
+                    //Long Shot
+                    hood.setAngle(90 - (33 + 0.1 * dist));
+                    flywheel.setVelocity(ShooterUtil.getShooterMaxVelocity());
+                    Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
+                } else {
+                    //Calculated Shot
+                    hood.setAngle(90 - hoodAngle);
+                    flywheel.setVelocity(encoderVelocity);
+                    Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+                }
             }
         }
+
     }
 
     @Override

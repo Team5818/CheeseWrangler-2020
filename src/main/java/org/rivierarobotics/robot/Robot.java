@@ -57,6 +57,7 @@ public class Robot extends TimedRobot {
         shuffleboard = new RobotShuffleboard();
         //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getTurret().disableAutoAim();
     }
 
     @Override
@@ -168,6 +169,8 @@ public class Robot extends TimedRobot {
             .setEntry("Index 4", bta[4]);
 
         SmartDashboard.putData(chooser);
+
+        SmartDashboard.putBoolean("AutoAim Enabled", turret.isAutoAimEnabled());
     }
 
     public static RobotShuffleboard getShuffleboard() {

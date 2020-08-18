@@ -97,22 +97,23 @@ public class CalcAim extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("BallVel", ballVel);
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle ", hoodAngle);
 
-        if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
-            //Close Shot
-            hood.setAngle(90 - hoodAngle);
-            flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
-        } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
-            //Long Shot
-            hood.setAngle(90 - (33 + 0.1 * dist));
-            flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMaxVelocity()));
-        } else {
-            //Calculated Shot
-            hood.setAngle(90 - hoodAngle);
-            flywheel.setVelocity(encoderVelocity);
+        if(turret.isAutoAimEnabled()) {
+            if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+                //Close Shot
+                hood.setAngle(90 - hoodAngle);
+                flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
+            } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
+                //Long Shot
+                hood.setAngle(90 - (33 + 0.1 * dist));
+                flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMaxVelocity()));
+            } else {
+                //Calculated Shot
+                hood.setAngle(90 - hoodAngle);
+                flywheel.setVelocity(encoderVelocity);
+            }
+
+            turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10 + 5);
         }
-
-        turret.setPositionTicks(captainKalbag * turret.getAnglesOrInchesToTicks() / 10 + 5);
-
     }
 
     private double captainKalbag(double xFromGoal, double zFromGoal) {

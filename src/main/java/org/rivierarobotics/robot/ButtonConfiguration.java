@@ -78,5 +78,7 @@ public class ButtonConfiguration {
             .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 10)
             .whenPressed(cmds.hood().toggleTrenchMode());
+        new JoystickButton(coDriverButtons, 9)
+                .whenPressed(cmds.vision().toggleAutoAim());
     }
 }

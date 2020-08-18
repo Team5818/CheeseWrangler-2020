@@ -53,8 +53,6 @@ public class PositionTracker {
         beforeT = Timer.getFPGATimestamp();
         pos[0] += (driveTrain.getXVelocity() * timeDifference);
         pos[1] += (driveTrain.getYVelocity() * timeDifference);
-        SmartDashboard.putNumber("EncoderX", pos[0]);
-        SmartDashboard.putNumber("EncoderY", pos[1]);
     }
 
     public void correctPosition() {

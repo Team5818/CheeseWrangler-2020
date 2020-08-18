@@ -33,6 +33,7 @@ public class VisionCommands {
     private VisionAimCreator visionAimCreator;
     private Provider<TrackerCorrectPosition> correctPositionProvider;
     private EncoderAimCreator encoderAimCreator;
+    private ToggleAutoAimCreator autoAimCreator;
 
     @Inject
     public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
@@ -40,13 +41,15 @@ public class VisionCommands {
                           LimelightLedSetStateCreator limelightLedSetStateCreator,
                           VisionAimCreator visionAimCreator,
                           Provider<TrackerCorrectPosition> correctPositionProvider,
-                          EncoderAimCreator encoderAimCreator) {
+                          EncoderAimCreator encoderAimCreator,
+                          ToggleAutoAimCreator autoAimCreator) {
         this.visionAimHoodCreator = visionAimHoodCreator;
         this.visionAimCreator = visionAimCreator;
         this.visionAimTurretCreator = visionAimTurretCreator;
         this.limelightLedSetStateCreator = limelightLedSetStateCreator;
         this.correctPositionProvider = correctPositionProvider;
         this.encoderAimCreator = encoderAimCreator;
+        this.autoAimCreator = autoAimCreator;
     }
 
     public VisionAimHood autoAimHood(double extraDistance, double height) {
@@ -60,6 +63,11 @@ public class VisionCommands {
     public VisionAim visionAim(VisionTarget target) {
         return visionAimCreator.create(target);
     }
+
+    public ToggleAutoAim toggleAutoAim() {
+        return autoAimCreator.create();
+    }
+
 
     public EncoderAim encoderAim(VisionTarget target) {
         return encoderAimCreator.create(target);

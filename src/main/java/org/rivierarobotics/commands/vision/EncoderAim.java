@@ -89,25 +89,25 @@ public class EncoderAim extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
 
-        if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
-            //Close Shot
-            hood.setAngle(90 - hoodAngle);
-            flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
-            Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
-        } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
-            //Long Shot
-            hood.setAngle(90 - (33 + 0.1 * dist));
-            flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
-            Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
-        } else {
-            //Calculated Shot
-            hood.setAngle(90 - hoodAngle);
-            flywheel.setVelocity(encoderVelocity);
-            Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+        if(turret.isAutoAimEnabled()) {
+            if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+                //Close Shot
+                hood.setAngle(90 - hoodAngle);
+                flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
+                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
+            } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
+                //Long Shot
+                hood.setAngle(90 - (33 + 0.1 * dist));
+                flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
+                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
+            } else {
+                //Calculated Shot
+                hood.setAngle(90 - hoodAngle);
+                flywheel.setVelocity(encoderVelocity);
+                Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+            }
+            turret.setAngle(turretAngle);
         }
-
-        turret.setAngle(turretAngle);
-
 
 
     }

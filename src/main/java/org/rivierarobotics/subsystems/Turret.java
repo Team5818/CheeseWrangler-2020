@@ -40,6 +40,7 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
+    private static boolean isAutoAimEnabled;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.5));
@@ -80,6 +81,18 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
         } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
             setPositionTicks(position - 4096);
         }
+    }
+
+    public void enableAutoAim() {
+        isAutoAimEnabled = true;
+    }
+
+    public void disableAutoAim() {
+        isAutoAimEnabled = false;
+    }
+
+    public boolean isAutoAimEnabled() {
+        return isAutoAimEnabled;
     }
 
     public double getMaxAngleInTicks() {
