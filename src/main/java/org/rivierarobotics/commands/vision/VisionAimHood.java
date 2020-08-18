@@ -73,7 +73,7 @@ public class VisionAimHood extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
 
 
-        if(turret.isAutoAimEnabled()) {
+        if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") ==  1) {
                 if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
                     //Close Shot

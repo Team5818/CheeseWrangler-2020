@@ -97,7 +97,7 @@ public class CalcAim extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("BallVel", ballVel);
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle ", hoodAngle);
 
-        if(turret.isAutoAimEnabled()) {
+        if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
                 //Close Shot
                 hood.setAngle(90 - hoodAngle);

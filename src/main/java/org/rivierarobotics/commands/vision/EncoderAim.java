@@ -89,7 +89,7 @@ public class EncoderAim extends CommandBase {
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
         Robot.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
 
-        if(turret.isAutoAimEnabled()) {
+        if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
                 //Close Shot
                 hood.setAngle(90 - hoodAngle);

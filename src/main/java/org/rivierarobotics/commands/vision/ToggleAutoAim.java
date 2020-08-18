@@ -32,7 +32,7 @@ import javax.inject.Inject;
 @GenerateCreator
 public class ToggleAutoAim extends InstantCommand {
 
-    private Turret turret;
+    private final Turret turret;
 
     @Inject
     public ToggleAutoAim(@Provided Turret turret) {
