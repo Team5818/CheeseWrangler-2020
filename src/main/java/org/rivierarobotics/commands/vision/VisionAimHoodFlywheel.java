@@ -36,7 +36,7 @@ import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
-public class VisionAimHood extends CommandBase {
+public class VisionAimHoodFlywheel extends CommandBase {
     private final Hood hood;
     private final DriveTrain driveTrain;
     private final Flywheel flywheel;
@@ -46,7 +46,7 @@ public class VisionAimHood extends CommandBase {
     private final double height;
     private final RobotShuffleboardTab tab;
 
-    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
+    public VisionAimHoodFlywheel(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
         this.hood = hd;
         this.driveTrain = dt;
         this.flywheel = fly;
@@ -102,7 +102,12 @@ public class VisionAimHood extends CommandBase {
     }
 
     @Override
-    public boolean isFinished() {
+    public void end(boolean interrupted) {
+        flywheel.setPower(0);
+    }
+
+    @Override
+    public boolean isFinished(){
         return false;
     }
 }

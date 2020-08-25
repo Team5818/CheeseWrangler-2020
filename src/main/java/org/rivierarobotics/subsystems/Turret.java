@@ -49,6 +49,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final VisionUtil vision;
     private static boolean isAutoAimEnabled;
     private final RobotShuffleboardTab tab;
+    public static boolean isAbsoluteAngle;
 
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
@@ -85,7 +86,12 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle() {
-        return (getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK;
+        if(isAbsoluteAngle) {
+            return MathUtil.wrapToCircle(gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK));
+        } else {
+            return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK);
+        }
+
     }
 
     public double getTxTurret(double distance, double extraDistance) {
@@ -96,31 +102,25 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPositionTicks(double positionTicks) {
-        //!!Experimental Version of Code!!
-
         double ticks = MathUtil.limit(
                 ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
         tab.setEntry("PosTicks", ticks);
-        //turretTalon.set(ControlMode.MotionMagic, ticks);
+        turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
     public void setAngle(double angle) {
-        /*
-        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * TICKS_PER_DEGREE);
-        if (position < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
-            setPositionTicks(position);
-        } else if (position - 4096 < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
-            setPositionTicks(position - 4096);
-        } */
+        angle = MathUtil.wrapToCircle(angle);
+        if(isAbsoluteAngle){
+            angle += MathUtil.wrapToCircle(gyro.getYaw());
+        }
 
-        //!!Experimental Version of Code!!
+        tab.setEntry("TurretSetAngle", angle);
 
-        tab.setEntry("SetTurretAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        tab.setEntry("SetTurAngInTicks", ticks);
-
         ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-        tab.setEntry("SetTicks", ticks);
+
+        tab.setEntry("TurretSetTick", ticks);
+
         turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 

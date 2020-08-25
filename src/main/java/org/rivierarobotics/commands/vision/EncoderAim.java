@@ -86,8 +86,6 @@ public class EncoderAim extends CommandBase {
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
 
-        turret.setAngle(turretAngle);
-
         tab.setEntry("Dist", dist);
         tab.setEntry("hoodAngle", hoodAngle);
         tab.setEntry("vx", vx);
@@ -113,8 +111,11 @@ public class EncoderAim extends CommandBase {
             }
             turret.setAngle(turretAngle);
         }
+    }
 
-
+    @Override
+    public void end(boolean interrupted) {
+        flywheel.setPower(0);
     }
 
     @Override

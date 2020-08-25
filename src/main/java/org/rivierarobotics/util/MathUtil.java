@@ -98,4 +98,5 @@ public class MathUtil {
     public static double ticksPer100msToMetersPerSec(double ticksPer100ms, double ticksPerMeter) {
         return (ticksPer100ms * 10) / ticksPerMeter;
     }
+
 }

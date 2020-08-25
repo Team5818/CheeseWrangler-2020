@@ -130,6 +130,11 @@ public class CalcAim extends CommandBase {
     }
 
     @Override
+    public void end(boolean interrupted) {
+        flywheel.setPower(0);
+    }
+
+    @Override
     public boolean isFinished() {
         return false;
     }

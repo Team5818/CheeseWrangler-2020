@@ -126,7 +126,6 @@ public class Robot extends TimedRobot {
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
-        var position = globalComponent.getPositionTracker();
         var shuffleboard = globalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
@@ -135,8 +134,7 @@ public class Robot extends TimedRobot {
             .setEntry("Turret Abs Angle", turret.getAbsoluteAngle())
             .setEntry("Turret Pos Ticks", turret.getPositionTicks());
 
-        shuffleboard.getTab("Auto Aim")
-                .setEntry("xFromGoal", position.getPosition());
+        shuffleboard.getTab("Auto Aim");
 
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))

@@ -27,7 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class VisionCommands {
-    private VisionAimHoodCreator visionAimHoodCreator;
+    private VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator;
     private VisionAimTurretCreator visionAimTurretCreator;
     private LimelightLedSetStateCreator limelightLedSetStateCreator;
     private VisionAimCreator visionAimCreator;
@@ -36,14 +36,14 @@ public class VisionCommands {
     private ToggleAutoAimCreator autoAimCreator;
 
     @Inject
-    public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
+    public VisionCommands(VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator,
                           VisionAimTurretCreator visionAimTurretCreator,
                           LimelightLedSetStateCreator limelightLedSetStateCreator,
                           VisionAimCreator visionAimCreator,
                           Provider<TrackerCorrectPosition> correctPositionProvider,
                           EncoderAimCreator encoderAimCreator,
                           ToggleAutoAimCreator autoAimCreator) {
-        this.visionAimHoodCreator = visionAimHoodCreator;
+        this.visionAimHoodFlywheelCreator = visionAimHoodFlywheelCreator;
         this.visionAimCreator = visionAimCreator;
         this.visionAimTurretCreator = visionAimTurretCreator;
         this.limelightLedSetStateCreator = limelightLedSetStateCreator;
@@ -52,8 +52,8 @@ public class VisionCommands {
         this.autoAimCreator = autoAimCreator;
     }
 
-    public VisionAimHood autoAimHood(double extraDistance, double height) {
-        return visionAimHoodCreator.create(extraDistance, height);
+    public VisionAimHoodFlywheel autoAimHood(double extraDistance, double height) {
+        return visionAimHoodFlywheelCreator.create(extraDistance, height);
     }
 
     public VisionAimTurret autoAimTurret(double extraDistance, double height) {

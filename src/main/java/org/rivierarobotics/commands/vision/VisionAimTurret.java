@@ -41,7 +41,6 @@ public class VisionAimTurret extends CommandBase {
     private final double extraDistance;
     private final double height;
     private final RobotShuffleboardTab tab;
-    private boolean done;
 
     public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
         this.turret = turret;
@@ -72,8 +71,6 @@ public class VisionAimTurret extends CommandBase {
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {
                 turret.setAngle(turretAngleAdj);
-            } else {
-                done = true;
             }
         }
 
@@ -81,12 +78,7 @@ public class VisionAimTurret extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        //turret.setPidEnabled(false);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return done;
+    public boolean isFinished(){
+        return false;
     }
 }
