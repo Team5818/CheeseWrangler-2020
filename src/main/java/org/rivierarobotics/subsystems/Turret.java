@@ -20,9 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.turret.TurretControl;
@@ -36,9 +34,9 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 3793;
+    private static final double ZERO_TICKS = 3692;
     private static final double MAX_ANGLE = 25;
-    private static final double MIN_ANGLE = -243.7;
+    private static final double MIN_ANGLE = -120;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
     private static final double DEGREES_PER_TICK = 360.0 / 4096;
     private final WPI_TalonSRX turretTalon;
@@ -51,11 +49,13 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.gyro = gyro;
         this.vision = vision;
         turretTalon = new WPI_TalonSRX(id);
+        turretTalon.configFactoryDefault();
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
-        turretTalon.configFactoryDefault();
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
+        turretTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        turretTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
@@ -105,7 +105,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
         ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
         Robot.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
-        //turretTalon.set(ControlMode.MotionMagic, ticks);
+        turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
     public double getMaxAngleInTicks() {
