@@ -28,6 +28,7 @@ import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -47,8 +48,6 @@ public class SubsystemModule {
     private static final int CLIMB_FALCON = 21;
 
     private static final int CAMERA_SERVO = 0;
-    private static final int CW_FRONT_SENSOR = 1;
-    private static final int CW_BACK_SENSOR = 0;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(1, 0, 0, 1);
@@ -74,14 +73,14 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision) {
-        return new Turret(TURRET_TALON, command, gyro, vision);
+    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard) {
+        return new Turret(TURRET_TALON, command, gyro, vision, shuffleboard);
     }
 
     @Provides
     @Singleton
-    public static Hood provideHood(Provider<HoodControl> command) {
-        return new Hood(HOOD_TALON, command);
+    public static Hood provideHood(Provider<HoodControl> command, @Provided RobotShuffleboard shuffleboard) {
+        return new Hood(HOOD_TALON, command, shuffleboard);
     }
 
     @Provides
@@ -100,8 +99,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Flywheel provideFlywheel() {
-        return new Flywheel(FLYWHEEL_FALCON);
+    public static Flywheel provideFlywheel(@Provided RobotShuffleboard shuffleboard) {
+        return new Flywheel(FLYWHEEL_FALCON, shuffleboard);
     }
 
 
@@ -122,7 +121,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, CW_FRONT_SENSOR, CW_BACK_SENSOR, command);
+        return new CheeseWheel(CHEESE_WHEEL_TALON, command);
     }
 
     @Provides

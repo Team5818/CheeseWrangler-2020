@@ -20,40 +20,29 @@
 
 package org.rivierarobotics.commands.ejector;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
-import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
-import org.rivierarobotics.util.BallTracker;
 
 @GenerateCreator
 public class EjectorSetPower extends InstantCommand {
     private final Ejector ejector;
     private final double power;
-    private final BallTracker ballTracker;
-    private final CheeseWheelCommands cheeseWheelCommands;
 
-    public EjectorSetPower(@Provided Ejector ejector, @Provided BallTracker ballTracker, double power, @Provided CheeseWheelCommands cheeseCommands) {
+    public EjectorSetPower(@Provided Ejector ejector, double power) {
         this.ejector = ejector;
         this.power = power;
-        this.ballTracker = ballTracker;
-        this.cheeseWheelCommands = cheeseCommands;
         addRequirements(ejector);
     }
 
     @Override
     public void execute() {
-        if (!ballTracker.shooterOnIndex && power > 0) {
-            cheeseWheelCommands.moveToNextIndexCancel(-1, CheeseWheel.AngleOffset.SHOOTING);
-            ejector.setPower(0);
-        } else {
-            ejector.setPower(power);
-        }
         ejector.setPower(power);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        ejector.setPower(0.0);
     }
 }

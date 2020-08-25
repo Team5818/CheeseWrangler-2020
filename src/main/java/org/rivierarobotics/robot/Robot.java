@@ -28,19 +28,19 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CameraFlip;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.RobotShuffleboard;
 
 import java.util.Objects;
 
 public class Robot extends TimedRobot {
-    private static RobotShuffleboard shuffleboard;
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private Command flyingWheelman;
+    private Thread cameraThread;
 
     @Override
     public void robotInit() {
@@ -54,8 +54,12 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
-        shuffleboard = new RobotShuffleboard();
         //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+        if (cameraThread == null) {
+            cameraThread = new CameraFlip();
+            cameraThread.start();
+        }
+
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getTurret().disableAutoAim();
     }
@@ -70,7 +74,6 @@ public class Robot extends TimedRobot {
 
             globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
-            globalComponent.getBallTracker().checkIfEmpty();
         }
     }
 
@@ -93,9 +96,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void teleopInit() {
-        if (shuffleboard == null) {
-            shuffleboard = new RobotShuffleboard();
-        }
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
@@ -128,6 +128,7 @@ public class Robot extends TimedRobot {
         var cw = globalComponent.getCheeseWheel();
         var position = globalComponent.getPositionTracker();
         boolean[] bta = globalComponent.getBallTracker().getBallArray();
+        var shuffleboard = globalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
@@ -154,26 +155,14 @@ public class Robot extends TimedRobot {
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
             .setEntry("At Position", cw.getPidController().atSetpoint())
-            .setEntry("Angle", cw.getAngle())
-            .setEntry("F Sensor Val", cw.getFrontSensorValue())
-            .setEntry("B Sensor Val", cw.getBackSensorValue())
-            .setEntry("F Ball", cw.isFrontBallPresent())
-            .setEntry("B Ball", cw.isBackBallPresent())
-            .setEntry("ShooterIndex", cw.getIndex(CheeseWheel.AngleOffset.SHOOTING))
-            .setEntry("CollectFrontIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
-            .setEntry("CollectBackIndex", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
-            .setEntry("Index 0", bta[0])
-            .setEntry("Index 1", bta[1])
-            .setEntry("Index 2", bta[2])
-            .setEntry("Index 3", bta[3])
-            .setEntry("Index 4", bta[4]);
+            .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
+            .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
+            .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
+            .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
+            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall());
 
         SmartDashboard.putData(chooser);
 
         SmartDashboard.putBoolean("AutoAim Enabled", turret.isAutoAimEnabled());
-    }
-
-    public static RobotShuffleboard getShuffleboard() {
-        return shuffleboard;
     }
 }

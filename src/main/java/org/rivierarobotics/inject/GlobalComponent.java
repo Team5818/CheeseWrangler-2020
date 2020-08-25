@@ -34,9 +34,9 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.BallTracker;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Singleton;
@@ -54,11 +54,11 @@ public abstract class GlobalComponent {
         getCheeseWheel();
         getClimb();
         getNavXGyro();
+        getShuffleboard();
         getButtonConfiguration();
         getVisionUtil();
         getCameraServo();
         getPositionTracker();
-        getBallTracker();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -79,11 +79,11 @@ public abstract class GlobalComponent {
 
     public abstract NavXGyro getNavXGyro();
 
+    public abstract RobotShuffleboard getShuffleboard();
+
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
-
-    public abstract BallTracker getBallTracker();
 
     public abstract CameraServo getCameraServo();
 

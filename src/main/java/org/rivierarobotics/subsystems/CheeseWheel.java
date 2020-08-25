@@ -22,9 +22,8 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.AnalogInput;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
-import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Provider;
@@ -32,24 +31,53 @@ import javax.inject.Provider;
 public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
-    private final AnalogInput frontSensor;
-    private final AnalogInput backSensor;
-    private final double zeroTicks = 3725;
-    private final double ballMax = 260;
-    private final double ballMin = 100;
+    private static final int TICKS_AT_ZERO_DEGREES = 3725;
+    private static final double INDEX_SPACING = 4096.0 / 5;
 
-    public CheeseWheel(int motor, int frontSensor, int backSensor, Provider<CheeseWheelControl> command) {
+    public CheeseWheel(int motor, Provider<CheeseWheelControl> command) {
         super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
-        this.frontSensor = new AnalogInput(frontSensor);
-        this.backSensor = new AnalogInput(backSensor);
         this.command = command;
         wheelTalon.configFactoryDefault();
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
 
+    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requireOpen) {
+        CheeseSlot min = CheeseSlot.values()[0];
+        for (CheeseSlot slot : CheeseSlot.values()) {
+            double posDiff = offset.cwTicks() - getTickPosOfSlot(slot);
+            boolean passDir;
+            switch (direction) {
+                case FORWARDS:
+                    passDir = posDiff > 0;
+                    break;
+                case BACKWARDS:
+                    passDir = posDiff < 0;
+                    break;
+                case ANY:
+                    passDir = true;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Cannot handle this direction");
+            }
+            if ((!requireOpen || slot.hasBall()) && passDir && Math.abs(posDiff) < Math.abs(offset.cwTicks() - getTickPosOfSlot(min))) {
+                min = slot;
+            }
+        }
+        return min;
+    }
+
+    public boolean onSlot(AngleOffset offset) {
+        return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES, getTickPosOfSlot(getClosestSlot(offset, Direction.ANY, false)), 15);
+    }
+
+    public double getTickPosOfSlot(CheeseSlot slot) {
+        return getPositionTicks() + (slot.ordinal() * INDEX_SPACING) - TICKS_AT_ZERO_DEGREES;
+    }
+
     @Override
     public void setPower(double pwr) {
+        logger.powerChange(pwr);
         wheelTalon.set(pwr);
     }
 
@@ -58,85 +86,33 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return wheelTalon.getSensorCollection().getPulseWidthPosition();
     }
 
-    public int getIndex(AngleOffset mode) {
-        double cwAngle = getAdjustedAngle(getAngleOffset(mode));
-        int min = 360;
-        double minAngle = 360;
-        for (int i = 0; i < 6; i++) {
-            if (minAngle > Math.abs(cwAngle - (i * 72))) {
-                minAngle = Math.abs(cwAngle - (i * 72));
-                if (i == 5) {
-                    return 0;
-                }
-                min = i;
-            }
-        }
-        return min;
-    }
-
-    public double getAngle() {
-        return getAdjustedAngle(0);
-    }
-
-    public double getAdjustedAngle(double adjAngle) {
-        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) / getAnglesOrInchesToTicks() + adjAngle);
-    }
-
-    public double getAngleAdded(int index, AngleOffset mode, int direction) {
-        Robot.getShuffleboard().getTab("Cheese Wheel").setEntry("Set Index", index);
-        double angleOff = index * 72 - getAdjustedAngle(getAngleOffset(mode));
-        if (Math.abs(angleOff) > 180) {
-            if (angleOff < 0) {
-                angleOff += 360;
-            } else if (angleOff > 0) {
-                angleOff -= 360;
-            }
-        }
-
-        if (direction > 0) {
-            if (angleOff < 0) {
-                return angleOff + 360;
-            }
-        } else if (direction < 0) {
-            if (angleOff > 0) {
-                return angleOff - 360;
-            }
-        }
-
-        return angleOff;
-    }
-
-    public void addAngle(double angle) {
-        setPositionTicks(getPositionTicks() + angle * getAnglesOrInchesToTicks());
-    }
-
-    public boolean isFrontBallPresent() {
-        return (frontSensor.getValue() < ballMax && frontSensor.getValue() > ballMin);
-    }
-
-    public double getFrontSensorValue() {
-        return frontSensor.getValue();
-    }
-
-    public boolean isBackBallPresent() {
-        return (backSensor.getValue() < ballMax && backSensor.getValue() > ballMin);
-    }
-
-    public double getBackSensorValue() {
-        return backSensor.getValue();
-    }
-
-    public double getAngleOffset(AngleOffset offset) {
-        return offset.angle;
-    }
-
     public enum AngleOffset {
         SHOOTING(36), COLLECT_FRONT(106), COLLECT_BACK(253);
 
         public final int angle;
+
         AngleOffset(int angle) {
             this.angle = angle;
         }
+
+        public double cwTicks() {
+            return (this.angle * 4096 / 360.0) - TICKS_AT_ZERO_DEGREES;
+        }
+
+        public Direction getAssocDir() {
+            switch (this) {
+                case COLLECT_FRONT:
+                    return Direction.FORWARDS;
+                case COLLECT_BACK:
+                    return Direction.BACKWARDS;
+                default:
+                    throw new IllegalArgumentException("Invalid assoc direction");
+            }
+        }
+    }
+
+    public enum Direction {
+        FORWARDS, BACKWARDS, ANY
     }
 
     @Override

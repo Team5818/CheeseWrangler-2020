@@ -18,27 +18,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.util;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import org.rivierarobotics.appjack.Logging;
-import org.rivierarobotics.appjack.MechLogger;
+import edu.wpi.first.wpilibj.DigitalInput;
 
-public class IntakeSide {
-    private final WPI_VictorSPX intakeVictor;
-    private final MechLogger logger;
+public enum CheeseSlot {
+    // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
+    ZERO, ONE, TWO, THREE, FOUR;
 
-    public IntakeSide(int id, boolean invert) {
-        intakeVictor = new WPI_VictorSPX(id);
-        intakeVictor.configFactoryDefault();
-        intakeVictor.setInverted(invert);
-        intakeVictor.setNeutralMode(NeutralMode.Brake);
-        logger = Logging.getLogger(getClass(), invert ? "left" : "right");
+    private static final int SENSOR_DIO_PIN_OFFSET = 5;
+    private final DigitalInput sensor;
+
+    CheeseSlot() {
+        this.sensor = new DigitalInput(this.ordinal() + SENSOR_DIO_PIN_OFFSET);
     }
 
-    public void setPower(double pwr) {
-        logger.powerChange(pwr);
-        intakeVictor.set(pwr);
+    public boolean hasBall() {
+        return sensor.get();
+    }
+
+    public static CheeseSlot slotOfNum(int num) {
+        for (CheeseSlot slot : CheeseSlot.values()) {
+            if (slot.ordinal() == num) {
+                return slot;
+            }
+        }
+        return null;
     }
 }

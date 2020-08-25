@@ -24,6 +24,8 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NeutralIdleMode;
@@ -31,13 +33,15 @@ import org.rivierarobotics.util.NeutralIdleMode;
 public class DriveTrainSide implements RRSubsystem {
     private static final double TICKS_PER_METER = 7916 / 1.8288;
     private static final double MOTOR_TO_WHEEL_RATIO = 17.0 / 48;
-    private WPI_TalonFX masterLeft;
-    private WPI_TalonFX slaveRight;
-    private Encoder shaftEncoder;
+    private final WPI_TalonFX masterLeft;
+    private final WPI_TalonFX slaveRight;
+    private final Encoder shaftEncoder;
+    private final MechLogger logger;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        this.masterLeft = new WPI_TalonFX(motors.left);
-        this.slaveRight = new WPI_TalonFX(motors.right);
+        this.masterLeft = new WPI_TalonFX(motors.master);
+        this.slaveRight = new WPI_TalonFX(motors.slave);
+        this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(1023 * 0.2, 0, 0, 0), 0, masterLeft, slaveRight);
@@ -68,8 +72,10 @@ public class DriveTrainSide implements RRSubsystem {
     }
 
     public void setVelocity(double vel) {
-        masterLeft.set(TalonFXControlMode.Velocity, MathUtil.metersPerSecToTicksPer100ms(
-            vel / MOTOR_TO_WHEEL_RATIO, TICKS_PER_METER));
+        double set = MathUtil.metersPerSecToTicksPer100ms(
+                vel / MOTOR_TO_WHEEL_RATIO, TICKS_PER_METER);
+        logger.setpointChange(set);
+        masterLeft.set(TalonFXControlMode.Velocity, set);
     }
 
     public void setNeutralIdle(NeutralIdleMode mode) {

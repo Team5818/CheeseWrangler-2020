@@ -20,17 +20,18 @@
 
 package org.rivierarobotics.util;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
+@Singleton
 public class RobotShuffleboard {
     private final Map<String, RobotShuffleboardTab> tabs;
 
-    public RobotShuffleboard(String... tabs) {
-        this.tabs = new HashMap<>(tabs.length);
-        for (String tabName : tabs) {
-            addTab(tabName);
-        }
+    @Inject
+    public RobotShuffleboard() {
+        this.tabs = new LinkedHashMap<>();
     }
 
     public RobotShuffleboardTab getTab(String tabName) {

@@ -20,8 +20,8 @@
 
 package org.rivierarobotics.util;
 
-public class ShooterUtil {
-    private ShooterUtil() {
+public class ShooterConstants {
+    private ShooterConstants() {
     }
 
     public static double getTopHeight() {

@@ -3,7 +3,7 @@ import org.rivierarobotics.gradlerioredux.artifactsKt
 import org.rivierarobotics.gradlerioredux.tasks.PathWeaverSourceSetExtension
 
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.7.8"
+    id("org.rivierarobotics.gradlerioredux") version "0.7.10"
 }
 
 gradleRioRedux {
@@ -27,9 +27,6 @@ afterEvaluate {
     }
 }
 
-val includeDesktopSupport = true
-val platform = wpi.platforms.javaClass.getDeclaredField("desktop").get(null) as String
-
 tasks.register("windowsLaunchSim") {
     doLast {
         project.exec{
@@ -38,16 +35,11 @@ tasks.register("windowsLaunchSim") {
         }
     }
 }
-if (platform.contains("windows")) {
+if (edu.wpi.first.toolchain.NativePlatforms.desktopOS() == "windows") {
     tasks.getByName("simulateJava").finalizedBy(tasks.getByName("windowsLaunchSim"))
 }
 
 dependencies {
-    for (depJni: String in (wpi.deps.wpilibJni(platform) + wpi.deps.vendor.jni(platform))) {
-        nativeDesktopZip(depJni)
-    }
-    simulation("edu.wpi.first.halsim:halsim_gui:${wpi.wpilibVersion}:$platform@zip")
-
     implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
     commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
         compileOnly(lib("annotations"))

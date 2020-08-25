@@ -22,26 +22,31 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 
 public abstract class BasePIDSubsystem extends SubsystemBase {
     protected final PIDController pidController;
     protected final PIDConfig pidConfig;
-    protected final double anglesOrInchesToTicks;
+    protected final double ticksPerAngleOrInch;
     protected boolean pidEnabled = false;
+    protected final MechLogger logger;
 
     public BasePIDSubsystem(PIDConfig pidConfig) {
         this(pidConfig, 4096.0 / 360);
     }
 
-    public BasePIDSubsystem(PIDConfig pidConfig, double anglesOrInchesToTicks) {
+    public BasePIDSubsystem(PIDConfig pidConfig, double ticksPerAngleOrInch) {
         this.pidConfig = pidConfig;
-        this.anglesOrInchesToTicks = anglesOrInchesToTicks;
+        this.ticksPerAngleOrInch = ticksPerAngleOrInch;
 
         this.pidController = new PIDController(pidConfig.getP(), pidConfig.getI(), pidConfig.getD());
         this.pidController.setTolerance(pidConfig.getTolerance());
+        this.logger = Logging.getLogger(getClass());
     }
 
     public void setPidEnabled(boolean pidEnabled) {
+        logger.stateChange("pid_enabled", pidEnabled);
         this.pidEnabled = pidEnabled;
     }
 
@@ -71,21 +76,23 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
         return pidConfig;
     }
 
-    public final double getAnglesOrInchesToTicks() {
-        return anglesOrInchesToTicks;
+    public final double getTicksPerAngleOrInch() {
+        return ticksPerAngleOrInch;
     }
 
     public double getPosition() {
-        return getPositionTicks() / anglesOrInchesToTicks;
+        return getPositionTicks() / ticksPerAngleOrInch;
     }
 
     public void setPosition(double position) {
-        pidEnabled = true;
-        pidController.setSetpoint(position * anglesOrInchesToTicks);
+        setPidEnabled(true);
+        position *= ticksPerAngleOrInch;
+        logger.setpointChange(position);
+        pidController.setSetpoint(position);
     }
 
     public void setManualPower(double pwr) {
-        pidEnabled = false;
+        setPidEnabled(false);
         setPower(pwr);
     }
 
@@ -93,6 +100,7 @@ public abstract class BasePIDSubsystem extends SubsystemBase {
 
     public void setPositionTicks(double position) {
         pidEnabled = true;
+        logger.setpointChange(position);
         pidController.setSetpoint(position);
     }
 
