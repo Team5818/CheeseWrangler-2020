@@ -23,29 +23,29 @@ package org.rivierarobotics.commands.turret;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.commands.MotionMagicSetPosition;
+import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.BasePIDSubsystem;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
-public class TurretSetAngle extends BasePIDSetPosition<Turret> {
+public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
     private final boolean isAbsolute;
+    private final double angle;
+    private final Turret turret;
 
     public TurretSetAngle(@Provided Turret turret, double angle, boolean isAbsolute) {
-        super(turret, 1, angle, 2);
+        super(turret, turret::getAngle, turret::setAngle, angle, 5, 2);
         this.isAbsolute = isAbsolute;
-        addRequirements(turret);
+        this.angle = angle;
+        this.turret = turret;
     }
 
     @Override
-    protected double getPositionTicks() {
-        if (isAbsolute) {
-            return subsystem.getAbsoluteAngle();
-        } else {
-            return subsystem.getAngle();
-        }
-    }
-
-    @Override
-    protected void setPositionTicks(double angle) {
-        subsystem.setAngle(angle);
+    public void initialize() {
+        Robot.getShuffleboard().getTab("TurretHood").setEntry("TargetTicks", (angle * 4096/360) + 3692 );
+        super.initialize();
     }
 }

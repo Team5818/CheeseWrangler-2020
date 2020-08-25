@@ -77,7 +77,7 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        turret.setPidEnabled(false);
+        //turret.setPidEnabled(false);
     }
 
     @Override

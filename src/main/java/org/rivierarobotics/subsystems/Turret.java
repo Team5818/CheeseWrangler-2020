@@ -20,39 +20,42 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.turret.TurretControl;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.ShooterConstants;
+import org.rivierarobotics.util.ShooterUtil;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
-public class Turret extends BasePIDSubsystem implements RRSubsystem {
-    private static final double zeroTicks = 3793;
-    private static final double maxAngle = 25;
-    private static final double minAngle = -243.7;
+public class Turret extends SubsystemBase implements RRSubsystem {
+    private static final double ZERO_TICKS = 3692;
+    private static final double MAX_ANGLE = 25;
+    private static final double MIN_ANGLE = -120;
+    private static final double TICKS_PER_DEGREE = 4096.0 / 360;
+    private static final double DEGREES_PER_TICK = 360.0 / 4096;
     private final WPI_TalonSRX turretTalon;
-    private final RobotShuffleboard shuffleboard;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
-    private static boolean isAutoAimEnabled;
 
-    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
-        super(new PIDConfig(0.0017, 0, 0, 0.0, 15, 0.5));
+    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
-        this.shuffleboard = shuffleboard;
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+                new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
+        turretTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        turretTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
@@ -62,71 +65,78 @@ public class Turret extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getAbsoluteAngle() {
-        return MathUtil.wrapToCircle((getPositionTicks() - zeroTicks) * (1 / getTicksPerAngleOrInch()) + (gyro.getYaw()));
+        return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK + (gyro.getYaw()));
     }
 
     public double getAngle() {
-        return (getPositionTicks() - zeroTicks) * (1 / getTicksPerAngleOrInch());
+        return (getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK;
     }
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
-        double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
-        shuffleboard.getTab("TurretHood").setEntry("txTurret", txTurret);
+        double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterUtil.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
+        Robot.getShuffleboard().getTab("TurretHood").setEntry("txTurret", txTurret);
         return txTurret;
     }
 
+    public void setPositionTicks(int positionTicks) {
+        //!!Experimental Version of Code!!
+
+        double ticks = MathUtil.limit(
+                ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        Robot.getShuffleboard().getTab("Turret").setEntry("PosTicks", ticks);
+        //turretTalon.set(ControlMode.MotionMagic, ticks);
+    }
+
     public void setAngle(double angle) {
-        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * getTicksPerAngleOrInch());
-        if (position < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
-            logger.setpointChange(position);
+        /*
+        double position = getPositionTicks() + ((angle - getAbsoluteAngle()) * TICKS_PER_DEGREE);
+        if (position < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
             setPositionTicks(position);
-        } else if (position - 4096 < zeroTicks + getMaxAngleInTicks() && position > zeroTicks + getMinAngleInTicks()) {
-            logger.setpointChange(position - 4096);
+        } else if (position - 4096 < ZERO_TICKS + getMaxAngleInTicks() && position > ZERO_TICKS + getMinAngleInTicks()) {
             setPositionTicks(position - 4096);
-        }
-    }
+        } */
 
-    public void enableAutoAim() {
-        isAutoAimEnabled = true;
-    }
+        //!!Experimental Version of Code!!
 
-    public void disableAutoAim() {
-        isAutoAimEnabled = false;
-    }
+        Robot.getShuffleboard().getTab("Turret").setEntry("SetTurretAngle", angle);
+        double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
+        Robot.getShuffleboard().getTab("Turret").setEntry("SetTurAngInTicks", ticks);
 
-    public boolean isAutoAimEnabled() {
-        return isAutoAimEnabled;
+        ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        Robot.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
+        turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
     public double getMaxAngleInTicks() {
-        return maxAngle * getTicksPerAngleOrInch();
+        return MAX_ANGLE * TICKS_PER_DEGREE;
     }
 
     public double getMinAngleInTicks() {
-        return minAngle * getTicksPerAngleOrInch();
+        return MIN_ANGLE * TICKS_PER_DEGREE;
     }
 
-    private double limitPowerToRange(double pwr) {
+    @Override
+    public void setPower(double pwr) {
+        if (pwr <= 0 && getPositionTicks() - ZERO_TICKS < getMinAngleInTicks()) {
+            pwr = 0;
+        } else if (pwr > 0 && getPositionTicks() - ZERO_TICKS > getMaxAngleInTicks()) {
+            pwr = 0;
+        }
+        turretTalon.set(ControlMode.PercentOutput, pwr);
+    }
+
+    /*
+    @Override
+    public void setManualPower(double pwr) {
         if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
             pwr = 0;
         } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
             pwr = 0;
         }
-        return pwr;
+        super.setManualPower(pwr);
     }
-
-    @Override
-    public void setPower(double pwr) {
-        pwr = limitPowerToRange(pwr);
-        logger.powerChange(pwr);
-        turretTalon.set(pwr);
-    }
-
-    @Override
-    public void setManualPower(double pwr) {
-        super.setManualPower(limitPowerToRange(pwr));
-    }
+    */
 
     @Override
     public void periodic() {
