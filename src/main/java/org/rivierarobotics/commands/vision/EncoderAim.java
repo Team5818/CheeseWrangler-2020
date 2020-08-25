@@ -32,6 +32,8 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -43,23 +45,25 @@ public class EncoderAim extends CommandBase {
     private final Turret turret;
     private final PositionTracker tracker;
     private final VisionTarget target;
+    private final RobotShuffleboardTab tab;
 
     public EncoderAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
-                      @Provided Turret turret, @Provided PositionTracker tracker, VisionTarget target) {
+                      @Provided Turret turret, @Provided PositionTracker tracker, @Provided RobotShuffleboard shuffleboard, VisionTarget target) {
         this.hood = hood;
         this.driveTrain = dt;
         this.flywheel = flywheel;
         this.turret = turret;
         this.tracker = tracker;
         this.target = target;
+        this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
 
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").clear();
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "Encoder Aim");
+        tab.clear();
+        tab.setEntry("Aim Mode: ", "Encoder Aim");
         double extraDistance;
         if (target == VisionTarget.INNER) {
             extraDistance = ShooterConstants.getDistanceFromOuterToInnerTarget();
@@ -84,28 +88,28 @@ public class EncoderAim extends CommandBase {
 
         turret.setAngle(turretAngle);
 
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Dist", dist);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle", hoodAngle);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("vx", vx);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
+        tab.setEntry("Dist", dist);
+        tab.setEntry("hoodAngle", hoodAngle);
+        tab.setEntry("vx", vx);
+        tab.setEntry("vxz", vxz);
+        tab.setEntry("ballVel", ballVel);
 
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot
                 hood.setAngle(90 - hoodAngle);
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
-                GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
+                tab.setEntry("Target: ", "Close Shot");
             } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot
                 hood.setAngle(90 - (33 + 0.1 * dist));
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
-                GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
+                tab.setEntry("Target: ", "Long Shot");
             } else {
                 //Calculated Shot
                 hood.setAngle(90 - hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
-                GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+                tab.setEntry("Target: ", "Calculated Shot");
             }
             turret.setAngle(turretAngle);
         }

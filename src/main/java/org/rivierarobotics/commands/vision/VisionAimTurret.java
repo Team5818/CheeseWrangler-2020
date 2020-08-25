@@ -28,6 +28,8 @@ import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -38,14 +40,16 @@ public class VisionAimTurret extends CommandBase {
     private final VisionUtil vision;
     private final double extraDistance;
     private final double height;
+    private final RobotShuffleboardTab tab;
     private boolean done;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, double extraDistance, double height) {
+    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
         this.turret = turret;
         this.hood = hood;
         this.vision = vision;
         this.height = height;
         this.extraDistance = extraDistance;
+        this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(turret);
     }
 
@@ -60,10 +64,10 @@ public class VisionAimTurret extends CommandBase {
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
 
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("TurretAngleAdj", turretAngleAdj);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("turretAngle", turretAngle);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("txTurret", txTurret);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("turretVZ", vz);
+        tab.setEntry("TurretAngleAdj", turretAngleAdj);
+        tab.setEntry("turretAngle", turretAngle);
+        tab.setEntry("txTurret", txTurret);
+        tab.setEntry("turretVZ", vz);
 
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {

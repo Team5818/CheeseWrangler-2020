@@ -30,6 +30,8 @@ import org.rivierarobotics.subsystems.BasePIDSubsystem;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
 public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
@@ -42,11 +44,5 @@ public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
         this.isAbsolute = isAbsolute;
         this.angle = angle;
         this.turret = turret;
-    }
-
-    @Override
-    public void initialize() {
-        GlobalComponent.getShuffleboard().getTab("TurretHood").setEntry("TargetTicks", (angle * 4096/360) + 3692 );
-        super.initialize();
     }
 }

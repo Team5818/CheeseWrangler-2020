@@ -30,6 +30,8 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -42,8 +44,9 @@ public class VisionAimHood extends CommandBase {
     private final Turret turret;
     private final double extraDistance;
     private final double height;
+    private final RobotShuffleboardTab tab;
 
-    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, double extraDistance, double height) {
+    public VisionAimHood(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
         this.hood = hd;
         this.driveTrain = dt;
         this.flywheel = fly;
@@ -51,6 +54,7 @@ public class VisionAimHood extends CommandBase {
         this.turret = turret;
         this.extraDistance = extraDistance;
         this.height = height;
+        this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel);
     }
 
@@ -67,11 +71,11 @@ public class VisionAimHood extends CommandBase {
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
 
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Dist", dist);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle", hoodAngle);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("vx", vx);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
+        tab.setEntry("Dist", dist);
+        tab.setEntry("hoodAngle", hoodAngle);
+        tab.setEntry("vx", vx);
+        tab.setEntry("vxz", vxz);
+        tab.setEntry("ballVel", ballVel);
 
 
         if (turret.isAutoAimEnabled()) {
@@ -80,17 +84,17 @@ public class VisionAimHood extends CommandBase {
                     //Close Shot
                     hood.setAngle(90 - hoodAngle);
                     flywheel.setVelocity(ShooterConstants.getShooterMinVelocity());
-                    GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
+                    tab.setEntry("Target: ", "Close Shot");
                 } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                     //Long Shot
                     hood.setAngle(90 - (33 + 0.1 * dist));
                     flywheel.setVelocity(ShooterConstants.getShooterMaxVelocity());
-                    GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
+                    tab.setEntry("Target: ", "Long Shot");
                 } else {
                     //Calculated Shot
                     hood.setAngle(90 - hoodAngle);
                     flywheel.setVelocity(encoderVelocity);
-                    GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+                    tab.setEntry("Target: ", "Calculated Shot");
                 }
             }
         }

@@ -49,6 +49,8 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -61,9 +63,10 @@ public class CalcAim extends CommandBase {
     private final Turret turret;
     private final PositionTracker tracker;
     private final double extraDistance;
+    private final RobotShuffleboardTab tab;
 
     public CalcAim(@Provided Hood hood, @Provided DriveTrain dt, @Provided Flywheel flywheel,
-                   @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker,
+                   @Provided VisionUtil vision, @Provided Turret turret, @Provided PositionTracker tracker, @Provided RobotShuffleboard shuffleboard,
                    double extraDistance) {
         this.hood = hood;
         this.driveTrain = dt;
@@ -72,13 +75,14 @@ public class CalcAim extends CommandBase {
         this.turret = turret;
         this.tracker = tracker;
         this.extraDistance = extraDistance;
+        this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").clear();
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "CalcAim");
+        tab.clear();
+        tab.setEntry("Aim Mode: ", "CalcAim");
         double y = ShooterConstants.getYVelocityConstant();
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
@@ -94,9 +98,9 @@ public class CalcAim extends CommandBase {
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
         double captainKalbag = Math.toDegrees(captainKalbag(xFromGoal, zFromGoal));
 
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Change In Angle", captainKalbag);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("BallVel", ballVel);
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle ", hoodAngle);
+        tab.setEntry("Change In Angle", captainKalbag);
+        tab.setEntry("BallVel", ballVel);
+        tab.setEntry("hoodAngle ", hoodAngle);
 
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {

@@ -74,7 +74,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard) {
-        return new Turret(TURRET_TALON, command, gyro, vision);
+        return new Turret(TURRET_TALON, command, gyro, vision, shuffleboard);
     }
 
     @Provides
@@ -120,8 +120,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, command);
+    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command, @Provided RobotShuffleboard shuffleboard) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, command, shuffleboard);
     }
 
     @Provides

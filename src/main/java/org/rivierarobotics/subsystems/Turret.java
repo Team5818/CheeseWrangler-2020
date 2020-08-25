@@ -23,12 +23,15 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -45,12 +48,14 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final NavXGyro gyro;
     private final VisionUtil vision;
     private static boolean isAutoAimEnabled;
+    private final RobotShuffleboardTab tab;
 
 
-    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
+    public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
+        this.tab = shuffleboard.getTab("TurretHood");
         turretTalon = new WPI_TalonSRX(id);
         turretTalon.configFactoryDefault();
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
@@ -86,7 +91,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
-        GlobalComponent.getShuffleboard().getTab("TurretHood").setEntry("txTurret", txTurret);
+        tab.setEntry("txTurret", txTurret);
         return txTurret;
     }
 
@@ -95,7 +100,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
         double ticks = MathUtil.limit(
                 ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("PosTicks", ticks);
+        tab.setEntry("PosTicks", ticks);
         //turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
@@ -110,12 +115,12 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
         //!!Experimental Version of Code!!
 
-        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("SetTurretAngle", angle);
+        tab.setEntry("SetTurretAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("SetTurAngInTicks", ticks);
+        tab.setEntry("SetTurAngInTicks", ticks);
 
         ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
+        tab.setEntry("SetTicks", ticks);
         turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 

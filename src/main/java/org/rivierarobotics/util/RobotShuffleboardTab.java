@@ -46,10 +46,11 @@ public class RobotShuffleboardTab {
     }
 
     public RobotShuffleboardTab clear() {
-        for (NetworkTableEntry entry : entries.values()) {
-            entry.delete();
-        }
-        entries.clear();
+        //TODO fix this
+//        for (NetworkTableEntry entry : entries.values()) {
+//            entry.delete();
+//        }
+//        entries.clear();
         return this;
     }
 

@@ -34,7 +34,7 @@ public enum CheeseSlot {
     }
 
     public boolean hasBall() {
-        return sensor.get();
+        return !sensor.get();
     }
 
     public static CheeseSlot slotOfNum(int num) {

@@ -25,14 +25,16 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class VisionAim extends ParallelCommandGroup {
-    public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").clear();
-        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
+    public VisionAim(VisionTarget target, @Provided RobotShuffleboard shuffleboard, @Provided VisionCommands vision) {
+        shuffleboard.getTab("Auto Aim").clear();
+        shuffleboard.getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
         if (target == VisionTarget.TOP) {
             addCommands(vision.autoAimHood(0, ShooterConstants.getTopHeight()),
                 vision.autoAimTurret(0, ShooterConstants.getTopHeight()));
