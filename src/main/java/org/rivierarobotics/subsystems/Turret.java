@@ -24,11 +24,12 @@ import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.turret.TurretControl;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NavXGyro;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
@@ -43,6 +44,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
+    private static boolean isAutoAimEnabled;
+
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision) {
         this.command = command;
@@ -68,23 +71,31 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK + (gyro.getYaw()));
     }
 
+    public void enableAutoAim() {
+        isAutoAimEnabled = true;
+    }
+
+    public void disableAutoAim() {
+        isAutoAimEnabled = false;
+    }
+
     public double getAngle() {
         return (getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK;
     }
 
     public double getTxTurret(double distance, double extraDistance) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
-        double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterUtil.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
-        Robot.getShuffleboard().getTab("TurretHood").setEntry("txTurret", txTurret);
+        double txTurret = Math.atan2(distance * Math.sin(tx) + ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
+        GlobalComponent.getShuffleboard().getTab("TurretHood").setEntry("txTurret", txTurret);
         return txTurret;
     }
 
-    public void setPositionTicks(int positionTicks) {
+    public void setPositionTicks(double positionTicks) {
         //!!Experimental Version of Code!!
 
         double ticks = MathUtil.limit(
                 ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-        Robot.getShuffleboard().getTab("Turret").setEntry("PosTicks", ticks);
+        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("PosTicks", ticks);
         //turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
@@ -99,12 +110,12 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
         //!!Experimental Version of Code!!
 
-        Robot.getShuffleboard().getTab("Turret").setEntry("SetTurretAngle", angle);
+        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("SetTurretAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        Robot.getShuffleboard().getTab("Turret").setEntry("SetTurAngInTicks", ticks);
+        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("SetTurAngInTicks", ticks);
 
         ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-        Robot.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
+        GlobalComponent.getShuffleboard().getTab("Turret").setEntry("SetTicks", ticks);
         turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
@@ -114,6 +125,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     public double getMinAngleInTicks() {
         return MIN_ANGLE * TICKS_PER_DEGREE;
+    }
+
+    public double getAnglesOrInchesToTicks() {
+        return 4096/360.0;
     }
 
     @Override
@@ -144,5 +159,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
+    }
+
+    public boolean isAutoAimEnabled() {
+        return isAutoAimEnabled;
     }
 }

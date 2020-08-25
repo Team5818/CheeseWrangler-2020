@@ -42,13 +42,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PositionTracker;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -76,36 +77,36 @@ public class CalcAim extends CommandBase {
 
     @Override
     public void execute() {
-        Robot.getShuffleboard().getTab("Auto Aim").clear();
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "CalcAim");
-        double y = ShooterUtil.getYVelocityConstant();
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").clear();
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "CalcAim");
+        double y = ShooterConstants.getYVelocityConstant();
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
         double zFromGoal = pos[0];
         double dist = Math.sqrt(Math.pow(xFromGoal, 2) + Math.pow(zFromGoal, 2));
         SmartDashboard.putNumber("dist", dist);
-        double t = ShooterUtil.getTConstant();
+        double t = ShooterConstants.getTConstant();
         double vx = (extraDistance + xFromGoal) / t - driveTrain.getYVelocity();
         double vz = zFromGoal / t - driveTrain.getXVelocity();
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(y, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+        double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
         double captainKalbag = Math.toDegrees(captainKalbag(xFromGoal, zFromGoal));
 
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("Change In Angle", captainKalbag);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("BallVel", ballVel);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle ", hoodAngle);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Change In Angle", captainKalbag);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("BallVel", ballVel);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle ", hoodAngle);
 
         if (turret.isAutoAimEnabled()) {
-            if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+            if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot
                 hood.setAngle(90 - hoodAngle);
-                flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMinVelocity()));
-            } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
+            } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot
                 hood.setAngle(90 - (33 + 0.1 * dist));
-                flywheel.setVelocity(ShooterUtil.velocityToTicks(ShooterUtil.getShooterMaxVelocity()));
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMaxVelocity()));
             } else {
                 //Calculated Shot
                 hood.setAngle(90 - hoodAngle);
@@ -117,9 +118,9 @@ public class CalcAim extends CommandBase {
     }
 
     private double captainKalbag(double xFromGoal, double zFromGoal) {
-        double epicTime = 0.1;
-        double xDist = xFromGoal - driveTrain.getYVelocity() * epicTime;
-        double zDist = zFromGoal - driveTrain.getXVelocity() * epicTime;
+        double timeAdvance = 0.1;
+        double xDist = xFromGoal - driveTrain.getYVelocity() * timeAdvance;
+        double zDist = zFromGoal - driveTrain.getXVelocity() * timeAdvance;
         return (1 / (Math.pow((zDist / xDist), 2) + 1)) * ((-driveTrain.getXVelocity() * xDist)
                 - (-driveTrain.getYVelocity() * xDist)) / Math.pow(xDist, 2);
     }

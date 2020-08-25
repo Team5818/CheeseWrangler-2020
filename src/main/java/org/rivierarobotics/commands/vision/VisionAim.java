@@ -23,21 +23,22 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class VisionAim extends ParallelCommandGroup {
     public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
-        Robot.getShuffleboard().getTab("Auto Aim").clear();
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").clear();
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
         if (target == VisionTarget.TOP) {
-            addCommands(vision.autoAimHood(0, ShooterUtil.getTopHeight()),
-                vision.autoAimTurret(0, ShooterUtil.getTopHeight()));
+            addCommands(vision.autoAimHood(0, ShooterConstants.getTopHeight()),
+                vision.autoAimTurret(0, ShooterConstants.getTopHeight()));
         } else {
-            addCommands(vision.autoAimHood(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()),
-                vision.autoAimTurret(ShooterUtil.getDistanceFromOuterToInnerTarget(), ShooterUtil.getTopHeight()));
+            addCommands(vision.autoAimHood(ShooterConstants.getDistanceFromOuterToInnerTarget(), ShooterConstants.getTopHeight()),
+                vision.autoAimTurret(ShooterConstants.getDistanceFromOuterToInnerTarget(), ShooterConstants.getTopHeight()));
         }
     }
 }

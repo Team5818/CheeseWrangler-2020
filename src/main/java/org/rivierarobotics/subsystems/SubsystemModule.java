@@ -74,7 +74,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard) {
-        return new Turret(TURRET_TALON, command, gyro, vision, shuffleboard);
+        return new Turret(TURRET_TALON, command, gyro, vision);
     }
 
     @Provides

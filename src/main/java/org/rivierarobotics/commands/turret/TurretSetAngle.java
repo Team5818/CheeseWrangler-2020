@@ -24,6 +24,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.commands.MotionMagicSetPosition;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.BasePIDSubsystem;
 import org.rivierarobotics.subsystems.Hood;
@@ -45,7 +46,7 @@ public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
 
     @Override
     public void initialize() {
-        Robot.getShuffleboard().getTab("TurretHood").setEntry("TargetTicks", (angle * 4096/360) + 3692 );
+        GlobalComponent.getShuffleboard().getTab("TurretHood").setEntry("TargetTicks", (angle * 4096/360) + 3692 );
         super.initialize();
     }
 }

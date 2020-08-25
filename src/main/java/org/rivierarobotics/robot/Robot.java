@@ -127,8 +127,7 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
         var position = globalComponent.getPositionTracker();
-        boolean[] bta = globalComponent.getBallTracker().getBallArray();
-        var shuffleboard = globalComponent.getShuffleboard();
+        var shuffleboard = GlobalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())

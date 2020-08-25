@@ -24,10 +24,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -50,7 +51,7 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
-        double t = ShooterUtil.getTConstant();
+        double t = ShooterConstants.getTConstant();
         double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
@@ -59,10 +60,10 @@ public class VisionAimTurret extends CommandBase {
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
 
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("TurretAngleAdj", turretAngleAdj);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("turretAngle", turretAngle);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("txTurret", txTurret);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("turretVZ", vz);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("TurretAngleAdj", turretAngleAdj);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("turretAngle", turretAngle);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("txTurret", txTurret);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("turretVZ", vz);
 
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {

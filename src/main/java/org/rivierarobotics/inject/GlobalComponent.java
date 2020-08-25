@@ -79,7 +79,9 @@ public abstract class GlobalComponent {
 
     public abstract NavXGyro getNavXGyro();
 
-    public abstract RobotShuffleboard getShuffleboard();
+    public static RobotShuffleboard getShuffleboard() {
+        return null;
+    }
 
     public abstract ButtonConfiguration getButtonConfiguration();
 

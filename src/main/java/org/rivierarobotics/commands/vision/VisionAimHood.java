@@ -24,12 +24,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.ShooterUtil;
+import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -55,8 +56,8 @@ public class VisionAimHood extends CommandBase {
 
     @Override
     public void execute() {
-        double vy = ShooterUtil.getYVelocityConstant();  //Vy constant
-        double t = ShooterUtil.getTConstant();   //time constant
+        double vy = ShooterConstants.getYVelocityConstant();  //Vy constant
+        double t = ShooterConstants.getTConstant();   //time constant
         double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
@@ -64,32 +65,32 @@ public class VisionAimHood extends CommandBase {
         double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)) + (0.5 * 0.2 * t * t);
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
-        double encoderVelocity = ShooterUtil.velocityToTicks(ballVel);
+        double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
 
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("Dist", dist);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle", hoodAngle);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("vx", vx);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
-        Robot.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Dist", dist);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("hoodAngle", hoodAngle);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("vx", vx);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("vxz", vxz);
+        GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("ballVel", ballVel);
 
 
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") ==  1) {
-                if (hoodAngle > ShooterUtil.getMaxHoodAngle()) {
+                if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                     //Close Shot
                     hood.setAngle(90 - hoodAngle);
-                    flywheel.setVelocity(ShooterUtil.getShooterMinVelocity());
-                    Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
-                } else if (ballVel > ShooterUtil.getMaxBallVelocity()) {
+                    flywheel.setVelocity(ShooterConstants.getShooterMinVelocity());
+                    GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Close Shot");
+                } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                     //Long Shot
                     hood.setAngle(90 - (33 + 0.1 * dist));
-                    flywheel.setVelocity(ShooterUtil.getShooterMaxVelocity());
-                    Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
+                    flywheel.setVelocity(ShooterConstants.getShooterMaxVelocity());
+                    GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Long Shot");
                 } else {
                     //Calculated Shot
                     hood.setAngle(90 - hoodAngle);
                     flywheel.setVelocity(encoderVelocity);
-                    Robot.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
+                    GlobalComponent.getShuffleboard().getTab("Auto Aim").setEntry("Target: ", "Calculated Shot");
                 }
             }
         }
