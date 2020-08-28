@@ -47,10 +47,14 @@ public class RobotShuffleboardTab {
 
     public RobotShuffleboardTab clear() {
         //TODO fix this
-//        for (NetworkTableEntry entry : entries.values()) {
-//            entry.delete();
-//        }
-//        entries.clear();
+        for (Map.Entry<String, NetworkTableEntry> entry : entries.entrySet()) {
+            NetworkTableEntry value = entry.getValue();
+            if (value.exists() && value.isValid()) {
+                value.delete();
+            }
+            entries.remove(entry.getKey());
+        }
+        entries.clear();
         return this;
     }
 
