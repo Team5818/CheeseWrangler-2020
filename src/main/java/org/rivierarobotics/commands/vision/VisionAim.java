@@ -25,6 +25,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
@@ -35,6 +36,9 @@ public class VisionAim extends ParallelCommandGroup {
     public VisionAim(VisionTarget target, @Provided RobotShuffleboard shuffleboard, @Provided VisionCommands vision) {
         shuffleboard.getTab("Auto Aim").clear();
         shuffleboard.getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
+
+        Turret.isAbsoluteAngle = true;
+
         if (target == VisionTarget.TOP) {
             addCommands(vision.autoAimHood(0, ShooterConstants.getTopHeight()),
                 vision.autoAimTurret(0, ShooterConstants.getTopHeight()));

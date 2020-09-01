@@ -39,7 +39,7 @@ import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 3692;
-    private static final double MAX_ANGLE = 25;
+    private static final double MAX_ANGLE = 125;
     private static final double MIN_ANGLE = -120;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
     private static final double DEGREES_PER_TICK = 360.0 / 4096;
@@ -111,17 +111,28 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     public void setAngle(double angle) {
         angle = MathUtil.wrapToCircle(angle);
         if(isAbsoluteAngle){
-            angle += MathUtil.wrapToCircle(gyro.getYaw());
+            angle -= MathUtil.wrapToCircle(gyro.getYaw());
         }
 
         tab.setEntry("TurretSetAngle", angle);
 
-        double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        ticks = MathUtil.limit(ticks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        double initialTicks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
 
-        tab.setEntry("TurretSetTick", ticks);
+        tab.setEntry("ticks", initialTicks);
 
-        turretTalon.set(ControlMode.MotionMagic, ticks);
+        double ticks = MathUtil.limit(initialTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+
+        if(ticks == ZERO_TICKS + getMaxAngleInTicks()){
+            initialTicks -= 4096;
+        } else if (ticks == ZERO_TICKS + getMinAngleInTicks()) {
+            initialTicks += 4096;
+        }
+
+        initialTicks = MathUtil.limit(initialTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+
+        tab.setEntry("TurretSetTick", initialTicks);
+
+        turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
     public double getMaxAngleInTicks() {

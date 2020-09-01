@@ -97,6 +97,8 @@ public class VisionAimHoodFlywheel extends CommandBase {
                     tab.setEntry("Target: ", "Calculated Shot");
                 }
             }
+        } else {
+            flywheel.setVelocity(0);
         }
 
     }

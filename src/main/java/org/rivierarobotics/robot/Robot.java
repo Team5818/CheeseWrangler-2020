@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
@@ -132,7 +133,8 @@ public class Robot extends TimedRobot {
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
             .setEntry("Hood Abs Angle", hood.getAngle())
             .setEntry("Turret Abs Angle", turret.getAbsoluteAngle())
-            .setEntry("Turret Pos Ticks", turret.getPositionTicks());
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
+            .setEntry("isAbsolute", Turret.isAbsoluteAngle);
 
         shuffleboard.getTab("Auto Aim");
 

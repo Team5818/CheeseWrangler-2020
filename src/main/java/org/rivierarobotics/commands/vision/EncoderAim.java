@@ -92,6 +92,8 @@ public class EncoderAim extends CommandBase {
         tab.setEntry("vxz", vxz);
         tab.setEntry("ballVel", ballVel);
 
+        Turret.isAbsoluteAngle = true;
+
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot
@@ -110,6 +112,8 @@ public class EncoderAim extends CommandBase {
                 tab.setEntry("Target: ", "Calculated Shot");
             }
             turret.setAngle(turretAngle);
+        } else {
+            flywheel.setVelocity(0);
         }
     }
 

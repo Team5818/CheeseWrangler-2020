@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,17 +46,9 @@ public class RobotShuffleboardTab {
         return this;
     }
 
-    public RobotShuffleboardTab clear() {
+    public void clear() {
         //TODO fix this
-        for (Map.Entry<String, NetworkTableEntry> entry : entries.entrySet()) {
-            NetworkTableEntry value = entry.getValue();
-            if (value.exists() && value.isValid()) {
-                value.delete();
-            }
-            entries.remove(entry.getKey());
-        }
-        entries.clear();
-        return this;
+
     }
 
     public NetworkTableEntry getEntry(String title) {
