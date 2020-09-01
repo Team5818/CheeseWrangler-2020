@@ -33,7 +33,7 @@ public class CWMoveSlotToIndex extends BasePIDSetPosition<CheeseWheel> {
     private final CheeseWheel.Direction direction;
 
     public CWMoveSlotToIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.AngleOffset mode, CheeseSlot slot, CheeseWheel.Direction direction) {
-        super(cheeseWheel, 15, mode.cwTicks(), 5);
+        super(cheeseWheel, 15, mode.getAssocCWTicks(), 5);
         this.mode = mode;
         this.slot = slot;
         this.direction = direction;
@@ -41,6 +41,6 @@ public class CWMoveSlotToIndex extends BasePIDSetPosition<CheeseWheel> {
 
     @Override
     protected double getPositionTicks() {
-        return subsystem.getTickPosOfSlot(slot);
+        return subsystem.getSlotTickPos(slot);
     }
 }

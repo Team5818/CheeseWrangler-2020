@@ -13,15 +13,13 @@ public class CameraFlip extends Thread {
 
     @Override
     public void run() {
-        UsbCamera camera = CameraServer.getInstance().startAutomaticCapture();
-//        camera.setVideoMode(VideoMode.PixelFormat.kMJPEG, 320, 240, 60);
         CvSink cvSink = CameraServer.getInstance().getVideo();
         CvSource outputStream = CameraServer.getInstance().putVideo("Secondary", 320, 240);
 
         Mat source = new Mat();
         Mat output = new Mat();
 
-        while(!Thread.interrupted()) {
+        while (!Thread.interrupted()) {
             if (cvSink.grabFrame(source) == 0) {
                 continue;
             }

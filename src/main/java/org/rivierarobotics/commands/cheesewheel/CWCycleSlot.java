@@ -20,16 +20,14 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 
 public class CWCycleSlot extends BasePIDSetPosition<CheeseWheel> {
     public CWCycleSlot(CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requireOpen) {
-        super(cheeseWheel, 10, cheeseWheel.getTickPosOfSlot(
+        super(cheeseWheel, 10, cheeseWheel.getSlotTickPos(
             CheeseSlot.slotOfNum((cheeseWheel.getClosestSlot(mode, direction, requireOpen).ordinal()
-                + (direction == CheeseWheel.Direction.BACKWARDS ? 4 : 1)) % 5)), 2);
+                + (direction == CheeseWheel.Direction.BACKWARDS ? 4 : 1)) % 5), direction), 5);
     }
 }

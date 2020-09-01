@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
             //    flyingWheelman.schedule();
             //}
 
-            globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
+            globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
     }
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_OFF);
+        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ShootNWedges extends SequentialCommandGroup {
             addCommands(
                     new ParallelDeadlineGroup(
                             ejectorCommands.setPower(1.0),
-                            cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.SHOOTING, false)
+                            cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false)
                     ),
                     ejectorCommands.setPower(0.0)
             );

@@ -43,6 +43,6 @@ public enum CheeseSlot {
                 return slot;
             }
         }
-        return null;
+        return CheeseSlot.values()[0];
     }
 }

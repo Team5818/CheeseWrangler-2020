@@ -49,7 +49,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requireOpen) {
         CheeseSlot min = CheeseSlot.values()[0];
         for (CheeseSlot slot : CheeseSlot.values()) {
-            double posDiff = offset.cwTicks() - getTickPosOfSlot(slot);
+            double posDiff = offset.getAssocCWTicks() - getSlotTickPos(slot);
             boolean passDir;
             switch (direction) {
                 case FORWARDS:
@@ -64,7 +64,8 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
                 default:
                     throw new IllegalArgumentException("Cannot handle this direction");
             }
-            if ((!requireOpen || slot.hasBall()) && passDir && Math.abs(posDiff) < Math.abs(offset.cwTicks() - getTickPosOfSlot(min))) {
+            if ((!requireOpen || slot.hasBall()) && passDir
+                && Math.abs(posDiff) < Math.abs(offset.getAssocCWTicks() - getSlotTickPos(min))) {
                 min = slot;
             }
         }
@@ -72,13 +73,38 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public boolean onSlot(AngleOffset offset) {
-        return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES, getTickPosOfSlot(getClosestSlot(offset, Direction.ANY, false)), 15);
+        return onSlot(offset, 15);
     }
 
-    public double getTickPosOfSlot(CheeseSlot slot) {
-        double pos = getPositionTicks() + (slot.ordinal() * INDEX_SPACING) - TICKS_AT_ZERO_DEGREES;
-        tab.setEntry("tickpos", pos + " FOR " + slot.ordinal());
-        return pos;
+    public boolean onSlot(AngleOffset offset, double tolerance) {
+        return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES,
+            getSlotTickPos(getClosestSlot(offset, Direction.ANY, false)), tolerance);
+    }
+
+    public double getSlotTickPos(CheeseSlot slot) {
+        return getSlotTickPos(slot, Direction.ANY);
+    }
+
+    public double getSlotTickPos(CheeseSlot slot, Direction direction) {
+        double slotPos = slot.ordinal() * INDEX_SPACING;
+        double cwPos = getPositionTicks() - TICKS_AT_ZERO_DEGREES;
+        switch (direction) {
+            case FORWARDS:
+                cwPos += slotPos;
+                break;
+            case BACKWARDS:
+                cwPos -= slotPos;
+                break;
+            case ANY:
+            default:
+                double modPos = cwPos % 4096;
+                double add = Math.abs(modPos + slotPos);
+                double subtr = Math.abs(modPos - slotPos);
+                cwPos += (((subtr > add) ? -1 : 1) * slotPos);
+                break;
+        }
+        tab.setEntry("tickpos", cwPos + " FOR " + slot.ordinal());
+        return cwPos;
     }
 
     @Override
@@ -93,27 +119,19 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public enum AngleOffset {
-        SHOOTING(36), COLLECT_FRONT(106), COLLECT_BACK(253);
+        //TODO change angle offsets to new values (0-ctr)
+        COLLECT_FRONT(106, Direction.FORWARDS), COLLECT_BACK(253, Direction.BACKWARDS);
 
         public final int angle;
+        public final Direction direction;
 
-        AngleOffset(int angle) {
+        AngleOffset(int angle, Direction direction) {
             this.angle = angle;
+            this.direction = direction;
         }
 
-        public double cwTicks() {
+        public double getAssocCWTicks() {
             return (this.angle * 4096 / 360.0) - TICKS_AT_ZERO_DEGREES;
-        }
-
-        public Direction getAssocDir() {
-            switch (this) {
-                case COLLECT_FRONT:
-                    return Direction.FORWARDS;
-                case COLLECT_BACK:
-                    return Direction.BACKWARDS;
-                default:
-                    throw new IllegalArgumentException("Invalid assoc direction");
-            }
         }
     }
 

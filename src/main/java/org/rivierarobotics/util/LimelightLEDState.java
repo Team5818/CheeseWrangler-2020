@@ -21,14 +21,5 @@
 package org.rivierarobotics.util;
 
 public enum LimelightLEDState {
-    FORCE_ON(3),
-    FORCE_OFF(1),
-    FORCE_BLINK(2),
-    INHERIT(0);
-
-    public final int set;
-
-    LimelightLEDState(int set) {
-        this.set = set;
-    }
+    INHERIT, FORCE_OFF, FORCE_BLINK, FORCE_ON
 }
