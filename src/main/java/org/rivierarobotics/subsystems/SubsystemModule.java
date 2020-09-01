@@ -120,8 +120,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, command);
+    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command, @Provided RobotShuffleboard shuffleboard) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, command, shuffleboard);
     }
 
     @Provides
