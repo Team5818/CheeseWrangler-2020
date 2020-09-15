@@ -37,7 +37,7 @@ public class BasePIDSetPosition<T extends BasePIDSubsystem> extends CommandBase 
         this.subsystem = subsystem;
         this.maxErrorTicks = maxErrorTicks;
         posTemp = positionTicks;
-        this.timeout = timeout;
+        this.timeout = timeout * 1000;
         addRequirements(subsystem);
     }
 
