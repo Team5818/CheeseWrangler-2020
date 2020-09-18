@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
@@ -51,10 +52,10 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public int getIndex(AngleOffset offset) {
-        int min = 360;
-        double minAngle = 360;
-        for (int i = 0; i <= 5; i++) {
-            double ang = Math.abs(getPositionTicksWithOffset(offset)  - (i * INDEX_SPACING));
+        int min = 0;
+        double minAngle = 4096;
+        for (int i = 0; i < 6; i++) {
+            double ang = Math.abs((getPositionTicksWithOffset(offset) % 4096.0)  - (i * INDEX_SPACING));
             if (minAngle > ang) {
                 minAngle = ang;
                 if (i == 5) {
@@ -70,6 +71,10 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requireOpen) {
         CheeseSlot min = CheeseSlot.values()[0];
         for (CheeseSlot slot : CheeseSlot.values()) {
+            if(slot.ordinal() == getIndex(offset) && slot.ordinal() == 0){
+                min = CheeseSlot.values()[1];
+                break;
+            }
             double posDiff = getSlotTickPos(slot) - getPositionTicksWithOffset(offset);
             boolean passDir;
             switch (direction) {
@@ -85,8 +90,8 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
                 default:
                     throw new IllegalArgumentException("Cannot handle this direction");
             }
-            if ((!requireOpen || slot.hasBall()) && getIndex(offset) != slot.ordinal() && passDir
-                && Math.abs(posDiff) < Math.abs(getSlotTickPos(min) - getPositionTicks())) {
+            if ((!requireOpen || slot.hasBall()) && getIndex(offset) != slot.ordinal() && passDir &&
+                    Math.abs(posDiff) < Math.abs(getSlotTickPos(min) - getPositionTicksWithOffset(offset))) {
                 min = slot;
             }
         }
@@ -103,20 +108,40 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
-        return getSlotTickPos(slot, AngleOffset.SHOOTER);
+        return getSlotTickPos(slot, AngleOffset.SHOOTER, Direction.ANY);
     }
 
-    // Direction is based off of getClosestSlot, Offset is necessary to return the correct values.
-    public double getSlotTickPos(CheeseSlot slot, AngleOffset offset) {
+    public double getSlotTickPos(CheeseSlot slot, AngleOffset offset, Direction direction) {
         int index = slot.ordinal();
         int offsetIndex = getIndex(offset);
+
+        //this is cringe. i like cringe.
+        double position = MathUtil.wrapToCircle((getPositionTicksWithOffset(offset) % 4096.0) * 360/4096.0) * 4096/360.0;
+
         if (offsetIndex == 4 && index == 0) {
             index = 5;
         } else if (offsetIndex == 0 && index == 4) {
             index = -1;
         }
-        double pos = index * INDEX_SPACING - (getPositionTicksWithOffset(offset) % 4096.0) + getPositionTicks();
-        tab.setEntry("tickpos", pos + " FOR " + slot.ordinal());
+
+        //SPECIAL CASE FOR offsetIndex == 0 because of wrapping not working if it is at like 4050 ticks
+        if(offsetIndex == 0) {
+            boolean isElongatedSide = Math.abs((position % 4096) - 4096) < Math.abs(position);
+            if(isElongatedSide) {
+                position-=4096;
+            }
+        }
+
+        double pos = index * INDEX_SPACING - position + getPositionTicks();
+
+        //DIRECTIONAL MODIFIERS
+        if(direction == Direction.FORWARDS && pos < 0) {
+            pos+=4096;
+        } else if(direction == Direction.BACKWARDS && pos > 0) {
+            pos-=4096;
+        }
+
+        tab.setEntry("pos",pos);
         return pos;
     }
 
