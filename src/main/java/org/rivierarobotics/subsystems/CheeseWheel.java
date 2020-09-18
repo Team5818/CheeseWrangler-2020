@@ -69,29 +69,18 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     // This should be the only thing actually taking a direction
     public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requireOpen) {
-        CheeseSlot min = CheeseSlot.values()[0];
+        CheeseSlot min = CheeseSlot.ZERO;
         for (CheeseSlot slot : CheeseSlot.values()) {
-            if(slot.ordinal() == getIndex(offset) && slot.ordinal() == 0){
-                min = CheeseSlot.values()[1];
+            if (slot.ordinal() == getIndex(offset) && slot.ordinal() == 0) {
+                min = CheeseSlot.ONE;
                 break;
             }
             double posDiff = getSlotTickPos(slot) - getPositionTicksWithOffset(offset);
-            boolean passDir;
-            switch (direction) {
-                case FORWARDS:
-                    passDir = posDiff > 0;
-                    break;
-                case BACKWARDS:
-                    passDir = posDiff < 0;
-                    break;
-                case ANY:
-                    passDir = true;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Cannot handle this direction");
-            }
-            if ((!requireOpen || slot.hasBall()) && getIndex(offset) != slot.ordinal() && passDir &&
-                    Math.abs(posDiff) < Math.abs(getSlotTickPos(min) - getPositionTicksWithOffset(offset))) {
+            boolean passDir = (direction == Direction.FORWARDS && posDiff > 0)
+                    || (direction == Direction.BACKWARDS && posDiff < 0)
+                    || direction == Direction.ANY;
+            if ((!requireOpen || slot.hasBall()) && getIndex(offset) != slot.ordinal() && passDir
+                    && Math.abs(posDiff) < Math.abs(getSlotTickPos(min) - getPositionTicksWithOffset(offset))) {
                 min = slot;
             }
         }
@@ -115,8 +104,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         int index = slot.ordinal();
         int offsetIndex = getIndex(offset);
 
-        //this is cringe. i like cringe.
-        double position = MathUtil.wrapToCircle((getPositionTicksWithOffset(offset) % 4096.0) * 360/4096.0) * 4096/360.0;
+        double position = MathUtil.wrapToCircle((getPositionTicksWithOffset(offset) % 4096), 4096);
 
         if (offsetIndex == 4 && index == 0) {
             index = 5;
@@ -125,24 +113,23 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         }
 
         //SPECIAL CASE FOR offsetIndex == 0 because of wrapping not working if it is at like 4050 ticks
-        if(offsetIndex == 0) {
-            boolean isElongatedSide = Math.abs((position % 4096) - 4096) < Math.abs(position);
-            if(isElongatedSide) {
-                position-=4096;
+        if (offsetIndex == 0) {
+            if (Math.abs((position % 4096) - 4096) < Math.abs(position)) {
+                position -= 4096;
             }
         }
 
-        double pos = index * INDEX_SPACING - position + getPositionTicks();
+        double outPos = (index * INDEX_SPACING) - position + getPositionTicks();
 
         //DIRECTIONAL MODIFIERS
-        if(direction == Direction.FORWARDS && pos < 0) {
-            pos+=4096;
-        } else if(direction == Direction.BACKWARDS && pos > 0) {
-            pos-=4096;
+        if (direction == Direction.FORWARDS && outPos < 0) {
+            outPos += 4096;
+        } else if (direction == Direction.BACKWARDS && outPos > 0) {
+            outPos -= 4096;
         }
 
-        tab.setEntry("pos",pos);
-        return pos;
+        tab.setEntry("pos", outPos);
+        return outPos;
     }
 
     @Override
