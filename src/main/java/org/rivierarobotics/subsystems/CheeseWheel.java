@@ -70,7 +70,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         int modifier = direction == Direction.BACKWARDS ? -1 : 1;
         if (requiresBall) {
             for (int i = 1; i < 5; i++) {
-                CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
+                CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 4));
                 if (slot.hasBall()) {
                     return slot;
                 }
@@ -120,7 +120,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
             }
         }
 
-        double outPos = (index * INDEX_SPACING) - position + getPositionTicks();
+        double outPos = (index * INDEX_SPACING) - position;
 
         //DIRECTIONAL MODIFIERS
         if (direction == Direction.FORWARDS && outPos < 0) {
@@ -129,8 +129,8 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
             outPos -= 4096;
         }
 
-        tab.setEntry("tickpos", outPos + " FOR " + slot.ordinal());
-        return outPos;
+        tab.setEntry("tickpos", (outPos + getPositionTicks()) + " FOR " + slot.ordinal());
+        return outPos + getPositionTicks();
     }
 
     @Override
