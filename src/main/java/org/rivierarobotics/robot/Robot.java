@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
@@ -153,7 +154,8 @@ public class Robot extends TimedRobot {
             .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
             .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
             .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
-            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall());
+            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
+                .setEntry("inde",cw.getIndex(CheeseWheel.AngleOffset.SHOOTER));
 
         SmartDashboard.putData(chooser);
     }

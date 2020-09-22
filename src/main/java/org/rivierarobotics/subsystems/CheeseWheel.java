@@ -75,12 +75,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
                 min = CheeseSlot.ONE;
                 break;
             }
-            double posDiff = getSlotTickPos(slot) - getPositionTicksWithOffset(offset);
+            double posDiff = getSlotTickPos(slot, offset, direction) - getPositionTicksWithOffset(offset);
+            tab.setEntry("posDiff" + slot.ordinal(), posDiff);
             boolean passDir = (direction == Direction.FORWARDS && posDiff > 0)
                     || (direction == Direction.BACKWARDS && posDiff < 0)
                     || direction == Direction.ANY;
             if ((!requireOpen || slot.hasBall()) && getIndex(offset) != slot.ordinal() && passDir
-                    && Math.abs(posDiff) < Math.abs(getSlotTickPos(min) - getPositionTicksWithOffset(offset))) {
+                    && Math.abs(posDiff) < Math.abs(getSlotTickPos(min, offset, direction) - getPositionTicksWithOffset(offset))) {
                 min = slot;
             }
         }
@@ -128,7 +129,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
             outPos -= 4096;
         }
 
-        tab.setEntry("pos", outPos);
+        tab.setEntry("tickpos", outPos + " FOR " + slot.ordinal());
         return outPos;
     }
 
