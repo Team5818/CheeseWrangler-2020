@@ -67,25 +67,33 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return min;
     }
 
-    // This should be the only thing actually taking a direction
-    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requireOpen) {
-        CheeseSlot min = CheeseSlot.ZERO;
-        for (CheeseSlot slot : CheeseSlot.values()) {
-            if (slot.ordinal() == getIndex(offset) && slot.ordinal() == 0) {
-                min = CheeseSlot.ONE;
-                break;
-            }
-            double posDiff = getSlotTickPos(slot, offset, direction) - getPositionTicksWithOffset(offset);
-            tab.setEntry("posDiff" + slot.ordinal(), posDiff);
-            boolean passDir = (direction == Direction.FORWARDS && posDiff > 0)
-                    || (direction == Direction.BACKWARDS && posDiff < 0)
-                    || direction == Direction.ANY;
-            if ((!requireOpen || slot.hasBall()) && getIndex(offset) != slot.ordinal() && passDir
-                    && Math.abs(posDiff) < Math.abs(getSlotTickPos(min, offset, direction) - getPositionTicksWithOffset(offset))) {
-                min = slot;
+    public CheeseSlot searchForNearestSlotWithDirection(AngleOffset offset, Direction direction, boolean hasBall){
+        int modifier = 1;
+        if(direction == Direction.BACKWARDS){
+            modifier = -1;
+        }
+        for(int i = 1; i < 5; i++) {
+            CheeseSlot slot = CheeseSlot.slotOfNum((int)MathUtil.wrapToCircle(getIndex(offset) + i * modifier,5));
+            if(hasBall == slot.hasBall()){
+                return slot;
             }
         }
-        return min;
+        return CheeseSlot.slotOfNum(getIndex(offset));
+    }
+
+    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean hasBall){
+
+        if(direction == Direction.ANY){
+            CheeseSlot forward = searchForNearestSlotWithDirection(offset,Direction.FORWARDS,hasBall);
+            CheeseSlot backward = searchForNearestSlotWithDirection(offset,Direction.BACKWARDS,hasBall);
+            if(Math.abs(getIndex(offset) - forward.ordinal()) <= Math.abs(getIndex(offset) - backward.ordinal())) {
+                return forward;
+            } else {
+                return backward;
+            }
+        }
+
+        return searchForNearestSlotWithDirection(offset,direction,hasBall);
     }
 
     public boolean onSlot(AngleOffset offset) {

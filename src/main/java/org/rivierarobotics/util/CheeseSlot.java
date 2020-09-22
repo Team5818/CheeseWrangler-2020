@@ -31,13 +31,11 @@ public enum CheeseSlot {
     private final DigitalInput sensor;
 
     CheeseSlot() {
-        SmartDashboard.putNumber("ball" + this.ordinal(),SENSOR_DIO_PIN_OFFSET + (5 - this.ordinal()));
         if(this.ordinal() == 0){
             this.sensor = new DigitalInput(5);
         } else {
             this.sensor = new DigitalInput(SENSOR_DIO_PIN_OFFSET + (5 - this.ordinal()));
         }
-
     }
 
     public boolean hasBall() {
