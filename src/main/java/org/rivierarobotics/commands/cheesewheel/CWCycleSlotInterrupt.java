@@ -29,18 +29,18 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 public class CWCycleSlotInterrupt extends InstantCommand {
     private final CheeseWheel.Direction direction;
     private final CheeseWheel.AngleOffset mode;
-    private final boolean requireOpen;
+    private final boolean requiresBall;
     private final CheeseWheel cheeseWheel;
 
-    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requireOpen) {
+    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requiresBall) {
         this.cheeseWheel = cheeseWheel;
         this.direction = direction;
         this.mode = mode;
-        this.requireOpen = requireOpen;
+        this.requiresBall = requiresBall;
     }
 
     @Override
     public void execute() {
-        new CWCycleSlot(cheeseWheel, direction, mode, requireOpen).schedule();
+        new CWCycleSlot(cheeseWheel, direction, mode, requiresBall).schedule();
     }
 }

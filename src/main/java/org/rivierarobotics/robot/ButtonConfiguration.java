@@ -67,13 +67,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.cheeseWheel().shootNWedges(5));
 
         new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false), true);
-        new JoystickButton(coDriverButtons, 3)
                 .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, true), true);
+        new JoystickButton(coDriverButtons, 3)
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false), true);
         new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false), true);
-        new JoystickButton(coDriverButtons, 6)
                 .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, true), true);
+        new JoystickButton(coDriverButtons, 6)
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false), true);
         new JoystickButton(coDriverButtons, 7)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 8)

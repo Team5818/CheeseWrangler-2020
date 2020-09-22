@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
@@ -47,7 +46,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public double getPositionTicksWithOffset(AngleOffset offset) {
+    public double getOffsetPositionTicks(AngleOffset offset) {
         return getPositionTicks() - offset.getAssocCWTicks();
     }
 
@@ -55,7 +54,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         int min = 0;
         double minAngle = 4096;
         for (int i = 0; i < 6; i++) {
-            double ang = Math.abs((getPositionTicksWithOffset(offset) % 4096.0)  - (i * INDEX_SPACING));
+            double ang = Math.abs((getOffsetPositionTicks(offset) % 4096.0)  - (i * INDEX_SPACING));
             if (minAngle > ang) {
                 minAngle = ang;
                 if (i == 5) {
@@ -67,33 +66,26 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return min;
     }
 
-    public CheeseSlot searchForNearestSlotWithDirection(AngleOffset offset, Direction direction, boolean hasBall){
-        int modifier = 1;
-        if(direction == Direction.BACKWARDS){
-            modifier = -1;
-        }
-        for(int i = 1; i < 5; i++) {
-            CheeseSlot slot = CheeseSlot.slotOfNum((int)MathUtil.wrapToCircle(getIndex(offset) + i * modifier,5));
-            if(hasBall == slot.hasBall()){
-                return slot;
+    public CheeseSlot searchForNearestSlotWithDirection(AngleOffset offset, Direction direction, boolean requiresBall) {
+        int modifier = direction == Direction.BACKWARDS ? -1 : 1;
+        if (requiresBall) {
+            for (int i = 1; i < 5; i++) {
+                CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
+                if (slot.hasBall()) {
+                    return slot;
+                }
             }
         }
         return CheeseSlot.slotOfNum(getIndex(offset));
     }
 
-    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean hasBall){
-
-        if(direction == Direction.ANY){
-            CheeseSlot forward = searchForNearestSlotWithDirection(offset,Direction.FORWARDS,hasBall);
-            CheeseSlot backward = searchForNearestSlotWithDirection(offset,Direction.BACKWARDS,hasBall);
-            if(Math.abs(getIndex(offset) - forward.ordinal()) <= Math.abs(getIndex(offset) - backward.ordinal())) {
-                return forward;
-            } else {
-                return backward;
-            }
+    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requiresBall) {
+        if (direction == Direction.ANY) {
+            CheeseSlot forward = searchForNearestSlotWithDirection(offset, Direction.FORWARDS, requiresBall);
+            CheeseSlot backward = searchForNearestSlotWithDirection(offset, Direction.BACKWARDS, requiresBall);
+            return Math.abs(getIndex(offset) - forward.ordinal()) <= Math.abs(getIndex(offset) - backward.ordinal()) ? forward : backward;
         }
-
-        return searchForNearestSlotWithDirection(offset,direction,hasBall);
+        return searchForNearestSlotWithDirection(offset, direction, requiresBall);
     }
 
     public boolean onSlot(AngleOffset offset) {
@@ -106,14 +98,14 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
-        return getSlotTickPos(slot, AngleOffset.SHOOTER, Direction.ANY);
+        return getSlotTickPos(slot, AngleOffset.COLLECT_FRONT, Direction.ANY);
     }
 
     public double getSlotTickPos(CheeseSlot slot, AngleOffset offset, Direction direction) {
         int index = slot.ordinal();
         int offsetIndex = getIndex(offset);
 
-        double position = MathUtil.wrapToCircle((getPositionTicksWithOffset(offset) % 4096), 4096);
+        double position = MathUtil.wrapToCircle((getOffsetPositionTicks(offset) % 4096), 4096);
 
         if (offsetIndex == 4 && index == 0) {
             index = 5;

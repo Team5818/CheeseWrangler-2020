@@ -31,11 +31,9 @@ public enum CheeseSlot {
     private final DigitalInput sensor;
 
     CheeseSlot() {
-        if(this.ordinal() == 0){
-            this.sensor = new DigitalInput(5);
-        } else {
-            this.sensor = new DigitalInput(SENSOR_DIO_PIN_OFFSET + (5 - this.ordinal()));
-        }
+        //TODO redo the green labels on the CW so we can revert this to below
+        // this.sensor = new DigitalInput(SENSOR_DIO_PIN_OFFSET + this.ordinal());
+        this.sensor = new DigitalInput(this.ordinal() == 0 ? 5 : SENSOR_DIO_PIN_OFFSET + 5 - this.ordinal());
     }
 
     public boolean hasBall() {
@@ -43,11 +41,6 @@ public enum CheeseSlot {
     }
 
     public static CheeseSlot slotOfNum(int num) {
-        for (CheeseSlot slot : CheeseSlot.values()) {
-            if (slot.ordinal() == num) {
-                return slot;
-            }
-        }
-        return CheeseSlot.values()[0];
+        return CheeseSlot.values()[num];
     }
 }
