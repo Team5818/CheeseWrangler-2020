@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
@@ -67,13 +68,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.cheeseWheel().shootNWedges(5));
 
         new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, true), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
         new JoystickButton(coDriverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER), true);
         new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, true), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
         new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER), true);
         new JoystickButton(coDriverButtons, 7)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 8)

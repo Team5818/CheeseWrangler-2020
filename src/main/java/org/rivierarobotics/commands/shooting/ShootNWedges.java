@@ -27,6 +27,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {
@@ -36,9 +37,10 @@ public class ShootNWedges extends SequentialCommandGroup {
 
         for (int i = 0; i < wedges; i++) {
             addCommands(
+                    // TODO change the CheeseSlot.State to reflect whether we want to shoot X balls or X slots
                     new ParallelDeadlineGroup(
                             ejectorCommands.setPower(1.0),
-                            cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, false)
+                            cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.BALL)
                     ),
                     ejectorCommands.setPower(0.0)
             );

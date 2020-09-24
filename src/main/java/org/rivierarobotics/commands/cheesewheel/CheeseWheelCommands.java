@@ -49,8 +49,8 @@ public class CheeseWheelCommands {
         this.all5ShootCreator = all5ShootCreator;
     }
 
-    public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requireOpen) {
-        return cycleSlotCreator.create(direction, mode, requireOpen);
+    public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
+        return cycleSlotCreator.create(direction, mode, requiredState);
     }
 
     public CWSetPosition setPosition(int ticks) {

@@ -43,4 +43,8 @@ public enum CheeseSlot {
     public static CheeseSlot slotOfNum(int num) {
         return CheeseSlot.values()[num];
     }
+
+    public enum State {
+        BALL, NO_BALL, EITHER
+    }
 }

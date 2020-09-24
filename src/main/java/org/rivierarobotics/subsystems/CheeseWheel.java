@@ -66,24 +66,26 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return min;
     }
 
-    public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, boolean requiresBall) {
+    public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
         int modifier = direction == Direction.BACKWARDS ? -1 : 1;
         for (int i = 1; i < 5; i++) {
             CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 4));
-            if (slot.hasBall() == requiresBall) {
+            if (requiredState == CheeseSlot.State.EITHER
+                    || (requiredState == CheeseSlot.State.BALL && slot.hasBall())
+                    || (requiredState == CheeseSlot.State.NO_BALL && !slot.hasBall())) {
                 return slot;
             }
         }
         return CheeseSlot.slotOfNum(getIndex(offset));
     }
 
-    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requiresBall) {
+    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
         if (direction == Direction.ANY) {
-            CheeseSlot forward = getSlotWithDirection(offset, Direction.FORWARDS, requiresBall);
-            CheeseSlot backward = getSlotWithDirection(offset, Direction.BACKWARDS, requiresBall);
+            CheeseSlot forward = getSlotWithDirection(offset, Direction.FORWARDS, requiredState);
+            CheeseSlot backward = getSlotWithDirection(offset, Direction.BACKWARDS, requiredState);
             return Math.abs(getIndex(offset) - forward.ordinal()) <= Math.abs(getIndex(offset) - backward.ordinal()) ? forward : backward;
         }
-        return getSlotWithDirection(offset, direction, requiresBall);
+        return getSlotWithDirection(offset, direction, requiredState);
     }
 
     public boolean onSlot(AngleOffset offset) {
@@ -92,7 +94,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     public boolean onSlot(AngleOffset offset, double tolerance) {
         return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES,
-            getSlotTickPos(getClosestSlot(offset, Direction.ANY, false)), tolerance);
+            getSlotTickPos(getClosestSlot(offset, Direction.ANY, CheeseSlot.State.EITHER)), tolerance);
     }
 
     public double getSlotTickPos(CheeseSlot slot) {

@@ -26,6 +26,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
+import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
@@ -63,7 +64,7 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void initialize() {
-        if (!cheeseWheel.onSlot(mode) || cheeseWheel.getClosestSlot(mode, mode.direction, false).hasBall()) {
+        if (!cheeseWheel.onSlot(mode) || cheeseWheel.getClosestSlot(mode, mode.direction, CheeseSlot.State.NO_BALL).hasBall()) {
             moveToNext();
         }
     }
@@ -73,7 +74,7 @@ public class CollectInfiniteWedges extends CommandBase {
         intake.setPower(frontPower, backPower);
 
         if (cheeseWheel.onSlot(mode)) {
-            if (cheeseWheel.getClosestSlot(mode, mode.direction, false).hasBall()) {
+            if (cheeseWheel.getClosestSlot(mode, mode.direction, CheeseSlot.State.NO_BALL).hasBall()) {
                 moveToNext();
             }
         } else {
@@ -82,7 +83,7 @@ public class CollectInfiniteWedges extends CommandBase {
     }
 
     private void moveToNext() {
-        cheeseWheelCommands.cycleSlot(mode.direction, mode, true).schedule();
+        cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
     }
 
     @Override

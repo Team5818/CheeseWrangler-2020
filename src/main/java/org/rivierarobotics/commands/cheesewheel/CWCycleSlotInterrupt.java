@@ -24,23 +24,24 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
 public class CWCycleSlotInterrupt extends InstantCommand {
     private final CheeseWheel.Direction direction;
     private final CheeseWheel.AngleOffset mode;
-    private final boolean requiresBall;
+    private final CheeseSlot.State requiredState;
     private final CheeseWheel cheeseWheel;
 
-    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requiresBall) {
+    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
         this.cheeseWheel = cheeseWheel;
         this.direction = direction;
         this.mode = mode;
-        this.requiresBall = requiresBall;
+        this.requiredState = requiredState;
     }
 
     @Override
     public void execute() {
-        new CWCycleSlot(cheeseWheel, direction, mode, requiresBall).schedule();
+        new CWCycleSlot(cheeseWheel, direction, mode, requiredState).schedule();
     }
 }
