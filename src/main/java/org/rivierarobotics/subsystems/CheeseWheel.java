@@ -66,14 +66,12 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return min;
     }
 
-    public CheeseSlot searchForNearestSlotWithDirection(AngleOffset offset, Direction direction, boolean requiresBall) {
+    public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, boolean requiresBall) {
         int modifier = direction == Direction.BACKWARDS ? -1 : 1;
-        if (requiresBall) {
-            for (int i = 1; i < 5; i++) {
-                CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 4));
-                if (slot.hasBall()) {
-                    return slot;
-                }
+        for (int i = 1; i < 5; i++) {
+            CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 4));
+            if (slot.hasBall() == requiresBall) {
+                return slot;
             }
         }
         return CheeseSlot.slotOfNum(getIndex(offset));
@@ -81,11 +79,11 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requiresBall) {
         if (direction == Direction.ANY) {
-            CheeseSlot forward = searchForNearestSlotWithDirection(offset, Direction.FORWARDS, requiresBall);
-            CheeseSlot backward = searchForNearestSlotWithDirection(offset, Direction.BACKWARDS, requiresBall);
+            CheeseSlot forward = getSlotWithDirection(offset, Direction.FORWARDS, requiresBall);
+            CheeseSlot backward = getSlotWithDirection(offset, Direction.BACKWARDS, requiresBall);
             return Math.abs(getIndex(offset) - forward.ordinal()) <= Math.abs(getIndex(offset) - backward.ordinal()) ? forward : backward;
         }
-        return searchForNearestSlotWithDirection(offset, direction, requiresBall);
+        return getSlotWithDirection(offset, direction, requiresBall);
     }
 
     public boolean onSlot(AngleOffset offset) {
