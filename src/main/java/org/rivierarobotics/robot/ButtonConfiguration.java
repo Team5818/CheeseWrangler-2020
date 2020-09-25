@@ -70,11 +70,11 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 2)
                 .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
         new JoystickButton(coDriverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.NO_BALL), true);
         new JoystickButton(coDriverButtons, 5)
                 .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
         new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.BALL), true);
         new JoystickButton(coDriverButtons, 7)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 8)

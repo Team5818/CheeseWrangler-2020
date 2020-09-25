@@ -26,6 +26,6 @@ import org.rivierarobotics.util.CheeseSlot;
 
 public class CWCycleSlot extends BasePIDSetPosition<CheeseWheel> {
     public CWCycleSlot(CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
-        super(cheeseWheel, 10, cheeseWheel.getSlotTickPos(cheeseWheel.getClosestSlot(mode, direction, requiredState), mode, direction), 5);
+        super(cheeseWheel, 10, cheeseWheel.getSlotTickPos(cheeseWheel.getClosestSlot(mode, direction, requiredState), mode, direction), 10);
     }
 }

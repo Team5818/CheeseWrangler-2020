@@ -33,12 +33,12 @@ import javax.inject.Provider;
 public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
-    private static final int TICKS_AT_ZERO_DEGREES = -369;
+    private static final int TICKS_AT_ZERO_DEGREES = 48;
     private static final double INDEX_SPACING = 4096.0 / 5;
     private final RobotShuffleboardTab tab;
 
     public CheeseWheel(int motor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {
-        super(new PIDConfig(0.00075, 0.0, 0.000, 0.0, 22, 1.0));
+        super(new PIDConfig(0.001, 0.00001, 0.000005, 0.0, 22, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
@@ -69,7 +69,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
         int modifier = direction == Direction.BACKWARDS ? -1 : 1;
         for (int i = 1; i < 5; i++) {
-            CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 4));
+            CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
             if (requiredState == CheeseSlot.State.EITHER
                     || (requiredState == CheeseSlot.State.BALL && slot.hasBall())
                     || (requiredState == CheeseSlot.State.NO_BALL && !slot.hasBall())) {
@@ -146,7 +146,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     public enum AngleOffset {
         //TODO change angle offsets to new values (0-ctr)
-        COLLECT_FRONT(0, Direction.FORWARDS), COLLECT_BACK(0, Direction.BACKWARDS), SHOOTER(0, Direction.ANY);
+        COLLECT_FRONT(2458, Direction.FORWARDS), COLLECT_BACK(835, Direction.BACKWARDS), SHOOTER(3687, Direction.ANY);
 
         public final int angle;
         public final Direction direction;
@@ -161,7 +161,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         // negative as well because it assumes zeroticks and the offset are in different directions.
         // now 40 degrees offset is just 0 degrees + the angle offset. fits better with the code.
         public double getAssocCWTicks() {
-            return (this.angle * 4096 / 360.0) + TICKS_AT_ZERO_DEGREES;
+            return this.angle + TICKS_AT_ZERO_DEGREES;
         }
     }
 
