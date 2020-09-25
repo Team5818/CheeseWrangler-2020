@@ -56,8 +56,8 @@ public class PositionTracker {
         pos[0] += (driveTrain.getXVelocity() * timeDifference);
         pos[1] += (driveTrain.getYVelocity() * timeDifference);
 
-        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal",pos[1]);
-        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal",pos[0]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[1]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[0]);
 
     }
 

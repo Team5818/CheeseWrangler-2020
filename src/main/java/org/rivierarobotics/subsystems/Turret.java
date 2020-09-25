@@ -20,13 +20,15 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.*;
+
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.turret.TurretControl;
-import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NavXGyro;
@@ -86,7 +88,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle() {
-        if(isAbsoluteAngle) {
+        if (isAbsoluteAngle) {
             return MathUtil.wrapToCircle(gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK));
         } else {
             return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK);
@@ -110,7 +112,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     public void setAngle(double angle) {
         angle = MathUtil.wrapToCircle(angle);
-        if(isAbsoluteAngle){
+        if (isAbsoluteAngle) {
             angle -= MathUtil.wrapToCircle(gyro.getYaw());
         }
 
@@ -122,7 +124,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
         double ticks = MathUtil.limit(initialTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
 
-        if(ticks == ZERO_TICKS + getMaxAngleInTicks()){
+        if (ticks == ZERO_TICKS + getMaxAngleInTicks()) {
             initialTicks -= 4096;
         } else if (ticks == ZERO_TICKS + getMinAngleInTicks()) {
             initialTicks += 4096;
@@ -144,7 +146,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAnglesOrInchesToTicks() {
-        return 4096/360.0;
+        return 4096 / 360.0;
     }
 
     @Override

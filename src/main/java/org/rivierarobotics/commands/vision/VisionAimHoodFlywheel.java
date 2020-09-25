@@ -109,7 +109,7 @@ public class VisionAimHoodFlywheel extends CommandBase {
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return false;
     }
 }

@@ -78,7 +78,7 @@ public class VisionAimTurret extends CommandBase {
     }
 
     @Override
-    public boolean isFinished(){
+    public boolean isFinished() {
         return false;
     }
 }
