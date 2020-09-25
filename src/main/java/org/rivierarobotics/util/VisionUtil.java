@@ -33,7 +33,7 @@ public class VisionUtil {
 
     @Inject
     public VisionUtil() {
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
+        this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
     public final double getLLValue(String key) {
@@ -44,12 +44,8 @@ public class VisionUtil {
         return getLLValue("ty") + (90 - hoodAbsPos) - 3;
     }
 
-    public final void setLedState(LimelightLEDState state) {
-        limelight.getEntry("ledMode").setNumber(state.set);
-    }
-
-    public final void setPipMode(LimelightPIPMode mode) {
-        limelight.getEntry("stream").setNumber(mode.set);
+    public final void setLEDState(LimelightLEDState state) {
+        limelight.getEntry("ledMode").setNumber(state.ordinal());
     }
 
     public final void invertLedState() {

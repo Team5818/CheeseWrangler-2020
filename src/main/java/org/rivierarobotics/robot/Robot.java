@@ -28,7 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
@@ -62,7 +62,6 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getTurret().disableAutoAim();
     }
 
     @Override
@@ -73,7 +72,7 @@ public class Robot extends TimedRobot {
             //    flyingWheelman.schedule();
             //}
 
-            globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_ON);
+            globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
     }
@@ -100,7 +99,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-        globalComponent.getNavXGyro().resetGyro();
+
         globalComponent.getButtonConfiguration().initTeleop();
     }
 
@@ -111,7 +110,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        globalComponent.getVisionUtil().setLedState(LimelightLEDState.FORCE_OFF);
+        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     @Override
@@ -133,10 +132,7 @@ public class Robot extends TimedRobot {
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
             .setEntry("Hood Abs Angle", hood.getAngle())
             .setEntry("Turret Abs Angle", turret.getAbsoluteAngle())
-            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
-            .setEntry("isAbsolute", Turret.isAbsoluteAngle);
-
-        shuffleboard.getTab("Auto Aim");
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks());
 
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))
@@ -152,16 +148,15 @@ public class Robot extends TimedRobot {
             .setEntry("Right Vel", dt.getRight().getVelocity());
 
         shuffleboard.getTab("Cheese Wheel")
-            .setEntry("Position Ticks", cw.getPositionTicks())
+            .setEntry("Position ticks", cw.getPositionTicks())
             .setEntry("At Position", cw.getPidController().atSetpoint())
             .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
             .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
             .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
             .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
-            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall());
+            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
+            .setEntry("Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER));
 
         SmartDashboard.putData(chooser);
-
-        SmartDashboard.putBoolean("AutoAim Enabled", turret.isAutoAimEnabled());
     }
 }

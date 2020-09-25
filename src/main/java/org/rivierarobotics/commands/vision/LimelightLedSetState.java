@@ -38,6 +38,6 @@ public class LimelightLedSetState extends InstantCommand {
 
     @Override
     public void execute() {
-        vision.setLedState(ledState);
+        vision.setLEDState(ledState);
     }
 }

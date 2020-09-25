@@ -33,12 +33,12 @@ import javax.inject.Provider;
 public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
-    private static final int TICKS_AT_ZERO_DEGREES = 3725;
+    private static final int TICKS_AT_ZERO_DEGREES = 48;
     private static final double INDEX_SPACING = 4096.0 / 5;
     private final RobotShuffleboardTab tab;
 
     public CheeseWheel(int motor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {
-        super(new PIDConfig(0.002, 0.0, 0.0001, 0.0, 30, 1.0));
+        super(new PIDConfig(0.001, 0.00001, 0.000005, 0.0, 22, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
@@ -46,39 +46,91 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
 
-    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, boolean requireOpen) {
-        CheeseSlot min = CheeseSlot.values()[0];
-        for (CheeseSlot slot : CheeseSlot.values()) {
-            double posDiff = offset.cwTicks() - getTickPosOfSlot(slot);
-            boolean passDir;
-            switch (direction) {
-                case FORWARDS:
-                    passDir = posDiff > 0;
-                    break;
-                case BACKWARDS:
-                    passDir = posDiff < 0;
-                    break;
-                case ANY:
-                    passDir = true;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Cannot handle this direction");
-            }
-            if ((!requireOpen || slot.hasBall()) && passDir && Math.abs(posDiff) < Math.abs(offset.cwTicks() - getTickPosOfSlot(min))) {
-                min = slot;
+    public double getOffsetPositionTicks(AngleOffset offset) {
+        return getPositionTicks() - offset.getAssocCWTicks();
+    }
+
+    public int getIndex(AngleOffset offset) {
+        int min = 0;
+        double minAngle = 4096;
+        for (int i = 0; i < 6; i++) {
+            double ang = Math.abs((getOffsetPositionTicks(offset) % 4096.0)  - (i * INDEX_SPACING));
+            if (minAngle > ang) {
+                minAngle = ang;
+                if (i == 5) {
+                    return 0;
+                }
+                min = i;
             }
         }
         return min;
     }
 
-    public boolean onSlot(AngleOffset offset) {
-        return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES, getTickPosOfSlot(getClosestSlot(offset, Direction.ANY, false)), 15);
+    public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
+        int modifier = direction == Direction.BACKWARDS ? -1 : 1;
+        for (int i = 1; i < 5; i++) {
+            CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
+            if (requiredState == CheeseSlot.State.EITHER
+                    || (requiredState == CheeseSlot.State.BALL && slot.hasBall())
+                    || (requiredState == CheeseSlot.State.NO_BALL && !slot.hasBall())) {
+                return slot;
+            }
+        }
+        return CheeseSlot.slotOfNum(getIndex(offset));
     }
 
-    public double getTickPosOfSlot(CheeseSlot slot) {
-        double slotPos = getPositionTicks() + (slot.ordinal() * INDEX_SPACING) - TICKS_AT_ZERO_DEGREES;
-        tab.setEntry("slotPos", slotPos + " FOR " + slot.ordinal());
-        return slotPos;
+    public CheeseSlot getClosestSlot(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
+        if (direction == Direction.ANY) {
+            CheeseSlot forward = getSlotWithDirection(offset, Direction.FORWARDS, requiredState);
+            CheeseSlot backward = getSlotWithDirection(offset, Direction.BACKWARDS, requiredState);
+            return Math.abs(getIndex(offset) - forward.ordinal()) <= Math.abs(getIndex(offset) - backward.ordinal()) ? forward : backward;
+        }
+        return getSlotWithDirection(offset, direction, requiredState);
+    }
+
+    public boolean onSlot(AngleOffset offset) {
+        return onSlot(offset, 15);
+    }
+
+    public boolean onSlot(AngleOffset offset, double tolerance) {
+        return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES,
+            getSlotTickPos(getClosestSlot(offset, Direction.ANY, CheeseSlot.State.EITHER)), tolerance);
+    }
+
+    public double getSlotTickPos(CheeseSlot slot) {
+        return getSlotTickPos(slot, AngleOffset.COLLECT_FRONT, Direction.ANY);
+    }
+
+    public double getSlotTickPos(CheeseSlot slot, AngleOffset offset, Direction direction) {
+        int index = slot.ordinal();
+        int offsetIndex = getIndex(offset);
+
+        double position = MathUtil.wrapToCircle((getOffsetPositionTicks(offset) % 4096), 4096);
+
+        if (offsetIndex == 4 && index == 0) {
+            index = 5;
+        } else if (offsetIndex == 0 && index == 4) {
+            index = -1;
+        }
+
+        //SPECIAL CASE FOR offsetIndex == 0 because of wrapping not working if it is at like 4050 ticks
+        if (offsetIndex == 0) {
+            if (Math.abs((position % 4096) - 4096) < Math.abs(position)) {
+                position -= 4096;
+            }
+        }
+
+        double outPos = (index * INDEX_SPACING) - position;
+
+        //DIRECTIONAL MODIFIERS
+        if (direction == Direction.FORWARDS && outPos < 0) {
+            outPos += 4096;
+        } else if (direction == Direction.BACKWARDS && outPos > 0) {
+            outPos -= 4096;
+        }
+
+        tab.setEntry("tickpos", (outPos + getPositionTicks()) + " FOR " + slot.ordinal());
+        return outPos + getPositionTicks();
     }
 
     @Override
@@ -93,27 +145,23 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public enum AngleOffset {
-        SHOOTING(36), COLLECT_FRONT(106), COLLECT_BACK(253);
+        //TODO change angle offsets to new values (0-ctr)
+        COLLECT_FRONT(2458, Direction.FORWARDS), COLLECT_BACK(835, Direction.BACKWARDS), SHOOTER(3687, Direction.ANY);
 
         public final int angle;
+        public final Direction direction;
 
-        AngleOffset(int angle) {
+        AngleOffset(int angle, Direction direction) {
             this.angle = angle;
+            this.direction = direction;
         }
 
-        public double cwTicks() {
-            return (this.angle * 4096 / 360.0) - TICKS_AT_ZERO_DEGREES;
-        }
-
-        public Direction getAssocDir() {
-            switch (this) {
-                case COLLECT_FRONT:
-                    return Direction.FORWARDS;
-                case COLLECT_BACK:
-                    return Direction.BACKWARDS;
-                default:
-                    throw new IllegalArgumentException("Invalid assoc direction");
-            }
+        // Has to add zero ticks because just imagine putting 0 into this. You get -some amount of ticks which then need
+        // to be added to getPositionTicks which we don't do anywhere in the code. also then we'd need to make everything
+        // negative as well because it assumes zeroticks and the offset are in different directions.
+        // now 40 degrees offset is just 0 degrees + the angle offset. fits better with the code.
+        public double getAssocCWTicks() {
+            return this.angle + TICKS_AT_ZERO_DEGREES;
         }
     }
 

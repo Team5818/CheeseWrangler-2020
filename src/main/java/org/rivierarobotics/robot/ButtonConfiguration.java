@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
 import javax.inject.Inject;
@@ -56,34 +57,38 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-//        new JoystickButton(coDriverLeft, 1)
-//            .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT));
-//        new JoystickButton(coDriverLeft, 2)
-//            .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK));
-        new JoystickButton(coDriverLeft,1)
-                .whenPressed(cmds.turret().setAbsoluteAngle(0));
-        new JoystickButton(coDriverLeft,2)
-                .whenPressed(cmds.turret().setRelativeAngle(0));
+        new JoystickButton(coDriverLeft, 1)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT));
+        new JoystickButton(coDriverLeft, 2)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK));
 
         new JoystickButton(coDriverRight, 1)
-            .whenPressed(cmds.vision().correctPosition());
+                .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
-            .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
-        new JoystickButton(coDriverButtons, 1)
-            .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, true), true);
+                .whenPressed(cmds.cheeseWheel().shootNWedges(5));
+
         new JoystickButton(coDriverButtons, 2)
-            .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, true), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
         new JoystickButton(coDriverButtons, 3)
-            .whenPressed(cmds.hood().setAngle(55));
-        new JoystickButton(coDriverButtons, 4)
-            .whenPressed(cmds.hood().setAngle(60));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.NO_BALL), true);
+        new JoystickButton(coDriverButtons, 5)
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
+        new JoystickButton(coDriverButtons, 6)
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.BALL), true);
+        new JoystickButton(coDriverButtons, 7)
+                .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
+        new JoystickButton(coDriverButtons, 8)
+                .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
+        // new JoystickButton(coDriverButtons, 9)
+        //         .whileHeld(cmds.vision().encoderAim(VisionTarget.INNER));
+        // new JoystickButton(coDriverButtons, 10)
+        //         .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
-            .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
-        new JoystickButton(coDriverButtons, 12)
-            .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
-        new JoystickButton(coDriverButtons, 10)
-            .whenPressed(cmds.hood().toggleTrenchMode());
-        new JoystickButton(coDriverButtons, 9)
-                .whenPressed(cmds.vision().toggleAutoAim());
+                .whenPressed(cmds.hood().toggleTrenchMode());
+        // new JoystickButton(coDriverButtons, 12)
+        //         .whenPressed(cmds.vision().toggleAutoAim());
+
+        new JoystickButton(driverButtons, 6)
+                .whenPressed(cmds.vision().correctPosition());
     }
 }

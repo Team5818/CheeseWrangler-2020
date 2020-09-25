@@ -21,6 +21,7 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public enum CheeseSlot {
     // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
@@ -30,7 +31,9 @@ public enum CheeseSlot {
     private final DigitalInput sensor;
 
     CheeseSlot() {
-        this.sensor = new DigitalInput(this.ordinal() + SENSOR_DIO_PIN_OFFSET);
+        //TODO redo the green labels on the CW so we can revert this to below
+        // this.sensor = new DigitalInput(SENSOR_DIO_PIN_OFFSET + this.ordinal());
+        this.sensor = new DigitalInput(this.ordinal() == 0 ? 5 : SENSOR_DIO_PIN_OFFSET + 5 - this.ordinal());
     }
 
     public boolean hasBall() {
@@ -38,11 +41,10 @@ public enum CheeseSlot {
     }
 
     public static CheeseSlot slotOfNum(int num) {
-        for (CheeseSlot slot : CheeseSlot.values()) {
-            if (slot.ordinal() == num) {
-                return slot;
-            }
-        }
-        return null;
+        return CheeseSlot.values()[num];
+    }
+
+    public enum State {
+        BALL, NO_BALL, EITHER
     }
 }

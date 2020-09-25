@@ -20,27 +20,28 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 
 @GenerateCreator
-public class CWMoveSlotToIndex extends BasePIDSetPosition<CheeseWheel> {
-    private final CheeseWheel.AngleOffset mode;
-    private final CheeseSlot slot;
+public class CWCycleSlotInterrupt extends InstantCommand {
     private final CheeseWheel.Direction direction;
+    private final CheeseWheel.AngleOffset mode;
+    private final CheeseSlot.State requiredState;
+    private final CheeseWheel cheeseWheel;
 
-    public CWMoveSlotToIndex(@Provided CheeseWheel cheeseWheel, CheeseWheel.AngleOffset mode, CheeseSlot slot, CheeseWheel.Direction direction) {
-        super(cheeseWheel, 15, mode.getAssocCWTicks(), 5);
-        this.mode = mode;
-        this.slot = slot;
+    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
+        this.cheeseWheel = cheeseWheel;
         this.direction = direction;
+        this.mode = mode;
+        this.requiredState = requiredState;
     }
 
     @Override
-    protected double getPositionTicks() {
-        return subsystem.getSlotTickPos(slot);
+    public void execute() {
+        new CWCycleSlot(cheeseWheel, direction, mode, requiredState).schedule();
     }
 }

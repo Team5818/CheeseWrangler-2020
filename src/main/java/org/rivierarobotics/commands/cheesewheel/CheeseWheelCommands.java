@@ -31,14 +31,14 @@ import javax.inject.Inject;
 
 public class CheeseWheelCommands {
     private final CWSetPositionCreator setPositionCreator;
-    private final CWCycleSlotCreator cycleSlotCreator;
+    private final CWCycleSlotInterruptCreator cycleSlotCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final CWMoveSlotToIndexCreator moveSlotToIndexCreator;
     private final All5ShootCreator all5ShootCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
-                               CWCycleSlotCreator cycleSlotCreator,
+                               CWCycleSlotInterruptCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
                                CWMoveSlotToIndexCreator moveSlotToIndexCreator,
                                All5ShootCreator all5ShootCreator) {
@@ -49,8 +49,8 @@ public class CheeseWheelCommands {
         this.all5ShootCreator = all5ShootCreator;
     }
 
-    public CWCycleSlot cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, boolean requireOpen) {
-        return cycleSlotCreator.create(direction, mode, requireOpen);
+    public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
+        return cycleSlotCreator.create(direction, mode, requiredState);
     }
 
     public CWSetPosition setPosition(int ticks) {
