@@ -67,7 +67,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
-        int modifier = direction == Direction.BACKWARDS ? -1 : 1;
+        int modifier = direction == Direction.BACKWARDS ? 1 : -1;
         for (int i = 1; i < 5; i++) {
             CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
             if (requiredState == CheeseSlot.State.EITHER
@@ -88,13 +88,9 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return getSlotWithDirection(offset, direction, requiredState);
     }
 
-    public boolean onSlot(AngleOffset offset) {
-        return onSlot(offset, 15);
-    }
-
-    public boolean onSlot(AngleOffset offset, double tolerance) {
-        return MathUtil.isWithinTolerance(getPositionTicks() - TICKS_AT_ZERO_DEGREES,
-            getSlotTickPos(getClosestSlot(offset, Direction.ANY, CheeseSlot.State.EITHER)), tolerance);
+    public boolean onSlot(AngleOffset offset, Direction direction, double tolerance) {
+        return MathUtil.isWithinTolerance(getOffsetPositionTicks(offset),
+            getSlotTickPos(getClosestSlot(offset, direction, CheeseSlot.State.EITHER)), tolerance);
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
@@ -133,6 +129,10 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return outPos + getPositionTicks();
     }
 
+    public RobotShuffleboardTab getTab() {
+        return tab;
+    }
+
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
@@ -146,7 +146,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     public enum AngleOffset {
         //TODO change angle offsets to new values (0-ctr)
-        COLLECT_FRONT(2458, Direction.FORWARDS), COLLECT_BACK(835, Direction.BACKWARDS), SHOOTER(3687, Direction.ANY);
+        COLLECT_FRONT(835, Direction.FORWARDS), COLLECT_BACK(2458, Direction.BACKWARDS), SHOOTER(3687, Direction.ANY);
 
         public final int angle;
         public final Direction direction;
