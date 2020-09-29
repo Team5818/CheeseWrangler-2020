@@ -99,18 +99,10 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     public double getSlotTickPos(CheeseSlot slot, AngleOffset offset, Direction direction) {
         int index = slot.ordinal();
-        int offsetIndex = getIndex(offset);
-
-        double position = MathUtil.wrapToCircle((getOffsetPositionTicks(offset) % 4096), 4096);
-
-        if (offsetIndex == 4 && index == 0) {
-            index = 5;
-        } else if (offsetIndex == 0 && index == 4) {
-            index = -1;
-        }
+        double position = MathUtil.wrapToCircle((getOffsetPositionTicks(offset)), 4096);
 
         //SPECIAL CASE FOR offsetIndex == 0 because of wrapping not working if it is at like 4050 ticks
-        if (offsetIndex == 0) {
+        if (getIndex(offset) == 0) {
             if (Math.abs((position % 4096) - 4096) < Math.abs(position)) {
                 position -= 4096;
             }
@@ -119,10 +111,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         double outPos = (index * INDEX_SPACING) - position;
 
         //DIRECTIONAL MODIFIERS
+        if(direction == Direction.ANY) {
+            direction = Math.abs((outPos + 4096) % 4096) >= Math.abs((outPos - 4096) % 4096) ? Direction.FORWARDS : Direction.BACKWARDS;
+        }
         if (direction == Direction.FORWARDS && outPos < 0) {
-            outPos += 4096;
-        } else if (direction == Direction.BACKWARDS && outPos > 0) {
             outPos -= 4096;
+        } else if (direction == Direction.BACKWARDS && outPos > 0) {
+            outPos += 4096;
         }
 
         tab.setEntry("tickpos", (outPos + getPositionTicks()) + " FOR " + slot.ordinal());
@@ -156,10 +151,6 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
             this.direction = direction;
         }
 
-        // Has to add zero ticks because just imagine putting 0 into this. You get -some amount of ticks which then need
-        // to be added to getPositionTicks which we don't do anywhere in the code. also then we'd need to make everything
-        // negative as well because it assumes zeroticks and the offset are in different directions.
-        // now 40 degrees offset is just 0 degrees + the angle offset. fits better with the code.
         public double getAssocCWTicks() {
             return this.angle + TICKS_AT_ZERO_DEGREES;
         }
