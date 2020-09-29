@@ -37,14 +37,16 @@ public class PositionTracker {
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
+    private final RobotShuffleboard robotShuffleboard;
     private double t;
 
     @Inject
-    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood) {
+    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard robotShuffleboard) {
         this.turret = turret;
         this.vision = vision;
         this.driveTrain = dt;
         this.hood = hood;
+        this.robotShuffleboard = robotShuffleboard;
     }
 
     public void trackPosition() {
@@ -53,8 +55,10 @@ public class PositionTracker {
         beforeT = Timer.getFPGATimestamp();
         pos[0] += (driveTrain.getXVelocity() * timeDifference);
         pos[1] += (driveTrain.getYVelocity() * timeDifference);
-        SmartDashboard.putNumber("EncoderX", pos[0]);
-        SmartDashboard.putNumber("EncoderY", pos[1]);
+
+        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[1]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[0]);
+
     }
 
     public void correctPosition() {
@@ -68,16 +72,16 @@ public class PositionTracker {
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
         if (turretAngle >= 0 && turretAngle < 90) {
-            pos[0] = -xFromTarget;
+            pos[0] = xFromTarget;
             pos[1] = yFromTarget;
         } else if (turretAngle >= 90 && turretAngle < 180) {
-            pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() - xFromTarget;
-            pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
-        } else if (turretAngle >= 180 && turretAngle < 270) {
             pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() + xFromTarget;
             pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
+        } else if (turretAngle >= 180 && turretAngle < 270) {
+            pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() - xFromTarget;
+            pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
         } else {
-            pos[0] = xFromTarget;
+            pos[0] = -xFromTarget;
             pos[1] = yFromTarget;
         }
     }

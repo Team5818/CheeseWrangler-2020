@@ -25,6 +25,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTablesJNI;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -47,12 +48,9 @@ public class RobotShuffleboardTab {
         return this;
     }
 
-    public RobotShuffleboardTab clear() {
-        for (NetworkTableEntry entry : entries.values()) {
-            entry.delete();
-        }
-        entries.clear();
-        return this;
+    public void clear() {
+        //TODO fix this
+
     }
 
     public NetworkTableEntry getEntry(String title) {

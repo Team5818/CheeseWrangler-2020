@@ -20,9 +20,11 @@
 
 package org.rivierarobotics.commands.vision;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
@@ -36,19 +38,17 @@ public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final Hood hood;
     private final VisionUtil vision;
-    private final RobotShuffleboardTab shuffleTab;
     private final double extraDistance;
     private final double height;
-    private boolean isFinished;
+    private final RobotShuffleboardTab tab;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard,
-                           double extraDistance, double height) {
+    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
         this.turret = turret;
         this.hood = hood;
         this.vision = vision;
         this.height = height;
         this.extraDistance = extraDistance;
-        this.shuffleTab = shuffleboard.getTab("VisionAim");
+        this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(turret);
     }
 
@@ -63,24 +63,22 @@ public class VisionAimTurret extends CommandBase {
         double absolute = turret.getAbsoluteAngle();
         var turretAngleAdj = turretAngle + absolute;
 
-        shuffleTab.setEntry("TurretAngleAdj", turretAngle)
-                .setEntry("vx", vx)
-                .setEntry("vz", vz);
+        tab.setEntry("TurretAngleAdj", turretAngleAdj);
+        tab.setEntry("turretAngle", turretAngle);
+        tab.setEntry("txTurret", txTurret);
+        tab.setEntry("turretVZ", vz);
 
-        if (vision.getLLValue("tv") == 1) {
-            turret.setAngle(turretAngleAdj);
-        } else {
-            isFinished = true;
+        if (turret.isAutoAimEnabled()) {
+            if (vision.getLLValue("tv") == 1) {
+                turret.setAngle(turretAngleAdj);
+            }
         }
-    }
 
-    @Override
-    public void end(boolean interrupted) {
-        turret.setPidEnabled(false);
+
     }
 
     @Override
     public boolean isFinished() {
-        return isFinished;
+        return false;
     }
 }

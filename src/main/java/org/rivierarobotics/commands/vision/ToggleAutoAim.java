@@ -18,35 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.turret;
+package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import org.rivierarobotics.inject.Input;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
-public class TurretControl extends CommandBase {
+@GenerateCreator
+public class ToggleAutoAim extends InstantCommand {
+
     private final Turret turret;
-    private final Joystick coDriverRightJs;
 
     @Inject
-    public TurretControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
-                         Turret turret) {
+    public ToggleAutoAim(@Provided Turret turret) {
         this.turret = turret;
-        this.coDriverRightJs = coDriverRightJs;
-        addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        turret.setPower(0.7 * MathUtil.fitDeadband(coDriverRightJs.getX()));
+        if (turret.isAutoAimEnabled()) {
+            turret.disableAutoAim();
+        } else {
+            turret.enableAutoAim();
+        }
+        SmartDashboard.putBoolean("AutoAim Enabled", turret.isAutoAimEnabled());
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

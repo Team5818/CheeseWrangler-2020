@@ -27,30 +27,33 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class VisionCommands {
-    private VisionAimHoodCreator visionAimHoodCreator;
+    private VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator;
     private VisionAimTurretCreator visionAimTurretCreator;
     private LimelightLedSetStateCreator limelightLedSetStateCreator;
     private VisionAimCreator visionAimCreator;
     private Provider<TrackerCorrectPosition> correctPositionProvider;
     private EncoderAimCreator encoderAimCreator;
+    private ToggleAutoAimCreator autoAimCreator;
 
     @Inject
-    public VisionCommands(VisionAimHoodCreator visionAimHoodCreator,
+    public VisionCommands(VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator,
                           VisionAimTurretCreator visionAimTurretCreator,
                           LimelightLedSetStateCreator limelightLedSetStateCreator,
                           VisionAimCreator visionAimCreator,
                           Provider<TrackerCorrectPosition> correctPositionProvider,
-                          EncoderAimCreator encoderAimCreator) {
-        this.visionAimHoodCreator = visionAimHoodCreator;
+                          EncoderAimCreator encoderAimCreator,
+                          ToggleAutoAimCreator autoAimCreator) {
+        this.visionAimHoodFlywheelCreator = visionAimHoodFlywheelCreator;
         this.visionAimCreator = visionAimCreator;
         this.visionAimTurretCreator = visionAimTurretCreator;
         this.limelightLedSetStateCreator = limelightLedSetStateCreator;
         this.correctPositionProvider = correctPositionProvider;
         this.encoderAimCreator = encoderAimCreator;
+        this.autoAimCreator = autoAimCreator;
     }
 
-    public VisionAimHood autoAimHood(double extraDistance, double height) {
-        return visionAimHoodCreator.create(extraDistance, height);
+    public VisionAimHoodFlywheel autoAimHood(double extraDistance, double height) {
+        return visionAimHoodFlywheelCreator.create(extraDistance, height);
     }
 
     public VisionAimTurret autoAimTurret(double extraDistance, double height) {
@@ -61,8 +64,13 @@ public class VisionCommands {
         return visionAimCreator.create(target);
     }
 
-    public EncoderAim encoderAim(double extraDistance) {
-        return encoderAimCreator.create(extraDistance);
+    public ToggleAutoAim toggleAutoAim() {
+        return autoAimCreator.create();
+    }
+
+
+    public EncoderAim encoderAim(VisionTarget target) {
+        return encoderAimCreator.create(target);
     }
 
     public TrackerCorrectPosition correctPosition() {

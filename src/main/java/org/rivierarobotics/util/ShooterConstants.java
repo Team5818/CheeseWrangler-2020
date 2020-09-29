@@ -28,6 +28,14 @@ public class ShooterConstants {
         return 1.78; //diff between robot height and top goal meters
     }
 
+    public static double getShooterMinVelocity() {
+        return 9;
+    }
+
+    public static double getShooterMaxVelocity() {
+        return 15;
+    }
+
     public static double getMaxBallVelocity() {
         //in m/s
         return 22;
