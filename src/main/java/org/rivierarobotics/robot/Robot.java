@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.robot;
 
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -56,6 +57,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
         //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+        CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
             cameraThread.start();

@@ -21,7 +21,6 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
@@ -31,14 +30,13 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PositionTracker {
-    static double[] pos = new double[2];
-    static double beforeT = 0;
+    private double[] pos = new double[2];
+    private double beforeT = 0;
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
     private final RobotShuffleboard robotShuffleboard;
-    private double t;
 
     @Inject
     public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard robotShuffleboard) {
@@ -50,15 +48,13 @@ public class PositionTracker {
     }
 
     public void trackPosition() {
-        t = Timer.getFPGATimestamp();
-        double timeDifference = (t - beforeT);
+        double timeDifference = Timer.getFPGATimestamp() - beforeT;
         beforeT = Timer.getFPGATimestamp();
-        pos[0] += (driveTrain.getXVelocity() * timeDifference);
-        pos[1] += (driveTrain.getYVelocity() * timeDifference);
+        pos[0] += driveTrain.getXVelocity() * timeDifference;
+        pos[1] += driveTrain.getYVelocity() * timeDifference;
 
         robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[1]);
         robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[0]);
-
     }
 
     public void correctPosition() {

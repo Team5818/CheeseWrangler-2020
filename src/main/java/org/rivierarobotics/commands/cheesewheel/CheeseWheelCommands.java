@@ -33,19 +33,16 @@ public class CheeseWheelCommands {
     private final CWSetPositionCreator setPositionCreator;
     private final CWCycleSlotInterruptCreator cycleSlotCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
-    private final CWMoveSlotToIndexCreator moveSlotToIndexCreator;
     private final All5ShootCreator all5ShootCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWCycleSlotInterruptCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
-                               CWMoveSlotToIndexCreator moveSlotToIndexCreator,
                                All5ShootCreator all5ShootCreator) {
         this.setPositionCreator = setPositionCreator;
         this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
-        this.moveSlotToIndexCreator = moveSlotToIndexCreator;
         this.all5ShootCreator = all5ShootCreator;
     }
 
@@ -55,10 +52,6 @@ public class CheeseWheelCommands {
 
     public CWSetPosition setPosition(int ticks) {
         return setPositionCreator.create(ticks);
-    }
-
-    public CWMoveSlotToIndex moveSlotToIndex(CheeseWheel.AngleOffset mode, CheeseSlot slot, CheeseWheel.Direction direction) {
-        return moveSlotToIndexCreator.create(mode, slot, direction);
     }
 
     public ShootNWedges shootNWedges(int wedges) {

@@ -23,21 +23,17 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class VisionAim extends ParallelCommandGroup {
     public VisionAim(VisionTarget target, @Provided RobotShuffleboard shuffleboard, @Provided VisionCommands vision) {
-        shuffleboard.getTab("Auto Aim").clear();
         shuffleboard.getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
 
-        Turret.isAbsoluteAngle = true;
+        Turret.IS_ABSOLUTE_ANGLE = true;
 
         if (target == VisionTarget.TOP) {
             addCommands(vision.autoAimHood(0, ShooterConstants.getTopHeight()),

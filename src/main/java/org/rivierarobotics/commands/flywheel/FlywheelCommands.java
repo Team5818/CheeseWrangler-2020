@@ -23,8 +23,8 @@ package org.rivierarobotics.commands.flywheel;
 import javax.inject.Inject;
 
 public class FlywheelCommands {
-    private FlywheelSetPowerCreator flywheelSetPowerCreator;
-    private FlywheelSetVelocityCreator flywheelSetVelocityCreator;
+    private final FlywheelSetPowerCreator flywheelSetPowerCreator;
+    private final FlywheelSetVelocityCreator flywheelSetVelocityCreator;
 
     @Inject
     public FlywheelCommands(FlywheelSetPowerCreator flywheelSetPowerCreator,

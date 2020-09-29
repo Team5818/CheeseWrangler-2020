@@ -49,10 +49,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
-    private static boolean isAutoAimEnabled;
     private final RobotShuffleboardTab tab;
-    public static boolean isAbsoluteAngle;
-
+    private static boolean isAutoAimEnabled;
+    public static boolean IS_ABSOLUTE_ANGLE;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         this.command = command;
@@ -88,12 +87,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle() {
-        if (isAbsoluteAngle) {
-            return MathUtil.wrapToCircle(gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK));
-        } else {
-            return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK);
-        }
-
+        return IS_ABSOLUTE_ANGLE ? MathUtil.wrapToCircle(gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK)) :
+                MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK);
     }
 
     public double getTxTurret(double distance, double extraDistance) {
@@ -104,15 +99,14 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPositionTicks(double positionTicks) {
-        double ticks = MathUtil.limit(
-                ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        double ticks = MathUtil.limit(ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
         tab.setEntry("PosTicks", ticks);
         turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
     public void setAngle(double angle) {
         angle = MathUtil.wrapToCircle(angle);
-        if (isAbsoluteAngle) {
+        if (IS_ABSOLUTE_ANGLE) {
             angle -= MathUtil.wrapToCircle(gyro.getYaw());
         }
 
@@ -145,8 +139,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return MIN_ANGLE * TICKS_PER_DEGREE;
     }
 
-    public double getAnglesOrInchesToTicks() {
-        return 4096 / 360.0;
+    public double getTicksPerDegree() {
+        return TICKS_PER_DEGREE;
     }
 
     @Override
@@ -158,18 +152,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         }
         turretTalon.set(ControlMode.PercentOutput, pwr);
     }
-
-    /*
-    @Override
-    public void setManualPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - zeroTicks < getMinAngleInTicks()) {
-            pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - zeroTicks > getMaxAngleInTicks()) {
-            pwr = 0;
-        }
-        super.setManualPower(pwr);
-    }
-    */
 
     @Override
     public void periodic() {

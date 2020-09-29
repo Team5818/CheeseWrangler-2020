@@ -41,24 +41,24 @@ public class GameData {
         }
     }
 
-    public static ColorChar get2020Color() {
-        char actualChar = get2020Char();
-        for (ColorChar color : ColorChar.values()) {
-            if (color.gameChar == actualChar) {
-                return color;
-            }
-        }
-        return ColorChar.NULL;
-    }
-
     // Corrupt is bad data, null is nothing matching
     public enum ColorChar {
         RED, BLUE, GREEN, YELLOW, CORRUPT, NULL;
 
-        public char gameChar;
+        private final char gameChar;
 
         ColorChar() {
-            gameChar = name().charAt(0);
+            gameChar = name().toLowerCase().charAt(0);
+        }
+
+        public static ColorChar get2020Color() {
+            char actualChar = get2020Char();
+            for (ColorChar color : ColorChar.values()) {
+                if (color.gameChar == actualChar) {
+                    return color;
+                }
+            }
+            return ColorChar.NULL;
         }
     }
 }

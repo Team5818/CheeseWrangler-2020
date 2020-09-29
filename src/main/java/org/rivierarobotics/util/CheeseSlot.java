@@ -21,7 +21,6 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.DigitalInput;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public enum CheeseSlot {
     // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0

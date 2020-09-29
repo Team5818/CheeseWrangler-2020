@@ -25,18 +25,18 @@ import org.rivierarobotics.subsystems.ServoPosition;
 import javax.inject.Inject;
 
 public class CameraServoCommands {
-    private CameraServoSetPositionCreator cameraServoSetPositionCreator;
+    private final CameraServoSetPositionCreator setPositionCreator;
 
     @Inject
-    public CameraServoCommands(CameraServoSetPositionCreator cameraServoSetPositionCreator) {
-        this.cameraServoSetPositionCreator = cameraServoSetPositionCreator;
+    public CameraServoCommands(CameraServoSetPositionCreator setPositionCreator) {
+        this.setPositionCreator = setPositionCreator;
     }
 
     public CameraServoSetPosition setAngle(double angle) {
-        return cameraServoSetPositionCreator.create(angle);
+        return setPositionCreator.create(angle);
     }
 
     public CameraServoSetPosition setPosition(ServoPosition position) {
-        return cameraServoSetPositionCreator.create(position.angle);
+        return setPositionCreator.create(position.angle);
     }
 }

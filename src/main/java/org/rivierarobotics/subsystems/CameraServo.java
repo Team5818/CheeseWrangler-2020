@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.util.CameraFlip;
 
 import javax.inject.Inject;
 
@@ -40,5 +41,10 @@ public class CameraServo extends SubsystemBase {
 
     public void setAngle(double angle) {
         this.servo.set(0.5 - (angle * 1 / 240.0));
+    }
+
+    @Override
+    public void periodic() {
+        CameraFlip.DO_FLIP = getAngle() > 95;
     }
 }

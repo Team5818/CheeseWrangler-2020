@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.commands.BasePIDSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;

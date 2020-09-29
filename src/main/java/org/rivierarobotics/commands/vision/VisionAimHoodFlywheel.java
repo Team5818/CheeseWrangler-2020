@@ -20,12 +20,9 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -38,7 +35,6 @@ import org.rivierarobotics.util.VisionUtil;
 @GenerateCreator
 public class VisionAimHoodFlywheel extends CommandBase {
     private final Hood hood;
-    private final DriveTrain driveTrain;
     private final Flywheel flywheel;
     private final VisionUtil vision;
     private final Turret turret;
@@ -46,9 +42,10 @@ public class VisionAimHoodFlywheel extends CommandBase {
     private final double height;
     private final RobotShuffleboardTab tab;
 
-    public VisionAimHoodFlywheel(@Provided Hood hd, @Provided DriveTrain dt, @Provided Flywheel fly, @Provided VisionUtil vision, @Provided Turret turret, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
+    public VisionAimHoodFlywheel(@Provided Hood hd, @Provided Flywheel fly, @Provided VisionUtil vision,
+                                 @Provided Turret turret, @Provided RobotShuffleboard shuffleboard,
+                                 double extraDistance, double height) {
         this.hood = hd;
-        this.driveTrain = dt;
         this.flywheel = fly;
         this.vision = vision;
         this.turret = turret;
@@ -77,7 +74,6 @@ public class VisionAimHoodFlywheel extends CommandBase {
         tab.setEntry("vxz", vxz);
         tab.setEntry("ballVel", ballVel);
 
-
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") ==  1) {
                 if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
@@ -100,7 +96,6 @@ public class VisionAimHoodFlywheel extends CommandBase {
         } else {
             flywheel.setVelocity(0);
         }
-
     }
 
     @Override

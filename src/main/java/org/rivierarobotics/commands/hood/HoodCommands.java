@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class HoodCommands {
-    private HoodSetAngleCreator hoodSetAngleCreator;
+    private final HoodSetAngleCreator hoodSetAngleCreator;
     private final Provider<ToggleTrenchMode> toggleTrenchModeProvider;
 
     @Inject

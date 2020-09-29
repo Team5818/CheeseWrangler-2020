@@ -26,7 +26,7 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class CollectionCommands {
-    private CollectInfiniteWedgesCreator collectInfiniteWedgesCreator;
+    private final CollectInfiniteWedgesCreator collectInfiniteWedgesCreator;
     private final Provider<CollectBasedOnMovement> intakeBasedOnMovementProvider;
 
     @Inject

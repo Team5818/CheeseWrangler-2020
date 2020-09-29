@@ -20,12 +20,9 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.robot.Robot;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -61,15 +58,8 @@ public class EncoderAim extends CommandBase {
 
     @Override
     public void execute() {
-
-        tab.clear();
         tab.setEntry("Aim Mode: ", "Encoder Aim");
-        double extraDistance;
-        if (target == VisionTarget.INNER) {
-            extraDistance = ShooterConstants.getDistanceFromOuterToInnerTarget();
-        } else {
-            extraDistance = 0;
-        }
+        double extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
 
         double[] pos = tracker.getPosition();
         double xFromGoal = pos[1];
@@ -92,7 +82,7 @@ public class EncoderAim extends CommandBase {
         tab.setEntry("vxz", vxz);
         tab.setEntry("ballVel", ballVel);
 
-        Turret.isAbsoluteAngle = true;
+        Turret.IS_ABSOLUTE_ANGLE = true;
 
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {

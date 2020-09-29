@@ -23,7 +23,6 @@ package org.rivierarobotics.subsystems;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.ejector.EjectorControl;
 import org.rivierarobotics.inject.Sided;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Side;
 
 import javax.inject.Inject;
@@ -53,10 +52,6 @@ public class Ejector extends SubsystemBase {
         //TODO change this to reflect shooting offset
         left.setPower(leftPwr);
         right.setPower(rightPwr);
-    }
-
-    public boolean isActive() {
-        return left.getPower() != 0 || right.getPower() != 0;
     }
 
     @Override

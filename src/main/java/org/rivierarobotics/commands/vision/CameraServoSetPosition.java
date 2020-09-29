@@ -39,7 +39,6 @@ public class CameraServoSetPosition extends InstantCommand {
 
     @Override
     public void execute() {
-        CameraFlip.DO_FLIP = position > 95;
         servo.setAngle(position);
     }
 }

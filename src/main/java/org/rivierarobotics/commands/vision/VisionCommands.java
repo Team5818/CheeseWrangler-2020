@@ -27,13 +27,13 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class VisionCommands {
-    private VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator;
-    private VisionAimTurretCreator visionAimTurretCreator;
-    private LimelightLedSetStateCreator limelightLedSetStateCreator;
-    private VisionAimCreator visionAimCreator;
-    private Provider<TrackerCorrectPosition> correctPositionProvider;
-    private EncoderAimCreator encoderAimCreator;
-    private ToggleAutoAimCreator autoAimCreator;
+    private final VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator;
+    private final VisionAimTurretCreator visionAimTurretCreator;
+    private final LimelightLedSetStateCreator limelightLedSetStateCreator;
+    private final VisionAimCreator visionAimCreator;
+    private final Provider<TrackerCorrectPosition> correctPositionProvider;
+    private final EncoderAimCreator encoderAimCreator;
+    private final ToggleAutoAimCreator autoAimCreator;
 
     @Inject
     public VisionCommands(VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator,
