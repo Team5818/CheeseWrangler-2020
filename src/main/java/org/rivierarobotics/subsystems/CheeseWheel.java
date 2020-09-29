@@ -51,9 +51,9 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public int getIndex(AngleOffset offset) {
-        double a = MathUtil.wrapToCircle(getOffsetPositionTicks(offset),4096);
-        for(int i = 0; i < 5; i++){
-            if(MathUtil.isWithinTolerance(INDEX_SPACING * i,a,INDEX_SPACING/2.0)){
+        double target = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
+        for (int i = 0; i < 5; i++) {
+            if (MathUtil.isWithinTolerance(INDEX_SPACING * i, target, INDEX_SPACING / 2.0)) {
                 return i;
             }
         }
@@ -82,9 +82,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return getSlotWithDirection(offset, direction, requiredState);
     }
 
-    public boolean onSlot(AngleOffset offset, Direction direction, double tolerance) {
-        double a = MathUtil.wrapToCircle(getOffsetPositionTicks(offset),4096);
-        return MathUtil.isWithinTolerance(a,getIndex(offset) * INDEX_SPACING,tolerance);
+    public boolean onSlot(AngleOffset offset) {
+        return onSlot(offset, 100);
+    }
+
+    public boolean onSlot(AngleOffset offset, double tolerance) {
+        double value = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
+        return MathUtil.isWithinTolerance(value, getIndex(offset) * INDEX_SPACING, tolerance);
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
@@ -121,8 +125,8 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
         outPos += getPositionTicks();
 
-        tab.setEntry("tickpos", outPos + " FOR " + slot.ordinal());
-        return outPos ;
+        tab.setEntry("SlotTickPos", outPos + " for " + slot.ordinal());
+        return outPos;
     }
 
     public RobotShuffleboardTab getTab() {
@@ -141,7 +145,6 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public enum AngleOffset {
-        //TODO change angle offsets to new values (0-ctr)
         COLLECT_FRONT(835, Direction.FORWARDS), COLLECT_BACK(2458, Direction.BACKWARDS), SHOOTER(3687, Direction.ANY);
 
         public final int angle;
