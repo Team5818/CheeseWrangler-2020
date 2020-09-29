@@ -64,8 +64,8 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void initialize() {
-        if (!cheeseWheel.onSlot(mode, mode.direction, 200)
-            || cheeseWheel.getClosestSlot(mode, mode.direction, CheeseSlot.State.NO_BALL).hasBall()) {
+        if (!cheeseWheel.onSlot(mode, mode.direction, 100)
+            || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
             moveToNext();
         }
     }

@@ -38,7 +38,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final RobotShuffleboardTab tab;
 
     public CheeseWheel(int motor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {
-        super(new PIDConfig(0.001, 0.00001, 0.000005, 0.0, 22, 1.0));
+        super(new PIDConfig(0.001, 0.000022, 0.0000015, 0.0, 20, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
@@ -54,7 +54,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         int min = 0;
         double minAngle = 4096;
         for (int i = 0; i < 6; i++) {
-            double ang = Math.abs((getOffsetPositionTicks(offset) % 4096.0)  - (i * INDEX_SPACING));
+            double ang = MathUtil.wrapToCircle(Math.abs((getOffsetPositionTicks(offset) % 4096.0)  - (i * INDEX_SPACING)), 4096);
             if (minAngle > ang) {
                 minAngle = ang;
                 if (i == 5) {
@@ -90,7 +90,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
 
     public boolean onSlot(AngleOffset offset, Direction direction, double tolerance) {
         return MathUtil.isWithinTolerance(getOffsetPositionTicks(offset),
-            getSlotTickPos(getClosestSlot(offset, direction, CheeseSlot.State.EITHER)), tolerance);
+            getSlotTickPos(CheeseSlot.slotOfNum(getIndex(offset)), offset, direction), tolerance);
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
@@ -119,14 +119,16 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         double outPos = (index * INDEX_SPACING) - position;
 
         //DIRECTIONAL MODIFIERS
-        if (direction == Direction.FORWARDS && outPos < 0) {
-            outPos += 4096;
-        } else if (direction == Direction.BACKWARDS && outPos > 0) {
+        if (direction == Direction.FORWARDS && outPos > 0) {
             outPos -= 4096;
+        } else if (direction == Direction.BACKWARDS && outPos < 0) {
+            outPos += 4096;
         }
 
-        tab.setEntry("tickpos", (outPos + getPositionTicks()) + " FOR " + slot.ordinal());
-        return outPos + getPositionTicks();
+        outPos += getPositionTicks();
+
+        tab.setEntry("tickpos", outPos + " FOR " + slot.ordinal());
+        return outPos ;
     }
 
     public RobotShuffleboardTab getTab() {
