@@ -51,19 +51,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public int getIndex(AngleOffset offset) {
-        int min = 0;
-        double minAngle = 4096;
-        for (int i = 0; i < 6; i++) {
-            double ang = MathUtil.wrapToCircle(Math.abs((getOffsetPositionTicks(offset) % 4096.0)  - (i * INDEX_SPACING)), 4096);
-            if (minAngle > ang) {
-                minAngle = ang;
-                if (i == 5) {
-                    return 0;
-                }
-                min = i;
+        double a = MathUtil.wrapToCircle(getOffsetPositionTicks(offset),4096);
+        for(int i = 0; i < 5; i++){
+            if(MathUtil.isWithinTolerance(INDEX_SPACING * i,a,INDEX_SPACING/2.0)){
+                return i;
             }
         }
-        return min;
+        return 0;
     }
 
     public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
@@ -89,8 +83,8 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public boolean onSlot(AngleOffset offset, Direction direction, double tolerance) {
-        return MathUtil.isWithinTolerance(getOffsetPositionTicks(offset),
-            getSlotTickPos(CheeseSlot.slotOfNum(getIndex(offset)), offset, direction), tolerance);
+        double a = MathUtil.wrapToCircle(getOffsetPositionTicks(offset),4096);
+        return MathUtil.isWithinTolerance(a,getIndex(offset) * INDEX_SPACING,tolerance);
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
