@@ -155,7 +155,8 @@ public class Robot extends TimedRobot {
             .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
             .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
             .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
-            .setEntry("Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER));
+            .setEntry("Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+            .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT));
 
         SmartDashboard.putData(chooser);
     }

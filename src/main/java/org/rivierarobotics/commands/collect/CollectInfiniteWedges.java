@@ -64,8 +64,7 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void initialize() {
-        if (!cheeseWheel.onSlot(mode, mode.direction, 50)
-            || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
+        if (!cheeseWheel.onSlot(mode) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
             moveToNext();
         }
     }
@@ -76,9 +75,9 @@ public class CollectInfiniteWedges extends CommandBase {
 
         int index = cheeseWheel.getIndex(mode);
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
-        cheeseWheel.getTab().setEntry("closestIndex", closest.ordinal());
-        cheeseWheel.getTab().setEntry("closestHasBall", closest.hasBall());
-        if (closest.hasBall()) {
+        cheeseWheel.getTab().setEntry("ClosestIndex", closest.ordinal());
+        cheeseWheel.getTab().setEntry("ClosestHasBall", closest.hasBall());
+        if (closest.hasBall() && cheeseWheel.onSlot(mode)) {
             moveToNext();
         }
     }

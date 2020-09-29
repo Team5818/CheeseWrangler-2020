@@ -38,7 +38,7 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final RobotShuffleboardTab tab;
 
     public CheeseWheel(int motor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {
-        super(new PIDConfig(0.001, 0.00001, 0.000005, 0.0, 22, 1.0));
+        super(new PIDConfig(0.001, 0.000022, 0.0000015, 0.0, 20, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
@@ -51,19 +51,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public int getIndex(AngleOffset offset) {
-        int min = 0;
-        double minAngle = 4096;
-        for (int i = 0; i < 6; i++) {
-            double ang = Math.abs((getOffsetPositionTicks(offset) % 4096.0)  - (i * INDEX_SPACING));
-            if (minAngle > ang) {
-                minAngle = ang;
-                if (i == 5) {
-                    return 0;
-                }
-                min = i;
+        double target = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
+        for (int i = 0; i < 5; i++) {
+            if (MathUtil.isWithinTolerance(INDEX_SPACING * i, target, INDEX_SPACING / 2.0)) {
+                return i;
             }
         }
-        return min;
+        return 0;
     }
 
     public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
@@ -88,9 +82,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return getSlotWithDirection(offset, direction, requiredState);
     }
 
-    public boolean onSlot(AngleOffset offset, Direction direction, double tolerance) {
-        return MathUtil.isWithinTolerance(getOffsetPositionTicks(offset),
-            getSlotTickPos(getClosestSlot(offset, direction, CheeseSlot.State.EITHER)), tolerance);
+    public boolean onSlot(AngleOffset offset) {
+        return onSlot(offset, 100);
+    }
+
+    public boolean onSlot(AngleOffset offset, double tolerance) {
+        double value = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
+        return MathUtil.isWithinTolerance(value, getIndex(offset) * INDEX_SPACING, tolerance);
     }
 
     public double getSlotTickPos(CheeseSlot slot) {
@@ -111,17 +109,16 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         double outPos = (index * INDEX_SPACING) - position;
 
         //DIRECTIONAL MODIFIERS
-        if(direction == Direction.ANY) {
-            direction = Math.abs((outPos + 4096) % 4096) >= Math.abs((outPos - 4096) % 4096) ? Direction.FORWARDS : Direction.BACKWARDS;
-        }
-        if (direction == Direction.FORWARDS && outPos < 0) {
+        if (direction == Direction.FORWARDS && outPos > 0) {
             outPos -= 4096;
-        } else if (direction == Direction.BACKWARDS && outPos > 0) {
+        } else if (direction == Direction.BACKWARDS && outPos < 0) {
             outPos += 4096;
         }
 
-        tab.setEntry("tickpos", (outPos + getPositionTicks()) + " FOR " + slot.ordinal());
-        return outPos + getPositionTicks();
+        outPos += getPositionTicks();
+
+        tab.setEntry("SlotTickPos", outPos + " for " + slot.ordinal());
+        return outPos;
     }
 
     public RobotShuffleboardTab getTab() {
@@ -140,7 +137,6 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     }
 
     public enum AngleOffset {
-        //TODO change angle offsets to new values (0-ctr)
         COLLECT_FRONT(835, Direction.FORWARDS), COLLECT_BACK(2458, Direction.BACKWARDS), SHOOTER(3687, Direction.ANY);
 
         public final int angle;
