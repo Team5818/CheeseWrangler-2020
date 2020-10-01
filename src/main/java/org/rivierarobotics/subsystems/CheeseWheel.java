@@ -46,7 +46,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-                new PIDConfig(0.001, 0.000022, 0.0000015, 0.0, 20, 1.0), -1, wheelTalon);
+                new PIDConfig(1023 / INDEX_SPACING, 0, 0, 0), 175, wheelTalon);
         wheelTalon.setSensorPhase(false);
         wheelTalon.setNeutralMode(NeutralMode.Brake);
         wheelTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
