@@ -45,9 +45,8 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
-        wheelTalon.configFactoryDefault();
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-                new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, wheelTalon);
+                new PIDConfig(0.001, 0.000022, 0.0000015, 0.0, 20, 1.0), -1, wheelTalon);
         wheelTalon.setSensorPhase(false);
         wheelTalon.setNeutralMode(NeutralMode.Brake);
         wheelTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
@@ -96,10 +95,6 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     public boolean onSlot(AngleOffset offset, double tolerance) {
         double value = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
         return MathUtil.isWithinTolerance(value, getIndex(offset) * INDEX_SPACING, tolerance);
-    }
-
-    public double getSlotTickPos(CheeseSlot slot) {
-        return getSlotTickPos(slot, AngleOffset.COLLECT_FRONT, Direction.ANY);
     }
 
     public double getSlotTickPos(CheeseSlot slot, AngleOffset offset, Direction direction) {

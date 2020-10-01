@@ -38,6 +38,6 @@ public class ClimbSetPower extends InstantCommand {
 
     @Override
     public void execute() {
-        climb.setManualPower(power);
+        climb.setPower(power);
     }
 }

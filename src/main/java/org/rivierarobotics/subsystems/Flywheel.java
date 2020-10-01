@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
@@ -53,7 +54,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        flywheelFalcon.set(pwr);
+        flywheelFalcon.set(ControlMode.PercentOutput, pwr);
     }
 
     public void setVelocity(double vel) {

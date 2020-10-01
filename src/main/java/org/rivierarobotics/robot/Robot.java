@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
     private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
-    private Command flyingWheelman;
     private Thread cameraThread;
 
     @Override
@@ -56,7 +55,6 @@ public class Robot extends TimedRobot {
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
 
-        //flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
@@ -64,16 +62,13 @@ public class Robot extends TimedRobot {
         }
 
         globalComponent.getNavXGyro().resetGyro();
+        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     @Override
     public void robotPeriodic() {
         displayShuffleboard();
         if (isEnabled()) {
-            //if (!flyingWheelman.isScheduled()) {
-            //    flyingWheelman.schedule();
-            //}
-
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }

@@ -57,37 +57,47 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
+        // Collecting
         new JoystickButton(coDriverLeft, 1)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT));
         new JoystickButton(coDriverLeft, 2)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK));
 
+        // Shooting
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(5));
 
+        // CheeseWheel manual cycles
         new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER));
         new JoystickButton(coDriverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.NO_BALL), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
         new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.NO_BALL), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER));
         new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.BALL), true);
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
+
+        // Autoaim and toggles
         new JoystickButton(coDriverButtons, 7)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 8)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
-        // new JoystickButton(coDriverButtons, 9)
-        //         .whileHeld(cmds.vision().encoderAim(VisionTarget.INNER));
-        // new JoystickButton(coDriverButtons, 10)
-        //         .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
+        new JoystickButton(coDriverButtons, 9)
+                .whileHeld(cmds.vision().encoderAim(VisionTarget.INNER));
+        new JoystickButton(coDriverButtons, 10)
+                .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.hood().toggleTrenchMode());
-        // new JoystickButton(coDriverButtons, 12)
-        //         .whenPressed(cmds.vision().toggleAutoAim());
+        new JoystickButton(coDriverButtons, 12)
+                .whenPressed(cmds.vision().toggleAutoAim());
+        new JoystickButton(coDriverButtons, 4)
+                .toggleWhenPressed(cmds.flywheel().setVelocity(15_900));
+        new JoystickButton(coDriverButtons, 1)
+                .toggleWhenPressed(cmds.ejector().setPower(1.0));
 
+        // Tesing/Dev
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.vision().correctPosition());
     }
