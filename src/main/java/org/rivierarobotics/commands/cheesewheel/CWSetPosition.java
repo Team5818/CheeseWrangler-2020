@@ -22,12 +22,13 @@ package org.rivierarobotics.commands.cheesewheel;
 
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.BasePIDSetPosition;
+import org.rivierarobotics.commands.MotionMagicSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
-public class CWSetPosition extends BasePIDSetPosition<CheeseWheel> {
-    public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks) {
-        super(cheeseWheel, 40, ticks, 2);
+public class CWSetPosition extends MotionMagicSetPosition<CheeseWheel> {
+    public CWSetPosition(@Provided CheeseWheel cheeseWheel, int ticks, @Provided RobotShuffleboard shuffleboard) {
+        super(cheeseWheel, cheeseWheel::getPositionTicks, cheeseWheel::setPositionTicks, ticks, 50, 5, shuffleboard);
     }
 }

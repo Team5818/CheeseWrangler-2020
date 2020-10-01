@@ -20,17 +20,21 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Provider;
 
-public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
+public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
     private static final int TICKS_AT_ZERO_DEGREES = 48;
@@ -38,12 +42,15 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
     private final RobotShuffleboardTab tab;
 
     public CheeseWheel(int motor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {
-        super(new PIDConfig(0.001, 0.000022, 0.0000015, 0.0, 20, 1.0));
         this.wheelTalon = new WPI_TalonSRX(motor);
         this.command = command;
         this.tab = shuffleboard.getTab("Cheese Wheel");
         wheelTalon.configFactoryDefault();
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+                new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, wheelTalon);
+        wheelTalon.setSensorPhase(false);
         wheelTalon.setNeutralMode(NeutralMode.Brake);
+        wheelTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
     public double getOffsetPositionTicks(AngleOffset offset) {
@@ -125,10 +132,13 @@ public class CheeseWheel extends BasePIDSubsystem implements RRSubsystem {
         return tab;
     }
 
+    public void setPositionTicks(double positionTicks) {
+        wheelTalon.set(ControlMode.MotionMagic, positionTicks);
+    }
+
     @Override
     public void setPower(double pwr) {
-        logger.powerChange(pwr);
-        wheelTalon.set(pwr);
+        wheelTalon.set(ControlMode.PercentOutput, pwr);
     }
 
     @Override

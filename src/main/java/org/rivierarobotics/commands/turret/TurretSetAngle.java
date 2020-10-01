@@ -24,13 +24,14 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.MotionMagicSetPosition;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
 public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
     private final boolean isAbsolute;
 
-    public TurretSetAngle(@Provided Turret turret, double angle, boolean isAbsolute) {
-        super(turret, turret::getAngle, turret::setAngle, angle, 5, 2);
+    public TurretSetAngle(@Provided Turret turret, double angle, boolean isAbsolute, @Provided RobotShuffleboard shuffleboard) {
+        super(turret, turret::getAngle, turret::setAngle, angle, 5, 2, shuffleboard);
         this.isAbsolute = isAbsolute;
     }
 

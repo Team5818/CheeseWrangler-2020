@@ -20,12 +20,22 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import org.rivierarobotics.commands.BasePIDSetPosition;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.MotionMagicSetPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.RobotShuffleboard;
 
-public class CWCycleSlot extends BasePIDSetPosition<CheeseWheel> {
-    public CWCycleSlot(CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
-        super(cheeseWheel, 10, cheeseWheel.getSlotTickPos(cheeseWheel.getClosestSlot(mode, direction, requiredState), mode, direction), 10);
+import javax.inject.Inject;
+
+@GenerateCreator
+public class CWCycleSlot extends MotionMagicSetPosition<CheeseWheel> {
+    @Inject
+    public CWCycleSlot(CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode,
+                       CheeseSlot.State requiredState, @Provided RobotShuffleboard shuffleboard) {
+        super(cheeseWheel, cheeseWheel::getPositionTicks, cheeseWheel::setPositionTicks,
+            cheeseWheel.getSlotTickPos(cheeseWheel.getClosestSlot(mode, direction, requiredState), mode, direction),
+                15, 5, shuffleboard);
     }
 }

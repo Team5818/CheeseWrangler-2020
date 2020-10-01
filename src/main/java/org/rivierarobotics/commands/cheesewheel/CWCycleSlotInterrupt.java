@@ -32,16 +32,19 @@ public class CWCycleSlotInterrupt extends InstantCommand {
     private final CheeseWheel.AngleOffset mode;
     private final CheeseSlot.State requiredState;
     private final CheeseWheel cheeseWheel;
+    private final CWCycleSlotCreator cwCycleSlot;
 
-    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
+    public CWCycleSlotInterrupt(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode,
+                                CheeseSlot.State requiredState, @Provided CWCycleSlotCreator cwCycleSlot) {
         this.cheeseWheel = cheeseWheel;
         this.direction = direction;
         this.mode = mode;
         this.requiredState = requiredState;
+        this.cwCycleSlot = cwCycleSlot;
     }
 
     @Override
     public void execute() {
-        new CWCycleSlot(cheeseWheel, direction, mode, requiredState).schedule();
+        cwCycleSlot.create(cheeseWheel, direction, mode, requiredState).schedule();
     }
 }

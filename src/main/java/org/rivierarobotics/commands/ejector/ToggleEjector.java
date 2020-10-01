@@ -18,46 +18,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.shooting;
+package org.rivierarobotics.commands.ejector;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
-import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
-public class All5Shoot extends CommandBase {
-    private final CheeseWheel cheeseWheel;
+public class ToggleEjector extends InstantCommand {
     private final Ejector ejector;
-    private double start;
 
-    public All5Shoot(@Provided CheeseWheel cheeseWheel, @Provided Ejector ejector) {
-        this.cheeseWheel = cheeseWheel;
+    public ToggleEjector(@Provided Ejector ejector) {
         this.ejector = ejector;
-        addRequirements(cheeseWheel, ejector);
-    }
-
-    @Override
-    public void initialize() {
-        start = cheeseWheel.getPositionTicks();
+        addRequirements(ejector);
     }
 
     @Override
     public void execute() {
-        ejector.setPower(1.0);
-        cheeseWheel.setPower(1.0);
+        if (ejector.isActive()) {
+            ejector.setPower(0.0);
+        } else {
+            ejector.setPower(1.0);
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
         ejector.setPower(0.0);
-        cheeseWheel.setPower(0);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return MathUtil.isWithinTolerance(cheeseWheel.getPositionTicks(), start + 4096, 50);
     }
 }

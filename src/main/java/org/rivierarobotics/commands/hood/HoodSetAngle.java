@@ -26,13 +26,14 @@ import org.rivierarobotics.commands.MotionMagicSetPosition;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.HoodPosition;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
 public class HoodSetAngle extends MotionMagicSetPosition<Hood> {
-    public HoodSetAngle(@Provided Hood hood, double angle) {
+    public HoodSetAngle(@Provided Hood hood, double angle, @Provided RobotShuffleboard shuffleboard) {
         super(hood, hood::getAngle, hood::setAngle,
             MathUtil.limit(angle,
                 (hood.isTrench ? HoodPosition.BACK_TRENCH.angle : HoodPosition.BACK_DEFAULT.angle),
-                HoodPosition.FORWARD.angle), 0.5, 2);
+                HoodPosition.FORWARD.angle), 0.5, 2, shuffleboard);
     }
 }

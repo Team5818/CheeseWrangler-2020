@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.RRSubsystem;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -34,30 +36,41 @@ public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> exten
     protected final DoubleSupplier getPosition;
     protected final DoubleConsumer setPosition;
     protected final double maxErrorTicks;
-    protected final double setpoint;
+    protected final double setPoint;
     protected final double timeout;
+    private RobotShuffleboardTab tab;
     private double start;
 
     public MotionMagicSetPosition(T subsystem, DoubleSupplier getPosition, DoubleConsumer setPosition,
-                                  double setpoint, double maxErrorTicks, double timeout) {
+                                  double setPoint, double maxErrorTicks, double timeout, RobotShuffleboard shuffleboard) {
         this.subsystem = subsystem;
         this.getPosition = getPosition;
         this.setPosition = setPosition;
         this.maxErrorTicks = maxErrorTicks;
-        this.setpoint = setpoint;
+        this.setPoint = setPoint;
         this.timeout = timeout;
+        tab = shuffleboard.getTab("MM Tuning");
+        tab.setEntry(subsystem.toString() + " setPoint:", setPoint);
+        tab.setEntry(subsystem.toString() + " maxErrorTicks:", maxErrorTicks);
         addRequirements(subsystem);
     }
 
     @Override
     public void initialize() {
-        setPosition.accept(setpoint);
+        setPosition.accept(setPoint);
         start = Timer.getFPGATimestamp();
     }
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(getPosition.getAsDouble(), setpoint, maxErrorTicks)
-            || (Timer.getFPGATimestamp() - start) > timeout;
+        tab.setEntry(subsystem.toString() + " currentPosition", getPosition.getAsDouble());
+        if (MathUtil.isWithinTolerance(getPosition.getAsDouble(), setPoint, maxErrorTicks)
+                || (Timer.getFPGATimestamp() - start) > timeout) {
+            tab.setEntry(subsystem.toString() + " finished", true);
+            return true;
+        } else {
+            tab.setEntry(subsystem.toString() + " finished", false);
+            return false;
+        }
     }
 }

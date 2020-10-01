@@ -151,7 +151,6 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
-            .setEntry("At Position", cw.getPidController().atSetpoint())
             .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
             .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
             .setEntry("Ball 2", CheeseSlot.TWO.hasBall())

@@ -42,7 +42,7 @@ public class CheeseWheelControl extends CommandBase {
 
     @Override
     public void execute() {
-        cheeseWheel.setManualPower(MathUtil.fitDeadband(coDriverLeftJs.getY()));
+        cheeseWheel.setPower(MathUtil.fitDeadband(coDriverLeftJs.getY()));
     }
 
     @Override

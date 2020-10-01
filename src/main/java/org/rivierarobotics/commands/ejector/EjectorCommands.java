@@ -24,13 +24,20 @@ import javax.inject.Inject;
 
 public class EjectorCommands {
     private final EjectorSetPowerCreator ejectorSetPowerCreator;
+    private final ToggleEjectorCreator toggleEjectorCreator;
 
     @Inject
-    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator) {
+    public EjectorCommands(EjectorSetPowerCreator ejectorSetPowerCreator, ToggleEjectorCreator toggleEjectorCreator) {
         this.ejectorSetPowerCreator = ejectorSetPowerCreator;
+        this.toggleEjectorCreator = toggleEjectorCreator;
     }
 
     public EjectorSetPower setPower(double power) {
         return ejectorSetPowerCreator.create(power);
     }
+
+    public ToggleEjector toggleEjector() {
+        return toggleEjectorCreator.create();
+    }
+
 }
