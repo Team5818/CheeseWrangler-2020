@@ -154,6 +154,9 @@ public class Robot extends TimedRobot {
             .setEntry("Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
             .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40));
 
+        shuffleboard.getTab("Vision")
+            .setEntry("Camera Servo Angle", globalComponent.getCameraServo().getAngle());
+
         SmartDashboard.putData(chooser);
     }
 }

@@ -22,27 +22,31 @@ package org.rivierarobotics.commands.shooting;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
+import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
                         @Provided EjectorCommands ejectorCommands,
                         int wedges) {
-
         for (int i = 0; i < wedges; i++) {
             addCommands(
-                    // TODO change the CheeseSlot.State to reflect whether we want to shoot X balls or X slots
-                    new ParallelDeadlineGroup(
-                            ejectorCommands.setPower(1.0),
-                            cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.BALL)
-                    ),
-                    ejectorCommands.setPower(0.0)
+                new SequentialCommandGroup(
+                ejectorCommands.setPower(1.0),
+                new WaitCommand(0.1),
+                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.BALL),
+                new WaitCommand(0.1),
+                ejectorCommands.setPower(0)
+                )
             );
         }
     }

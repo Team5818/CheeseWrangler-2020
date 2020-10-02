@@ -90,8 +90,9 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     private boolean limitSafety(double pwr) {
-        return !(getPositionTicks() <= HoodPosition.BACK_DEFAULT.ticks && pwr < 0)
-            && !(getPositionTicks() >= HoodPosition.FORWARD.ticks && pwr > 0);
+        shuffleTab.setEntry("limitPower", pwr);
+        return !(getPositionTicks() >= HoodPosition.FORWARD.ticks && pwr < 0)
+            && !(getPositionTicks() <= HoodPosition.BACK_DEFAULT.ticks && pwr > 0);
     }
 
     public double getAngle() {

@@ -40,9 +40,4 @@ public class EjectorSetPower extends InstantCommand {
     public void execute() {
         ejector.setPower(power);
     }
-
-    @Override
-    public void end(boolean interrupted) {
-        ejector.setPower(0.0);
-    }
 }

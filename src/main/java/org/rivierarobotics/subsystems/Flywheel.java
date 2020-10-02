@@ -61,7 +61,8 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         shuffleboard.getTab("Vision").setEntry("Flywheel Set Vel", vel);
         logger.setpointChange(vel);
         if (vel == 0) {
-            flywheelFalcon.set(TalonFXControlMode.Disabled, 0.0);
+            flywheelFalcon.set(TalonFXControlMode.Velocity, 0.0);
+            flywheelFalcon.set(TalonFXControlMode.Current, 0.0);
         } else {
             flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
         }
