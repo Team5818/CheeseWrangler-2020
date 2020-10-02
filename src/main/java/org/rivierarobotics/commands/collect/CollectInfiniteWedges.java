@@ -36,6 +36,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private final double frontPower;
     private final double backPower;
     private static final double pwrConstant = 1.0;
+    private static final int tolerance = 40;
     private final CheeseWheel.AngleOffset mode;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
@@ -64,7 +65,7 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void initialize() {
-        if (!cheeseWheel.onSlot(mode) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
+        if (!cheeseWheel.onSlot(mode, tolerance) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
             moveToNext();
         }
     }
@@ -77,7 +78,7 @@ public class CollectInfiniteWedges extends CommandBase {
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
         cheeseWheel.getTab().setEntry("ClosestIndex", closest.ordinal());
         cheeseWheel.getTab().setEntry("ClosestHasBall", closest.hasBall());
-        if (closest.hasBall() && cheeseWheel.onSlot(mode)) {
+        if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance)) {
             moveToNext();
         }
     }
