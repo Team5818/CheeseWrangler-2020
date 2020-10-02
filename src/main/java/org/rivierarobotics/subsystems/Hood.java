@@ -38,7 +38,6 @@ import javax.inject.Provider;
 public class Hood extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 1762;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
-    public boolean isTrench = false;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
     private final MechLogger logger;
@@ -79,9 +78,9 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
     // Applies a bell curve power ramp for safety
     private double curvePower(double pwr) {
-        double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
+        double back = HoodPosition.BACK_DEFAULT.ticks;
         double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
-        double curvedPwr = Math.pow(Math.E, -(4.0 / 8) * (pos * pos)) * pwr;
+        double curvedPwr = Math.pow(Math.E, -(11.0 / 8) * (pos * pos)) * pwr;
         if (limitSafety(curvedPwr)) {
             return curvedPwr;
         } else {
@@ -102,7 +101,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     public void setAngle(double angle) {
         shuffleTab.setEntry("SetHoodAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        double back = isTrench ? HoodPosition.BACK_TRENCH.ticks : HoodPosition.BACK_DEFAULT.ticks;
+        double back = HoodPosition.BACK_DEFAULT.ticks;
         shuffleTab.setEntry("ticksAngSet", ticks);
         ticks = MathUtil.limit(ticks, back, HoodPosition.FORWARD.ticks);
         shuffleTab.setEntry("ticksAng", ticks);

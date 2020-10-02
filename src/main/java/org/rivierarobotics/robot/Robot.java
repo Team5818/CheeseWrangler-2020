@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.robot;
 
-import com.revrobotics.CANSparkMax;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -61,7 +60,6 @@ public class Robot extends TimedRobot {
             cameraThread = new CameraFlip();
             cameraThread.start();
         }
-
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
@@ -97,7 +95,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-
+        globalComponent.getNavXGyro().resetGyro();
         globalComponent.getButtonConfiguration().initTeleop();
     }
 
@@ -137,7 +135,8 @@ public class Robot extends TimedRobot {
             .setEntry("ty", visionUtil.getLLValue("ty"))
             .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
-            .setEntry("Gyro Angle", gyro.getYaw());
+            .setEntry("Gyro Angle", gyro.getYaw())
+            .setEntry("Autoaim Enabled", turret.isAutoAimEnabled());
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
