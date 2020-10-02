@@ -20,18 +20,14 @@
 
 package org.rivierarobotics.commands.shooting;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
-import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {

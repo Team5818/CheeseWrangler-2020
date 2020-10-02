@@ -61,7 +61,6 @@ public class Robot extends TimedRobot {
             cameraThread.start();
         }
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     @Override
@@ -106,12 +105,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     @Override
     public void disabledPeriodic() {
-        CommandScheduler.getInstance().run();
+        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     private void displayShuffleboard() {

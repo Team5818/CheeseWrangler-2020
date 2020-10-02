@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.util.CameraFlip;
 
 import javax.inject.Inject;
 

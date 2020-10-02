@@ -36,21 +36,29 @@ public class VisionUtil {
         this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
-    public final double getLLValue(String key) {
-        return limelight.getEntry(key).getDouble(0);
+    public double getLLValue(String key) {
+        return getLLValue(key, -1);
     }
 
-    public final double getActualTY(double hoodAbsPos) {
+    public double getLLValue(String key, double def) {
+        return limelight.getEntry(key).getDouble(def);
+    }
+
+    public double getActualTY(double hoodAbsPos) {
         return getLLValue("ty") + (90 - hoodAbsPos) - 3;
     }
 
-    public final void setLEDState(LimelightLEDState state) {
+    public void setLEDState(LimelightLEDState state) {
         limelight.getEntry("ledMode").setNumber(state.ordinal());
     }
+    
+    public boolean hasLEDState(LimelightLEDState state) {
+        return (int) limelight.getEntry("ledMode").getNumber(-1) == state.ordinal();
+    }
 
-    public final void invertLedState() {
+    public void invertLedState() {
         NetworkTableEntry led = limelight.getEntry("ledMode");
-        double cs = (double) led.getNumber(1.0);
+        int cs = (int) led.getNumber(1.0);
         led.setNumber(cs == 1 ? 3 : 1);
     }
 

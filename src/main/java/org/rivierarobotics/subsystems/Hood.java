@@ -54,10 +54,6 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         shuffleTab = shuffleboard.getTab("TurretHood");
     }
 
-    public final WPI_TalonSRX getHoodTalon() {
-        return hoodTalon;
-    }
-
     public static double getTicksPerDegree() {
         return TICKS_PER_DEGREE;
     }
@@ -81,11 +77,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         double back = HoodPosition.BACK_DEFAULT.ticks;
         double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
         double curvedPwr = Math.pow(Math.E, -(11.0 / 8) * (pos * pos)) * pwr;
-        if (limitSafety(curvedPwr)) {
-            return curvedPwr;
-        } else {
-            return 0.0;
-        }
+        return limitSafety(curvedPwr) ? curvedPwr : 0.0;
     }
 
     private boolean limitSafety(double pwr) {
@@ -101,9 +93,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     public void setAngle(double angle) {
         shuffleTab.setEntry("SetHoodAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        double back = HoodPosition.BACK_DEFAULT.ticks;
         shuffleTab.setEntry("ticksAngSet", ticks);
-        ticks = MathUtil.limit(ticks, back, HoodPosition.FORWARD.ticks);
+        ticks = MathUtil.limit(ticks, HoodPosition.BACK_DEFAULT.ticks, HoodPosition.FORWARD.ticks);
         shuffleTab.setEntry("ticksAng", ticks);
         logger.setpointChange(ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);

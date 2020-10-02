@@ -22,9 +22,7 @@ package org.rivierarobotics.subsystems;
 
 public enum HoodPosition {
     FORWARD(2515),
-    BACK_DEFAULT(2250),
-    BACK_TRENCH(2026),
-    MIDDLE(2350);
+    BACK_DEFAULT(2250);
 
     public final int ticks;
     public final double angle;

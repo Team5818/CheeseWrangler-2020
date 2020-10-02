@@ -44,10 +44,6 @@ public class Ejector extends SubsystemBase {
         this.command = command;
     }
 
-    public boolean isActive() {
-        return Math.abs(left.getPower()) > 0 || Math.abs(right.getPower()) > 0;
-    }
-
     public void setPower(double pwr) {
         setPower(pwr, pwr);
     }

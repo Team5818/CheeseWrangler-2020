@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.ServoPosition;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
@@ -80,7 +81,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 6)
                 .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
 
-        // Autoaim and toggles
+        // Autoaim
         new JoystickButton(coDriverButtons, 7)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 8)
@@ -90,16 +91,24 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 10)
                 .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
-                .whenPressed(() -> CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP);
+                .whenPressed(cmds.vision().correctPosition());
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.vision().toggleAutoAim());
+
+        // Toggles
         new JoystickButton(coDriverButtons, 4)
                 .toggleWhenPressed(cmds.flywheel().setVelocity(15_900));
         new JoystickButton(coDriverButtons, 1)
                 .toggleWhenPressed(cmds.ejector().setPower(1.0));
 
-        // Tesing/Dev
-        new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.vision().correctPosition());
+        // Camera servo
+        new JoystickButton(driverButtons, 11)
+                .whenPressed(() -> CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP);
+        new JoystickButton(driverButtons, 12)
+                .whenPressed(cmds.cameraServo().setPosition(ServoPosition.FRONT_COLLECT));
+        new JoystickButton(driverButtons, 10)
+                .whenPressed(cmds.cameraServo().setPosition(ServoPosition.BACK_COLLECT));
+        new JoystickButton(driverButtons, 8)
+                .whenPressed(cmds.cameraServo().setPosition(ServoPosition.CLIMB));
     }
 }
