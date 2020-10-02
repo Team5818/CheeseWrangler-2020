@@ -31,7 +31,7 @@ public class CameraFlip extends Thread {
 
     @Override
     public void run() {
-        CvSink cvSink = CameraServer.getInstance().getVideo();
+        CvSink cvSink = CameraServer.getInstance().getVideo("USB Camera 0");
         CvSource outputStream = CameraServer.getInstance().putVideo("Secondary", 320, 240);
 
         Mat source = new Mat();
@@ -46,6 +46,8 @@ public class CameraFlip extends Thread {
                 // https://docs.wpilib.org/en/stable/docs/software/vision-processing/introduction/using-the-cameraserver-on-the-roborio.html
                 // 0 = flip about x axis
                 Core.flip(source, output, 0);
+            } else {
+                output = source.clone();
             }
             outputStream.putFrame(output);
         }

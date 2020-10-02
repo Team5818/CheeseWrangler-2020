@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -89,7 +90,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 10)
                 .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
-                .whenPressed(cmds.hood().toggleTrenchMode());
+                .whenPressed(() -> CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP);
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.vision().toggleAutoAim());
         new JoystickButton(coDriverButtons, 4)

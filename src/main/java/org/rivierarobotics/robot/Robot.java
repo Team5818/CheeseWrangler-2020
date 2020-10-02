@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.robot;
 
+import com.revrobotics.CANSparkMax;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -153,9 +154,6 @@ public class Robot extends TimedRobot {
             .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
             .setEntry("Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
             .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40));
-
-        shuffleboard.getTab("Vision")
-            .setEntry("Camera Servo Angle", globalComponent.getCameraServo().getAngle());
 
         SmartDashboard.putData(chooser);
     }

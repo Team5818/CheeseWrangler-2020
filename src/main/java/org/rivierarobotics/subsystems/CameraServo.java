@@ -34,17 +34,7 @@ public class CameraServo extends SubsystemBase {
         this.servo = new Servo(id);
     }
 
-    //TODO redo these two methods for camera specific servo
-    public double getAngle() {
-        return (servo.getPosition() - 0.5) * -240.0;
-    }
-
     public void setAngle(double angle) {
         this.servo.set(0.5 - (angle * 1 / 240.0));
-    }
-
-    @Override
-    public void periodic() {
-        CameraFlip.DO_FLIP = getAngle() > 95;
     }
 }
