@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems;
 
 public enum HoodPosition {
+    //TODO: CREATE NEW LIMITS THAT ARE GOOD
     FORWARD(2450),
     BACK_DEFAULT(2250);
 

@@ -87,17 +87,17 @@ public class EncoderAim extends CommandBase {
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot
-                hood.setAngle(90 - hoodAngle);
+                hood.setAngle(hoodAngle);
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
                 tab.setEntry("Target: ", "Close Shot");
             } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot
-                hood.setAngle(90 - (33 + 0.1 * dist));
+                hood.setAngle((33 + 0.1 * dist));
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
                 tab.setEntry("Target: ", "Long Shot");
             } else {
                 //Calculated Shot
-                hood.setAngle(90 - hoodAngle);
+                hood.setAngle(hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
                 tab.setEntry("Target: ", "Calculated Shot");
             }

@@ -38,6 +38,7 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
+    //TODO: GET ZERO TICK USING RULER AND FORWARD POSITION TICKS
     private static final double ZERO_TICKS = 1762;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
     private final WPI_TalonSRX hoodTalon;

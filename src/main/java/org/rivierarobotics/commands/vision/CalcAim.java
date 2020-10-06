@@ -82,15 +82,15 @@ public class CalcAim extends CommandBase {
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot
-                hood.setAngle(90 - hoodAngle);
+                hood.setAngle(hoodAngle);
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
             } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot
-                hood.setAngle(90 - (33 + 0.1 * dist));
+                hood.setAngle((33 + 0.1 * dist));
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMaxVelocity()));
             } else {
                 //Calculated Shot
-                hood.setAngle(90 - hoodAngle);
+                hood.setAngle(hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
             }
             turret.setPositionTicks(captainKalbag * turret.getTicksPerDegree() / 10 + 5);
