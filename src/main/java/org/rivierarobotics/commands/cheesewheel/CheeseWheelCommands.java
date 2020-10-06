@@ -20,12 +20,7 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import org.rivierarobotics.commands.shooting.All5Shoot;
-import org.rivierarobotics.commands.shooting.All5ShootCreator;
-import org.rivierarobotics.commands.shooting.Shoot;
-import org.rivierarobotics.commands.shooting.ShootCreator;
-import org.rivierarobotics.commands.shooting.ShootNWedges;
-import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
+import org.rivierarobotics.commands.shooting.*;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 
@@ -37,14 +32,14 @@ public class CheeseWheelCommands {
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final All5ShootCreator all5ShootCreator;
     private final CWCycleSlotCreator cycleSlotWaitCreator;
-    private final ShootCreator shootCreator;
+    private final ContinuousShootCreator shootCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWCycleSlotInterruptCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
                                All5ShootCreator all5ShootCreator, CWCycleSlotCreator cycleSlotWaitCreator,
-                               ShootCreator shootCreator) {
+                               ContinuousShootCreator shootCreator) {
         this.setPositionCreator = setPositionCreator;
         this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
@@ -62,7 +57,7 @@ public class CheeseWheelCommands {
         return cycleSlotWaitCreator.create(direction, mode, requiredState);
     }
 
-    public Shoot shoot() {
+    public ContinuousShoot continuousShoot() {
         return shootCreator.create();
     }
 
@@ -73,8 +68,6 @@ public class CheeseWheelCommands {
     public ShootNWedges shootNWedges(int wedges) {
         return shootNWedgesCreator.create(wedges);
     }
-
-
 
     public All5Shoot all5Shoot() {
         return all5ShootCreator.create();

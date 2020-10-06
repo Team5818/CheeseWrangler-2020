@@ -33,51 +33,51 @@ import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
-public class Shoot extends CommandBase {
+public class ContinuousShoot extends CommandBase {
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
     private final Ejector ejector;
-    private boolean finishedShooting;
+    private boolean finishedShooting = false;
+    private CheeseSlot shootingSlot;
+    private double shootStartTimestamp = -1;
 
-    public Shoot(@Provided CheeseWheel cheeseWheel, @Provided Turret turret, @Provided Ejector ejector, @Provided RobotShuffleboard shuffleboard) {
+    public ContinuousShoot(@Provided CheeseWheel cheeseWheel, @Provided Turret turret, @Provided Ejector ejector, @Provided RobotShuffleboard shuffleboard) {
         this.turret = turret;
         this.cheeseWheel = cheeseWheel;
         this.ejector = ejector;
         this.tab = shuffleboard.getTab("TurretHood");
-        addRequirements(cheeseWheel);
+        addRequirements(cheeseWheel, ejector);
     }
 
     @Override
     public void execute() {
-        CheeseWheel.AngleOffset offset =
-                MathUtil.isWithinTolerance(turret.getAngle(), 0, 90) ? CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
+        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(), 0, 90) ?
+                CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
 
-        if (!cheeseWheel.onSlot(offset, 30) || (!CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset)).hasBall() && finishedShooting)) {
-            finishedShooting = false;
-            cheeseWheel.setPositionTicks(cheeseWheel.getSlotTickPos(
-                    cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL), offset, offset.direction));
-        } else {
+        CheeseSlot currentSlot = CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset));
+        if (finishedShooting) {
+            if (!cheeseWheel.onSlot(offset, 30) || !currentSlot.hasBall()) {
+                finishedShooting = false;
+                cheeseWheel.setPositionTicks(cheeseWheel.getSlotTickPos(
+                        cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL), offset, offset.direction));
+                shootingSlot = currentSlot;
+            }
+        } else if (shootingSlot.hasBall() || (shootStartTimestamp != -1 && shootStartTimestamp + 0.3 < Timer.getFPGATimestamp())) {
             ejector.setPower(1);
-            while (CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset)).hasBall()) {
-            }
-            double startTime = Timer.getFPGATimestamp();
-            if (startTime + 0.3 < Timer.getFPGATimestamp()) {
-                ejector.setPower(0);
-                finishedShooting = true;
-            }
+        } else if (shootStartTimestamp == -1) {
+            shootStartTimestamp = Timer.getFPGATimestamp();
+        } else {
+            ejector.setPower(0);
+            finishedShooting = true;
+            shootStartTimestamp = -1;
         }
-
-    }
-
-    @Override
-    public void end(boolean interrupted) {
     }
 
     @Override
     public boolean isFinished() {
-        for (int i = 0; i < 5; i++) {
-            if (CheeseSlot.slotOfNum(i).hasBall()) {
+        for (CheeseSlot slot : CheeseSlot.values()) {
+            if (slot.hasBall()) {
                 return false;
             }
         }
