@@ -20,7 +20,12 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import org.rivierarobotics.commands.shooting.*;
+import org.rivierarobotics.commands.shooting.All5Shoot;
+import org.rivierarobotics.commands.shooting.All5ShootCreator;
+import org.rivierarobotics.commands.shooting.ContinuousShoot;
+import org.rivierarobotics.commands.shooting.ContinuousShootCreator;
+import org.rivierarobotics.commands.shooting.ShootNWedges;
+import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 

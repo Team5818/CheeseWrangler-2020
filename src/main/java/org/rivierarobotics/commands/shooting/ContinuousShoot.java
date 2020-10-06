@@ -57,9 +57,13 @@ public class ContinuousShoot extends CommandBase {
 
     @Override
     public void execute() {
+        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(), 0, 90)
+                ? CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
+        CheeseSlot currentSlot = CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset));
         if (finishedShooting) {
             moveWheel();
-        } else if (shootingSlot.hasBall() || (shootStartTimestamp != -1 && shootStartTimestamp + 0.3 < Timer.getFPGATimestamp())) {
+        } else if ((currentSlot.hasBall() || (shootStartTimestamp != -1 && shootStartTimestamp + 0.3 < Timer.getFPGATimestamp()))
+                    && cheeseWheel.onSlot(offset, 30)) {
             ejector.setPower(1);
         } else if (shootStartTimestamp == -1) {
             shootStartTimestamp = Timer.getFPGATimestamp();
@@ -71,14 +75,13 @@ public class ContinuousShoot extends CommandBase {
     }
 
     private void moveWheel() {
-        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(), 0, 90) ?
-                CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
+        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(), 0, 90)
+                ? CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
         CheeseSlot currentSlot = CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset));
         if (!cheeseWheel.onSlot(offset, 30) || !currentSlot.hasBall()) {
             finishedShooting = false;
             cheeseWheel.setPositionTicks(cheeseWheel.getSlotTickPos(
                     cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL), offset, offset.direction));
-            shootingSlot = currentSlot;
         }
     }
 
