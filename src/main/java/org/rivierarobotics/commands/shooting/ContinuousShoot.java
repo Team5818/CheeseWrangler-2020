@@ -51,18 +51,14 @@ public class ContinuousShoot extends CommandBase {
     }
 
     @Override
-    public void execute() {
-        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(), 0, 90) ?
-                CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
+    public void initialize() {
+        moveWheel();
+    }
 
-        CheeseSlot currentSlot = CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset));
+    @Override
+    public void execute() {
         if (finishedShooting) {
-            if (!cheeseWheel.onSlot(offset, 30) || !currentSlot.hasBall()) {
-                finishedShooting = false;
-                cheeseWheel.setPositionTicks(cheeseWheel.getSlotTickPos(
-                        cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL), offset, offset.direction));
-                shootingSlot = currentSlot;
-            }
+            moveWheel();
         } else if (shootingSlot.hasBall() || (shootStartTimestamp != -1 && shootStartTimestamp + 0.3 < Timer.getFPGATimestamp())) {
             ejector.setPower(1);
         } else if (shootStartTimestamp == -1) {
@@ -71,6 +67,18 @@ public class ContinuousShoot extends CommandBase {
             ejector.setPower(0);
             finishedShooting = true;
             shootStartTimestamp = -1;
+        }
+    }
+
+    private void moveWheel() {
+        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(), 0, 90) ?
+                CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
+        CheeseSlot currentSlot = CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset));
+        if (!cheeseWheel.onSlot(offset, 30) || !currentSlot.hasBall()) {
+            finishedShooting = false;
+            cheeseWheel.setPositionTicks(cheeseWheel.getSlotTickPos(
+                    cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL), offset, offset.direction));
+            shootingSlot = currentSlot;
         }
     }
 
