@@ -37,7 +37,7 @@ public class ShootNWedges extends SequentialCommandGroup {
                         @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
                         int wedges) {
         for (int i = 0; i < wedges; i++) {
-            if(MathUtil.isWithinTolerance(turret.getAngle(), 0, 90)) {
+            if (MathUtil.isWithinTolerance(turret.getAngle(), 0, 90)) {
                 addCommands(
                         new SequentialCommandGroup(
                                 cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseSlot.State.BALL),

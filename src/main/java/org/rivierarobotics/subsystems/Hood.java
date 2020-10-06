@@ -49,8 +49,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-            new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 400, hoodTalon);
-        hoodTalon.setSensorPhase(true);
+            new PIDConfig((0.8 * 1023 / 400), 0, 0, 0), 400, hoodTalon);
+        hoodTalon.setSensorPhase(false);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
         hoodTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         hoodTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
@@ -79,10 +79,9 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
     // Applies a bell curve power ramp for safety
     private double curvePower(double pwr) {
-        double back = HoodPosition.BACK_DEFAULT.ticks;
-        double pos = pwr < 0 ? (getPositionTicks() - HoodPosition.BACK_DEFAULT.ticks) / (HoodPosition.FORWARD.ticks - back) :
-                (getPositionTicks() - HoodPosition.FORWARD.ticks) / (HoodPosition.BACK_DEFAULT.ticks - HoodPosition.FORWARD.ticks);
-        double curvedPwr = Math.pow(Math.E, -(11.0 / 8) * (pos * pos)) * pwr;
+        double range = HoodPosition.FORWARD.ticks - HoodPosition.BACK_DEFAULT.ticks;
+        double pos = pwr > 0 ? 1.5 / range / (HoodPosition.FORWARD.ticks - getPositionTicks()) : 1.5 / range / (getPositionTicks() - HoodPosition.BACK_DEFAULT.ticks);
+        double curvedPwr = Math.pow(Math.E, -(6.0 / 8) * pos * pos) * pwr;
         return limitSafety(curvedPwr) ? curvedPwr : 0.0;
     }
 
@@ -97,13 +96,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
-        angle = 90 - angle;
-        shuffleTab.setEntry("SetHoodAngle", angle);
-        double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
-        shuffleTab.setEntry("ticksAngSet", ticks);
-        ticks = MathUtil.limit(ticks, HoodPosition.BACK_DEFAULT.ticks, HoodPosition.FORWARD.ticks);
-        shuffleTab.setEntry("ticksAng", ticks);
-        logger.setpointChange(ticks);
+        double ticks = MathUtil.limit(angle * TICKS_PER_DEGREE - ZERO_TICKS, HoodPosition.BACK_DEFAULT.ticks, HoodPosition.FORWARD.ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 

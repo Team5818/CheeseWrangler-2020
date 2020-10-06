@@ -22,6 +22,8 @@ package org.rivierarobotics.commands.cheesewheel;
 
 import org.rivierarobotics.commands.shooting.All5Shoot;
 import org.rivierarobotics.commands.shooting.All5ShootCreator;
+import org.rivierarobotics.commands.shooting.Shoot;
+import org.rivierarobotics.commands.shooting.ShootCreator;
 import org.rivierarobotics.commands.shooting.ShootNWedges;
 import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
 import org.rivierarobotics.subsystems.CheeseWheel;
@@ -35,17 +37,21 @@ public class CheeseWheelCommands {
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final All5ShootCreator all5ShootCreator;
     private final CWCycleSlotCreator cycleSlotWaitCreator;
+    private final ShootCreator shootCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWCycleSlotInterruptCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
-                               All5ShootCreator all5ShootCreator, CWCycleSlotCreator cycleSlotWaitCreator) {
+                               All5ShootCreator all5ShootCreator, CWCycleSlotCreator cycleSlotWaitCreator,
+                               ShootCreator shootCreator) {
         this.setPositionCreator = setPositionCreator;
         this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.all5ShootCreator = all5ShootCreator;
         this.cycleSlotWaitCreator = cycleSlotWaitCreator;
+        this.shootCreator = shootCreator;
+
     }
 
     public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
@@ -53,7 +59,11 @@ public class CheeseWheelCommands {
     }
 
     public CWCycleSlot cycleSlotWait(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
-        return cycleSlotWaitCreator.create(direction,mode,requiredState);
+        return cycleSlotWaitCreator.create(direction, mode, requiredState);
+    }
+
+    public Shoot shoot() {
+        return shootCreator.create();
     }
 
     public CWSetPosition setPosition(int ticks) {
@@ -63,6 +73,8 @@ public class CheeseWheelCommands {
     public ShootNWedges shootNWedges(int wedges) {
         return shootNWedgesCreator.create(wedges);
     }
+
+
 
     public All5Shoot all5Shoot() {
         return all5ShootCreator.create();

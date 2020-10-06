@@ -68,7 +68,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
 
     public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
         int modifier = direction == Direction.BACKWARDS ? 1 : -1;
-        for (int i = 1; i < 5; i++) {
+        for (int i = 0; i < 5; i++) {
             CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
             if (requiredState == CheeseSlot.State.EITHER
                     || (requiredState == CheeseSlot.State.BALL && slot.hasBall())
@@ -138,8 +138,8 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     }
 
     public enum AngleOffset {
-        COLLECT_FRONT(875, Direction.FORWARDS), COLLECT_BACK(2510, Direction.BACKWARDS), SHOOTER_FRONT(-360, Direction.FORWARDS),
-        SHOOTER_BACK(-360, Direction.BACKWARDS);
+        COLLECT_FRONT(875, Direction.FORWARDS), COLLECT_BACK(2510, Direction.BACKWARDS), SHOOTER_FRONT(-360, Direction.BACKWARDS),
+        SHOOTER_BACK(-360, Direction.FORWARDS);
 
         public final int angle;
         public final Direction direction;
