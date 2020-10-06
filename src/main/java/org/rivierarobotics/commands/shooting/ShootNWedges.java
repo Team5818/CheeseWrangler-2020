@@ -27,23 +27,35 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
-                        @Provided EjectorCommands ejectorCommands,
+                        @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
                         int wedges) {
         for (int i = 0; i < wedges; i++) {
-            addCommands(
-                new SequentialCommandGroup(
-                ejectorCommands.setPower(1.0),
-                new WaitCommand(0.1),
-                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.BALL),
-                new WaitCommand(0.1),
-                ejectorCommands.setPower(0)
-                )
-            );
+            if(MathUtil.isWithinTolerance(turret.getAngle(), 0, 90)) {
+                addCommands(
+                        new SequentialCommandGroup(
+                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseSlot.State.BALL),
+                                new WaitCommand(0.8),
+                                ejectorCommands.setPower(1.0),
+                                new WaitCommand(0.5),
+                                ejectorCommands.setPower(0)
+                        ));
+            } else {
+                addCommands(
+                        new SequentialCommandGroup(
+                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
+                                new WaitCommand(0.8),
+                                ejectorCommands.setPower(1.0),
+                                new WaitCommand(0.5),
+                                ejectorCommands.setPower(0)
+                        ));
+            }
         }
     }
 }

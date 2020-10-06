@@ -126,7 +126,8 @@ public class Robot extends TimedRobot {
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
             .setEntry("Hood Abs Angle", hood.getAngle())
             .setEntry("Turret Abs Angle", turret.getAbsoluteAngle())
-            .setEntry("Turret Pos Ticks", turret.getPositionTicks());
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
+            .setEntry("TurretAng", turret.getAngle());
 
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))

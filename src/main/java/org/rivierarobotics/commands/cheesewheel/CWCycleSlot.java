@@ -31,11 +31,12 @@ import javax.inject.Inject;
 
 @GenerateCreator
 public class CWCycleSlot extends MotionMagicSetPosition<CheeseWheel> {
+
     @Inject
-    public CWCycleSlot(CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode,
+    public CWCycleSlot(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode,
                        CheeseSlot.State requiredState, @Provided RobotShuffleboard shuffleboard) {
         super(cheeseWheel, cheeseWheel::getPositionTicks, cheeseWheel::setPositionTicks,
             cheeseWheel.getSlotTickPos(cheeseWheel.getClosestSlot(mode, direction, requiredState), mode, direction),
-                15, 5, shuffleboard);
+                70, 5, shuffleboard);
     }
 }

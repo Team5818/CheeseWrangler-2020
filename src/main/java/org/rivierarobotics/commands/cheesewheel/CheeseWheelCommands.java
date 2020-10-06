@@ -34,20 +34,26 @@ public class CheeseWheelCommands {
     private final CWCycleSlotInterruptCreator cycleSlotCreator;
     private final ShootNWedgesCreator shootNWedgesCreator;
     private final All5ShootCreator all5ShootCreator;
+    private final CWCycleSlotCreator cycleSlotWaitCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWCycleSlotInterruptCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
-                               All5ShootCreator all5ShootCreator) {
+                               All5ShootCreator all5ShootCreator, CWCycleSlotCreator cycleSlotWaitCreator) {
         this.setPositionCreator = setPositionCreator;
         this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.all5ShootCreator = all5ShootCreator;
+        this.cycleSlotWaitCreator = cycleSlotWaitCreator;
     }
 
     public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
         return cycleSlotCreator.create(direction, mode, requiredState);
+    }
+
+    public CWCycleSlot cycleSlotWait(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
+        return cycleSlotWaitCreator.create(direction,mode,requiredState);
     }
 
     public CWSetPosition setPosition(int ticks) {

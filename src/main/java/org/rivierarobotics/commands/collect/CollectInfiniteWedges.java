@@ -36,7 +36,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private final double frontPower;
     private final double backPower;
     private static final double pwrConstant = 1.0;
-    private static final int tolerance = 75;
+    private static final int tolerance = 90;
     private final CheeseWheel.AngleOffset mode;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,

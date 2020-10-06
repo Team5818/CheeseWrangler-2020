@@ -22,6 +22,8 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,9 +49,12 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         this.command = command;
         hoodTalon = new WPI_TalonSRX(motorId);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-            new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, hoodTalon);
-        hoodTalon.setSensorPhase(false);
+            new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 400, hoodTalon);
+        hoodTalon.setSensorPhase(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
+        hoodTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        hoodTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         logger = Logging.getLogger(getClass());
         shuffleTab = shuffleboard.getTab("TurretHood");
     }
@@ -75,7 +80,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     // Applies a bell curve power ramp for safety
     private double curvePower(double pwr) {
         double back = HoodPosition.BACK_DEFAULT.ticks;
-        double pos = (getPositionTicks() - back) / (HoodPosition.FORWARD.ticks - back);
+        double pos = pwr < 0 ? (getPositionTicks() - HoodPosition.BACK_DEFAULT.ticks) / (HoodPosition.FORWARD.ticks - back) :
+                (getPositionTicks() - HoodPosition.FORWARD.ticks) / (HoodPosition.BACK_DEFAULT.ticks - HoodPosition.FORWARD.ticks);
         double curvedPwr = Math.pow(Math.E, -(11.0 / 8) * (pos * pos)) * pwr;
         return limitSafety(curvedPwr) ? curvedPwr : 0.0;
     }
@@ -91,6 +97,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
+        angle = 90 - angle;
         shuffleTab.setEntry("SetHoodAngle", angle);
         double ticks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
         shuffleTab.setEntry("ticksAngSet", ticks);

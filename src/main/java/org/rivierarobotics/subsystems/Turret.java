@@ -27,6 +27,7 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.util.MathUtil;
@@ -40,7 +41,7 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 5790;
+    private static final double ZERO_TICKS = 5760;
     private static final double MAX_ANGLE = 10;
     private static final double MIN_ANGLE = -255;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
@@ -79,10 +80,12 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void enableAutoAim() {
+        SmartDashboard.putBoolean("AutoAim",true);
         isAutoAimEnabled = true;
     }
 
     public void disableAutoAim() {
+        SmartDashboard.putBoolean("AutoAim",false);
         isAutoAimEnabled = false;
     }
 
