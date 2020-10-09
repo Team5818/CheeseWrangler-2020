@@ -125,9 +125,9 @@ public class Robot extends TimedRobot {
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
             .setEntry("Hood Abs Angle", hood.getAngle())
-            .setEntry("Turret Abs Angle", turret.getAbsoluteAngle())
-            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
-            .setEntry("TurretAng", turret.getAngle());
+            .setEntry("Turret Abs Angle", turret.getAngle(true))
+            .setEntry("Turret Rel Angle", turret.getAngle(false))
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks());
 
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))
@@ -150,7 +150,8 @@ public class Robot extends TimedRobot {
             .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
             .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
             .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
-            .setEntry("Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+            .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+            .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
             .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40));
 
         SmartDashboard.putData(chooser);

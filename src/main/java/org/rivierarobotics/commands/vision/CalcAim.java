@@ -77,8 +77,6 @@ public class CalcAim extends CommandBase {
         tab.setEntry("BallVel", ballVel);
         tab.setEntry("hoodAngle ", hoodAngle);
 
-        Turret.IS_ABSOLUTE_ANGLE = true;
-
         if (turret.isAutoAimEnabled()) {
             if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
                 //Close Shot

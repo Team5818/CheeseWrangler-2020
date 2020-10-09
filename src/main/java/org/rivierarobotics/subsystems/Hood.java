@@ -48,7 +48,10 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
     public Hood(int motorId, Provider<HoodControl> command, RobotShuffleboard shuffleboard) {
         this.command = command;
-        hoodTalon = new WPI_TalonSRX(motorId);
+        this.logger = Logging.getLogger(getClass());
+        this.shuffleTab = shuffleboard.getTab("TurretHood");
+
+        this.hoodTalon = new WPI_TalonSRX(motorId);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
             new PIDConfig((0.8 * 1023 / 400), 0, 0, 0), 400, hoodTalon);
         hoodTalon.setSensorPhase(false);
@@ -56,8 +59,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         hoodTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        logger = Logging.getLogger(getClass());
-        shuffleTab = shuffleboard.getTab("TurretHood");
+
     }
 
     public static double getTicksPerDegree() {
@@ -78,18 +80,25 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.set(ControlMode.PercentOutput, pwr);
     }
 
-    // Applies a bell curve power ramp for safety
+    // Applies a polynomial curve power ramp for safety
     private double curvePower(double pwr) {
-        double range = HoodPosition.FORWARD.ticks - HoodPosition.BACK_DEFAULT.ticks;
-        double pos = pwr > 0 ? 1.5 / range / (HoodPosition.FORWARD.ticks - getPositionTicks()) : 1.5 / range / (getPositionTicks() - HoodPosition.BACK_DEFAULT.ticks);
-        double curvedPwr = Math.pow(Math.E, -(6.0 / 8) * pos * pos) * pwr;
-        return limitSafety(curvedPwr) ? curvedPwr : 0.0;
+        if (pwr == 0) {
+            return pwr;
+        } else {
+            // fit position from -1 to 1 b/n HoodPosition locations
+            int end = HoodPosition.FORWARD.ticks;
+            int start = HoodPosition.BACK_DEFAULT.ticks;
+            double fittedPos = (2 * ((getPositionTicks() - end) / (start - end))) - 1;
+            double curvedPwr = (((-5.0 / 8) * (fittedPos * fittedPos)) + Math.signum(pwr)) * pwr;
+            return limitSafety(curvedPwr) ? curvedPwr : 0.0;
+        }
     }
 
     private boolean limitSafety(double pwr) {
         shuffleTab.setEntry("limitPower", pwr);
-        return !(getPositionTicks() >= HoodPosition.FORWARD.ticks && pwr < 0)
-            && !(getPositionTicks() <= HoodPosition.BACK_DEFAULT.ticks && pwr > 0);
+        double pos = getPositionTicks();
+        return !(pos >= HoodPosition.FORWARD.ticks && pwr < 0)
+            && !(pos <= HoodPosition.BACK_DEFAULT.ticks && pwr > 0);
     }
 
     public double getAngle() {
@@ -97,7 +106,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
-        double ticks = MathUtil.limit(angle * TICKS_PER_DEGREE - ZERO_TICKS, HoodPosition.BACK_DEFAULT.ticks, HoodPosition.FORWARD.ticks);
+        double ticks = MathUtil.limit(angle * TICKS_PER_DEGREE + ZERO_TICKS, HoodPosition.BACK_DEFAULT.ticks, HoodPosition.FORWARD.ticks);
         logger.setpointChange(ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
     }

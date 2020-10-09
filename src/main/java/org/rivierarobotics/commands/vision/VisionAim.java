@@ -33,8 +33,6 @@ public class VisionAim extends ParallelCommandGroup {
     public VisionAim(VisionTarget target, @Provided RobotShuffleboard shuffleboard, @Provided VisionCommands vision) {
         shuffleboard.getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
 
-        Turret.IS_ABSOLUTE_ANGLE = true;
-
         if (target == VisionTarget.TOP) {
             addCommands(vision.autoAimHood(0, ShooterConstants.getTopHeight()),
                 vision.autoAimTurret(0, ShooterConstants.getTopHeight()));

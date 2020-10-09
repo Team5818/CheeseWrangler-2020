@@ -57,7 +57,7 @@ public class VisionAimTurret extends CommandBase {
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
         double vz = dist * Math.sin(txTurret) / t;
         double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
-        double absolute = turret.getAbsoluteAngle();
+        double absolute = turret.getAngle(true);
         var turretAngleAdj = turretAngle + absolute;
 
         tab.setEntry("TurretAngleAdj", turretAngleAdj);
@@ -67,7 +67,7 @@ public class VisionAimTurret extends CommandBase {
 
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {
-                turret.setAngle(turretAngleAdj);
+                turret.setAngle(turretAngleAdj, true);
             }
         }
     }

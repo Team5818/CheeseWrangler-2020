@@ -21,8 +21,9 @@
 package org.rivierarobotics.subsystems;
 
 public enum HoodPosition {
-    //TODO: CREATE NEW LIMITS THAT ARE GOOD
-    FORWARD(2450),
+    // These could be 2600 and 2175 respectively,
+    //  but the power curving isn't good enough and it rolls off the gear
+    FORWARD(2500),
     BACK_DEFAULT(2250);
 
     public final int ticks;

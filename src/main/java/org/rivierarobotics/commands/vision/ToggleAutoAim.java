@@ -30,7 +30,6 @@ import javax.inject.Inject;
 
 @GenerateCreator
 public class ToggleAutoAim extends InstantCommand {
-
     private final Turret turret;
 
     @Inject
@@ -40,11 +39,7 @@ public class ToggleAutoAim extends InstantCommand {
 
     @Override
     public void execute() {
-        if (turret.isAutoAimEnabled()) {
-            turret.disableAutoAim();
-        } else {
-            turret.enableAutoAim();
-        }
+        turret.toggleAutoAim();
         SmartDashboard.putBoolean("AutoAim Enabled", turret.isAutoAimEnabled());
     }
 

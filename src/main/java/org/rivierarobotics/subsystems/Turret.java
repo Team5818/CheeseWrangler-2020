@@ -28,6 +28,8 @@ import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
@@ -44,22 +46,23 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double MAX_ANGLE = 10;
     private static final double MIN_ANGLE = -255;
     private static final double TICKS_PER_DEGREE = 4096.0 / 360;
-    private static final double DEGREES_PER_TICK = 360.0 / 4096;
+    private static final double DEGREES_PER_TICK = 1 / TICKS_PER_DEGREE;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
     private final RobotShuffleboardTab tab;
-    private static boolean isAutoAimEnabled;
-    public static boolean IS_ABSOLUTE_ANGLE;
+    private static boolean autoAimEnabled;
+    private final MechLogger logger;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         this.command = command;
         this.gyro = gyro;
         this.vision = vision;
         this.tab = shuffleboard.getTab("TurretHood");
-        turretTalon = new WPI_TalonSRX(id);
-        turretTalon.configFactoryDefault();
+        this.logger = Logging.getLogger(getClass());
+
+        this.turretTalon = new WPI_TalonSRX(id);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
         turretTalon.setSensorPhase(false);
@@ -74,21 +77,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return turretTalon.getSensorCollection().getPulseWidthPosition();
     }
 
-    public double getAbsoluteAngle() {
-        return MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK + (gyro.getYaw()));
-    }
-
-    public void enableAutoAim() {
-        isAutoAimEnabled = true;
-    }
-
-    public void disableAutoAim() {
-        isAutoAimEnabled = false;
-    }
-
-    public double getAngle() {
-        return IS_ABSOLUTE_ANGLE ? MathUtil.wrapToCircle(gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK)) :
-                MathUtil.wrapToCircle((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK);
+    public double getAngle(boolean isAbsolute) {
+        return MathUtil.wrapToCircle(isAbsolute ? (gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK)) :
+                ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK));
     }
 
     public double getTxTurret(double distance, double extraDistance) {
@@ -100,34 +91,46 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     public void setPositionTicks(double positionTicks) {
         double ticks = MathUtil.limit(ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-        tab.setEntry("PosTicks", ticks);
+        tab.setEntry("TurretSetPosTicks", ticks);
         turretTalon.set(ControlMode.MotionMagic, ticks);
     }
 
-    public void setAngle(double angle) {
-        angle = MathUtil.wrapToCircle(angle);
-        if (IS_ABSOLUTE_ANGLE) {
-            angle -= MathUtil.wrapToCircle(gyro.getYaw());
+    public void setAngle(double angle, boolean isAbsolute) {
+        if (isAbsolute) {
+            angle -= gyro.getYaw();
         }
+        angle = MathUtil.wrapToCircle(angle);
 
         tab.setEntry("TurretSetAngle", angle);
+        double initialTicks = angle * TICKS_PER_DEGREE;
+        tab.setEntry("TurretInitSetTicks", initialTicks);
+        double min = MathUtil.wrapToCircle(getMinAngleInTicks(), 4096);
+        double max = MathUtil.wrapToCircle(getMaxAngleInTicks(), 4096);
 
-        double initialTicks = ZERO_TICKS + (angle * TICKS_PER_DEGREE);
+        double ticks = MathUtil.limit(initialTicks, min, max);
+        if (max < min) {
+            double diffMax = initialTicks - max;
+            double diffMin = min - initialTicks;
+            if (diffMax > 0 && diffMin > 0) {
+                if (diffMin < diffMax) {
+                    ticks = min;
+                } else if (diffMax < diffMin) {
+                    ticks = max;
+                }
+            }
+        }
 
-        tab.setEntry("ticks", initialTicks);
-
-        double ticks = MathUtil.limit(initialTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
-
-        if (ticks == ZERO_TICKS + getMaxAngleInTicks()) {
+        if (ticks == max) {
             initialTicks -= 4096;
-        } else if (ticks == ZERO_TICKS + getMinAngleInTicks()) {
+        } else if (ticks == min) {
             initialTicks += 4096;
         }
 
-        initialTicks = MathUtil.limit(initialTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        initialTicks = MathUtil.limit(initialTicks, min, max);
+        initialTicks += ZERO_TICKS;
 
-        tab.setEntry("TurretSetTick", initialTicks);
-
+        tab.setEntry("TurretFinalSetTicks", initialTicks);
+        logger.setpointChange(initialTicks);
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
@@ -143,13 +146,24 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return TICKS_PER_DEGREE;
     }
 
+    public void toggleAutoAim() {
+        autoAimEnabled = !autoAimEnabled;
+    }
+
+    public boolean isAutoAimEnabled() {
+        return autoAimEnabled;
+    }
+
     @Override
     public void setPower(double pwr) {
-        if (pwr <= 0 && getPositionTicks() - ZERO_TICKS < getMinAngleInTicks()) {
+        //TODO fix this, it should work but does not
+        double pos = getPositionTicks() - ZERO_TICKS;
+        if (pwr < 0 && pos < getMinAngleInTicks()) {
             pwr = 0;
-        } else if (pwr > 0 && getPositionTicks() - ZERO_TICKS > getMaxAngleInTicks()) {
+        } else if (pwr > 0 && pos > getMaxAngleInTicks()) {
             pwr = 0;
         }
+        logger.powerChange(pwr);
         turretTalon.set(ControlMode.PercentOutput, pwr);
     }
 
@@ -159,9 +173,5 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
-    }
-
-    public boolean isAutoAimEnabled() {
-        return isAutoAimEnabled;
     }
 }
