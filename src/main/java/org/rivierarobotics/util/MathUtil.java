@@ -22,6 +22,7 @@ package org.rivierarobotics.util;
 
 public class MathUtil {
     private static final double DEADBAND = 0.08;
+    private static final double TICKS_PER_DEGREE = 4096.0 / 360;
 
     private MathUtil() {
     }
@@ -85,6 +86,22 @@ public class MathUtil {
         } else {
             return 0;
         }
+    }
+
+    public static double degreesToTicks(double degrees) {
+        return degreesToTicks(degrees, TICKS_PER_DEGREE);
+    }
+
+    public static double degreesToTicks(double degrees, double ticksPerDegree) {
+        return degrees * ticksPerDegree;
+    }
+
+    public static double ticksToDegrees(double ticks) {
+        return ticksToDegrees(ticks, 1 / TICKS_PER_DEGREE);
+    }
+
+    public static double ticksToDegrees(double ticks, double degreesPerTick) {
+        return ticks * degreesPerTick;
     }
 
     public static boolean isWithinTolerance(double value, double target, double tolerance) {

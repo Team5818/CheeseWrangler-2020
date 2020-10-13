@@ -37,7 +37,6 @@ import javax.inject.Provider;
 public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
-    private static final int TICKS_AT_ZERO_DEGREES = 0;
     private static final double INDEX_SPACING = 4096.0 / 5;
     private final RobotShuffleboardTab tab;
 
@@ -119,10 +118,6 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
         return outPos;
     }
 
-    public RobotShuffleboardTab getTab() {
-        return tab;
-    }
-
     public void setPositionTicks(double positionTicks) {
         wheelTalon.set(ControlMode.MotionMagic, positionTicks);
     }
@@ -138,7 +133,9 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     }
 
     public enum AngleOffset {
-        COLLECT_FRONT(875, Direction.FORWARDS), COLLECT_BACK(2510, Direction.BACKWARDS), SHOOTER_FRONT(-360, Direction.BACKWARDS),
+        COLLECT_FRONT(875, Direction.FORWARDS),
+        COLLECT_BACK(2510, Direction.BACKWARDS),
+        SHOOTER_FRONT(-360, Direction.BACKWARDS),
         SHOOTER_BACK(-360, Direction.FORWARDS);
 
         public final int angle;
@@ -150,7 +147,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
         }
 
         public double getAssocCWTicks() {
-            return this.angle + TICKS_AT_ZERO_DEGREES;
+            return this.angle;
         }
     }
 

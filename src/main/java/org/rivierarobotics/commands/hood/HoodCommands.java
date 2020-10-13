@@ -20,8 +20,6 @@
 
 package org.rivierarobotics.commands.hood;
 
-import org.rivierarobotics.subsystems.HoodPosition;
-
 import javax.inject.Inject;
 
 public class HoodCommands {
@@ -35,9 +33,4 @@ public class HoodCommands {
     public HoodSetAngle setAngle(double angle) {
         return hoodSetAngleCreator.create(angle);
     }
-
-    public HoodSetAngle setAngle(HoodPosition position) {
-        return hoodSetAngleCreator.create(position.angle);
-    }
-
 }

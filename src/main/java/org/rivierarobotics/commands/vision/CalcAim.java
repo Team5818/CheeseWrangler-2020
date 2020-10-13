@@ -27,6 +27,7 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
@@ -91,7 +92,7 @@ public class CalcAim extends CommandBase {
                 hood.setAngle(hoodAngle);
                 flywheel.setVelocity(encoderVelocity);
             }
-            turret.setPositionTicks(captainKalbag * turret.getTicksPerDegree() / 10 + 5);
+            turret.setPositionTicks(MathUtil.degreesToTicks(captainKalbag) / 10 + 5);
         }
     }
 

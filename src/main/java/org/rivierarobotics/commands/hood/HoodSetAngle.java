@@ -24,15 +24,15 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.MotionMagicSetPosition;
 import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.HoodPosition;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
 public class HoodSetAngle extends MotionMagicSetPosition<Hood> {
     public HoodSetAngle(@Provided Hood hood, @Provided RobotShuffleboard shuffleboard, double angle) {
-        super(hood, hood::getAngle, hood::setAngle,
-                MathUtil.limit(angle, HoodPosition.BACK_DEFAULT.angle, HoodPosition.FORWARD.angle),
+        super(hood, hood::getAngle, hood::setAngle, MathUtil.limit(angle,
+                MathUtil.ticksToDegrees(hood.getZeroTicks() - hood.getBackTicks()),
+                MathUtil.ticksToDegrees(hood.getZeroTicks() - hood.getForwardTicks())),
                 0.5, 2, shuffleboard);
     }
 }

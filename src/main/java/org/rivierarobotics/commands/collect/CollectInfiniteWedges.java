@@ -27,6 +27,8 @@ import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
@@ -37,14 +39,16 @@ public class CollectInfiniteWedges extends CommandBase {
     private final double backPower;
     private static final double pwrConstant = 1.0;
     private static final int tolerance = 90;
+    private final RobotShuffleboardTab shuffleTab;
     private final CheeseWheel.AngleOffset mode;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
-                          @Provided CheeseWheelCommands cheeseWheelCommands,
+                          @Provided CheeseWheelCommands cheeseWheelCommands, @Provided RobotShuffleboard rsb,
                           CheeseWheel.AngleOffset mode) {
         this.intake = intake;
         this.cheeseWheel = cheeseWheel;
         this.cheeseWheelCommands = cheeseWheelCommands;
+        this.shuffleTab = rsb.getTab("Cheese Wheel");
         this.mode = mode;
 
         switch (mode) {
@@ -87,8 +91,8 @@ public class CollectInfiniteWedges extends CommandBase {
 
         int index = cheeseWheel.getIndex(mode);
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
-        cheeseWheel.getTab().setEntry("ClosestIndex", closest.ordinal());
-        cheeseWheel.getTab().setEntry("ClosestHasBall", closest.hasBall());
+        shuffleTab.setEntry("ClosestIndex", closest.ordinal());
+        shuffleTab.setEntry("ClosestHasBall", closest.hasBall());
         if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance)) {
             moveToNext();
         }

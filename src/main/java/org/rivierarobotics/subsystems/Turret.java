@@ -45,8 +45,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 1652;
     private static final double MAX_ANGLE = 10;
     private static final double MIN_ANGLE = -220;
-    private static final double TICKS_PER_DEGREE = 4096.0 / 360;
-    private static final double DEGREES_PER_TICK = 1 / TICKS_PER_DEGREE;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -78,8 +76,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle(boolean isAbsolute) {
-        return MathUtil.wrapToCircle(isAbsolute ? (gyro.getYaw() + ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK)) :
-                ((getPositionTicks() - ZERO_TICKS) * DEGREES_PER_TICK));
+        return MathUtil.wrapToCircle(isAbsolute ? gyro.getYaw() + MathUtil.degreesToTicks(getPositionTicks() - ZERO_TICKS) :
+                MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS));
     }
 
     public double getTxTurret(double distance, double extraDistance) {
@@ -90,7 +88,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPositionTicks(double positionTicks) {
-        double ticks = MathUtil.limit(ZERO_TICKS + positionTicks, ZERO_TICKS + getMinAngleInTicks(), ZERO_TICKS + getMaxAngleInTicks());
+        double ticks = MathUtil.limit(ZERO_TICKS + positionTicks, ZERO_TICKS + MathUtil.ticksToDegrees(MIN_ANGLE), ZERO_TICKS + MathUtil.ticksToDegrees(MAX_ANGLE));
         tab.setEntry("TurretSetPosTicks", ticks);
         turretTalon.set(ControlMode.MotionMagic, ticks);
     }
@@ -101,9 +99,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         if (isAbsolute) {
             angle -= MathUtil.wrapToCircle(gyro.getYaw());
         }
-        double min = ZERO_TICKS + getMinAngleInTicks();
-        double max = ZERO_TICKS + getMaxAngleInTicks();
-        double initialTicks = ZERO_TICKS + ((angle * TICKS_PER_DEGREE) % 4096);
+        double min = ZERO_TICKS + MathUtil.ticksToDegrees(MIN_ANGLE);
+        double max = ZERO_TICKS + MathUtil.ticksToDegrees(MAX_ANGLE);
+        double initialTicks = ZERO_TICKS + (MathUtil.degreesToTicks(angle) % 4096);
         tab.setEntry("TInitSetAngle", initialTicks);
         double ticks = MathUtil.limit(initialTicks, min, max);
         if (ticks == max) {
@@ -120,18 +118,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
-    public double getMaxAngleInTicks() {
-        return MAX_ANGLE * TICKS_PER_DEGREE;
-    }
-
-    public double getMinAngleInTicks() {
-        return MIN_ANGLE * TICKS_PER_DEGREE;
-    }
-
-    public double getTicksPerDegree() {
-        return TICKS_PER_DEGREE;
-    }
-
     public void toggleAutoAim() {
         autoAimEnabled = !autoAimEnabled;
     }
@@ -142,11 +128,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
-        //TODO fix this, it should work but does not
         double pos = getPositionTicks() - ZERO_TICKS;
-        if (pwr < 0 && pos < getMinAngleInTicks()) {
-            pwr = 0;
-        } else if (pwr > 0 && pos > getMaxAngleInTicks()) {
+        if ((pwr < 0 && pos < MathUtil.ticksToDegrees(MIN_ANGLE))
+                || pwr > 0 && pos > MathUtil.ticksToDegrees(MAX_ANGLE)) {
             pwr = 0;
         }
         logger.powerChange(pwr);
