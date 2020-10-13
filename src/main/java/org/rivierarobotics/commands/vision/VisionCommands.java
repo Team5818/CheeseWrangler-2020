@@ -52,12 +52,12 @@ public class VisionCommands {
         this.autoAimCreator = autoAimCreator;
     }
 
-    public VisionAimHoodFlywheel autoAimHood(double extraDistance, double height) {
-        return visionAimHoodFlywheelCreator.create(extraDistance, height);
+    public VisionAimHoodFlywheel autoAimHood(double extraDistance) {
+        return visionAimHoodFlywheelCreator.create(extraDistance);
     }
 
-    public VisionAimTurret autoAimTurret(double extraDistance, double height) {
-        return visionAimTurretCreator.create(extraDistance, height);
+    public VisionAimTurret autoAimTurret(double extraDistance) {
+        return visionAimTurretCreator.create(extraDistance);
     }
 
     public VisionAim visionAim(VisionTarget target) {

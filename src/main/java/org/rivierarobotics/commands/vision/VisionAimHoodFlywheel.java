@@ -26,6 +26,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
@@ -35,61 +36,40 @@ import org.rivierarobotics.util.VisionUtil;
 public class VisionAimHoodFlywheel extends CommandBase {
     private final Hood hood;
     private final Flywheel flywheel;
-    private final VisionUtil vision;
     private final Turret turret;
-    private final double extraDistance;
-    private final double height;
+    private final VisionUtil vision;
     private final RobotShuffleboardTab tab;
+    private  final PhysicsUtil physics;
 
-    public VisionAimHoodFlywheel(@Provided Hood hd, @Provided Flywheel fly, @Provided VisionUtil vision,
-                                 @Provided Turret turret, @Provided RobotShuffleboard shuffleboard,
-                                 double extraDistance, double height) {
+    public VisionAimHoodFlywheel(@Provided Hood hd, @Provided Flywheel fly, @Provided RobotShuffleboard shuffleboard,
+                                 @Provided PhysicsUtil physics, @Provided Turret turret, @Provided VisionUtil vision,
+                                 double extraDistance) {
         this.hood = hd;
         this.flywheel = fly;
+        this.physics = physics;
+        physics.setExtraDistance(extraDistance);
         this.vision = vision;
         this.turret = turret;
-        this.extraDistance = extraDistance;
-        this.height = height;
         this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel);
     }
 
     @Override
     public void execute() {
-        double vy = ShooterConstants.getYVelocityConstant();  //Vy constant
-        double t = ShooterConstants.getTConstant();   //time constant
-        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
-        double txTurret = turret.getTxTurret(dist, extraDistance);
-        double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
-        double vz = (dist * Math.sin(txTurret)) / t;
-        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
-        double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
-        double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
+
+        double hoodAngle = physics.getCalculatedHoodAngle();
+        double ballVel = physics.getBallVel();
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
-
-        tab.setEntry("Dist", dist);
-        tab.setEntry("hoodAngle", hoodAngle);
-        tab.setEntry("vx", vx);
-        tab.setEntry("vxz", vxz);
-        tab.setEntry("ballVel", ballVel);
-
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") ==  1) {
-                if (hoodAngle > ShooterConstants.getMaxHoodAngle()) {
-                    //Close Shot
-                    hood.setAngle(hoodAngle);
-                    flywheel.setVelocity(ShooterConstants.getShooterMinVelocity());
-                    tab.setEntry("Target: ", "Close Shot");
-                } else if (ballVel > ShooterConstants.getMaxBallVelocity()) {
+                if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                     //Long Shot
-                    hood.setAngle((33 + 0.1 * dist));
+                    hood.setAngle(ShooterConstants.getEstimatedHoodAngle(physics.getDistanceToTarget()));
                     flywheel.setVelocity(ShooterConstants.getShooterMaxVelocity());
                     tab.setEntry("Target: ", "Long Shot");
                 } else {
-                    //Calculated Shot
                     hood.setAngle(hoodAngle);
                     flywheel.setVelocity(encoderVelocity);
-                    tab.setEntry("Target: ", "Calculated Shot");
                 }
             }
         } else {

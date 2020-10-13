@@ -73,20 +73,16 @@ public class ShooterConstants {
         return 0.14; //KG
     }
 
+    public static double getEstimatedHoodAngle(double distance) {
+        return 33 + 0.1 * distance;
+    }
+
     public static double getTConstant() {
         return getYVelocityConstant() / 9.81; //seconds
     }
 
     public static double getMaxFlywheelVelocity() {
         return 19880; //encoder value
-    }
-
-    public static double getMaxHoodAngle() {
-        return 66; //degrees
-    }
-
-    public static double getMinHoodAngle() {
-        return 33;
     }
 
     public static double velocityToTicks(double vel) {

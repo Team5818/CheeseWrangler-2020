@@ -35,6 +35,7 @@ import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.VisionUtil;
@@ -59,6 +60,7 @@ public abstract class GlobalComponent {
         getVisionUtil();
         getCameraServo();
         getPositionTracker();
+        getPhysicsUtil();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -70,6 +72,8 @@ public abstract class GlobalComponent {
     public abstract Flywheel getFlywheel();
 
     public abstract Intake getIntake();
+
+    public abstract PhysicsUtil getPhysicsUtil();
 
     public abstract Ejector getEjector();
 

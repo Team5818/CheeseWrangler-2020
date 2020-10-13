@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
@@ -34,11 +33,11 @@ public class VisionAim extends ParallelCommandGroup {
         shuffleboard.getTab("Auto Aim").setEntry("Aim Mode: ", "Vision Aim");
 
         if (target == VisionTarget.TOP) {
-            addCommands(vision.autoAimHood(0, ShooterConstants.getTopHeight()),
-                vision.autoAimTurret(0, ShooterConstants.getTopHeight()));
+            addCommands(vision.autoAimHood(0),
+                vision.autoAimTurret(0));
         } else {
-            addCommands(vision.autoAimHood(ShooterConstants.getDistanceFromOuterToInnerTarget(), ShooterConstants.getTopHeight()),
-                vision.autoAimTurret(ShooterConstants.getDistanceFromOuterToInnerTarget(), ShooterConstants.getTopHeight()));
+            addCommands(vision.autoAimHood(ShooterConstants.getDistanceFromOuterToInnerTarget()),
+                vision.autoAimTurret(ShooterConstants.getDistanceFromOuterToInnerTarget()));
         }
     }
 }

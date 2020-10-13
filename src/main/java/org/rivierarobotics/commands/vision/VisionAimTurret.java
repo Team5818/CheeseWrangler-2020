@@ -23,53 +23,38 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
-import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
 public class VisionAimTurret extends CommandBase {
     private final Turret turret;
-    private final Hood hood;
+    private final PhysicsUtil physics;
     private final VisionUtil vision;
-    private final double extraDistance;
-    private final double height;
     private final RobotShuffleboardTab tab;
 
-    public VisionAimTurret(@Provided Turret turret, @Provided Hood hood, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard, double extraDistance, double height) {
+    public VisionAimTurret(@Provided Turret turret, @Provided VisionUtil vision,
+                           @Provided RobotShuffleboard shuffleboard, double extraDistance, @Provided PhysicsUtil physics) {
         this.turret = turret;
-        this.hood = hood;
         this.vision = vision;
-        this.height = height;
-        this.extraDistance = extraDistance;
+        this.physics = physics;
+        this.physics.setExtraDistance(extraDistance);
         this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-        double t = ShooterConstants.getTConstant();
-        double dist = height / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
-        double txTurret = turret.getTxTurret(dist, extraDistance);
-        double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
-        double vz = dist * Math.sin(txTurret) / t;
-        double turretAngle = Math.toDegrees(Math.atan2(vz, vx));
-        double absolute = turret.getAngle(true);
-        var turretAngleAdj = turretAngle + absolute;
-
-        tab.setEntry("TurretAngleAdj", turretAngleAdj);
-        tab.setEntry("turretAngle", turretAngle);
-        tab.setEntry("txTurret", txTurret);
-        tab.setEntry("turretVZ", vz);
 
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {
-                turret.setAngle(turretAngleAdj, true);
+                turret.setAngle(physics.getAngleToTarget(), true);
             }
         }
+
     }
 
     @Override
