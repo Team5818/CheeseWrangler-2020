@@ -56,7 +56,6 @@ public class EncoderAim extends CommandBase {
 
     @Override
     public void execute() {
-        tab.setEntry("Aim Mode: ", "Encoder Aim");
         double ballVel = physics.getBallVel();
 
         if (turret.isAutoAimEnabled()) {

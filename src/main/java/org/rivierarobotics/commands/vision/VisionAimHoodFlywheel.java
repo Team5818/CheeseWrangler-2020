@@ -48,6 +48,7 @@ public class VisionAimHoodFlywheel extends CommandBase {
         this.flywheel = fly;
         this.physics = physics;
         physics.setExtraDistance(extraDistance);
+        physics.setAimMode(PhysicsUtil.AimMode.VISION);
         this.vision = vision;
         this.turret = turret;
         this.tab = shuffleboard.getTab("Auto Aim");

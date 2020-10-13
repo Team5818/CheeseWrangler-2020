@@ -143,6 +143,7 @@ public class PhysicsUtil {
     }
 
     public void setAimMode(AimMode aimMode) {
+        tab.setEntry("Aim Mode: ", aimMode.name());
         this.aimMode = aimMode;
     }
 

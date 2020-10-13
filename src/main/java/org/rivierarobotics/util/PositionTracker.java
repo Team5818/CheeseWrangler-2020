@@ -54,8 +54,8 @@ public class PositionTracker {
         pos[0] += driveTrain.getXVelocity() * timeDifference;
         pos[1] += driveTrain.getYVelocity() * timeDifference;
 
-        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[0]);
-        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[1]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[1]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[0]);
     }
 
     public void correctPosition() {
@@ -69,8 +69,8 @@ public class PositionTracker {
         double turretAngle = turret.getTxTurret(dist, 0) + turret.getAngle(true);
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
-        pos[0] = xFromTarget;
-        pos[1] = yFromTarget;
+        pos[1] = xFromTarget;
+        pos[0] = yFromTarget;
     }
 
     public void reset() {

@@ -42,6 +42,7 @@ public class VisionAimTurret extends CommandBase {
         this.vision = vision;
         this.physics = physics;
         this.physics.setExtraDistance(extraDistance);
+        physics.setAimMode(PhysicsUtil.AimMode.VISION);
         this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(turret);
     }
