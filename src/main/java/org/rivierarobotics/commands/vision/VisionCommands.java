@@ -68,7 +68,6 @@ public class VisionCommands {
         return autoAimCreator.create();
     }
 
-
     public EncoderAim encoderAim(VisionTarget target) {
         return encoderAimCreator.create(target);
     }

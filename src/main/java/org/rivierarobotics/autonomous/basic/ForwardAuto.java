@@ -34,7 +34,6 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class ForwardAuto extends SequentialCommandGroup {
-
     public ForwardAuto(@Provided DriveCommands commands,
                        @Provided CheeseWheelCommands cheeseWheelCommands,
                        @Provided CollectionCommands intake,

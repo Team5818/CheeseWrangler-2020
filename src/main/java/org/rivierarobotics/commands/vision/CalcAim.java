@@ -39,7 +39,8 @@ public class CalcAim extends CommandBase {
     private final RobotShuffleboardTab tab;
     private final PhysicsUtil physics;
 
-    public CalcAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret, @Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard,
+    public CalcAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
+                   @Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard,
                    double extraDistance) {
         this.hood = hood;
         this.flywheel = flywheel;
@@ -53,7 +54,6 @@ public class CalcAim extends CommandBase {
 
     @Override
     public void execute() {
-
         double ballVel = physics.getBallVel();
         if (turret.isAutoAimEnabled()) {
             if (ballVel > ShooterConstants.getMaxBallVelocity()) {

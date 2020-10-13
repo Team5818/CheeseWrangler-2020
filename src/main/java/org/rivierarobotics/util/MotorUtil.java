@@ -21,6 +21,7 @@
 package org.rivierarobotics.util;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import org.rivierarobotics.subsystems.PIDConfig;
@@ -59,6 +60,13 @@ public class MotorUtil {
                 motor.configMotionCruiseVelocity(maxVel);
                 motor.configMotionAcceleration(maxVel);
             }
+        }
+    }
+
+    @SafeVarargs
+    public static <T extends BaseMotorController> void setNeutralMode(NeutralMode mode, T... motors) {
+        for (T motor : motors) {
+            motor.setNeutralMode(mode);
         }
     }
 }

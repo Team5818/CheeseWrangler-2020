@@ -34,28 +34,24 @@ public class VisionAimTurret extends CommandBase {
     private final Turret turret;
     private final PhysicsUtil physics;
     private final VisionUtil vision;
-    private final RobotShuffleboardTab tab;
 
     public VisionAimTurret(@Provided Turret turret, @Provided VisionUtil vision,
-                           @Provided RobotShuffleboard shuffleboard, double extraDistance, @Provided PhysicsUtil physics) {
+                           @Provided PhysicsUtil physics, double extraDistance) {
         this.turret = turret;
         this.vision = vision;
         this.physics = physics;
         this.physics.setExtraDistance(extraDistance);
         physics.setAimMode(PhysicsUtil.AimMode.VISION);
-        this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(turret);
     }
 
     @Override
     public void execute() {
-
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {
                 turret.setAngle(physics.getAngleToTarget(), true);
             }
         }
-
     }
 
     @Override

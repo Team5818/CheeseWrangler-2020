@@ -29,7 +29,6 @@ import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
 public class ContinuousShoot extends CommandBase {

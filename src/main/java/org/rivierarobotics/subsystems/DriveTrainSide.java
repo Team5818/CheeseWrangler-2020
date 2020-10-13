@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
@@ -28,7 +29,6 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
-import org.rivierarobotics.util.NeutralIdleMode;
 
 public class DriveTrainSide implements RRSubsystem {
     private static final double TICKS_PER_METER = 7916 / 1.8288;
@@ -46,7 +46,7 @@ public class DriveTrainSide implements RRSubsystem {
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(1023 * 0.2, 0, 0, 0), 0, masterLeft, slaveRight);
         MotorUtil.setInverted(invert, masterLeft, slaveRight);
-        NeutralIdleMode.BRAKE.applyTo(masterLeft, slaveRight);
+        MotorUtil.setNeutralMode(NeutralMode.Brake, masterLeft, slaveRight);
         slaveRight.follow(masterLeft);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
@@ -76,10 +76,6 @@ public class DriveTrainSide implements RRSubsystem {
                 vel / MOTOR_TO_WHEEL_RATIO, TICKS_PER_METER);
         logger.setpointChange(set);
         masterLeft.set(TalonFXControlMode.Velocity, set);
-    }
-
-    public void setNeutralIdle(NeutralIdleMode mode) {
-        mode.applyTo(masterLeft, slaveRight);
     }
 
     public void resetEncoder() {

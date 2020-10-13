@@ -36,6 +36,7 @@ public class ShootNWedges extends SequentialCommandGroup {
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
                         @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
                         int wedges) {
+        //TODO pull this out into a method & remove duplicates
         for (int i = 0; i < wedges; i++) {
             if (MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90)) {
                 addCommands(

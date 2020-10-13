@@ -24,15 +24,13 @@ import edu.wpi.first.wpilibj.DigitalInput;
 
 public enum CheeseSlot {
     // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
+    // Labeled with labelmaker (small) labels
     ZERO, ONE, TWO, THREE, FOUR;
 
-    private static final int SENSOR_DIO_PIN_OFFSET = 5;
     private final DigitalInput sensor;
 
     CheeseSlot() {
-        //TODO redo the green labels on the CW so we can revert this to below
-        // this.sensor = new DigitalInput(SENSOR_DIO_PIN_OFFSET + this.ordinal());
-        this.sensor = new DigitalInput(this.ordinal() == 0 ? 5 : SENSOR_DIO_PIN_OFFSET + 5 - this.ordinal());
+        this.sensor = new DigitalInput(this.ordinal() == 0 ? 5 : 10 - this.ordinal());
     }
 
     public boolean hasBall() {

@@ -29,7 +29,6 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PhysicsUtil {
-
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
@@ -53,7 +52,6 @@ public class PhysicsUtil {
     }
 
     public double getDistanceToTarget() {
-
         double dist = aimMode == AimMode.VISION ? ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle()))) :
                 Math.sqrt(Math.pow(positionTracker.getPosition()[1] + extraDistance, 2) + Math.pow(positionTracker.getPosition()[0], 2));
         tab.setEntry("Dist", dist);

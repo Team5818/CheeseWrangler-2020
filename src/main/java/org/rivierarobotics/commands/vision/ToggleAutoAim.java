@@ -20,27 +20,29 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Inject;
 
 @GenerateCreator
 public class ToggleAutoAim extends InstantCommand {
     private final Turret turret;
+    private final RobotShuffleboardTab tab;
 
     @Inject
-    public ToggleAutoAim(@Provided Turret turret) {
+    public ToggleAutoAim(@Provided Turret turret, @Provided RobotShuffleboard shuffleboard) {
         this.turret = turret;
+        this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     @Override
     public void execute() {
         turret.toggleAutoAim();
-        SmartDashboard.putBoolean("AutoAim Enabled", turret.isAutoAimEnabled());
+        tab.setEntry("AutoAim Enabled", turret.isAutoAimEnabled());
     }
-
 }

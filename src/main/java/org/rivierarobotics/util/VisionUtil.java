@@ -61,5 +61,4 @@ public class VisionUtil {
         int cs = (int) led.getNumber(1.0);
         led.setNumber(cs == 1 ? 3 : 1);
     }
-
 }

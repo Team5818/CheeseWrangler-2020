@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.drive.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
-import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Side;
 
@@ -37,6 +36,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class DriveTrain extends SubsystemBase {
+    private static final double TRACKWIDTH = 0.7366; // meters
     private final DriveTrainSide left;
     private final DriveTrainSide right;
     private final NavXGyro gyro;
@@ -50,7 +50,7 @@ public class DriveTrain extends SubsystemBase {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
-        this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
+        this.kinematics = new DifferentialDriveKinematics(TRACKWIDTH);
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }

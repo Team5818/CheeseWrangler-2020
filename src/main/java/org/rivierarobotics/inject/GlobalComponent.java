@@ -94,5 +94,4 @@ public abstract class GlobalComponent {
     public abstract PositionTracker getPositionTracker();
 
     public abstract CommandComponent.Builder getCommandComponentBuilder();
-
 }

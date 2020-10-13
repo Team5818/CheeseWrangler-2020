@@ -31,7 +31,6 @@ import javax.inject.Inject;
 
 @GenerateCreator
 public class CWCycleSlot extends MotionMagicSetPosition<CheeseWheel> {
-
     @Inject
     public CWCycleSlot(@Provided CheeseWheel cheeseWheel, CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode,
                        CheeseSlot.State requiredState, @Provided RobotShuffleboard shuffleboard) {

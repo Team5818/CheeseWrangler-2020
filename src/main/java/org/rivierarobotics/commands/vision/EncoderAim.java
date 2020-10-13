@@ -41,8 +41,8 @@ public class EncoderAim extends CommandBase {
     private final RobotShuffleboardTab tab;
 
     public EncoderAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
-                      @Provided RobotShuffleboard shuffleboard, VisionTarget target,
-                      @Provided PhysicsUtil physics) {
+                      @Provided RobotShuffleboard shuffleboard, @Provided PhysicsUtil physics,
+                      VisionTarget target) {
         this.hood = hood;
         this.flywheel = flywheel;
         this.turret = turret;

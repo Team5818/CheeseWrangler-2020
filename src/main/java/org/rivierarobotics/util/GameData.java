@@ -26,16 +26,16 @@ public class GameData {
     private GameData() {
     }
 
-    public static String getData() {
+    public static String getRawData() {
         return DriverStation.getInstance().getGameSpecificMessage();
     }
 
     // Possible 2020 values (upper case):
     // R = red, B = blue, G = green, Y = yellow
     // C = corrupt (error)
-    public static char get2020Char() {
+    public static char getChar() {
         try {
-            return getData().charAt(0);
+            return getRawData().charAt(0);
         } catch (IndexOutOfBoundsException e) {
             return 'C';
         }
@@ -51,8 +51,8 @@ public class GameData {
             gameChar = name().toLowerCase().charAt(0);
         }
 
-        public static ColorChar get2020Color() {
-            char actualChar = get2020Char();
+        public static ColorChar getColor() {
+            char actualChar = getChar();
             for (ColorChar color : ColorChar.values()) {
                 if (color.gameChar == actualChar) {
                     return color;

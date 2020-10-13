@@ -28,7 +28,6 @@ import org.rivierarobotics.commands.drive.DriveCommands;
 
 @GenerateCreator
 public class ShootAndDrive extends SequentialCommandGroup {
-
     public ShootAndDrive(@Provided DriveCommands drive,
                          @Provided CheeseWheelCommands cheeseWheel) {
         super(
