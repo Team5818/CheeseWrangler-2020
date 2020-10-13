@@ -62,7 +62,7 @@ public class VisionAimHoodFlywheel extends CommandBase {
         double txTurret = turret.getTxTurret(dist, extraDistance);
         double vx = (dist * Math.cos(txTurret) + extraDistance) / t;
         double vz = (dist * Math.sin(txTurret)) / t;
-        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2)) + (0.5 * 0.2 * t * t);
+        double vxz = Math.sqrt(Math.pow(vx, 2) + Math.pow(vz, 2));
         double hoodAngle = Math.toDegrees(Math.atan2(vy, vxz));
         double ballVel = vxz / Math.cos(Math.toRadians(hoodAngle));
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);

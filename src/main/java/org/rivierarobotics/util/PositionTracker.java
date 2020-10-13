@@ -21,6 +21,7 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
@@ -53,8 +54,8 @@ public class PositionTracker {
         pos[0] += driveTrain.getXVelocity() * timeDifference;
         pos[1] += driveTrain.getYVelocity() * timeDifference;
 
-        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[1]);
-        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[0]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[0]);
+        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[1]);
     }
 
     public void correctPosition() {
@@ -64,22 +65,12 @@ public class PositionTracker {
 
         double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
             / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
-        double turretAngle = turret.getAngle(true);
+        SmartDashboard.putNumber("dist",dist);
+        double turretAngle = turret.getTxTurret(dist,0) + turret.getAngle(true);
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
-        if (turretAngle >= 0 && turretAngle < 90) {
-            pos[0] = xFromTarget;
-            pos[1] = yFromTarget;
-        } else if (turretAngle >= 90 && turretAngle < 180) {
-            pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() + xFromTarget;
-            pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
-        } else if (turretAngle >= 180 && turretAngle < 270) {
-            pos[0] = ShooterConstants.getLeftFieldToBallCollect() - ShooterConstants.getLeftFieldToCloseGoal() - xFromTarget;
-            pos[1] = ShooterConstants.getFieldLength() - yFromTarget;
-        } else {
-            pos[0] = -xFromTarget;
-            pos[1] = yFromTarget;
-        }
+        pos[0] = xFromTarget;
+        pos[1] = yFromTarget;
     }
 
     public void reset() {

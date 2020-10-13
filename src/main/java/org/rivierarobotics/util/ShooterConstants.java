@@ -25,7 +25,7 @@ public class ShooterConstants {
     }
 
     public static double getTopHeight() {
-        return 1.78; //diff between robot height and top goal meters
+        return 1.6; //diff between robot height and top goal meters
     }
 
     public static double getShooterMinVelocity() {

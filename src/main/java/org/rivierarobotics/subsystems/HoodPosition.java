@@ -24,13 +24,13 @@ public enum HoodPosition {
     // These could be 2600 and 2175 respectively,
     //  but the power curving isn't good enough and it rolls off the gear
     FORWARD(2500),
-    BACK_DEFAULT(2250);
+    BACK_DEFAULT(2200);
 
     public final int ticks;
     public final double angle;
 
     HoodPosition(int ticks) {
         this.ticks = ticks;
-        this.angle = (ticks - Hood.getZeroTicks()) / Hood.getTicksPerDegree();
+        this.angle = (Hood.getZeroTicks() - ticks) / Hood.getTicksPerDegree();
     }
 }

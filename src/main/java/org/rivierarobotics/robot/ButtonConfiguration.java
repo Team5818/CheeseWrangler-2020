@@ -110,5 +110,10 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.cameraServo().setPosition(ServoPosition.BACK_COLLECT));
         new JoystickButton(driverButtons, 8)
                 .whenPressed(cmds.cameraServo().setPosition(ServoPosition.CLIMB));
+        new JoystickButton(driverButtons,6)
+                .whenPressed(cmds.hood().setAngle(0));
+        new JoystickButton(driverButtons,5)
+                .whenPressed(cmds.hood().setAngle(90));
+
     }
 }

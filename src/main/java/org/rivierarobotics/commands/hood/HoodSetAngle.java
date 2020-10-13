@@ -32,6 +32,7 @@ import org.rivierarobotics.util.RobotShuffleboard;
 public class HoodSetAngle extends MotionMagicSetPosition<Hood> {
     public HoodSetAngle(@Provided Hood hood, @Provided RobotShuffleboard shuffleboard, double angle) {
         super(hood, hood::getAngle, hood::setAngle,
-            MathUtil.limit(angle, HoodPosition.BACK_DEFAULT.angle, HoodPosition.FORWARD.angle), 0.5, 2, shuffleboard);
+                MathUtil.limit(angle, HoodPosition.BACK_DEFAULT.angle, HoodPosition.FORWARD.angle),
+                0.5, 2, shuffleboard);
     }
 }
