@@ -98,7 +98,8 @@ public class PhysicsUtil {
 
     public double getAngleToTarget() {
         //returns limelight value adjusted for offset with respect to the turrets current ABSOLUTE angle
-        double angleToTarget = turret.getTxTurret(getDistanceToTarget(), extraDistance) + turret.getAngle(true);
+        double angleToTarget = aimMode == AimMode.VISION ? turret.getTxTurret(getDistanceToTarget(), extraDistance) + turret.getAngle(true) :
+            MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(getZVelocityToTarget(), getXVelocityToTarget())));
         tab.setEntry("tx", turret.getTxTurret(getDistanceToTarget(), extraDistance));
         tab.setEntry("Turret SetAbsoluteAngle", angleToTarget);
         return angleToTarget;
