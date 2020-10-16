@@ -25,8 +25,6 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
@@ -47,6 +45,7 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
+        physics.calculateVelocities(false, false);
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {
                 turret.setAngle(physics.getAngleToTarget(), true);

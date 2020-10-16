@@ -38,11 +38,13 @@ public class PhysicsUtil {
     private double extraDistance = 0;
     private final PositionTracker positionTracker;
     private AimMode aimMode = AimMode.VISION;
+    private boolean isPerpendicular;
+    private double velocity;
+    private double[] vXYZ = {0, 0, 0};
 
     @Inject
     public PhysicsUtil(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard robotShuffleboard,
                         PositionTracker positionTracker) {
-        //Calc Aim
         this.turret = turret;
         this.vision = vision;
         this.driveTrain = dt;
@@ -51,77 +53,57 @@ public class PhysicsUtil {
         this.tab = robotShuffleboard.getTab("Auto Aim");
     }
 
+    public double getX() {
+        return aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
+                getLLDistance() * Math.cos(getLLTurretAngle() + extraDistance);
+    }
+
+    public double getY() {
+        return aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
+                getLLDistance() * Math.cos(getLLTurretAngle() + extraDistance);
+    }
+
+    public double getZ() {
+        return ShooterConstants.getTopHeight();
+    }
+
     public double getDistanceToTarget() {
-        double dist = aimMode == AimMode.VISION ? ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle()))) :
-                Math.sqrt(Math.pow(positionTracker.getPosition()[1] + extraDistance, 2) + Math.pow(positionTracker.getPosition()[0], 2));
+        double dist = Math.sqrt(Math.pow(getX() + extraDistance, 2) + Math.pow(getY(), 2));
         tab.setEntry("Dist", dist);
         return dist;
     }
 
-    public double getXVelocityToTarget() {
-        //goal ->   <>
-        //     |
-        //x -> |---- <- z
-        double vx = (extraDistance + positionTracker.getPosition()[1]) / t;
-        if (aimMode == AimMode.VISION) {
-            vx = getDistanceToTarget() * Math.cos(getAngleToTarget() + extraDistance) / t;
-        } else if (aimMode == AimMode.CALC) {
-            vx -= driveTrain.getYVelocity();
-        }
-        tab.setEntry("X Velocity", vx);
-        return vx;
+    public double getLLTurretAngle() {
+        //Returns angle to target using LL values
+        double turretAngle = turret.getAngle(true) + turret.getTxTurret(extraDistance, hood.getAngle());
+        tab.setEntry("Turret Angle", turretAngle);
+        return turretAngle;
     }
 
-    public double getZVelocityToTarget() {
-        //goal ->   <>
-        //     |
-        //x -> |---- <- z
-        double vz = positionTracker.getPosition()[0] / t;
-        if (aimMode == AimMode.VISION) {
-            vz = getDistanceToTarget() * Math.cos(getAngleToTarget() + extraDistance) / t;
-        } else if (aimMode == AimMode.CALC) {
-            vz -= driveTrain.getXVelocity();
-        }
-        tab.setEntry("Z Velocity", vz);
-        return vz;
-    }
-
-    public double getXZVelocityToTarget() {
-        //goal ->    <>
-        //          /
-        //         /
-        //xz ->   /
-        double vxz = Math.sqrt(Math.pow(getXVelocityToTarget(), 2) + Math.pow(getZVelocityToTarget(), 2));
-        tab.setEntry("XZ Velocity", vxz);
-        return vxz;
+    public double getLLDistance() {
+        //Returns distance to target using LL values
+        double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
+        tab.setEntry("Dist", dist);
+        return dist;
     }
 
     public double getAngleToTarget() {
-        //returns limelight value adjusted for offset with respect to the turrets current ABSOLUTE angle
-        double angleToTarget = aimMode == AimMode.VISION ? turret.getTxTurret(getDistanceToTarget(), extraDistance) + turret.getAngle(true) :
-            MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(getZVelocityToTarget(), getXVelocityToTarget())));
-        tab.setEntry("tx", turret.getTxTurret(getDistanceToTarget(), extraDistance));
-        tab.setEntry("Turret SetAbsoluteAngle", angleToTarget);
-        return angleToTarget;
+        //Returns angle to target using x y z position of target.
+        double turretAngle = Math.toDegrees(Math.atan2(vXYZ[1], vXYZ[2]));
+        tab.setEntry("Turret Angle", turretAngle);
+        return turretAngle;
     }
 
     public double getCalculatedHoodAngle() {
         //returns the hood angle using the relationship between horizontal and vertical velocities
-        double hoodAngle = Math.toDegrees(Math.atan2(ShooterConstants.getYVelocityConstant(), getXZVelocityToTarget()));
+        double hoodAngle = Math.toDegrees(Math.atan2(vXYZ[2], Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1])));
         tab.setEntry("Hood Angle", hoodAngle);
         return hoodAngle;
     }
 
     public double getBallVel() {
         //Returns ball's velocity in m/s
-        double ballVel = getXZVelocityToTarget() / Math.cos(Math.toRadians(getCalculatedHoodAngle()));
-        if (getCalculatedHoodAngle() < MathUtil.ticksToDegrees(hood.getBackTicks())) {
-            tab.setEntry("Target: ", "Close Shot");
-            return ShooterConstants.getShooterMinVelocity();
-        }
-        tab.setEntry("Target: ", "Calculated");
-        tab.setEntry("Ball Velocity", ballVel);
-        return ballVel;
+        return Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
     }
 
     private double captainKalbag(double xFromGoal, double zFromGoal) {
@@ -133,8 +115,33 @@ public class PhysicsUtil {
                 - (-driveTrain.getYVelocity() * xDist)) / Math.pow(xDist, 2);
     }
 
+    public void calculateVelocities(boolean isArc, boolean perpendicularShot) {
+        //Straight Shot: sqrt(-4*g*z + 2*v^2 - 2*sqrt(-4*g^2*x^2 - 4*g^2*y^2 - 4*g*v^2*z + v^4))/(2*g)
+        //Arc Shot:sqrt(2)*sqrt(-2*g*z + v^2 + sqrt(-4*g^2*x^2 - 4*g^2*y^2 - 4*g*v^2*z + v^4))/(2*g)
+        double x = getX();
+        double y = getY();
+        double z = getZ();
+        if (!perpendicularShot) {
+            tab.setEntry("Trajectory: ", "Curve or Arc");
+            double g = 9.81;
+            double v = velocity;
+            double a = -4 * g * g * x * x - 4 * g * g * y * y - 4 * g * v * v * z + Math.pow(v, 4);
+            double t = !isArc ? Math.sqrt(-4 * g * z + 2 * (v * v) - 2 * Math.sqrt(a)) / (2 * g) :
+                    1.41421 * Math.sqrt(-2 * g * z + v * v + Math.sqrt(a)) / (2 * g);
+            vXYZ = new double[]{x / t, y / t, z / t + g * t};
+        } else {
+            tab.setEntry("Trajectory: ", "Perpendicular");
+            double t = ShooterConstants.getTConstant();
+            vXYZ = new double[]{x / t, y / t, ShooterConstants.getZVelocityConstant()};
+        }
+    }
+
     public double getTurretVelocity() {
         return MathUtil.degreesToTicks(captainKalbag(positionTracker.getPosition()[1], positionTracker.getPosition()[0])) / 10 + 5;
+    }
+
+    public void setVelocity(double velocity) {
+        this.velocity = velocity;
     }
 
     public void setExtraDistance(double extraDistance) {

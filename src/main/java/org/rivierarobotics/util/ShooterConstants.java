@@ -61,8 +61,8 @@ public class ShooterConstants {
         return 0.74295;
     }
 
-    public static double getYVelocityConstant() {
-        return Math.sqrt(getTopHeight() * 2 * 10); //  meters/second
+    public static double getZVelocityConstant() {
+        return Math.sqrt(getTopHeight() * 2 * 9.81); //  meters/second
     }
 
     public static double getExtraVelocity() {
@@ -78,7 +78,7 @@ public class ShooterConstants {
     }
 
     public static double getTConstant() {
-        return getYVelocityConstant() / 9.81; //seconds
+        return getZVelocityConstant() / 9.81; //seconds
     }
 
     public static double getMaxFlywheelVelocity() {

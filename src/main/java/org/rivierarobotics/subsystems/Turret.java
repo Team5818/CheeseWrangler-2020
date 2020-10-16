@@ -80,8 +80,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
                 MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS));
     }
 
-    public double getTxTurret(double distance, double extraDistance) {
+    public double getTxTurret(double extraDistance, double hoodAngle) {
         double tx = Math.toRadians(vision.getLLValue("tx"));
+        double distance = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
+                / Math.tan(Math.toRadians(vision.getActualTY(hoodAngle)));
         double txTurret = Math.atan2(distance * Math.sin(tx) - ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
         tab.setEntry("txTurret", txTurret);
         return txTurret;

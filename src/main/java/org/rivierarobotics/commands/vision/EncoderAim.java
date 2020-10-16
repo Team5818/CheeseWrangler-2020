@@ -56,8 +56,8 @@ public class EncoderAim extends CommandBase {
 
     @Override
     public void execute() {
+        physics.calculateVelocities(false, false);
         double ballVel = physics.getBallVel();
-
         if (turret.isAutoAimEnabled()) {
             if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot

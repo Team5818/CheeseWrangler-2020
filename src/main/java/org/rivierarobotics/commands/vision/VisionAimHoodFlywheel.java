@@ -57,6 +57,7 @@ public class VisionAimHoodFlywheel extends CommandBase {
 
     @Override
     public void execute() {
+        physics.calculateVelocities(false, false);
         double hoodAngle = physics.getCalculatedHoodAngle();
         double ballVel = physics.getBallVel();
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
