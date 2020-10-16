@@ -50,7 +50,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final NavXGyro gyro;
     private final VisionUtil vision;
     private final RobotShuffleboardTab tab;
-    private static boolean autoAimEnabled;
     private final MechLogger logger;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
@@ -73,6 +72,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     @Override
     public double getPositionTicks() {
         return turretTalon.getSensorCollection().getPulseWidthPosition();
+    }
+
+    public double getVelocty() {
+        return turretTalon.getSensorCollection().getPulseWidthVelocity();
     }
 
     public double getAngle(boolean isAbsolute) {
@@ -121,7 +124,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setVelocity(double ticksPerSec) {
-        ticksPerSec /= 10;
         ticksPerSec = ensureInRange(ticksPerSec);
         logger.stateChange("Velocity Set", ticksPerSec);
         turretTalon.set(ControlMode.Velocity, ticksPerSec);
@@ -141,14 +143,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             in = 0;
         }
         return in;
-    }
-
-    public void toggleAutoAim() {
-        autoAimEnabled = !autoAimEnabled;
-    }
-
-    public boolean isAutoAimEnabled() {
-        return autoAimEnabled;
     }
 
     @Override

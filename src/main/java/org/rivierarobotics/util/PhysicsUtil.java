@@ -40,6 +40,7 @@ public class PhysicsUtil {
     private AimMode aimMode = AimMode.VISION;
     private double velocity;
     private double[] vXYZ = new double[3];
+    private boolean autoAimEnabled;
 
     @Inject
     public PhysicsUtil(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood,
@@ -141,6 +142,14 @@ public class PhysicsUtil {
 
     public void setExtraDistance(double extraDistance) {
         this.extraDistance = extraDistance;
+    }
+
+    public void toggleAutoAim() {
+        autoAimEnabled = !autoAimEnabled;
+    }
+
+    public boolean isAutoAimEnabled() {
+        return autoAimEnabled;
     }
 
     public void setAimMode(AimMode aimMode) {

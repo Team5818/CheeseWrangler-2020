@@ -62,7 +62,7 @@ public class VisionAimHoodFlywheel extends CommandBase {
         double hoodAngle = physics.getCalculatedHoodAngle();
         double ballVel = physics.getBallVel();
         double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
-        if (turret.isAutoAimEnabled()) {
+        if (physics.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") ==  1) {
                 if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                     //Long Shot

@@ -134,8 +134,7 @@ public class Robot extends TimedRobot {
             .setEntry("ty", visionUtil.getLLValue("ty"))
             .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
-            .setEntry("Gyro Angle", gyro.getYaw())
-            .setEntry("Autoaim Enabled", turret.isAutoAimEnabled());
+            .setEntry("Gyro Angle", gyro.getYaw());
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())

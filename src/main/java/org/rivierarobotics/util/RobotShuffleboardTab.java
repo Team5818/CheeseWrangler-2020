@@ -21,8 +21,10 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +45,10 @@ public class RobotShuffleboardTab {
             entries.get(key).setValue(value);
         }
         return this;
+    }
+
+    public RobotShuffleboardTab addSendable(Sendable sendable) {
+        return setEntry(SendableRegistry.getName(sendable), sendable);
     }
 
     public NetworkTableEntry getEntry(String title) {

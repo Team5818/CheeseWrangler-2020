@@ -57,7 +57,7 @@ public class CalcAim extends CommandBase {
         physics.setVelocity(19);
         physics.calculateVelocities(false, false);
         double ballVel = physics.getBallVel();
-        if (turret.isAutoAimEnabled()) {
+        if (physics.isAutoAimEnabled()) {
             if (ballVel > ShooterConstants.getMaxBallVelocity()) {
                 //Long Shot
                 hood.setAngle(ShooterConstants.getEstimatedHoodAngle(physics.getDistanceToTarget()));
