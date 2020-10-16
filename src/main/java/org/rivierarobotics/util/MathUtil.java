@@ -63,10 +63,6 @@ public class MathUtil {
         }
     }
 
-    public static double limit(double value, double limit) {
-        return limit(value, limit, limit);
-    }
-
     public static double limit(double value, double min, double max) {
         if (value > max) {
             return max;
@@ -74,17 +70,6 @@ public class MathUtil {
             return min;
         } else {
             return value;
-        }
-    }
-
-    public static double minAbsCompare(double v1, double v2) {
-        double absMin = Math.min(Math.abs(v1), Math.abs(v2));
-        if (Math.abs(v1) == absMin) {
-            return v1;
-        } else if (Math.abs(v2) == absMin) {
-            return v2;
-        } else {
-            return 0;
         }
     }
 
@@ -107,17 +92,4 @@ public class MathUtil {
     public static boolean isWithinTolerance(double value, double target, double tolerance) {
         return Math.abs(value - target) < tolerance;
     }
-
-    public static double ticksPer100msToRPM(double ticksRate, double ticksPerRev) {
-        return ticksPerRev * (600 / ticksPerRev);
-    }
-
-    public static double metersPerSecToTicksPer100ms(double metersPerSecond, double ticksPerMeter) {
-        return metersPerSecond * (1.0 / 10) * ticksPerMeter;
-    }
-
-    public static double ticksPer100msToMetersPerSec(double ticksPer100ms, double ticksPerMeter) {
-        return (ticksPer100ms * 10) / ticksPerMeter;
-    }
-
 }

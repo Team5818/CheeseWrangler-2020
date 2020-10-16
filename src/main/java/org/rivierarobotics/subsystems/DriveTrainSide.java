@@ -72,8 +72,8 @@ public class DriveTrainSide implements RRSubsystem {
     }
 
     public void setVelocity(double vel) {
-        double set = MathUtil.metersPerSecToTicksPer100ms(
-                vel / MOTOR_TO_WHEEL_RATIO, TICKS_PER_METER);
+        // Converts m/s to ticks/100ms and sets velocity
+        double set = (vel * TICKS_PER_METER) / (MOTOR_TO_WHEEL_RATIO * 10);
         logger.setpointChange(set);
         masterLeft.set(TalonFXControlMode.Velocity, set);
     }

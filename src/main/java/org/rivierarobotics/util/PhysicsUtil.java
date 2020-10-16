@@ -29,20 +29,21 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PhysicsUtil {
+    private static final double g = 9.81;
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
-    private double extraDistance = 0;
     private final PositionTracker positionTracker;
+    private double extraDistance = 0;
     private AimMode aimMode = AimMode.VISION;
     private double velocity;
-    private double[] vXYZ = {0, 0, 0};
+    private double[] vXYZ = new double[3];
 
     @Inject
-    public PhysicsUtil(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard robotShuffleboard,
-                        PositionTracker positionTracker) {
+    public PhysicsUtil(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood,
+                       RobotShuffleboard robotShuffleboard, PositionTracker positionTracker) {
         this.turret = turret;
         this.vision = vision;
         this.driveTrain = dt;
@@ -67,7 +68,7 @@ public class PhysicsUtil {
 
     public double getDistanceToTarget() {
         double dist = Math.sqrt(Math.pow(getX() + extraDistance, 2) + Math.pow(getY(), 2));
-        tab.setEntry("Dist", dist);
+        tab.setEntry("Target Dist", dist);
         return dist;
     }
 
@@ -81,7 +82,7 @@ public class PhysicsUtil {
     public double getLLDistance() {
         //Returns distance to target using LL values
         double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
-        tab.setEntry("Dist", dist);
+        tab.setEntry("LL Dist", dist);
         return dist;
     }
 
@@ -93,7 +94,7 @@ public class PhysicsUtil {
     }
 
     public double getCalculatedHoodAngle() {
-        //returns the hood angle using the relationship between horizontal and vertical velocities
+        //Returns the hood angle using the relationship between horizontal and vertical velocities
         double hoodAngle = Math.toDegrees(Math.atan2(vXYZ[2], Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1])));
         tab.setEntry("Hood Angle", hoodAngle);
         return hoodAngle;
@@ -110,7 +111,7 @@ public class PhysicsUtil {
         double xDist = xFromGoal - driveTrain.getYVelocity() * timeAdvance;
         double zDist = zFromGoal - driveTrain.getXVelocity() * timeAdvance;
         return (1 / (Math.pow((zDist / xDist), 2) + 1)) * ((-driveTrain.getXVelocity() * xDist)
-                - (-driveTrain.getYVelocity() * xDist)) / Math.pow(xDist, 2);
+                - (-driveTrain.getYVelocity() * xDist)) / (xDist * xDist);
     }
 
     public void calculateVelocities(boolean isArc, boolean perpendicularShot) {
@@ -119,17 +120,15 @@ public class PhysicsUtil {
         double x = getX();
         double y = getY();
         double z = getZ();
-        double []testXYZ = new double[]{x / ShooterConstants.getTConstant(), y / ShooterConstants.getTConstant(), ShooterConstants.getZVelocityConstant()};
+        double[] tempXYZ = { x / ShooterConstants.getTConstant(), y / ShooterConstants.getTConstant(), ShooterConstants.getZVelocityConstant() };
         if (!perpendicularShot) {
             tab.setEntry("Trajectory: ", "Curve or Arc");
-            double g = 9.81;
-            double v = velocity;
-            double a = -4 * g * g * x * x - 4 * g * g * y * y - 4 * g * v * v * z + Math.pow(v, 4);
-            double t = !isArc ? Math.sqrt(-4 * g * z + 2 * (v * v) - 2 * Math.sqrt(a)) / (2 * g) :
-                    1.41421 * Math.sqrt(-2 * g * z + v * v + Math.sqrt(a)) / (2 * g);
-            vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : testXYZ;
+            double a = -4 * g * g * x * x - 4 * g * g * y * y - 4 * g * velocity * velocity * z + (velocity * velocity * velocity * velocity);
+            double t = !isArc ? Math.sqrt(-4 * g * z + 2 * (velocity * velocity) - 2 * Math.sqrt(a)) / (2 * g) :
+                    1.41421 * Math.sqrt(-2 * g * z + velocity * velocity + Math.sqrt(a)) / (2 * g);
+            vXYZ = !Double.isNaN(t) ? new double[] { x / t, y / t, z / t + g * t } : tempXYZ;
         }
-        vXYZ = testXYZ;
+        vXYZ = tempXYZ;
     }
 
     public double getTurretVelocity() {
