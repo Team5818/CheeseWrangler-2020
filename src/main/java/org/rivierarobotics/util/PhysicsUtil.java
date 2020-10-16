@@ -34,11 +34,9 @@ public class PhysicsUtil {
     private final VisionUtil vision;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
-    private final double t = ShooterConstants.getTConstant();
     private double extraDistance = 0;
     private final PositionTracker positionTracker;
     private AimMode aimMode = AimMode.VISION;
-    private boolean isPerpendicular;
     private double velocity;
     private double[] vXYZ = {0, 0, 0};
 
@@ -121,6 +119,7 @@ public class PhysicsUtil {
         double x = getX();
         double y = getY();
         double z = getZ();
+        double []testXYZ = new double[]{x / ShooterConstants.getTConstant(), y / ShooterConstants.getTConstant(), ShooterConstants.getZVelocityConstant()};
         if (!perpendicularShot) {
             tab.setEntry("Trajectory: ", "Curve or Arc");
             double g = 9.81;
@@ -128,12 +127,9 @@ public class PhysicsUtil {
             double a = -4 * g * g * x * x - 4 * g * g * y * y - 4 * g * v * v * z + Math.pow(v, 4);
             double t = !isArc ? Math.sqrt(-4 * g * z + 2 * (v * v) - 2 * Math.sqrt(a)) / (2 * g) :
                     1.41421 * Math.sqrt(-2 * g * z + v * v + Math.sqrt(a)) / (2 * g);
-            vXYZ = new double[]{x / t, y / t, z / t + g * t};
-        } else {
-            tab.setEntry("Trajectory: ", "Perpendicular");
-            double t = ShooterConstants.getTConstant();
-            vXYZ = new double[]{x / t, y / t, ShooterConstants.getZVelocityConstant()};
+            vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : testXYZ;
         }
+        vXYZ = testXYZ;
     }
 
     public double getTurretVelocity() {

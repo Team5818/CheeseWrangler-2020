@@ -45,6 +45,7 @@ public class VisionAimTurret extends CommandBase {
 
     @Override
     public void execute() {
+        physics.setVelocity(19);
         physics.calculateVelocities(false, false);
         if (turret.isAutoAimEnabled()) {
             if (vision.getLLValue("tv") == 1) {
