@@ -120,23 +120,35 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
+    public void setVelocity(double ticksPerSec) {
+        ticksPerSec /= 10;
+        ticksPerSec = ensureInRange(ticksPerSec);
+        logger.stateChange("Velocity Set", ticksPerSec);
+        turretTalon.set(ControlMode.Velocity, ticksPerSec);
+    }
+
+    @Override
+    public void setPower(double pwr) {
+        pwr = ensureInRange(pwr);
+        logger.powerChange(pwr);
+        turretTalon.set(ControlMode.PercentOutput, pwr);
+    }
+
+    private double ensureInRange(double in) {
+        double pos = getPositionTicks() - ZERO_TICKS;
+        if ((in < 0 && pos < MathUtil.ticksToDegrees(MIN_ANGLE))
+                || in > 0 && pos > MathUtil.ticksToDegrees(MAX_ANGLE)) {
+            in = 0;
+        }
+        return in;
+    }
+
     public void toggleAutoAim() {
         autoAimEnabled = !autoAimEnabled;
     }
 
     public boolean isAutoAimEnabled() {
         return autoAimEnabled;
-    }
-
-    @Override
-    public void setPower(double pwr) {
-        double pos = getPositionTicks() - ZERO_TICKS;
-        if ((pwr < 0 && pos < MathUtil.ticksToDegrees(MIN_ANGLE))
-                || pwr > 0 && pos > MathUtil.ticksToDegrees(MAX_ANGLE)) {
-            pwr = 0;
-        }
-        logger.powerChange(pwr);
-        turretTalon.set(ControlMode.PercentOutput, pwr);
     }
 
     @Override

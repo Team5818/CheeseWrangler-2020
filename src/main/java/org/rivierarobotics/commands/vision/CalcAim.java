@@ -67,8 +67,7 @@ public class CalcAim extends CommandBase {
                 hood.setAngle(physics.getCalculatedHoodAngle());
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
             }
-            //TODO: Create a setVelocity in Turret
-            turret.setAngle(physics.getTurretVelocity(), true);
+            turret.setVelocity(physics.getTurretVelocity());
         } else {
             flywheel.setVelocity(0);
         }
