@@ -41,7 +41,6 @@ public class PhysicsUtil {
     private double velocity;
     private static boolean autoAimEnabled;
     private double[] vXYZ = new double[3];
-    private boolean autoAimEnabled;
 
     @Inject
     public PhysicsUtil(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood,
@@ -109,13 +108,13 @@ public class PhysicsUtil {
 
     private double captainKalbag(double xFromGoal, double zFromGoal) {
         //Equation: (vx*y - vy*x)/((vx^2 + vy^2)*t^2 + (-2*vx*x - 2*vy*y)*t + x^2 + y^2)
-        //Returns change in angle per 100ms
+        //Returns change in ticks per 100ms
         double t = 0;
         double x = getX();
         double y = getY();
         double vx = vXYZ[0];
         double vy = vXYZ[1];
-        double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2* vy * y) * t + x * x + y * y);
+        double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2 * vy * y) * t + x * x + y * y);
         double velocityInDegrees = velocityInRads * (180 / Math.PI);
         double velocityInTicksPer100ms = MathUtil.degreesToTicks(velocityInDegrees) / 10;
         tab.setEntry("Turret Velocity: ", velocityInTicksPer100ms);
@@ -153,14 +152,6 @@ public class PhysicsUtil {
 
     public void setExtraDistance(double extraDistance) {
         this.extraDistance = extraDistance;
-    }
-
-    public void toggleAutoAim() {
-        autoAimEnabled = !autoAimEnabled;
-    }
-
-    public boolean isAutoAimEnabled() {
-        return autoAimEnabled;
     }
 
     public void setAimMode(AimMode aimMode) {
