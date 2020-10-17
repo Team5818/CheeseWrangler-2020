@@ -64,9 +64,13 @@ public class Turret extends SubsystemBase implements RRSubsystem {
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
+        turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         turretTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         turretTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        turretTalon.configForwardSoftLimitThreshold((int)(ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE)));
+        turretTalon.configReverseSoftLimitThreshold((int)(ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE)));
+        turretTalon.configForwardSoftLimitEnable(true);
+        turretTalon.configReverseSoftLimitEnable(true);
     }
 
     @Override
@@ -74,7 +78,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return turretTalon.getSensorCollection().getPulseWidthPosition();
     }
 
-    public double getVelocty() {
+    public double getVelocity() {
         return turretTalon.getSensorCollection().getPulseWidthVelocity();
     }
 
@@ -93,9 +97,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPositionTicks(double positionTicks) {
-        double ticks = MathUtil.limit(ZERO_TICKS + positionTicks, ZERO_TICKS + MathUtil.ticksToDegrees(MIN_ANGLE), ZERO_TICKS + MathUtil.ticksToDegrees(MAX_ANGLE));
-        tab.setEntry("TurretSetPosTicks", ticks);
-        turretTalon.set(ControlMode.MotionMagic, ticks);
+        tab.setEntry("TurretSetPosTicks", positionTicks);
+        turretTalon.set(ControlMode.MotionMagic, positionTicks);
     }
 
     public void setAngle(double angle, boolean isAbsolute) {

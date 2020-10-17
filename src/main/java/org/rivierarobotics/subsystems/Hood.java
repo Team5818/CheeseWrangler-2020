@@ -59,6 +59,10 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.setNeutralMode(NeutralMode.Brake);
         hoodTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         hoodTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        hoodTalon.configForwardSoftLimitThreshold((int)FORWARD_TICKS);
+        hoodTalon.configReverseSoftLimitThreshold((int)BACK_TICKS);
+        hoodTalon.configForwardSoftLimitEnable(true);
+        hoodTalon.configReverseSoftLimitEnable(true);
         hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
