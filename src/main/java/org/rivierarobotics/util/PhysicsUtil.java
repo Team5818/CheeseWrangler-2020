@@ -39,6 +39,7 @@ public class PhysicsUtil {
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.VISION;
     private double velocity;
+    private static boolean autoAimEnabled;
     private double[] vXYZ = new double[3];
     private boolean autoAimEnabled;
 
@@ -55,12 +56,12 @@ public class PhysicsUtil {
 
     public double getX() {
         return aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
-                getLLDistance() * Math.cos(getLLTurretAngle() + extraDistance);
+                getLLDistance() * Math.sin(getLLTurretAngle());
     }
 
     public double getY() {
         return aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
-                getLLDistance() * Math.cos(getLLTurretAngle() + extraDistance);
+                getLLDistance() * Math.cos(getLLTurretAngle());
     }
 
     public double getZ() {
@@ -89,7 +90,7 @@ public class PhysicsUtil {
 
     public double getAngleToTarget() {
         //Returns angle to target using x y z position of target.
-        double turretAngle = Math.toDegrees(Math.atan2(vXYZ[1], vXYZ[2]));
+        double turretAngle = Math.toDegrees(Math.atan2(vXYZ[1], vXYZ[0]));
         tab.setEntry("Turret Angle", turretAngle);
         return turretAngle;
     }
@@ -107,12 +108,18 @@ public class PhysicsUtil {
     }
 
     private double captainKalbag(double xFromGoal, double zFromGoal) {
-        //Does something with derivatives idk
-        double timeAdvance = 0.1;
-        double xDist = xFromGoal - driveTrain.getYVelocity() * timeAdvance;
-        double zDist = zFromGoal - driveTrain.getXVelocity() * timeAdvance;
-        return (1 / (Math.pow((zDist / xDist), 2) + 1)) * ((-driveTrain.getXVelocity() * xDist)
-                - (-driveTrain.getYVelocity() * xDist)) / (xDist * xDist);
+        //Equation: (vx*y - vy*x)/((vx^2 + vy^2)*t^2 + (-2*vx*x - 2*vy*y)*t + x^2 + y^2)
+        //Returns change in angle per 100ms
+        double t = 0;
+        double x = getX();
+        double y = getY();
+        double vx = vXYZ[0];
+        double vy = vXYZ[1];
+        double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2* vy * y) * t + x * x + y * y);
+        double velocityInDegrees = velocityInRads * (180 / Math.PI);
+        double velocityInTicksPer100ms = MathUtil.degreesToTicks(velocityInDegrees) / 10;
+        tab.setEntry("Turret Velocity: ", velocityInTicksPer100ms);
+        return velocityInTicksPer100ms;
     }
 
     public void calculateVelocities(boolean isArc, boolean perpendicularShot) {
@@ -140,6 +147,10 @@ public class PhysicsUtil {
         this.velocity = velocity;
     }
 
+    public double getTargetVelocity() {
+        return velocity;
+    }
+
     public void setExtraDistance(double extraDistance) {
         this.extraDistance = extraDistance;
     }
@@ -155,6 +166,14 @@ public class PhysicsUtil {
     public void setAimMode(AimMode aimMode) {
         tab.setEntry("Aim Mode: ", aimMode.name());
         this.aimMode = aimMode;
+    }
+
+    public void toggleAutoAim() {
+        autoAimEnabled = !autoAimEnabled;
+    }
+
+    public boolean isAutoAimEnabled() {
+        return autoAimEnabled;
     }
 
     public enum AimMode {

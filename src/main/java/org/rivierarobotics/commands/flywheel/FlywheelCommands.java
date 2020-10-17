@@ -20,16 +20,22 @@
 
 package org.rivierarobotics.commands.flywheel;
 
+import org.rivierarobotics.commands.shooting.ChangeSpeed;
+import org.rivierarobotics.commands.shooting.ChangeSpeedCreator;
+
 import javax.inject.Inject;
 
 public class FlywheelCommands {
     private final FlywheelSetPowerCreator flywheelSetPowerCreator;
     private final FlywheelSetVelocityCreator flywheelSetVelocityCreator;
+    private final ChangeSpeedCreator changeSpeedCreator;
 
     @Inject
     public FlywheelCommands(FlywheelSetPowerCreator flywheelSetPowerCreator,
-                            FlywheelSetVelocityCreator flywheelSetVelocityCreator) {
+                            FlywheelSetVelocityCreator flywheelSetVelocityCreator,
+                            ChangeSpeedCreator changeSpeedCreator) {
         this.flywheelSetPowerCreator = flywheelSetPowerCreator;
+        this.changeSpeedCreator = changeSpeedCreator;
         this.flywheelSetVelocityCreator = flywheelSetVelocityCreator;
     }
 
@@ -39,5 +45,9 @@ public class FlywheelCommands {
 
     public FlywheelSetVelocity setVelocity(double vel) {
         return flywheelSetVelocityCreator.create(vel);
+    }
+
+    public ChangeSpeed changeAutoAimSpeed(double amount) {
+        return changeSpeedCreator.create(amount);
     }
 }

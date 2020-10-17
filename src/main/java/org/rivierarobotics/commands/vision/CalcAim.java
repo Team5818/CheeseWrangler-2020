@@ -55,7 +55,7 @@ public class CalcAim extends CommandBase {
     @Override
     public void execute() {
         physics.setVelocity(19);
-        physics.calculateVelocities(false, false);
+        physics.calculateVelocities(false, true);
         double ballVel = physics.getBallVel();
         if (physics.isAutoAimEnabled()) {
             if (ballVel > ShooterConstants.getMaxBallVelocity()) {
