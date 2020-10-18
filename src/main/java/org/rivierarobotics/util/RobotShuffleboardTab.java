@@ -23,35 +23,62 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;
     private final Map<String, NetworkTableEntry> entries;
 
-    public RobotShuffleboardTab(String tab) {
-        this.tab = Shuffleboard.getTab(tab);
+    public RobotShuffleboardTab(String name) {
+        this.tab = Shuffleboard.getTab(name);
         this.entries = new HashMap<>();
-    }
-
-    public <T> RobotShuffleboardTab setEntry(String key, T value) {
-        if (!entries.containsKey(key)) {
-            entries.put(key, tab.add(key, value).getEntry());
-        } else {
-            entries.get(key).setValue(value);
-        }
-        return this;
     }
 
     public RobotShuffleboardTab addSendable(Sendable sendable) {
         return setEntry(SendableRegistry.getName(sendable), sendable);
     }
 
+    public <T> RobotShuffleboardTab setEntry(String title, T value) {
+        if (!entries.containsKey(title)) {
+            List<ShuffleboardComponent<?>> components = tab.getComponents();
+            for (ShuffleboardComponent<?> comp : components) {
+                if (comp.getTitle().equals(title) && comp instanceof SimpleWidget) {
+                    NetworkTableEntry entry = ((SimpleWidget) comp).getEntry();
+                    entry.setValue(value);
+                    entries.put(title, entry);
+                    return this;
+                }
+            }
+            entries.put(title, tab.add(title, value).getEntry());
+        } else {
+            entries.get(title).setValue(value);
+        }
+        return this;
+    }
+
     public NetworkTableEntry getEntry(String title) {
         return entries.get(title);
+    }
+
+    public RobotShuffleboardTab deleteEntry(String title) {
+        entries.remove(title).delete();
+        return this;
+    }
+
+    public RobotShuffleboardTab clear() {
+        for (Map.Entry<String, NetworkTableEntry> entry : entries.entrySet()) {
+            NetworkTableEntry value = entries.remove(entry.getKey());
+            if (value != null && value.isValid() && value.exists()) {
+                value.delete();
+            }
+        }
+        return this;
     }
 }

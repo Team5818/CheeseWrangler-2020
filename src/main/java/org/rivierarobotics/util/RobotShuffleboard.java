@@ -48,4 +48,8 @@ public class RobotShuffleboard {
             }
         }
     }
+
+    public void removeTab(String tabName) {
+        tabs.remove(tabName);
+    }
 }

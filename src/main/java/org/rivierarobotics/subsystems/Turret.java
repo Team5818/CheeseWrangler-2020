@@ -64,13 +64,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
-        turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
-        turretTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        turretTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        turretTalon.configForwardSoftLimitThreshold((int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE)));
-        turretTalon.configReverseSoftLimitThreshold((int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE)));
-        turretTalon.configForwardSoftLimitEnable(true);
-        turretTalon.configReverseSoftLimitEnable(true);
+        MotorUtil.setSoftLimits((int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE)),
+                (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE)), turretTalon);
     }
 
     @Override

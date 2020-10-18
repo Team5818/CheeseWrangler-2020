@@ -25,25 +25,18 @@ public class PIDConfig {
     private final double kI;
     private final double kD;
     private final double kF;
-    private final double tolerance;
     private final double pidRange;
 
-    public PIDConfig(double kP, double kI, double kD, double kF, double tolerance, double pidRange) {
+    public PIDConfig(double kP, double kI, double kD, double kF, double pidRange) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
         this.kF = kF;
-        this.tolerance = tolerance;
         this.pidRange = pidRange;
     }
 
     public PIDConfig(double kP, double kI, double kD, double kF) {
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
-        this.kF = kF;
-        this.tolerance = 0;
-        this.pidRange = 1.0;
+        this(kP, kI, kD, kF, 1.0);
     }
 
     public double getP() {
@@ -60,10 +53,6 @@ public class PIDConfig {
 
     public double getF() {
         return kF;
-    }
-
-    public double getTolerance() {
-        return tolerance;
     }
 
     public double getRange() {

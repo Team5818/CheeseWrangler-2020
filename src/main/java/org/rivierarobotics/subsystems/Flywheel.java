@@ -30,20 +30,22 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
-    private final RobotShuffleboard shuffleboard;
+    private final RobotShuffleboardTab tab;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
-        flywheelFalcon = new WPI_TalonFX(id);
+        this.logger = Logging.getLogger(getClass());
+        this.tab = shuffleboard.getTab("Vision");
+
+        this.flywheelFalcon = new WPI_TalonFX(id);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         flywheelFalcon.setInverted(false);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
-        logger = Logging.getLogger(getClass());
-        this.shuffleboard = shuffleboard;
     }
 
     @Override
@@ -58,7 +60,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public void setVelocity(double vel) {
-        shuffleboard.getTab("Vision").setEntry("Flywheel Set Vel", vel);
+        tab.setEntry("Flywheel Set Vel", vel);
         logger.setpointChange(vel);
         if (vel == 0) {
             flywheelFalcon.set(TalonFXControlMode.Velocity, 0.0);

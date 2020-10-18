@@ -34,24 +34,24 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class ForwardAuto extends SequentialCommandGroup {
-    public ForwardAuto(@Provided DriveCommands commands,
-                       @Provided CheeseWheelCommands cheeseWheelCommands,
+    public ForwardAuto(@Provided DriveCommands drive,
+                       @Provided CheeseWheelCommands cheeseWheel,
                        @Provided CollectionCommands intake,
                        @Provided VisionCommands vision,
-                       boolean useVisionAim) {
+                       boolean useAutoAim) {
         addCommands(
-            cheeseWheelCommands.shootNWedges(5),
+            cheeseWheel.shootNWedges(5),
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    commands.driveDistance(-5, 0.25).withTimeout(6.0),
-                    commands.driveDistance(5, 0.5).withTimeout(6.0)
+                    drive.driveDistance(-5, 0.25).withTimeout(6.0),
+                    drive.driveDistance(5, 0.5).withTimeout(6.0)
                 ),
                 intake.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
             ),
-            useVisionAim
-                ? vision.visionAim(VisionTarget.INNER).withTimeout(1.0)
+            useAutoAim
+                ? vision.encoderAim(VisionTarget.INNER).withTimeout(1.0)
                 : new InstantCommand(),
-            cheeseWheelCommands.shootNWedges(5)
+            cheeseWheel.shootNWedges(5)
         );
     }
 }

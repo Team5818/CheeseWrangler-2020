@@ -38,9 +38,10 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 2750;
-    private static final double FORWARD_TICKS = 2500;
-    private static final double BACK_TICKS = 2200;
+    private static final int ZERO_TICKS = 2750;
+    private static final int FORWARD_TICKS = 2500;
+    private static final int BACK_TICKS = 2200;
+    private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
     private final MechLogger logger;
@@ -57,24 +58,18 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.setSensorPhase(true);
         hoodTalon.setInverted(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
-        hoodTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        hoodTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        hoodTalon.configForwardSoftLimitThreshold((int) FORWARD_TICKS);
-        hoodTalon.configReverseSoftLimitThreshold((int) BACK_TICKS);
-        hoodTalon.configForwardSoftLimitEnable(true);
-        hoodTalon.configReverseSoftLimitEnable(true);
-        hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
+        MotorUtil.setSoftLimits(FORWARD_TICKS, BACK_TICKS, hoodTalon);
     }
 
-    public double getZeroTicks() {
+    public int getZeroTicks() {
         return ZERO_TICKS;
     }
     
-    public double getForwardTicks() {
+    public int getForwardTicks() {
         return FORWARD_TICKS;
     }
 
-    public double getBackTicks() {
+    public int getBackTicks() {
         return BACK_TICKS;
     }
 
@@ -91,10 +86,10 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     // Applies a bell curve power ramp for safety
     private double curvePower(double pwr) {
         double range = FORWARD_TICKS - BACK_TICKS;
-        double pos = 1.5 - (pwr >= 0 ? 1.5 / (range / Math.abs((FORWARD_TICKS - getPositionTicks()))) :
-                1.5 / (range / Math.abs((getPositionTicks() - BACK_TICKS))));
+        double pos = CURVE_FACTOR - (pwr >= 0 ? CURVE_FACTOR / (range / Math.abs((FORWARD_TICKS - getPositionTicks()))) :
+                CURVE_FACTOR / (range / Math.abs((getPositionTicks() - BACK_TICKS))));
         shuffleTab.setEntry("curvePos", pos);
-        double curvedPwr = Math.pow(Math.E, -(8.0 / 8) * pos * pos) * pwr;
+        double curvedPwr = Math.pow(Math.E, -pos * pos) * pwr;
         boolean limitSafety = limitSafety(pwr);
         shuffleTab.setEntry("limitSafety", limitSafety);
         shuffleTab.setEntry("curvedPwr", curvedPwr);
@@ -113,6 +108,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         return MathUtil.ticksToDegrees(ZERO_TICKS - getPositionTicks());
     }
 
+    //TODO remove this or modify - doesn't do anything? (calls in EncoderAim, CalcAim, VisionAimHoodFlywheel)
     public double getAngle(double ticks) {
         return MathUtil.ticksToDegrees(ZERO_TICKS);
     }

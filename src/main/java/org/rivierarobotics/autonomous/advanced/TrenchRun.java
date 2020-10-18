@@ -21,6 +21,7 @@
 package org.rivierarobotics.autonomous.advanced;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.autonomous.AutonomousCommands;
@@ -37,22 +38,19 @@ public class TrenchRun extends SequentialCommandGroup {
     public TrenchRun(@Provided AutonomousCommands auto, @Provided DriveCommands drive, @Provided CollectionCommands collect,
                      @Provided CheeseWheelCommands shoot, @Provided VisionCommands aim) {
         super(
-                auto.pathweaver(Pose2dPath.START_TOP_TO_SHOOT),
-                aim.visionAim(VisionTarget.INNER),
-                shoot.shootNWedges(5),
+                sequence(auto.pathweaver(Pose2dPath.START_TOP_TO_SHOOT), shoot.shootNWedges(5))
+                        .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
                 auto.pathweaver(Pose2dPath.SHOOT_TO_TRENCH_PICKUP),
                 drive.driveDistance(1.8, 0.25)
                         .deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
-                auto.pathweaver(Pose2dPath.TRENCH_END_TO_SHOOT),
-                aim.visionAim(VisionTarget.INNER),
-                shoot.shootNWedges(5),
+                sequence(auto.pathweaver(Pose2dPath.TRENCH_END_TO_SHOOT), shoot.shootNWedges(5))
+                        .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
                 auto.pathweaver(Pose2dPath.SHOOT_TO_LEFT_CENTER_BALL)
                         .deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                 auto.pathweaver(Pose2dPath.SHIFT_LEFT_CENTER_BALL)
                         .deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
-                auto.pathweaver(Pose2dPath.LEFT_CENTER_BALL_TO_SHOOT),
-                aim.visionAim(VisionTarget.INNER),
-                shoot.shootNWedges(5)
+                sequence(auto.pathweaver(Pose2dPath.LEFT_CENTER_BALL_TO_SHOOT), shoot.shootNWedges(5))
+                        .deadlineWith(aim.encoderAim(VisionTarget.INNER))
         );
     }
 }

@@ -48,7 +48,6 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
                 new PIDConfig(1023 / 200.0, 0, 0, 0), -1, wheelTalon);
         wheelTalon.setSensorPhase(false);
         wheelTalon.setNeutralMode(NeutralMode.Brake);
-        wheelTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
     public double getOffsetPositionTicks(AngleOffset offset) {

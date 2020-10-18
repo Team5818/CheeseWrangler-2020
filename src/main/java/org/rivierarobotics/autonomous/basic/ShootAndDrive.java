@@ -35,5 +35,4 @@ public class ShootAndDrive extends SequentialCommandGroup {
             drive.driveDistance(-1, 0.25)
         );
     }
-
 }

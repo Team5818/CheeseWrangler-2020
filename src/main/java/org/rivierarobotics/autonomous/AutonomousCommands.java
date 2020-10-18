@@ -22,6 +22,8 @@ package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
+import org.rivierarobotics.autonomous.advanced.TrenchRun;
+import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
 import org.rivierarobotics.autonomous.basic.ForwardAuto;
 import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
 import org.rivierarobotics.autonomous.basic.ShootAndDrive;
@@ -34,16 +36,19 @@ public class AutonomousCommands {
     private final ForwardAutoCreator forwardAutoCreator;
     private final ShootAndDriveCreator shootAndDriveCreator;
     private final ShootLoopCreator shootLoopCreator;
+    private final TrenchRunCreator trenchRunCreator;
 
     @Inject
     public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
                               ForwardAutoCreator forwardAutoCreator,
                               ShootAndDriveCreator shootAndDriveCreator,
-                              ShootLoopCreator shootLoopCreator) {
+                              ShootLoopCreator shootLoopCreator,
+                              TrenchRunCreator trenchRunCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
         this.shootLoopCreator = shootLoopCreator;
+        this.trenchRunCreator = trenchRunCreator;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
@@ -60,5 +65,9 @@ public class AutonomousCommands {
 
     public ShootLoop shootLoop(Pose2dPath loop) {
         return shootLoopCreator.create(loop);
+    }
+
+    public TrenchRun trenchRun() {
+        return trenchRunCreator.create();
     }
 }

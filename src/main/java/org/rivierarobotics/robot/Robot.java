@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
@@ -54,6 +55,10 @@ public class Robot extends TimedRobot {
         chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
+        chooser.addOption("TrenchRun", commandComponent.auto().trenchRun());
+        chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
+        chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
+        chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
 
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
@@ -121,7 +126,6 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
         var shuffleboard = globalComponent.getShuffleboard();
-        var physics = globalComponent.getPhysicsUtil();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
