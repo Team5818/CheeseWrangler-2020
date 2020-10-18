@@ -67,8 +67,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
         turretTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         turretTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        turretTalon.configForwardSoftLimitThreshold((int)(ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE)));
-        turretTalon.configReverseSoftLimitThreshold((int)(ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE)));
+        turretTalon.configForwardSoftLimitThreshold((int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE)));
+        turretTalon.configReverseSoftLimitThreshold((int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE)));
         turretTalon.configForwardSoftLimitEnable(true);
         turretTalon.configReverseSoftLimitEnable(true);
     }
@@ -126,10 +126,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
-    public void setVelocity(double ticksPerSec) {
-        ticksPerSec = ensureInRange(ticksPerSec);
-        logger.stateChange("Velocity Set", ticksPerSec);
-        turretTalon.set(ControlMode.Velocity, ticksPerSec);
+    public void setVelocity(double ticksPer100ms) {
+        logger.stateChange("Velocity Set", ticksPer100ms);
+        turretTalon.set(ControlMode.Velocity, ticksPer100ms);
     }
 
     @Override

@@ -23,9 +23,11 @@ package org.rivierarobotics.commands.shooting;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
+import org.rivierarobotics.util.ShooterConstants;
 
 import javax.inject.Inject;
 
@@ -44,7 +46,8 @@ public class ChangeSpeed extends InstantCommand {
 
     @Override
     public void execute() {
-        physics.setVelocity(physics.getTargetVelocity() + amount);
+        physics.setVelocity(MathUtil.limit(physics.getTargetVelocity() + amount,
+                ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
         tab.setEntry("Set Speed: ", physics.getTargetVelocity());
     }
 }

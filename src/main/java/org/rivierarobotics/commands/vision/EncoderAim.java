@@ -56,20 +56,21 @@ public class EncoderAim extends CommandBase {
 
     @Override
     public void execute() {
-        physics.setVelocity(19);
-        physics.calculateVelocities(false, false);
+        physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
+        double hoodAngle = physics.getCalculatedHoodAngle();
+        if (hoodAngle > hood.getAngle(hood.getBackTicks())) {
+            tab.setEntry("Limit?:", "Hood Angle");
+            ballVel = physics.getBallVel(hood.getAngle(hood.getForwardTicks()));
+            hoodAngle = hood.getAngle(hood.getBackTicks());
+        } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
+            tab.setEntry("Limit?:", "Slow Ball Velocity");
+            ballVel = ShooterConstants.getShooterMinVelocity();
+        }
         if (physics.isAutoAimEnabled()) {
-            if (ballVel > ShooterConstants.getMaxBallVelocity()) {
-                //Long Shot
-                hood.setAngle(ShooterConstants.getEstimatedHoodAngle(physics.getDistanceToTarget()));
-                flywheel.setVelocity(ShooterConstants.velocityToTicks(ShooterConstants.getShooterMinVelocity()));
-                tab.setEntry("Target: ", "Long Shot");
-            } else {
-                hood.setAngle(physics.getCalculatedHoodAngle());
-                flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
-            }
             turret.setAngle(physics.getAngleToTarget(), true);
+            flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
+            hood.setAngle(hoodAngle);
         } else {
             flywheel.setVelocity(0);
         }

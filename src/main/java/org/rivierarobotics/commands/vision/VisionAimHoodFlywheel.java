@@ -57,25 +57,24 @@ public class VisionAimHoodFlywheel extends CommandBase {
 
     @Override
     public void execute() {
-        physics.setVelocity(19);
-        physics.calculateVelocities(false, false);
-        double hoodAngle = physics.getCalculatedHoodAngle();
-        double ballVel = physics.getBallVel();
-        double encoderVelocity = ShooterConstants.velocityToTicks(ballVel);
-        if (physics.isAutoAimEnabled()) {
-            if (vision.getLLValue("tv") ==  1) {
-                if (ballVel > ShooterConstants.getMaxBallVelocity()) {
-                    //Long Shot
-                    hood.setAngle(ShooterConstants.getEstimatedHoodAngle(physics.getDistanceToTarget()));
-                    flywheel.setVelocity(ShooterConstants.getShooterMaxVelocity());
-                    tab.setEntry("Target: ", "Long Shot");
-                } else {
-                    hood.setAngle(hoodAngle);
-                    flywheel.setVelocity(encoderVelocity);
-                }
+        if (vision.getLLValue("tv") == 1) {
+            physics.calculateVelocities(false);
+            double ballVel = physics.getBallVel();
+            double hoodAngle = physics.getCalculatedHoodAngle();
+            if (hoodAngle > hood.getAngle(hood.getBackTicks())) {
+                tab.setEntry("Limit?:", "Hood Angle");
+                ballVel = physics.getBallVel(hood.getAngle(hood.getForwardTicks()));
+                hoodAngle = hood.getAngle(hood.getBackTicks());
+            } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
+                tab.setEntry("Limit?:", "Slow Ball Velocity");
+                ballVel = ShooterConstants.getShooterMinVelocity();
             }
-        } else {
-            flywheel.setVelocity(0);
+            if (physics.isAutoAimEnabled()) {
+                hood.setAngle(hoodAngle);
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
+            } else {
+                flywheel.setVelocity(0);
+            }
         }
     }
 

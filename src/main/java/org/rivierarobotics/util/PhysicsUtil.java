@@ -106,14 +106,20 @@ public class PhysicsUtil {
         return Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
     }
 
-    private double captainKalbag(double xFromGoal, double zFromGoal) {
+    public double getBallVel(double hoodAngle) {
+        //Returns ball's velocity in m/s
+        double t = 0.7;
+        return (getZ() / t + g * t) / Math.sin(Math.toRadians(hoodAngle));
+    }
+
+    private double captainKalbag() {
         //Equation: (vx*y - vy*x)/((vx^2 + vy^2)*t^2 + (-2*vx*x - 2*vy*y)*t + x^2 + y^2)
         //Returns change in ticks per 100ms
         double t = 0;
         double x = getX();
         double y = getY();
-        double vx = vXYZ[0];
-        double vy = vXYZ[1];
+        double vx = driveTrain.getXVelocity();
+        double vy = driveTrain.getYVelocity();
         double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2 * vy * y) * t + x * x + y * y);
         double velocityInDegrees = velocityInRads * (180 / Math.PI);
         double velocityInTicksPer100ms = MathUtil.degreesToTicks(velocityInDegrees) / 10;
@@ -121,7 +127,7 @@ public class PhysicsUtil {
         return velocityInTicksPer100ms;
     }
 
-    public void calculateVelocities(boolean isArc, boolean perpendicularShot) {
+    public void calculateVelocities(boolean perpendicularShot) {
         //Straight Shot: sqrt(-4*g*z + 2*v^2 - 2*sqrt(-4*g^2*x^2 - 4*g^2*y^2 - 4*g*v^2*z + v^4))/(2*g)
         //Arc Shot:sqrt(2)*sqrt(-2*g*z + v^2 + sqrt(-4*g^2*x^2 - 4*g^2*y^2 - 4*g*v^2*z + v^4))/(2*g)
         double x = getX();
@@ -131,15 +137,18 @@ public class PhysicsUtil {
         if (!perpendicularShot) {
             tab.setEntry("Trajectory: ", "Curve or Arc");
             double a = -4 * g * g * x * x - 4 * g * g * y * y - 4 * g * velocity * velocity * z + (velocity * velocity * velocity * velocity);
-            double t = !isArc ? Math.sqrt(-4 * g * z + 2 * (velocity * velocity) - 2 * Math.sqrt(a)) / (2 * g) :
-                    1.41421 * Math.sqrt(-2 * g * z + velocity * velocity + Math.sqrt(a)) / (2 * g);
-            vXYZ = !Double.isNaN(t) ? new double[] { x / t, y / t, z / t + g * t } : tempXYZ;
+            double tStraight = Math.sqrt(-4 * g * z + 2 * (velocity * velocity) - 2 * Math.sqrt(a)) / (2 * g);
+            double tArc = 1.41421 * Math.sqrt(-2 * g * z + velocity * velocity + Math.sqrt(a)) / (2 * g);
+            double t = Double.isNaN(tStraight) ? tStraight : tArc;
+            vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : tempXYZ;
+        } else {
+            vXYZ = tempXYZ;
         }
-        vXYZ = tempXYZ;
+        tab.setEntry("vXYZ", vXYZ);
     }
 
     public double getTurretVelocity() {
-        return MathUtil.degreesToTicks(captainKalbag(positionTracker.getPosition()[1], positionTracker.getPosition()[0])) / 10 + 5;
+        return captainKalbag();
     }
 
     public void setVelocity(double velocity) {
