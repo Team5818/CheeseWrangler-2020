@@ -22,8 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -108,9 +106,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         return MathUtil.ticksToDegrees(ZERO_TICKS - getPositionTicks());
     }
 
-    //TODO remove this or modify - doesn't do anything? (calls in EncoderAim, CalcAim, VisionAimHoodFlywheel)
     public double getAngle(double ticks) {
-        return MathUtil.ticksToDegrees(ZERO_TICKS);
+        return MathUtil.ticksToDegrees(ZERO_TICKS - ticks);
     }
 
     public void setAngle(double angle) {

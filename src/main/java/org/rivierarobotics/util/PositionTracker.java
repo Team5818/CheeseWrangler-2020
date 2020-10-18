@@ -62,7 +62,6 @@ public class PositionTracker {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
-
         double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
             / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         SmartDashboard.putNumber("dist", dist);
