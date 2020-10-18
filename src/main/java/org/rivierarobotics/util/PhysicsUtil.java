@@ -38,7 +38,7 @@ public class PhysicsUtil {
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.VISION;
-    private double velocity;
+    private static double velocity = 19;
     private static boolean autoAimEnabled;
     private double[] vXYZ = new double[3];
 
@@ -152,7 +152,7 @@ public class PhysicsUtil {
     }
 
     public void setVelocity(double velocity) {
-        this.velocity = velocity;
+        PhysicsUtil.velocity = velocity;
     }
 
     public double getTargetVelocity() {
