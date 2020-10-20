@@ -88,18 +88,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
                 CURVE_FACTOR / (range / Math.abs((getPositionTicks() - BACK_TICKS))));
         shuffleTab.setEntry("curvePos", pos);
         double curvedPwr = Math.pow(Math.E, -pos * pos) * pwr;
-        boolean limitSafety = limitSafety(pwr);
-        shuffleTab.setEntry("limitSafety", limitSafety);
         shuffleTab.setEntry("curvedPwr", curvedPwr);
-        return limitSafety ? curvedPwr : 0.0;
-    }
-
-    private boolean limitSafety(double pwr) {
-        double limit = MathUtil.limit(getPositionTicks(), BACK_TICKS, FORWARD_TICKS);
-        if ((limit != FORWARD_TICKS && limit != BACK_TICKS) || (limit == FORWARD_TICKS && pwr < 0)) {
-            return true;
-        }
-        return limit == BACK_TICKS && pwr > 0;
+        return curvedPwr;
     }
 
     public double getAngle() {
@@ -110,9 +100,13 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         return MathUtil.ticksToDegrees(ZERO_TICKS - ticks);
     }
 
+    public double[] getSoftLimits() {
+        return new double[]{hoodTalon.configGetCustomParam(0), hoodTalon.configGetCustomParam(1)};
+    }
+
     public void setAngle(double angle) {
         shuffleTab.setEntry("setAngle", angle);
-        double ticks = MathUtil.limit(ZERO_TICKS - MathUtil.degreesToTicks(angle), BACK_TICKS, FORWARD_TICKS);
+        double ticks = ZERO_TICKS - MathUtil.degreesToTicks(angle);
         shuffleTab.setEntry("setTicks", ticks);
         logger.setpointChange(ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);

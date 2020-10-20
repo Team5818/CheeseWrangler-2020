@@ -30,28 +30,46 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
+import java.util.function.Supplier;
 
 public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> extends CommandBase {
     protected final T subsystem;
     protected final DoubleSupplier getPosition;
     protected final DoubleConsumer setPosition;
-    protected final double maxErrorTicks;
+    protected final Supplier<double[]> getSoftLimits;
+    protected final double maxError;
     protected final double setPoint;
     protected final double timeout;
     protected final RobotShuffleboardTab tab;
     private double start;
 
     public MotionMagicSetPosition(T subsystem, DoubleSupplier getPosition, DoubleConsumer setPosition,
-                                  double setPoint, double maxErrorTicks, double timeout, RobotShuffleboard shuffleboard) {
+                                  double setPoint, double maxError, double timeout, RobotShuffleboard shuffleboard) {
         this.subsystem = subsystem;
         this.getPosition = getPosition;
         this.setPosition = setPosition;
-        this.maxErrorTicks = maxErrorTicks;
+        this.maxError = maxError;
         this.setPoint = setPoint;
+        this.timeout = timeout;
+        this.getSoftLimits = null;
+        tab = shuffleboard.getTab("MM Tuning");
+        tab.setEntry(subsystem.getName() + " setPoint:", setPoint);
+        tab.setEntry(subsystem.getName() + " maxErrorTicks:", maxError);
+        addRequirements(subsystem);
+    }
+
+    public MotionMagicSetPosition(T subsystem, DoubleSupplier getPosition, DoubleConsumer setPosition, Supplier<double[]> getSoftLimits,
+                                  double setPoint, double maxError, double timeout, RobotShuffleboard shuffleboard) {
+        this.subsystem = subsystem;
+        this.getPosition = getPosition;
+        this.setPosition = setPosition;
+        this.maxError = maxError;
+        this.setPoint = setPoint;
+        this.getSoftLimits = getSoftLimits;
         this.timeout = timeout;
         tab = shuffleboard.getTab("MM Tuning");
         tab.setEntry(subsystem.getName() + " setPoint:", setPoint);
-        tab.setEntry(subsystem.getName() + " maxErrorTicks:", maxErrorTicks);
+        tab.setEntry(subsystem.getName() + " maxErrorTicks:", maxError);
         addRequirements(subsystem);
     }
 
@@ -64,7 +82,10 @@ public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> exten
     @Override
     public boolean isFinished() {
         tab.setEntry(subsystem.getName() + " currentPosition", getPosition.getAsDouble());
-        boolean finished = MathUtil.isWithinTolerance(getPosition.getAsDouble(), setPoint, maxErrorTicks) || (Timer.getFPGATimestamp() - start) > timeout;
+        boolean finished = MathUtil.isWithinTolerance(getPosition.getAsDouble(), setPoint, maxError) || (Timer.getFPGATimestamp() - start) > timeout;
+        if (getSoftLimits != null) {
+            finished = finished || subsystem.getPositionTicks() >= getSoftLimits.get()[0] || subsystem.getPositionTicks() <= getSoftLimits.get()[1];
+        }
         tab.setEntry(subsystem.getName() + " finished", finished);
         return finished;
     }

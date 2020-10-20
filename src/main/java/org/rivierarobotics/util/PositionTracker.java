@@ -21,7 +21,6 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
@@ -62,13 +61,8 @@ public class PositionTracker {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
-        double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
-                / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
-        SmartDashboard.putNumber("dist", dist);
+        double dist = turret.getTurretDistance(0, hood.getAngle());
         double turretAngle = turret.getTxTurret(0, hood.getAngle());
-        if(turretAngle > 180) {
-            turretAngle -= 360;
-        }
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
         pos[0] = -xFromTarget;

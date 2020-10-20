@@ -82,16 +82,29 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getTxTurret(double extraDistance, double hoodAngle) {
+        double tx = Math.toRadians(vision.getLLValue("tx"));
+        double angleA = Math.PI / 2 - tx;
+        double z = ShooterConstants.getLLtoTurretZ();
+        double a = getTurretDistance(extraDistance, hoodAngle);
+        double dist = getDistance(extraDistance, hoodAngle);
+        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a))) + getAngle(true);
+        return tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
+    }
+
+    public double getDistance(double extraDistance, double hoodAngle) {
         double initialD = ShooterConstants.getTopHeight() / Math.sin(Math.toRadians(vision.getActualTY(hoodAngle)));
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double xInitialD = Math.sin(tx) * initialD;
         double yInitialD = Math.cos(tx) * initialD + extraDistance;
-        double dist = Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
+        return Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
+    }
+
+    public double getTurretDistance(double extraDistance, double hoodAngle) {
+        double tx = Math.toRadians(vision.getLLValue("tx"));
         double angleA = Math.PI / 2 - tx;
         double z = ShooterConstants.getLLtoTurretZ();
-        double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
-        double finalAngle = Math.toDegrees(Math.asin( (Math.sin(angleA) * dist / a)));
-        return tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
+        double dist = getDistance(extraDistance, hoodAngle);
+        return Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
     }
 
     public void setPositionTicks(double positionTicks) {
@@ -134,18 +147,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
-        pwr = ensureInRange(pwr);
         logger.powerChange(pwr);
         turretTalon.set(ControlMode.PercentOutput, pwr);
-    }
-
-    private double ensureInRange(double in) {
-        double pos = getPositionTicks() - ZERO_TICKS;
-        if ((in < 0 && pos < MathUtil.ticksToDegrees(MIN_ANGLE))
-                || in > 0 && pos > MathUtil.ticksToDegrees(MAX_ANGLE)) {
-            in = 0;
-        }
-        return in;
     }
 
     @Override
@@ -154,6 +157,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
+    }
+
+    public double[] getSoftLimits() {
+        return new double[]{turretTalon.configGetCustomParam(0), turretTalon.configGetCustomParam(1)};
     }
 
     private enum PIDMode {

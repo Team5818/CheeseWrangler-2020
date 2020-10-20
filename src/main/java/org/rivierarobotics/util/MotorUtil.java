@@ -23,7 +23,6 @@ package org.rivierarobotics.util;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
@@ -64,6 +63,8 @@ public class MotorUtil {
         for (T motor : motors) {
             motor.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
             motor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+            motor.configSetCustomParam(forward, 0);
+            motor.configSetCustomParam(reverse, 1);
             motor.configForwardSoftLimitThreshold(forward);
             motor.configReverseSoftLimitThreshold(reverse);
             motor.configForwardSoftLimitEnable(true);

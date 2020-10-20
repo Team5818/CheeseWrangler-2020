@@ -56,15 +56,15 @@ public class PhysicsUtil {
     public double getX() {
         double x = aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
                 getLLDistance() * Math.cos(Math.abs(Math.toRadians(getLLTurretAngle())));
-        tab.setEntry("x",x);
+        tab.setEntry("x", x);
         return x;
     }
 
     public double getY() {
         double y = aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
                 getLLDistance() * Math.sin(Math.abs(Math.toRadians(getLLTurretAngle())));
-        tab.setEntry("y",-y);
-        return -y;
+        tab.setEntry("y", y);
+        return y;
     }
 
     public double getZ() {
@@ -86,8 +86,7 @@ public class PhysicsUtil {
 
     public double getLLDistance() {
         //Returns distance to target using LL values
-        double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
-                / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
+        double dist = turret.getTurretDistance(extraDistance, hood.getAngle());
         tab.setEntry("LL Dist", dist);
         return dist;
     }
@@ -109,7 +108,7 @@ public class PhysicsUtil {
     public double getBallVel() {
         //Returns ball's velocity in m/s
         double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
-        tab.setEntry("ballVel",ballVel);
+        tab.setEntry("ballVel", ballVel);
         return ballVel;
     }
 
@@ -147,7 +146,7 @@ public class PhysicsUtil {
             double tStraight = Math.sqrt(-4 * g * z + 2 * (velocity * velocity) - 2 * Math.sqrt(a)) / (2 * g);
             double tArc = 1.41421 * Math.sqrt(-2 * g * z + velocity * velocity + Math.sqrt(a)) / (2 * g);
             double t = Double.isNaN(tStraight) ? tArc : tStraight;
-            if(Double.isNaN(tStraight)) {
+            if (Double.isNaN(tStraight)) {
                 tab.setEntry("Trajectory: ", "ARC");
             }
             vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : tempXYZ;
@@ -155,8 +154,8 @@ public class PhysicsUtil {
             vXYZ = tempXYZ;
         }
         tab.setEntry("vx", vXYZ[0]);
-        tab.setEntry("vy",vXYZ[1]);
-        tab.setEntry("vz",vXYZ[2]);
+        tab.setEntry("vy", vXYZ[1]);
+        tab.setEntry("vz", vXYZ[2]);
     }
 
     public double getTurretVelocity() {
