@@ -26,6 +26,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
@@ -61,7 +62,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
         this.turretTalon = new WPI_TalonSRX(id);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-                new PIDConfig((1.5 * 1023 / 400), 0, 0, 0), 800, turretTalon);
+                PIDMode.POSITION.config, 800, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
         MotorUtil.setSoftLimits((int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE)),
@@ -93,6 +94,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     public void setPositionTicks(double positionTicks) {
         tab.setEntry("TurretSetPosTicks", positionTicks);
+        PIDMode.POSITION.enable(turretTalon);
         turretTalon.set(ControlMode.MotionMagic, positionTicks);
     }
 
@@ -118,11 +120,13 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         }
         tab.setEntry("TFinalAngleTicks", initialTicks);
         logger.setpointChange(initialTicks);
+        PIDMode.POSITION.enable(turretTalon);
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
     public void setVelocity(double ticksPer100ms) {
         logger.stateChange("Velocity Set", ticksPer100ms);
+        PIDMode.VELOCITY.enable(turretTalon);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
     }
 
@@ -148,5 +152,27 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
+    }
+
+    private enum PIDMode {
+        POSITION(new PIDConfig((1.5 * 1023 / 400), 0, 0, 0)),
+        VELOCITY(new PIDConfig((1.5 * 1023 / 400), 0, 0, 0));
+
+        private final PIDConfig config;
+        private static PIDMode current;
+
+        PIDMode(PIDConfig config) {
+            this.config = config;
+        }
+
+        public void enable(BaseMotorController motor) {
+            if (this != current) {
+                motor.config_kP(0, config.getP());
+                motor.config_kI(0, config.getI());
+                motor.config_kD(0, config.getD());
+                motor.config_kF(0, config.getF());
+                current = this;
+            }
+        }
     }
 }

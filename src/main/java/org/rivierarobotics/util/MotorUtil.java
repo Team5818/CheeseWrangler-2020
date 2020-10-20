@@ -34,13 +34,6 @@ public class MotorUtil {
     }
 
     @SafeVarargs
-    public static <T extends BaseMotorController> void setInverted(boolean invert, T... motors) {
-        for (T motor : motors) {
-            motor.setInverted(invert);
-        }
-    }
-
-    @SafeVarargs
     public static <T extends BaseMotorController> void setupMotionMagic(FeedbackDevice sensor, PIDConfig pidConfig, int maxVel, T... motors) {
         for (T motor : motors) {
             motor.configFactoryDefault();
@@ -63,13 +56,6 @@ public class MotorUtil {
                 motor.configMotionCruiseVelocity(maxVel);
                 motor.configMotionAcceleration(maxVel);
             }
-        }
-    }
-
-    @SafeVarargs
-    public static <T extends BaseMotorController> void setNeutralMode(NeutralMode mode, T... motors) {
-        for (T motor : motors) {
-            motor.setNeutralMode(mode);
         }
     }
 
