@@ -113,8 +113,8 @@ public class ButtonConfiguration {
 
         // Testing/dev
         new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.hood().setAngle(0));
+                .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
         new JoystickButton(driverButtons, 5)
-                .whenPressed(cmds.hood().setAngle(90));
+                .whenPressed(cmds.flywheel().changeAutoAimSpeed(-1));
     }
 }

@@ -132,14 +132,16 @@ public class Robot extends TimedRobot {
             .setEntry("Hood Abs Angle", hood.getAngle())
             .setEntry("Turret Abs Angle", turret.getAngle(true))
             .setEntry("Turret Rel Angle", turret.getAngle(false))
-            .setEntry("Turret Pos Ticks", turret.getPositionTicks());
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
+            .setEntry("turretVel",turret.getVelocity());
 
         shuffleboard.getTab("Vision")
             .setEntry("tx", visionUtil.getLLValue("tx"))
             .setEntry("ty", visionUtil.getLLValue("ty"))
             .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
-            .setEntry("Gyro Angle", gyro.getYaw());
+            .setEntry("Gyro Angle", gyro.getYaw())
+            .setEntry("Adj tx",turret.getTxTurret(0,hood.getAngle()));
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())

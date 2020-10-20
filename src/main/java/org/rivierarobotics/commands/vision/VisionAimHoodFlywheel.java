@@ -57,8 +57,9 @@ public class VisionAimHoodFlywheel extends CommandBase {
 
     @Override
     public void execute() {
+        physics.setAimMode(PhysicsUtil.AimMode.VISION);
+        physics.calculateVelocities(false);
         if (vision.getLLValue("tv") == 1) {
-            physics.calculateVelocities(false);
             double ballVel = physics.getBallVel();
             double hoodAngle = physics.getCalculatedHoodAngle();
             if (hoodAngle > hood.getAngle(hood.getBackTicks())) {

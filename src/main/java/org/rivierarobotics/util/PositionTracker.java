@@ -63,13 +63,16 @@ public class PositionTracker {
             return;
         }
         double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
-            / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
+                / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         SmartDashboard.putNumber("dist", dist);
-        double turretAngle = turret.getTxTurret(0, hood.getAngle()) + turret.getAngle(true);
+        double turretAngle = turret.getTxTurret(0, hood.getAngle());
+        if(turretAngle > 180) {
+            turretAngle -= 360;
+        }
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
-        pos[1] = xFromTarget;
-        pos[0] = yFromTarget;
+        pos[0] = -xFromTarget;
+        pos[1] = yFromTarget;
     }
 
     public void reset() {

@@ -45,7 +45,7 @@ public class VisionUtil {
     }
 
     public double getActualTY(double hoodAbsPos) {
-        return getLLValue("ty") + hoodAbsPos - 4;
+        return getLLValue("ty") + hoodAbsPos -  8;
     }
 
     public void setLEDState(LimelightLEDState state) {

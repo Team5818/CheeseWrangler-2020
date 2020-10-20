@@ -23,8 +23,6 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
-import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
@@ -79,17 +77,21 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle(boolean isAbsolute) {
-        return MathUtil.wrapToCircle(isAbsolute ? gyro.getYaw() + MathUtil.degreesToTicks(getPositionTicks() - ZERO_TICKS) :
-                MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS));
+        return isAbsolute ? MathUtil.wrapToCircle(gyro.getYaw() + MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS)) :
+                MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
     }
 
     public double getTxTurret(double extraDistance, double hoodAngle) {
+        double initialD = ShooterConstants.getTopHeight() / Math.sin(Math.toRadians(vision.getActualTY(hoodAngle)));
         double tx = Math.toRadians(vision.getLLValue("tx"));
-        double distance = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
-                / Math.tan(Math.toRadians(vision.getActualTY(hoodAngle)));
-        double txTurret = Math.atan2(distance * Math.sin(tx) - ShooterConstants.getLLtoTurretZ(), distance * Math.cos(tx) + extraDistance);
-        tab.setEntry("txTurret", txTurret);
-        return txTurret;
+        double xInitialD = Math.sin(tx) * initialD;
+        double yInitialD = Math.cos(tx) * initialD + extraDistance;
+        double dist = Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
+        double angleA = Math.PI / 2 - tx;
+        double z = ShooterConstants.getLLtoTurretZ();
+        double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
+        double finalAngle = Math.toDegrees(Math.asin( (Math.sin(angleA) * dist / a)));
+        return tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
     }
 
     public void setPositionTicks(double positionTicks) {

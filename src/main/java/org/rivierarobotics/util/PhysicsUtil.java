@@ -54,13 +54,17 @@ public class PhysicsUtil {
     }
 
     public double getX() {
-        return aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
-                getLLDistance() * Math.sin(getLLTurretAngle());
+        double x = aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
+                getLLDistance() * Math.cos(Math.abs(Math.toRadians(getLLTurretAngle())));
+        tab.setEntry("x",x);
+        return x;
     }
 
     public double getY() {
-        return aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
-                getLLDistance() * Math.cos(getLLTurretAngle());
+        double y = aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
+                getLLDistance() * Math.sin(Math.abs(Math.toRadians(getLLTurretAngle())));
+        tab.setEntry("y",-y);
+        return -y;
     }
 
     public double getZ() {
@@ -75,14 +79,15 @@ public class PhysicsUtil {
 
     public double getLLTurretAngle() {
         //Returns angle to target using LL values
-        double turretAngle = turret.getAngle(true) + turret.getTxTurret(extraDistance, hood.getAngle());
+        double turretAngle = turret.getTxTurret(extraDistance, hood.getAngle());
         tab.setEntry("Turret Angle", turretAngle);
         return turretAngle;
     }
 
     public double getLLDistance() {
         //Returns distance to target using LL values
-        double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
+        double dist = ShooterConstants.getTopHeight() + ShooterConstants.getLLtoTurretY()
+                / Math.tan(Math.toRadians(vision.getActualTY(hood.getAngle())));
         tab.setEntry("LL Dist", dist);
         return dist;
     }
@@ -103,7 +108,9 @@ public class PhysicsUtil {
 
     public double getBallVel() {
         //Returns ball's velocity in m/s
-        return Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
+        double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
+        tab.setEntry("ballVel",ballVel);
+        return ballVel;
     }
 
     public double getBallVel(double hoodAngle) {
@@ -135,16 +142,21 @@ public class PhysicsUtil {
         double z = getZ();
         double[] tempXYZ = { x / ShooterConstants.getTConstant(), y / ShooterConstants.getTConstant(), ShooterConstants.getZVelocityConstant() };
         if (!perpendicularShot) {
-            tab.setEntry("Trajectory: ", "Curve or Arc");
+            tab.setEntry("Trajectory: ", "Curve");
             double a = -4 * g * g * x * x - 4 * g * g * y * y - 4 * g * velocity * velocity * z + (velocity * velocity * velocity * velocity);
             double tStraight = Math.sqrt(-4 * g * z + 2 * (velocity * velocity) - 2 * Math.sqrt(a)) / (2 * g);
             double tArc = 1.41421 * Math.sqrt(-2 * g * z + velocity * velocity + Math.sqrt(a)) / (2 * g);
-            double t = Double.isNaN(tStraight) ? tStraight : tArc;
+            double t = Double.isNaN(tStraight) ? tArc : tStraight;
+            if(Double.isNaN(tStraight)) {
+                tab.setEntry("Trajectory: ", "ARC");
+            }
             vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : tempXYZ;
         } else {
             vXYZ = tempXYZ;
         }
-        tab.setEntry("vXYZ", vXYZ);
+        tab.setEntry("vx", vXYZ[0]);
+        tab.setEntry("vy",vXYZ[1]);
+        tab.setEntry("vz",vXYZ[2]);
     }
 
     public double getTurretVelocity() {
