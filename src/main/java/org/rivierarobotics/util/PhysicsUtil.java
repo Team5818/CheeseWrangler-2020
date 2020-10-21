@@ -79,14 +79,14 @@ public class PhysicsUtil {
 
     public double getLLTurretAngle() {
         //Returns angle to target using LL values
-        double turretAngle = turret.getTxTurret(extraDistance, hood.getAngle());
+        double turretAngle = turret.getTurretCalculations(extraDistance, hood.getAngle())[1];
         tab.setEntry("Turret Angle", turretAngle);
         return turretAngle;
     }
 
     public double getLLDistance() {
         //Returns distance to target using LL values
-        double dist = turret.getTurretDistance(extraDistance, hood.getAngle());
+        double dist = turret.getTurretCalculations(extraDistance, hood.getAngle())[0];
         tab.setEntry("LL Dist", dist);
         return dist;
     }

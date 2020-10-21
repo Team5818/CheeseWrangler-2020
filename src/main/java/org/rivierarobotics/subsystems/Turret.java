@@ -81,30 +81,24 @@ public class Turret extends SubsystemBase implements RRSubsystem {
                 MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
     }
 
-    public double getTxTurret(double extraDistance, double hoodAngle) {
-        double tx = Math.toRadians(vision.getLLValue("tx"));
-        double angleA = Math.PI / 2 - tx;
-        double z = ShooterConstants.getLLtoTurretZ();
-        double a = getTurretDistance(extraDistance, hoodAngle);
-        double dist = getDistance(extraDistance, hoodAngle);
-        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a))) + getAngle(true);
-        return tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
-    }
+    public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
 
-    public double getDistance(double extraDistance, double hoodAngle) {
         double initialD = ShooterConstants.getTopHeight() / Math.sin(Math.toRadians(vision.getActualTY(hoodAngle)));
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double xInitialD = Math.sin(tx) * initialD;
         double yInitialD = Math.cos(tx) * initialD + extraDistance;
-        return Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
-    }
+        double dist = Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
 
-    public double getTurretDistance(double extraDistance, double hoodAngle) {
-        double tx = Math.toRadians(vision.getLLValue("tx"));
+        tx = Math.atan(xInitialD / yInitialD);
         double angleA = Math.PI / 2 - tx;
         double z = ShooterConstants.getLLtoTurretZ();
-        double dist = getDistance(extraDistance, hoodAngle);
-        return Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
+        double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
+
+        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a))) + getAngle(true);
+        finalAngle = tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
+
+        return new double[]{a, finalAngle};
+
     }
 
     public void setPositionTicks(double positionTicks) {

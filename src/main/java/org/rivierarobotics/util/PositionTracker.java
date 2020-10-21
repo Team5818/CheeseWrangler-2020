@@ -61,8 +61,8 @@ public class PositionTracker {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
-        double dist = turret.getTurretDistance(0, hood.getAngle());
-        double turretAngle = turret.getTxTurret(0, hood.getAngle());
+        double dist = turret.getTurretCalculations(0, hood.getAngle())[0];
+        double turretAngle = turret.getTurretCalculations(0, hood.getAngle())[1];
         double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
         double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
         pos[0] = -xFromTarget;
