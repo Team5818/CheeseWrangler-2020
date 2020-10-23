@@ -47,7 +47,7 @@ public class VisionAimTurret extends CommandBase {
     public void execute() {
         if (vision.getLLValue("tv") == 1) {
             physics.calculateVelocities(false);
-            double turretAngle = physics.getAngleToTarget();
+            double turretAngle = physics.getLLTurretAngle();
             if (physics.isAutoAimEnabled()) {
                 turret.setAngle(turretAngle, true);
             }

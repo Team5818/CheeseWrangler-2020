@@ -101,7 +101,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public double[] getSoftLimits() {
-        return new double[]{hoodTalon.configGetCustomParam(0), hoodTalon.configGetCustomParam(1)};
+        return new double[]{FORWARD_TICKS, BACK_TICKS};
     }
 
     public void setAngle(double angle) {

@@ -66,6 +66,8 @@ public class EncoderAim extends CommandBase {
         } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
             tab.setEntry("Limit?:", "Slow Ball Velocity");
             ballVel = ShooterConstants.getShooterMinVelocity();
+        } else {
+            tab.setEntry("Limit?:", "None");
         }
         if (physics.isAutoAimEnabled()) {
             turret.setAngle(physics.getAngleToTarget(), true);

@@ -63,8 +63,6 @@ public class MotorUtil {
         for (T motor : motors) {
             motor.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
             motor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-            motor.configSetCustomParam(forward, 0);
-            motor.configSetCustomParam(reverse, 1);
             motor.configForwardSoftLimitThreshold(forward);
             motor.configReverseSoftLimitThreshold(reverse);
             motor.configForwardSoftLimitEnable(true);
