@@ -55,6 +55,10 @@ public class AutonomousCommands {
         return pathweaverExecutorCreator.create(path);
     }
 
+    public PathweaverExecutor pathweaver(Pose2dPath path, boolean isAbsolute, boolean flip) {
+        return pathweaverExecutorCreator.create(path, isAbsolute, flip);
+    }
+
     public ForwardAuto forwardAuto(boolean useVisionAim) {
         return forwardAutoCreator.create(useVisionAim);
     }

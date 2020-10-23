@@ -36,15 +36,15 @@ public class PositionTracker {
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
-    private final RobotShuffleboard robotShuffleboard;
+    private final RobotShuffleboardTab tab;
 
     @Inject
-    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard robotShuffleboard) {
+    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard shuffleboard) {
         this.turret = turret;
         this.vision = vision;
         this.driveTrain = dt;
         this.hood = hood;
-        this.robotShuffleboard = robotShuffleboard;
+        this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     public void trackPosition() {
@@ -53,8 +53,8 @@ public class PositionTracker {
         pos[0] += driveTrain.getXVelocity() * timeDifference;
         pos[1] += driveTrain.getYVelocity() * timeDifference;
 
-        robotShuffleboard.getTab("Auto Aim").setEntry("xFromGoal", pos[1]);
-        robotShuffleboard.getTab("Auto Aim").setEntry("zFromGoal", pos[0]);
+        tab.setEntry("xFromGoal", pos[1]);
+        tab.setEntry("zFromGoal", pos[0]);
     }
 
     public void correctPosition() {

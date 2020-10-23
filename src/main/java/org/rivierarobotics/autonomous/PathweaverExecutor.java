@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
 import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
+import edu.wpi.first.wpilibj.geometry.Twist2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
@@ -41,6 +42,7 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @GenerateCreator
 public class PathweaverExecutor extends CommandBase {
@@ -51,31 +53,46 @@ public class PathweaverExecutor extends CommandBase {
     //TODO do robot-characterization for MOTOR_FF and tune voltage PID
     private static final SimpleMotorFeedforward MOTOR_FF = new SimpleMotorFeedforward(0, 0, 0);
     private static final PIDConfig PID_CONFIG = new PIDConfig(0.05, 0, 0);
+    private static final Twist2d ADD_180_FLIP = new Twist2d(0, 0, Math.toRadians(180));
 
     private final DriveTrain driveTrain;
     private final RamseteCommand command;
     private final Trajectory trajectory;
     private final RobotShuffleboardTab tab;
 
-    public PathweaverExecutor(@Provided DriveTrain driveTrain, @Provided RobotShuffleboard shuffleboard, Pose2dPath path) {
+    public PathweaverExecutor(@Provided DriveTrain driveTrain, @Provided RobotShuffleboard shuffleboard, Pose2dPath path, boolean isAbsolute, boolean flip) {
         this.driveTrain = driveTrain;
-        this.trajectory = generateTrajectory(path);
+        this.trajectory = generateTrajectory(path, isAbsolute, flip);
         this.command = createCommand();
         this.tab = shuffleboard.getTab("Pathweaver");
     }
 
-    private Trajectory generateTrajectory(Pose2dPath path) {
+    // Included for compatibility w/ preexisting autos
+    public PathweaverExecutor(@Provided DriveTrain driveTrain, @Provided RobotShuffleboard shuffleboard, Pose2dPath path) {
+        this(driveTrain, shuffleboard, path, true, false);
+    }
+
+    private Trajectory generateTrajectory(Pose2dPath path, boolean isAbsolute, boolean flip) {
         Trajectory pathTraj = path.getTrajectory();
+        if (flip) {
+            pathTraj = new Trajectory(trajectory.getStates().stream().map(state ->
+                    new Trajectory.State(trajectory.getTotalTimeSeconds() - state.timeSeconds,
+                            -state.velocityMetersPerSecond,
+                            -state.accelerationMetersPerSecondSq,
+                            state.poseMeters.exp(ADD_180_FLIP),
+                            state.curvatureRadPerMeter)
+            ).collect(Collectors.toList()));
+        }
         List<Pose2d> pathPoses = new ArrayList<>();
         for (Trajectory.State state : pathTraj.getStates()) {
             pathPoses.add(state.poseMeters);
         }
-        return TrajectoryGenerator.generateTrajectory(pathPoses,
+        Trajectory out = TrajectoryGenerator.generateTrajectory(pathPoses,
             new TrajectoryConfig(MAX_VEL, MAX_ACCEL)
                 .setKinematics(driveTrain.getKinematics())
                 .addConstraint(new DifferentialDriveVoltageConstraint(
-                    MOTOR_FF, driveTrain.getKinematics(), MAX_DRAW_VOLTAGE)))
-            .relativeTo(pathTraj.getInitialPose());
+                    MOTOR_FF, driveTrain.getKinematics(), MAX_DRAW_VOLTAGE)));
+        return isAbsolute ? out : out.relativeTo(driveTrain.getPose());
     }
 
     private RamseteCommand createCommand() {
@@ -105,7 +122,6 @@ public class PathweaverExecutor extends CommandBase {
 
     @Override
     public void initialize() {
-        driveTrain.resetEncoder();
         tab.setEntry("TotalTime", trajectory.getTotalTimeSeconds());
         command.schedule();
     }

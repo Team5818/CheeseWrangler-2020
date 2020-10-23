@@ -80,7 +80,7 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getDriveTrain().resetEncoder();
+        globalComponent.getDriveTrain().resetOdometry();
         globalComponent.getPositionTracker().reset();
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
@@ -126,6 +126,7 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
         var shuffleboard = globalComponent.getShuffleboard();
+        var physics = globalComponent.getPhysicsUtil();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
@@ -142,6 +143,9 @@ public class Robot extends TimedRobot {
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
             .setEntry("Gyro Angle", gyro.getYaw())
             .setEntry("Adj tx", turret.getTurretCalculations(0, hood.getAngle())[1]);
+
+        shuffleboard.getTab("Auto Aim")
+                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())

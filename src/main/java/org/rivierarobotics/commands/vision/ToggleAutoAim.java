@@ -32,17 +32,14 @@ import javax.inject.Inject;
 @GenerateCreator
 public class ToggleAutoAim extends InstantCommand {
     private final PhysicsUtil physics;
-    private final RobotShuffleboardTab tab;
 
     @Inject
-    public ToggleAutoAim(@Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard) {
+    public ToggleAutoAim(@Provided PhysicsUtil physics) {
         this.physics = physics;
-        this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     @Override
     public void execute() {
         physics.toggleAutoAim();
-        tab.setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
     }
 }
