@@ -64,6 +64,11 @@ public class DriveTrain extends SubsystemBase {
         right.setVelocity(r);
     }
 
+    public void setVoltage(double l, double r) {
+        left.setVoltage(l);
+        right.setVoltage(r);
+    }
+
     public void setPower(double l, double r) {
         left.setPower(l);
         right.setPower(r);

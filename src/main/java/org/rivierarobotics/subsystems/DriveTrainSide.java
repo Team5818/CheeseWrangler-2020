@@ -41,7 +41,7 @@ public class DriveTrainSide implements RRSubsystem {
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.masterLeft = new WPI_TalonFX(motors.master);
         this.slaveRight = new WPI_TalonFX(motors.slave);
-        this.logger = Logging.getLogger(getClass(), invert ? "right" : "left");
+        this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(0.05, 0, 0, 0), 0, masterLeft, slaveRight);
@@ -58,7 +58,7 @@ public class DriveTrainSide implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return masterLeft.getSelectedSensorVelocity();
+        return getPosition() * TICKS_PER_METER;
     }
 
     @Override
@@ -79,6 +79,11 @@ public class DriveTrainSide implements RRSubsystem {
         double set = (vel * TICKS_PER_METER) / (MOTOR_TO_WHEEL_RATIO * 10);
         logger.setpointChange(set);
         masterLeft.set(ControlMode.Velocity, set);
+    }
+
+    public void setVoltage(double volts) {
+        masterLeft.setVoltage(volts);
+        slaveRight.setVoltage(volts);
     }
 
     public void resetEncoder() {

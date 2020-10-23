@@ -20,67 +20,103 @@
 
 package org.rivierarobotics.autonomous;
 
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.controller.RamseteController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.geometry.Pose2d;
-import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryConfig;
+import edu.wpi.first.wpilibj.trajectory.TrajectoryGenerator;
+import edu.wpi.first.wpilibj.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.PIDConfig;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @GenerateCreator
 public class PathweaverExecutor extends CommandBase {
+    private static final double MAX_VEL = 4.0; // Maximum velocity (in m/s)
+    private static final double MAX_ACCEL = 2.0; // Maximum acceleration (in m/s)
+    private static final double MAX_DRAW_VOLTAGE = 10.0; // Maximum motor draw voltage (< robot)
+    // Specifies ks, kv, and ka constants - found via robot characterization
+    //TODO do robot-characterization for MOTOR_FF and tune voltage PID
+    private static final SimpleMotorFeedforward MOTOR_FF = new SimpleMotorFeedforward(0, 0, 0);
+    private static final PIDConfig PID_CONFIG = new PIDConfig(0.05, 0, 0);
+
     private final DriveTrain driveTrain;
-    private final RamseteController controller;
+    private final RamseteCommand command;
     private final Trajectory trajectory;
     private final RobotShuffleboardTab tab;
-    private double startTimestamp;
 
     public PathweaverExecutor(@Provided DriveTrain driveTrain, @Provided RobotShuffleboard shuffleboard, Pose2dPath path) {
         this.driveTrain = driveTrain;
-        this.controller = new RamseteController();
         this.trajectory = generateTrajectory(path);
+        this.command = createCommand();
         this.tab = shuffleboard.getTab("Pathweaver");
-        addRequirements(driveTrain);
     }
 
     private Trajectory generateTrajectory(Pose2dPath path) {
-        final var traj = path.getTrajectory();
-        return traj.relativeTo(traj.getInitialPose());
+        Trajectory pathTraj = path.getTrajectory();
+        List<Pose2d> pathPoses = new ArrayList<>();
+        for (Trajectory.State state : pathTraj.getStates()) {
+            pathPoses.add(state.poseMeters);
+        }
+        return TrajectoryGenerator.generateTrajectory(pathPoses,
+            new TrajectoryConfig(MAX_VEL, MAX_ACCEL)
+                .setKinematics(driveTrain.getKinematics())
+                .addConstraint(new DifferentialDriveVoltageConstraint(
+                    MOTOR_FF, driveTrain.getKinematics(), MAX_DRAW_VOLTAGE)))
+            .relativeTo(pathTraj.getInitialPose());
+    }
+
+    private RamseteCommand createCommand() {
+        return new RamseteCommand(
+            trajectory,
+            driveTrain::getPose,
+            new RamseteController(),
+            MOTOR_FF,
+            driveTrain.getKinematics(),
+            () -> new DifferentialDriveWheelSpeeds(
+                driveTrain.getLeft().getVelocity(),
+                driveTrain.getRight().getVelocity()
+            ),
+            new PIDController(PID_CONFIG.getP(), PID_CONFIG.getI(), PID_CONFIG.getD()),
+            new PIDController(PID_CONFIG.getP(), PID_CONFIG.getI(), PID_CONFIG.getD()),
+            this::loggedVoltageOut,
+            driveTrain
+        );
+    }
+
+    public void loggedVoltageOut(double l, double r) {
+        tab.setEntry("VoltageSetLeft", l);
+        tab.setEntry("VoltageSetRight", r);
+        tab.setEntry("BatVoltage", RobotController.getBatteryVoltage());
+        driveTrain.setVoltage(l, r);
     }
 
     @Override
     public void initialize() {
-        startTimestamp = Timer.getFPGATimestamp();
         driveTrain.resetEncoder();
-    }
-
-    @Override
-    public void execute() {
-        Pose2d current = driveTrain.getPose();
-        Trajectory.State goal = trajectory.sample(Timer.getFPGATimestamp() - startTimestamp);
-        tab.setEntry("CurrentPose", current.toString());
-        tab.setEntry("GoalPose", goal.toString());
-        ChassisSpeeds adjustedSpeeds = controller.calculate(current, goal);
-        DifferentialDriveWheelSpeeds wheelSpeeds = driveTrain.getKinematics().toWheelSpeeds(adjustedSpeeds);
-        tab.setEntry("Left Vel Set", wheelSpeeds.leftMetersPerSecond);
-        tab.setEntry("Right Vel Set", wheelSpeeds.rightMetersPerSecond);
-        driveTrain.setVelocity(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+        tab.setEntry("TotalTime", trajectory.getTotalTimeSeconds());
+        command.schedule();
     }
 
     @Override
     public void end(boolean interrupted) {
-        driveTrain.setVelocity(0.0, 0.0);
-        driveTrain.setPower(0.0, 0.0);
+        driveTrain.setVoltage(0, 0);
     }
 
     @Override
     public boolean isFinished() {
-        return trajectory.getTotalTimeSeconds() <= (Timer.getFPGATimestamp() - startTimestamp);
+        return command.isFinished();
     }
 }

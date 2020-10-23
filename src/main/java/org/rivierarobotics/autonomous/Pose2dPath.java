@@ -33,6 +33,7 @@ import java.util.Locale;
 
 public enum Pose2dPath {
     // An underscore indicates a camelCase filename, keep all lowercase filenames and uppercase enums otherwise
+    STRAIGHT,
     FLEX,
     FLEX_TAPE,
 

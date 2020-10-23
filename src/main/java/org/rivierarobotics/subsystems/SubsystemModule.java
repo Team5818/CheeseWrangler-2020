@@ -61,14 +61,14 @@ public class SubsystemModule {
     @Singleton
     @Sided(Side.LEFT)
     public static DriveTrainSide provideDriveSideLeft() {
-        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, false);
+        return new DriveTrainSide(DRIVETRAIN_LEFT_MOTOR_IDS, true);
     }
 
     @Provides
     @Singleton
     @Sided(Side.RIGHT)
     public static DriveTrainSide provideDriveSideRight() {
-        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, true);
+        return new DriveTrainSide(DRIVETRAIN_RIGHT_MOTOR_IDS, false);
     }
 
     @Provides

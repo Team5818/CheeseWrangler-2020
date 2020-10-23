@@ -39,6 +39,10 @@ public class PIDConfig {
         this(kP, kI, kD, kF, 1.0);
     }
 
+    public PIDConfig(double kP, double kI, double kD) {
+        this(kP, kI, kD, 0.0, 1.0);
+    }
+
     public double getP() {
         return kP;
     }
