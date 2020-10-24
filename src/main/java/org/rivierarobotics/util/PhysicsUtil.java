@@ -35,6 +35,7 @@ public class PhysicsUtil {
     private final VisionUtil vision;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
+    private final RobotShuffleboardTab testTab;
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.VISION;
@@ -51,6 +52,7 @@ public class PhysicsUtil {
         this.hood = hood;
         this.positionTracker = positionTracker;
         this.tab = robotShuffleboard.getTab("Auto Aim");
+        this.testTab = robotShuffleboard.getTab("Test3DGrapher");
     }
 
     public double getX() {
@@ -146,16 +148,27 @@ public class PhysicsUtil {
             double tStraight = Math.sqrt(-4 * g * z + 2 * (velocity * velocity) - 2 * Math.sqrt(a)) / (2 * g);
             double tArc = 1.41421 * Math.sqrt(-2 * g * z + velocity * velocity + Math.sqrt(a)) / (2 * g);
             double t = Double.isNaN(tStraight) ? tArc : tStraight;
+            testTab.setEntry("T", t);
             if (Double.isNaN(tStraight)) {
                 tab.setEntry("Trajectory: ", "ARC");
             }
             vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : tempXYZ;
         } else {
+            testTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;
         }
         tab.setEntry("vx", vXYZ[0]);
         tab.setEntry("vy", vXYZ[1]);
         tab.setEntry("vz", vXYZ[2]);
+
+        testTab.setEntry("vx", vXYZ[0]);
+        testTab.setEntry("vy", vXYZ[1]);
+        testTab.setEntry("vz", vXYZ[2]);
+        testTab.setEntry("g", g);
+
+
+
+
     }
 
     public double getTurretVelocity() {
