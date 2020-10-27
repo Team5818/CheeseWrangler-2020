@@ -33,30 +33,28 @@ import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {
+    private final CheeseWheelCommands cheeseWheelCommands;
+    private final EjectorCommands ejectorCommands;
+
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
                         @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
                         int wedges) {
-        //TODO pull this out into a method & remove duplicates
+        this.cheeseWheelCommands = cheeseWheelCommands;
+        this.ejectorCommands = ejectorCommands;
+        SequentialCommandGroup singleCheese = singleWedgeGroup(MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90));
         for (int i = 0; i < wedges; i++) {
-            if (MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90)) {
-                addCommands(
-                        new SequentialCommandGroup(
-                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseSlot.State.BALL),
-                                new WaitCommand(0.8),
-                                ejectorCommands.setPower(1.0),
-                                new WaitCommand(0.5),
-                                ejectorCommands.setPower(0)
-                        ));
-            } else {
-                addCommands(
-                        new SequentialCommandGroup(
-                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
-                                new WaitCommand(0.8),
-                                ejectorCommands.setPower(1.0),
-                                new WaitCommand(0.5),
-                                ejectorCommands.setPower(0)
-                        ));
-            }
+            addCommands(singleCheese);
         }
+    }
+
+    private SequentialCommandGroup singleWedgeGroup(boolean isBack) {
+        return new SequentialCommandGroup(
+            cheeseWheelCommands.cycleSlot(isBack ? CheeseWheel.Direction.BACKWARDS : CheeseWheel.Direction.FORWARDS,
+                isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
+            new WaitCommand(0.3),
+            ejectorCommands.setPower(1.0),
+            new WaitCommand(0.5),
+            ejectorCommands.setPower(0)
+        );
     }
 }

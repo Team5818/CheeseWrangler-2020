@@ -117,17 +117,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
         new JoystickButton(driverButtons, 5)
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(-1));
-        new JoystickButton(driverButtons, 4)
-                .whenPressed(cmds.turret().setAbsoluteAngle(10));
-        new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.turret().setAbsoluteAngle(-100));
-        new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.hood().setAngle(90));
-        new JoystickButton(driverButtons, 1)
-                .whenPressed(cmds.hood().setAngle(0));
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT));
         new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
+            .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
+        new JoystickButton(driverButtons, 3)
+                .whenPressed(cmds.cheeseWheel().continuousShoot());
+        new JoystickButton(driverButtons, 2)
+            .whenPressed(cmds.cheeseWheel().all5Shoot());
     }
 }

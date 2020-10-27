@@ -38,12 +38,10 @@ public class DriveTrainSide implements RRSubsystem {
     private final WPI_TalonFX slaveRight;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
-    private final Boolean inverted;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.masterLeft = new WPI_TalonFX(motors.master);
         this.slaveRight = new WPI_TalonFX(motors.slave);
-        this.inverted = invert;
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
@@ -93,7 +91,6 @@ public class DriveTrainSide implements RRSubsystem {
     }
 
     public void setVoltage(double volts) {
-//        volts = !inverted ? -volts : volts;
         masterLeft.setVoltage(volts);
         slaveRight.setVoltage(volts);
     }

@@ -47,7 +47,7 @@ public class All5Shoot extends CommandBase {
     @Override
     public void execute() {
         ejector.setPower(1.0);
-        cheeseWheel.setPower(1.0);
+        cheeseWheel.setPower(0.65);
     }
 
     @Override
@@ -58,6 +58,6 @@ public class All5Shoot extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return MathUtil.isWithinTolerance(cheeseWheel.getPositionTicks(), start + 4096, 50);
+        return !MathUtil.isWithinTolerance(cheeseWheel.getPositionTicks(), start, 5096);
     }
 }

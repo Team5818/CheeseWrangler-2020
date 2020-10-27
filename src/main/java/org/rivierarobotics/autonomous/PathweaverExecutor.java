@@ -74,26 +74,25 @@ public class PathweaverExecutor extends CommandBase {
 
     private Trajectory generateTrajectory(Pose2dPath path, boolean isAbsolute, boolean flip) {
         Trajectory pathTraj = path.getTrajectory();
-//        if (flip) {
-//            //pathTraj = new Trajectory(trajectory.getStates().stream().map(state ->
-//                    new Trajectory.State(trajectory.getTotalTimeSeconds() - state.timeSeconds,
-//                            -state.velocityMetersPerSecond,
-//                            -state.accelerationMetersPerSecondSq,
-//                            state.poseMeters.exp(ADD_180_FLIP),
-//                            state.curvatureRadPerMeter)
-//            ).collect(Collectors.toList()));
-//        }
-        List<Pose2d> pathPoses = new ArrayList<>();
-        for (Trajectory.State state : pathTraj.getStates()) {
-            pathPoses.add(state.poseMeters);
+        if (flip) {
+            Trajectory finalPathTraj = pathTraj;
+            pathTraj = new Trajectory(finalPathTraj.getStates().stream().map(state ->
+                    new Trajectory.State(finalPathTraj.getTotalTimeSeconds() - state.timeSeconds,
+                            -state.velocityMetersPerSecond,
+                            -state.accelerationMetersPerSecondSq,
+                            state.poseMeters.exp(ADD_180_FLIP),
+                            state.curvatureRadPerMeter)
+            ).collect(Collectors.toList()));
         }
+        List<Pose2d> pathPoses = new ArrayList<>();
+        pathTraj.getStates().forEach(state -> pathPoses.add(state.poseMeters));
         Trajectory out = TrajectoryGenerator.generateTrajectory(pathPoses,
             new TrajectoryConfig(MAX_VEL, MAX_ACCEL)
                 .setKinematics(driveTrain.getKinematics())
                 .addConstraint(new DifferentialDriveVoltageConstraint(
                     MOTOR_FF, driveTrain.getKinematics(), MAX_DRAW_VOLTAGE)));
-//        return isAbsolute ? out : out.relativeTo(driveTrain.getPose());
-        return out.relativeTo(pathTraj.getInitialPose());
+        out = out.relativeTo(pathTraj.getInitialPose());
+        return isAbsolute ? out : out.relativeTo(driveTrain.getPose());
     }
 
     private RamseteCommand createCommand() {
@@ -130,7 +129,6 @@ public class PathweaverExecutor extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         driveTrain.setVoltage(0, 0);
-        driveTrain.resetOdometry();
     }
 
     @Override

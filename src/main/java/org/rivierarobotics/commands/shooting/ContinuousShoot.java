@@ -37,6 +37,7 @@ public class ContinuousShoot extends CommandBase {
     private final Ejector ejector;
     private boolean finishedShooting = true;
     private double shootStartTimestamp = -1;
+    private Double endTime;
 
     public ContinuousShoot(@Provided CheeseWheel cheeseWheel, @Provided Turret turret, @Provided Ejector ejector) {
         this.turret = turret;
@@ -69,11 +70,15 @@ public class ContinuousShoot extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        if (endTime != null) {
+            return !(endTime + 1 < Timer.getFPGATimestamp());
+        }
         for (CheeseSlot slot : CheeseSlot.values()) {
             if (slot.hasBall()) {
                 return false;
             }
         }
-        return true;
+        endTime = Timer.getFPGATimestamp();
+        return false;
     }
 }

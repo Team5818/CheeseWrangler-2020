@@ -52,7 +52,7 @@ public class DriveTrain extends SubsystemBase {
         this.left = left;
         this.right = right;
         this.kinematics = new DifferentialDriveKinematics(TRACKWIDTH);
-        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
+        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }
 
@@ -111,15 +111,14 @@ public class DriveTrain extends SubsystemBase {
 
     @Override
     public void periodic() {
-
         SmartDashboard.putNumber("VLeftL", left.getLVoltage());
-        SmartDashboard.putNumber("VLeftR",left.getRVoltage());
+        SmartDashboard.putNumber("VLeftR", left.getRVoltage());
         SmartDashboard.putNumber("VRightL", right.getLVoltage());
-        SmartDashboard.putNumber("VRightR",right.getRVoltage());
+        SmartDashboard.putNumber("VRightR", right.getRVoltage());
         SmartDashboard.putString("Odometry", odometry.getPoseMeters().toString());
 
         odometry.update(
-            Rotation2d.fromDegrees(gyro.getYaw()),
+            Rotation2d.fromDegrees(-gyro.getYaw()),
             left.getPosition(),
             right.getPosition()
         );
