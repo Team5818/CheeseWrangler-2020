@@ -27,6 +27,7 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.RobotShuffleboard;
@@ -35,10 +36,10 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
     private final Intake intake;
+    private double frontPower;
+    private double backPower;
     private final CheeseWheel cheeseWheel;
     private final CheeseWheelCommands cheeseWheelCommands;
-    private final double frontPower;
-    private final double backPower;
     private static final double pwrConstant = 1.0;
     private static final int tolerance = 90;
     private boolean firstMoveDone = false;
@@ -53,20 +54,6 @@ public class CollectInfiniteWedges extends CommandBase {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.shuffleTab = rsb.getTab("Cheese Wheel");
         this.mode = mode;
-
-        switch (mode) {
-            case COLLECT_FRONT:
-                frontPower = pwrConstant;
-                backPower = 0.0;
-                break;
-            case COLLECT_BACK:
-                frontPower = 0.0;
-                backPower = pwrConstant;
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid side");
-        }
-
         addRequirements(intake);
     }
 
@@ -81,8 +68,24 @@ public class CollectInfiniteWedges extends CommandBase {
     public void execute() {
         boolean isFull = true;
 
-        if (!CommandScheduler.getInstance().isScheduled(cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL))) {
+        if (!CommandScheduler.getInstance().isScheduled(cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL))
+                || cheeseWheel.onSlot(mode, tolerance)) {
             firstMoveDone = true;
+        }
+
+        if (firstMoveDone) {
+            switch (mode) {
+                case COLLECT_FRONT:
+                    frontPower = pwrConstant;
+                    backPower = 0.0;
+                    break;
+                case COLLECT_BACK:
+                    frontPower = 0.0;
+                    backPower = pwrConstant;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid side");
+            }
         }
 
         for (CheeseSlot slot : CheeseSlot.values()) {
@@ -92,9 +95,11 @@ public class CollectInfiniteWedges extends CommandBase {
             }
         }
         if (isFull || !firstMoveDone) {
-            intake.setPower(0.0, 0.0);
+            frontPower = 0;
+            backPower = 0;
             return;
         }
+
         intake.setPower(frontPower, backPower);
 
         int index = cheeseWheel.getIndex(mode);

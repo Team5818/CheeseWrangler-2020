@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PositionTracker {
-    private final double[] pos = new double[2];
+    private double[] pos = new double[2];
     private double beforeT = 0;
     private final DriveTrain driveTrain;
     private final Hood hood;
