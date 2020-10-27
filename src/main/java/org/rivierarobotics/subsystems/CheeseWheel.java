@@ -56,9 +56,9 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
 
     public int getIndex(AngleOffset offset) {
         double target = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i <= 5; i++) {
             if (MathUtil.isWithinTolerance(INDEX_SPACING * i, target, INDEX_SPACING / 2.0)) {
-                return i;
+                return i == 5 ? 0 : i;
             }
         }
         return 0;

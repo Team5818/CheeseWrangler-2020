@@ -20,65 +20,41 @@
 
 package org.rivierarobotics.commands.shooting;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
+import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
 
 @GenerateCreator
-public class ContinuousShoot extends CommandBase {
-    private final CheeseWheel cheeseWheel;
-    private final Turret turret;
-    private final Ejector ejector;
-    private boolean finishedShooting = true;
-    private double shootStartTimestamp = -1;
-    private Double endTime;
-
-    public ContinuousShoot(@Provided CheeseWheel cheeseWheel, @Provided Turret turret, @Provided Ejector ejector) {
-        this.turret = turret;
-        this.cheeseWheel = cheeseWheel;
-        this.ejector = ejector;
-        addRequirements(cheeseWheel, ejector);
-    }
-
-    @Override
-    public void execute() {
-        CheeseWheel.AngleOffset offset = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90)
-                ? CheeseWheel.AngleOffset.SHOOTER_FRONT : CheeseWheel.AngleOffset.SHOOTER_BACK;
-        CheeseSlot currentSlot = CheeseSlot.slotOfNum(cheeseWheel.getIndex(offset));
-        if (finishedShooting) {
-            if (!cheeseWheel.onSlot(offset, 30) || !currentSlot.hasBall()) {
-                finishedShooting = false;
-                cheeseWheel.setPositionTicks(cheeseWheel.getSlotTickPos(
-                        cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL), offset, offset.direction));
-            }
-        } else if (currentSlot.hasBall() || (shootStartTimestamp != -1 && shootStartTimestamp + 0.3 < Timer.getFPGATimestamp())) {
-            ejector.setPower(1);
-        } else if (shootStartTimestamp == -1) {
-            shootStartTimestamp = Timer.getFPGATimestamp();
-        } else {
-            ejector.setPower(0);
-            finishedShooting = true;
-            shootStartTimestamp = -1;
-        }
-    }
-
-    @Override
-    public boolean isFinished() {
-        if (endTime != null) {
-            return !(endTime + 1 < Timer.getFPGATimestamp());
-        }
-        for (CheeseSlot slot : CheeseSlot.values()) {
-            if (slot.hasBall()) {
-                return false;
-            }
-        }
-        endTime = Timer.getFPGATimestamp();
-        return false;
+public class ContinuousShoot extends SequentialCommandGroup {
+    public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
+                           @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
+                           @Provided CheeseWheel cheeseWheel) {
+        boolean isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
+        CheeseWheel.AngleOffset offset = isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT;
+        CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
+        addCommands(
+                new ParallelDeadlineGroup(
+                        cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL),
+                        new WaitCommand(1)
+                ),
+                new WaitCommand(0.3),
+                ejectorCommands.setPower(1),
+                new ParallelRaceGroup(
+                        new WaitUntilCommand(slot::noBall).andThen(new WaitCommand(0.2)),
+                        new WaitCommand(0.5)
+                ),
+                ejectorCommands.setPower(0),
+                new WaitCommand(0.1)
+        );
     }
 }

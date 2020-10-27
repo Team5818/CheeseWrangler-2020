@@ -75,6 +75,7 @@ public class Robot extends TimedRobot {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
+
     }
 
     @Override

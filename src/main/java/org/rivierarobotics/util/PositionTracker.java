@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PositionTracker {
-    private double[] pos = new double[2];
+    private final double[] pos = new double[2];
     private double beforeT = 0;
     private final DriveTrain driveTrain;
     private final Hood hood;
@@ -50,7 +50,7 @@ public class PositionTracker {
     public void trackPosition() {
         double timeDifference = Timer.getFPGATimestamp() - beforeT;
         beforeT = Timer.getFPGATimestamp();
-        pos[0] += driveTrain.getXVelocity() * timeDifference;
+        pos[0] -= driveTrain.getXVelocity() * timeDifference;
         pos[1] += driveTrain.getYVelocity() * timeDifference;
 
         tab.setEntry("xFromGoal", pos[1]);
@@ -63,9 +63,9 @@ public class PositionTracker {
         }
         double dist = turret.getTurretCalculations(0, hood.getAngle())[0];
         double turretAngle = turret.getTurretCalculations(0, hood.getAngle())[1];
-        double xFromTarget = dist * Math.sin(Math.abs(Math.toRadians(turretAngle)));
-        double yFromTarget = dist * Math.cos(Math.abs(Math.toRadians(turretAngle)));
-        pos[0] = -xFromTarget;
+        double xFromTarget = dist * Math.sin(Math.toRadians(turretAngle));
+        double yFromTarget = dist * Math.cos(Math.toRadians(turretAngle));
+        pos[0] = xFromTarget;
         pos[1] = yFromTarget;
     }
 

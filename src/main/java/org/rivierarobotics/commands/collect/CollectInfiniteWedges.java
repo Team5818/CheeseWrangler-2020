@@ -20,7 +20,9 @@
 
 package org.rivierarobotics.commands.collect;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -39,6 +41,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private final double backPower;
     private static final double pwrConstant = 1.0;
     private static final int tolerance = 90;
+    private boolean firstMoveDone = false;
     private final RobotShuffleboardTab shuffleTab;
     private final CheeseWheel.AngleOffset mode;
 
@@ -77,13 +80,18 @@ public class CollectInfiniteWedges extends CommandBase {
     @Override
     public void execute() {
         boolean isFull = true;
+
+        if (!CommandScheduler.getInstance().isScheduled(cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL))) {
+            firstMoveDone = true;
+        }
+
         for (CheeseSlot slot : CheeseSlot.values()) {
             if (!slot.hasBall()) {
                 isFull = false;
                 break;
             }
         }
-        if (isFull) {
+        if (isFull || !firstMoveDone) {
             intake.setPower(0.0, 0.0);
             return;
         }

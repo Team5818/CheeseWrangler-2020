@@ -57,14 +57,14 @@ public class PhysicsUtil {
 
     public double getX() {
         double x = aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
-                getLLDistance() * Math.cos(Math.abs(Math.toRadians(getLLTurretAngle())));
+                getLLDistance() * Math.cos(Math.toRadians(getLLTurretAngle()));
         tab.setEntry("x", x);
         return x;
     }
 
     public double getY() {
         double y = aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
-                getLLDistance() * Math.sin(Math.abs(Math.toRadians(getLLTurretAngle())));
+                getLLDistance() * Math.sin(Math.toRadians(getLLTurretAngle()));
         tab.setEntry("y", y);
         return y;
     }
@@ -165,10 +165,6 @@ public class PhysicsUtil {
         testTab.setEntry("vy", vXYZ[1]);
         testTab.setEntry("vz", vXYZ[2]);
         testTab.setEntry("g", g);
-
-
-
-
     }
 
     public double getTurretVelocity() {
