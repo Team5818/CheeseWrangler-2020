@@ -28,6 +28,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 
 public class DriveTrainSide implements RRSubsystem {
@@ -37,10 +38,12 @@ public class DriveTrainSide implements RRSubsystem {
     private final WPI_TalonFX slaveRight;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
+    private final Boolean inverted;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.masterLeft = new WPI_TalonFX(motors.master);
         this.slaveRight = new WPI_TalonFX(motors.slave);
+        this.inverted = invert;
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
@@ -66,6 +69,14 @@ public class DriveTrainSide implements RRSubsystem {
         masterLeft.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
+    public double getLVoltage() {
+        return masterLeft.getMotorOutputVoltage();
+    }
+
+    public double getRVoltage() {
+        return slaveRight.getMotorOutputVoltage();
+    }
+
     public double getPosition() {
         return shaftEncoder.getDistance();
     }
@@ -82,6 +93,7 @@ public class DriveTrainSide implements RRSubsystem {
     }
 
     public void setVoltage(double volts) {
+//        volts = !inverted ? -volts : volts;
         masterLeft.setVoltage(volts);
         slaveRight.setVoltage(volts);
     }

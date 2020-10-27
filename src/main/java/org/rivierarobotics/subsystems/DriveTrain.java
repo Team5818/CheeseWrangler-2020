@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.drive.DriveControlCreator;
@@ -110,6 +111,13 @@ public class DriveTrain extends SubsystemBase {
 
     @Override
     public void periodic() {
+
+        SmartDashboard.putNumber("VLeftL", left.getLVoltage());
+        SmartDashboard.putNumber("VLeftR",left.getRVoltage());
+        SmartDashboard.putNumber("VRightL", right.getLVoltage());
+        SmartDashboard.putNumber("VRightR",right.getRVoltage());
+        SmartDashboard.putString("Odometry", odometry.getPoseMeters().toString());
+
         odometry.update(
             Rotation2d.fromDegrees(gyro.getYaw()),
             left.getPosition(),

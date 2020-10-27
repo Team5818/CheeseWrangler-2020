@@ -33,7 +33,6 @@ public class VisionUtil {
 
     @Inject
     public VisionUtil() {
-        NetworkTableInstance.getDefault().setServer("10.58.18.2", 5818);
         this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
