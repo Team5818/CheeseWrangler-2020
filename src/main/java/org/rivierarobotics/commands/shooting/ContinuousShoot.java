@@ -43,15 +43,10 @@ public class ContinuousShoot extends SequentialCommandGroup {
         CheeseWheel.AngleOffset offset = isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT;
         CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
         addCommands(
-                new ParallelDeadlineGroup(
-                        cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL),
-                        new WaitCommand(1)
-                ),
+                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL).withTimeout(1),
                 new WaitCommand(0.3),
-                ejectorCommands.setPower(1),
-                new ParallelRaceGroup(
-                        new WaitUntilCommand(slot::noBall).andThen(new WaitCommand(0.2)),
-                        new WaitCommand(0.5)
+                ejectorCommands.setPower(1).alongWith(
+                        new WaitUntilCommand(slot::noBall).andThen(new WaitCommand(0.2)).withTimeout(1)
                 ),
                 ejectorCommands.setPower(0),
                 new WaitCommand(0.1)

@@ -94,6 +94,7 @@ public class CollectInfiniteWedges extends CommandBase {
                 break;
             }
         }
+
         if (isFull || !firstMoveDone) {
             frontPower = 0;
             backPower = 0;
