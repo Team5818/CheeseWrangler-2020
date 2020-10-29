@@ -20,8 +20,6 @@
 
 package org.rivierarobotics.commands.shooting;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -46,7 +44,9 @@ public class ContinuousShoot extends SequentialCommandGroup {
                 cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL).withTimeout(1),
                 new WaitCommand(0.3),
                 ejectorCommands.setPower(1).alongWith(
-                        new WaitUntilCommand(slot::noBall).andThen(new WaitCommand(0.2)).withTimeout(1)
+                        new WaitUntilCommand(() -> !slot.hasBall())
+                                .andThen(new WaitCommand(0.2))
+                                .withTimeout(1)
                 ),
                 ejectorCommands.setPower(0),
                 new WaitCommand(0.1)
