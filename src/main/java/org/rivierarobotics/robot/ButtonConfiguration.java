@@ -120,10 +120,10 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT));
         new JoystickButton(driverButtons, 7)
-            .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
+                .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
         new JoystickButton(driverButtons, 3)
                 .whileHeld(cmds.cheeseWheel().continuousShoot());
         new JoystickButton(driverButtons, 2)
-            .whenPressed(cmds.cheeseWheel().all5Shoot());
+                .whenPressed(cmds.cheeseWheel().all5Shoot());
     }
 }

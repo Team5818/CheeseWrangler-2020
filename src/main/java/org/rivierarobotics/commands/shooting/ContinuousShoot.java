@@ -21,6 +21,8 @@
 package org.rivierarobotics.commands.shooting;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -37,31 +39,32 @@ import org.rivierarobotics.util.MathUtil;
 import java.util.function.Supplier;
 
 @GenerateCreator
-public class ContinuousShoot extends SequentialCommandGroup {
-
+public class ContinuousShoot extends CommandBase {
     private final CheeseWheelCommands cheeseWheelCommands;
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private int run = 0;
-
+    private SequentialCommandGroup cmd;
 
     public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
-                           @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
+                           @Provided EjectorCommands ejectorCommands,
+                           @Provided Turret turret,
                            @Provided CheeseWheel cheeseWheel) {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.ejectorCommands = ejectorCommands;
         this.turret = turret;
         this.cheeseWheel = cheeseWheel;
+    }
+
+    @Override
+    public void initialize() {
         boolean isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
         CheeseWheel.AngleOffset offset = isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT;
         Supplier<CheeseSlot> slot = () -> cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
         SmartDashboard.putNumber("Slot Test", slot.get().ordinal());
-        addCommands(
-                new ParallelRaceGroup(
-                        cheeseWheelCommands.cycleSlot(offset.direction, offset, CheeseSlot.State.BALL),
-                        new WaitCommand(1)
-                ),
+
+        cmd = new SequentialCommandGroup(
+                cheeseWheelCommands.cycleSlot(offset.direction, offset, CheeseSlot.State.BALL).withTimeout(1),
                 new WaitCommand(0.3),
                 ejectorCommands.setPower(1).alongWith(
                         new WaitUntilCommand(() -> !slot.get().hasBall())
@@ -71,12 +74,11 @@ public class ContinuousShoot extends SequentialCommandGroup {
                 ejectorCommands.setPower(0),
                 new WaitCommand(0.1)
         );
+        cmd.schedule();
     }
 
     @Override
-    public void initialize() {
-        run++;
-        SmartDashboard.putNumber("Run", run);
-        super.initialize();
+    public boolean isFinished() {
+        return cmd != null && cmd.isFinished();
     }
 }

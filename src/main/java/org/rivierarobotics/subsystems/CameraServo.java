@@ -34,6 +34,6 @@ public class CameraServo extends SubsystemBase {
     }
 
     public void setAngle(double angle) {
-        this.servo.set(0.5 - (angle * 1 / 240.0));
+        this.servo.set(0.25 + (angle / 360));
     }
 }
