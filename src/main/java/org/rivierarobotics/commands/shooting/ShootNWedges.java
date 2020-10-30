@@ -41,9 +41,8 @@ public class ShootNWedges extends SequentialCommandGroup {
                         int wedges) {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.ejectorCommands = ejectorCommands;
-        SequentialCommandGroup singleCheese = singleWedgeGroup(MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90));
         for (int i = 0; i < wedges; i++) {
-            addCommands(singleCheese);
+            addCommands(singleWedgeGroup(MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90)));
         }
     }
 
@@ -51,9 +50,9 @@ public class ShootNWedges extends SequentialCommandGroup {
         return new SequentialCommandGroup(
             cheeseWheelCommands.cycleSlot(isBack ? CheeseWheel.Direction.BACKWARDS : CheeseWheel.Direction.FORWARDS,
                 isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
-            new WaitCommand(0.3),
+            new WaitCommand(1),
             ejectorCommands.setPower(1.0),
-            new WaitCommand(0.5),
+            new WaitCommand(1),
             ejectorCommands.setPower(0)
         );
     }

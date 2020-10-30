@@ -70,7 +70,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.cheeseWheel().shootNWedges(5));
+                .whenPressed(cmds.cheeseWheel().continuousShoot());
 
         // CheeseWheel manual cycles
         new JoystickButton(coDriverButtons, 2)
@@ -122,7 +122,7 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 7)
             .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
         new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().continuousShoot());
+                .whileHeld(cmds.cheeseWheel().continuousShoot());
         new JoystickButton(driverButtons, 2)
             .whenPressed(cmds.cheeseWheel().all5Shoot());
     }

@@ -36,6 +36,6 @@ public class CWCycleSlot extends MotionMagicSetPosition<CheeseWheel> {
                        CheeseSlot.State requiredState, @Provided RobotShuffleboard shuffleboard) {
         super(cheeseWheel, cheeseWheel::getPositionTicks, cheeseWheel::setPositionTicks,
             cheeseWheel.getSlotTickPos(cheeseWheel.getClosestSlot(mode, direction, requiredState), mode, direction),
-                70, 5, shuffleboard);
+                0, 5, shuffleboard);
     }
 }

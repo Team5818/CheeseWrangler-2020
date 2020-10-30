@@ -101,6 +101,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
         globalComponent.getNavXGyro().resetGyro();
+
         globalComponent.getButtonConfiguration().initTeleop();
     }
 
@@ -163,7 +164,9 @@ public class Robot extends TimedRobot {
             .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
             .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
             .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
-            .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40));
+            .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
+            .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
+            .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
 
         SmartDashboard.putData(chooser);
     }

@@ -49,16 +49,17 @@ public class EncoderAim extends CommandBase {
         this.physics = physics;
         double extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
         this.physics.setExtraDistance(extraDistance);
-        this.physics.setAimMode(PhysicsUtil.AimMode.ENCODER);
         this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
+        this.physics.setAimMode(PhysicsUtil.AimMode.ENCODER);
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();
+        physics.getAngleToTarget();
         if (hoodAngle > hood.getAngle(hood.getBackTicks())) {
             tab.setEntry("Limit?:", "Hood Angle");
             ballVel = physics.getBallVel(hood.getAngle(hood.getForwardTicks()));

@@ -51,7 +51,7 @@ public class PositionTracker {
         double timeDifference = Timer.getFPGATimestamp() - beforeT;
         beforeT = Timer.getFPGATimestamp();
         pos[0] -= driveTrain.getXVelocity() * timeDifference;
-        pos[1] += driveTrain.getYVelocity() * timeDifference;
+        pos[1] -= driveTrain.getYVelocity() * timeDifference;
 
         tab.setEntry("xFromGoal", pos[1]);
         tab.setEntry("zFromGoal", pos[0]);

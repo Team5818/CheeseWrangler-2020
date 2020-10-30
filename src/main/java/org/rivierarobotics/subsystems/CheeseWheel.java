@@ -22,6 +22,8 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -47,6 +49,8 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 new PIDConfig(1023 / 200.0, 0, 0, 0), -1, wheelTalon);
         wheelTalon.setSensorPhase(false);
+        wheelTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        wheelTalon.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         wheelTalon.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -134,8 +138,8 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     public enum AngleOffset {
         COLLECT_FRONT(875, Direction.FORWARDS),
         COLLECT_BACK(2510, Direction.BACKWARDS),
-        SHOOTER_FRONT(-360, Direction.BACKWARDS),
-        SHOOTER_BACK(-360, Direction.FORWARDS);
+        SHOOTER_FRONT(-350, Direction.BACKWARDS),
+        SHOOTER_BACK(-350, Direction.FORWARDS);
 
         public final int angle;
         public final Direction direction;
