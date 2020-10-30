@@ -64,11 +64,11 @@ public class ContinuousShoot extends CommandBase {
         SmartDashboard.putNumber("Slot Test", slot.get().ordinal());
 
         cmd = new SequentialCommandGroup(
-                cheeseWheelCommands.cycleSlot(offset.direction, offset, CheeseSlot.State.BALL).withTimeout(1),
+                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL,30).withTimeout(2),
                 new WaitCommand(0.3),
                 ejectorCommands.setPower(1).alongWith(
                         new WaitUntilCommand(() -> !slot.get().hasBall())
-                                .andThen(new WaitCommand(0.2))
+                                .andThen(new WaitCommand(0.3))
                                 .withTimeout(1)
                 ),
                 ejectorCommands.setPower(0),

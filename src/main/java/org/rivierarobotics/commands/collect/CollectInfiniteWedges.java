@@ -68,7 +68,7 @@ public class CollectInfiniteWedges extends CommandBase {
     public void execute() {
         boolean isFull = true;
 
-        if (!CommandScheduler.getInstance().isScheduled(cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL))
+        if (!CommandScheduler.getInstance().isScheduled(cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30))
                 || cheeseWheel.onSlot(mode, tolerance)) {
             firstMoveDone = true;
         }

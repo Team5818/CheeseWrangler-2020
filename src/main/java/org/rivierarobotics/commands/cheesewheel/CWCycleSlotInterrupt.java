@@ -44,7 +44,7 @@ public class CWCycleSlotInterrupt extends InstantCommand {
 
     @Override
     public void execute() {
-        innerCommand = cwCycleSlot.create(direction, mode, requiredState);
+        innerCommand = cwCycleSlot.create(direction, mode, requiredState, 0);
         innerCommand.schedule();
     }
 

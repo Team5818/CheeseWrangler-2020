@@ -57,8 +57,8 @@ public class CheeseWheelCommands {
         return cycleSlotCreator.create(direction, mode, requiredState);
     }
 
-    public CWCycleSlot cycleSlotWait(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
-        return cycleSlotWaitCreator.create(direction, mode, requiredState);
+    public CWCycleSlot cycleSlotWait(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState, double tolerance) {
+        return cycleSlotWaitCreator.create(direction, mode, requiredState, tolerance);
     }
 
     public ContinuousShoot continuousShoot() {
