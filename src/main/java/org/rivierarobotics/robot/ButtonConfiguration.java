@@ -26,8 +26,8 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.CameraPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.ServoPosition;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
@@ -63,9 +63,11 @@ public class ButtonConfiguration {
     public void initTeleop() {
         // Collecting
         new JoystickButton(coDriverLeft, 1)
-                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT));
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT)));
         new JoystickButton(coDriverLeft, 2)
-                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK));
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK)));
 
         // Shooting
         new JoystickButton(coDriverRight, 1)
@@ -107,13 +109,14 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 11)
                 .whenPressed(() -> CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP);
         new JoystickButton(driverButtons, 12)
-            .whenPressed(cmds.cameraServo().setPosition(ServoPosition.FRONT_COLLECT)
-                .alongWith(cmds.cameraServo().flip(false)));
+                .whenPressed(cmds.camera().setPosition(CameraPosition.FRONT)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT)));
         new JoystickButton(driverButtons, 10)
-            .whenPressed(cmds.cameraServo().setPosition(ServoPosition.BACK_COLLECT)
-                .alongWith(cmds.cameraServo().flip(true)));
+                .whenPressed(cmds.camera().setPosition(CameraPosition.BACK)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK)));
         new JoystickButton(driverButtons, 8)
-                .whenPressed(cmds.cameraServo().setPosition(ServoPosition.CLIMB));
+                .whenPressed(cmds.camera().setPosition(CameraPosition.CLIMB)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.CLIMB)));
 
         // Testing/dev
         new JoystickButton(driverButtons, 6)

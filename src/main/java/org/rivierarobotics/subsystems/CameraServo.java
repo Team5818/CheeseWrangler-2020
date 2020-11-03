@@ -33,7 +33,13 @@ public class CameraServo extends SubsystemBase {
         this.servo = new Servo(id);
     }
 
-    public void setTo(double value) {
-        this.servo.set(value);
+    public void setValue(double value) {
+        servo.set(value);
+    }
+
+    // Range: 0 (front) to 180 (back)
+    public void setAngle(double degrees) {
+        double range = CameraPosition.BACK.getServoValue() - CameraPosition.FRONT.getServoValue();
+        servo.set(CameraPosition.FRONT.getServoValue() + ((degrees / 180) * range));
     }
 }
