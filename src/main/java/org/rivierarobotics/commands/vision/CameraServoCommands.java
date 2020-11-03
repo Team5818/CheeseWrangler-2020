@@ -26,10 +26,13 @@ import javax.inject.Inject;
 
 public class CameraServoCommands {
     private final CameraServoSetPositionCreator setPositionCreator;
+    private final CameraImageFlipCreator imageFlipCreator;
 
     @Inject
-    public CameraServoCommands(CameraServoSetPositionCreator setPositionCreator) {
+    public CameraServoCommands(CameraServoSetPositionCreator setPositionCreator,
+                               CameraImageFlipCreator imageFlipCreator) {
         this.setPositionCreator = setPositionCreator;
+        this.imageFlipCreator = imageFlipCreator;
     }
 
     public CameraServoSetPosition setAngle(double angle) {
@@ -37,6 +40,14 @@ public class CameraServoCommands {
     }
 
     public CameraServoSetPosition setPosition(ServoPosition position) {
-        return setPositionCreator.create(position.angle);
+        return setPositionCreator.create(position.set);
+    }
+
+    public CameraImageFlip flip(boolean setState) {
+        return imageFlipCreator.create(setState);
+    }
+
+    public CameraImageFlip flip() {
+        return imageFlipCreator.create();
     }
 }

@@ -107,9 +107,11 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 11)
                 .whenPressed(() -> CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP);
         new JoystickButton(driverButtons, 12)
-                .whenPressed(cmds.cameraServo().setPosition(ServoPosition.FRONT_COLLECT));
+            .whenPressed(cmds.cameraServo().setPosition(ServoPosition.FRONT_COLLECT)
+                .alongWith(cmds.cameraServo().flip(false)));
         new JoystickButton(driverButtons, 10)
-                .whenPressed(cmds.cameraServo().setPosition(ServoPosition.BACK_COLLECT));
+            .whenPressed(cmds.cameraServo().setPosition(ServoPosition.BACK_COLLECT)
+                .alongWith(cmds.cameraServo().flip(true)));
         new JoystickButton(driverButtons, 8)
                 .whenPressed(cmds.cameraServo().setPosition(ServoPosition.CLIMB));
 

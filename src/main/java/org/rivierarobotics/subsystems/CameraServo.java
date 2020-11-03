@@ -33,7 +33,7 @@ public class CameraServo extends SubsystemBase {
         this.servo = new Servo(id);
     }
 
-    public void setAngle(double angle) {
-        this.servo.set(0.25 + (angle / 360));
+    public void setTo(double value) {
+        this.servo.set(value);
     }
 }

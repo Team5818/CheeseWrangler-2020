@@ -22,22 +22,22 @@ package org.rivierarobotics.commands.vision;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CameraServo;
+import org.rivierarobotics.util.CameraFlip;
 
 @GenerateCreator
-public class CameraServoSetPosition extends InstantCommand {
-    private final CameraServo servo;
-    private final double position;
+public class CameraImageFlip extends InstantCommand {
+    private final boolean flipSetState;
 
-    public CameraServoSetPosition(@Provided CameraServo servo, double position) {
-        this.servo = servo;
-        this.position = position;
-        addRequirements(servo);
+    public CameraImageFlip(boolean flipSetState) {
+        this.flipSetState = flipSetState;
+    }
+
+    public CameraImageFlip() {
+        this(!CameraFlip.DO_FLIP);
     }
 
     @Override
     public void execute() {
-        servo.setTo(position);
+        CameraFlip.DO_FLIP = flipSetState;
     }
 }
