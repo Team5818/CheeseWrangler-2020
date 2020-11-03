@@ -31,7 +31,7 @@ import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.commands.hood.HoodCommands;
 import org.rivierarobotics.commands.turret.TurretCommands;
-import org.rivierarobotics.commands.vision.CameraServoCommands;
+import org.rivierarobotics.commands.vision.CameraCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 
 @Subcomponent
@@ -54,7 +54,7 @@ public abstract class CommandComponent {
 
     public abstract AutonomousCommands auto();
 
-    public abstract CameraServoCommands cameraServo();
+    public abstract CameraCommands camera();
 
     public abstract ClimbCommands climb();
 

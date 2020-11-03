@@ -20,17 +20,17 @@
 
 package org.rivierarobotics.commands.vision;
 
-import org.rivierarobotics.subsystems.ServoPosition;
+import org.rivierarobotics.subsystems.CameraPosition;
 
 import javax.inject.Inject;
 
-public class CameraServoCommands {
+public class CameraCommands {
     private final CameraServoSetPositionCreator setPositionCreator;
     private final CameraImageFlipCreator imageFlipCreator;
 
     @Inject
-    public CameraServoCommands(CameraServoSetPositionCreator setPositionCreator,
-                               CameraImageFlipCreator imageFlipCreator) {
+    public CameraCommands(CameraServoSetPositionCreator setPositionCreator,
+                          CameraImageFlipCreator imageFlipCreator) {
         this.setPositionCreator = setPositionCreator;
         this.imageFlipCreator = imageFlipCreator;
     }
@@ -39,15 +39,19 @@ public class CameraServoCommands {
         return setPositionCreator.create(angle);
     }
 
-    public CameraServoSetPosition setPosition(ServoPosition position) {
-        return setPositionCreator.create(position.set);
+    public CameraServoSetPosition setPosition(CameraPosition position) {
+        return setPositionCreator.create(position.getServoValue());
     }
 
-    public CameraImageFlip flip(boolean setState) {
+    public CameraImageFlip flipImage(boolean setState) {
         return imageFlipCreator.create(setState);
     }
 
-    public CameraImageFlip flip() {
+    public CameraImageFlip flipImage(CameraPosition position) {
+        return imageFlipCreator.create(position.isFlipped());
+    }
+
+    public CameraImageFlip toggleFlipImage() {
         return imageFlipCreator.create();
     }
 }

@@ -38,6 +38,6 @@ public class CameraServoSetPosition extends InstantCommand {
 
     @Override
     public void execute() {
-        servo.setTo(position);
+        servo.setValue(position);
     }
 }

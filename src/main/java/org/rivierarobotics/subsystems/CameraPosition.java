@@ -20,14 +20,24 @@
 
 package org.rivierarobotics.subsystems;
 
-public enum ServoPosition {
-    FRONT_COLLECT(0.12),
-    BACK_COLLECT(0.8),
-    CLIMB(0.5);
+public enum CameraPosition {
+    FRONT(0.15, false),
+    BACK(0.8, true),
+    CLIMB(0.5, false);
 
-    public final double set;
+    private final double servoValue;
+    private final boolean flipped;
 
-    ServoPosition(double set) {
-        this.set = set;
+    CameraPosition(double servoValue, boolean flipped) {
+        this.servoValue = servoValue;
+        this.flipped = flipped;
+    }
+
+    public double getServoValue() {
+        return servoValue;
+    }
+
+    public boolean isFlipped() {
+        return flipped;
     }
 }
