@@ -89,9 +89,9 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 8)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 9)
-                .whileHeld(cmds.vision().encoderAim(VisionTarget.INNER));
+                .toggleWhenPressed(cmds.vision().encoderAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 10)
-                .whileHeld(cmds.vision().encoderAim(VisionTarget.TOP));
+                .toggleWhenPressed(cmds.vision().encoderAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.vision().correctPosition());
         new JoystickButton(coDriverButtons, 12)

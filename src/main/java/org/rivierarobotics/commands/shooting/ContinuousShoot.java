@@ -69,11 +69,11 @@ public class ContinuousShoot extends CommandBase {
                 new WaitCommand(0),
                 ejectorCommands.setPower(1).alongWith(
                         new WaitUntilCommand(() -> !slot.get().hasBall())
-                                .andThen(new WaitCommand(0.1))
-                                .withTimeout(0.1)
+                                .andThen(new WaitCommand(0.3))
+                                .withTimeout(0.3)
                 ),
                 ejectorCommands.setPower(0),
-                new WaitCommand(0.05)
+                new WaitCommand(0.2)
         );
         cmd.schedule();
     }

@@ -25,6 +25,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.commands.cheesewheel.CWCycleSlot;
+import org.rivierarobotics.commands.cheesewheel.CWCycleSlotInterrupt;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
@@ -44,6 +46,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private static final int tolerance = 60;
     private boolean firstMoveDone = false;
     private final RobotShuffleboardTab shuffleTab;
+    private CWCycleSlot cycleSlot;
     private final CheeseWheel.AngleOffset mode;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
@@ -60,7 +63,8 @@ public class CollectInfiniteWedges extends CommandBase {
     @Override
     public void initialize() {
         if (!cheeseWheel.onSlot(mode, tolerance) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
-            moveToNext();
+            cycleSlot = cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30);
+            cycleSlot.schedule();
         }
     }
 
@@ -68,8 +72,7 @@ public class CollectInfiniteWedges extends CommandBase {
     public void execute() {
         boolean isFull = true;
 
-        if (!CommandScheduler.getInstance().isScheduled(cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30))
-                || cheeseWheel.onSlot(mode, tolerance)) {
+        if (cycleSlot == null || !CommandScheduler.getInstance().isScheduled(cycleSlot) || cheeseWheel.onSlot(mode, tolerance)) {
             firstMoveDone = true;
         }
 
@@ -107,12 +110,8 @@ public class CollectInfiniteWedges extends CommandBase {
         shuffleTab.setEntry("ClosestIndex", closest.ordinal());
         shuffleTab.setEntry("ClosestHasBall", closest.hasBall());
         if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance)) {
-            moveToNext();
+            cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
         }
-    }
-
-    private void moveToNext() {
-        cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
     }
 
     @Override
