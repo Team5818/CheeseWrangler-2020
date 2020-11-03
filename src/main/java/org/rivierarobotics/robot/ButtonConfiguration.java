@@ -21,6 +21,7 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
@@ -70,7 +71,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.cheeseWheel().continuousShoot());
+                .whileHeld(cmds.cheeseWheel().continuousShoot());
 
         // CheeseWheel manual cycles
         new JoystickButton(coDriverButtons, 2)

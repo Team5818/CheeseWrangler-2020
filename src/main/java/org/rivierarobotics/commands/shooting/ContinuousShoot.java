@@ -22,6 +22,7 @@ package org.rivierarobotics.commands.shooting;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -64,21 +65,22 @@ public class ContinuousShoot extends CommandBase {
         SmartDashboard.putNumber("Slot Test", slot.get().ordinal());
 
         cmd = new SequentialCommandGroup(
-                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL,30).withTimeout(2),
-                new WaitCommand(0.3),
+                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(2),
+                new WaitCommand(0),
                 ejectorCommands.setPower(1).alongWith(
                         new WaitUntilCommand(() -> !slot.get().hasBall())
-                                .andThen(new WaitCommand(0.3))
-                                .withTimeout(1)
+                                .andThen(new WaitCommand(0.1))
+                                .withTimeout(0.1)
                 ),
                 ejectorCommands.setPower(0),
-                new WaitCommand(0.1)
+                new WaitCommand(0.05)
         );
         cmd.schedule();
     }
 
     @Override
     public boolean isFinished() {
-        return cmd != null && cmd.isFinished();
+        SmartDashboard.putBoolean("cmdfinished", !CommandScheduler.getInstance().isScheduled(cmd));
+        return cmd != null && !CommandScheduler.getInstance().isScheduled(cmd);
     }
 }

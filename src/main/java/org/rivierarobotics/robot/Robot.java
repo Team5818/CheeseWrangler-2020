@@ -101,7 +101,7 @@ public class Robot extends TimedRobot {
             autonomousCommand.cancel();
         }
         globalComponent.getNavXGyro().resetGyro();
-
+        commandComponent.flywheel().setPower(0).schedule();
         globalComponent.getButtonConfiguration().initTeleop();
     }
 

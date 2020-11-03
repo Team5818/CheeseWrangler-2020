@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PhysicsUtil {
-    private static final double g = 9.81;
+    private static final double g = 9.81 / 2;
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
