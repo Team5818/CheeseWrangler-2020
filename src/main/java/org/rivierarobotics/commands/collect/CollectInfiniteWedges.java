@@ -63,14 +63,14 @@ public class CollectInfiniteWedges extends CommandBase {
     @Override
     public void initialize() {
         if (!cheeseWheel.onSlot(mode, tolerance) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
-            cycleSlot = cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30);
+            cycleSlot = !isFull() ? cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30) :
+                    cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.EITHER, 30);
             cycleSlot.schedule();
         }
     }
 
     @Override
     public void execute() {
-        boolean isFull = true;
 
         if (cycleSlot == null || !CommandScheduler.getInstance().isScheduled(cycleSlot) || cheeseWheel.onSlot(mode, tolerance)) {
             firstMoveDone = true;
@@ -91,14 +91,9 @@ public class CollectInfiniteWedges extends CommandBase {
             }
         }
 
-        for (CheeseSlot slot : CheeseSlot.values()) {
-            if (!slot.hasBall()) {
-                isFull = false;
-                break;
-            }
-        }
 
-        if (isFull || !firstMoveDone) {
+
+        if (isFull() || !firstMoveDone) {
             frontPower = 0;
             backPower = 0;
         }
@@ -109,9 +104,18 @@ public class CollectInfiniteWedges extends CommandBase {
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
         shuffleTab.setEntry("ClosestIndex", closest.ordinal());
         shuffleTab.setEntry("ClosestHasBall", closest.hasBall());
-        if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance) && !isFull) {
+        if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance) && !isFull()) {
             cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
         }
+    }
+
+    private boolean isFull() {
+        for (CheeseSlot slot : CheeseSlot.values()) {
+            if (!slot.hasBall()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
