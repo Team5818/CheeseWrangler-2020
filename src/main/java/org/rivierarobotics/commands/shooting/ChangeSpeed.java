@@ -48,6 +48,5 @@ public class ChangeSpeed extends InstantCommand {
     public void execute() {
         physics.setVelocity(MathUtil.limit(physics.getTargetVelocity() + amount,
                 ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
-        tab.setEntry("Set Speed: ", physics.getTargetVelocity());
     }
 }

@@ -28,6 +28,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
@@ -36,6 +37,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
     private final RobotShuffleboardTab tab;
+    private static double targetVel = 0;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
@@ -59,8 +61,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         flywheelFalcon.set(ControlMode.PercentOutput, pwr);
     }
 
+    public boolean withinTolerance(double tolerance) {
+        return MathUtil.isWithinTolerance(getPositionTicks(), targetVel, tolerance);
+    }
+
     public void setVelocity(double vel) {
         tab.setEntry("Flywheel Set Vel", vel);
+        Flywheel.targetVel = vel;
         logger.setpointChange(vel);
         if (vel == 0) {
             flywheelFalcon.set(TalonFXControlMode.Velocity, 0.0);

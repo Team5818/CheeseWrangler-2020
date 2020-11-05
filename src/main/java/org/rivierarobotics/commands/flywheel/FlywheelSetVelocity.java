@@ -24,21 +24,34 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.util.PhysicsUtil;
+import org.rivierarobotics.util.ShooterConstants;
 
 @GenerateCreator
 public class FlywheelSetVelocity extends CommandBase {
     private final Flywheel flywheel;
-    private final double velocity;
+    private final PhysicsUtil util;
+    private double vel = 0;
 
-    public FlywheelSetVelocity(@Provided Flywheel flywheel, double velocity) {
+    public FlywheelSetVelocity(@Provided Flywheel flywheel, @Provided PhysicsUtil util) {
         this.flywheel = flywheel;
-        this.velocity = velocity;
+        this.util = util;
+        addRequirements(flywheel);
+    }
+
+    public FlywheelSetVelocity(@Provided Flywheel flywheel, double vel) {
+        this.flywheel = flywheel;
+        this.vel = vel;
+        this.util = null;
         addRequirements(flywheel);
     }
 
     @Override
     public void execute() {
-        flywheel.setVelocity(velocity);
+        if (util != null) {
+            vel = ShooterConstants.velocityToTicks(util.getBallVel());
+        }
+        flywheel.setVelocity(vel);
     }
 
     @Override

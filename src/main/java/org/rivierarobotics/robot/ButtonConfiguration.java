@@ -101,7 +101,7 @@ public class ButtonConfiguration {
 
         // Toggles
         new JoystickButton(coDriverButtons, 4)
-                .toggleWhenPressed(cmds.flywheel().setVelocity(15_900));
+                .toggleWhenPressed(cmds.flywheel().setVelocity());
         new JoystickButton(coDriverButtons, 1)
                 .toggleWhenPressed(cmds.ejector().setPower(1.0));
 

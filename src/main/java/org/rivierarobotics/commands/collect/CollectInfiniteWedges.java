@@ -109,7 +109,7 @@ public class CollectInfiniteWedges extends CommandBase {
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
         shuffleTab.setEntry("ClosestIndex", closest.ordinal());
         shuffleTab.setEntry("ClosestHasBall", closest.hasBall());
-        if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance)) {
+        if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance) && !isFull) {
             cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
         }
     }

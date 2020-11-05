@@ -33,6 +33,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
@@ -46,15 +47,18 @@ public class ContinuousShoot extends CommandBase {
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
     private SequentialCommandGroup cmd;
+    private final Flywheel flywheel;
 
     public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
                            @Provided EjectorCommands ejectorCommands,
                            @Provided Turret turret,
-                           @Provided CheeseWheel cheeseWheel) {
+                           @Provided CheeseWheel cheeseWheel,
+                           @Provided Flywheel flywheel) {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.ejectorCommands = ejectorCommands;
         this.turret = turret;
         this.cheeseWheel = cheeseWheel;
+        this.flywheel = flywheel;
     }
 
     @Override
@@ -67,13 +71,14 @@ public class ContinuousShoot extends CommandBase {
         cmd = new SequentialCommandGroup(
                 cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(2),
                 new WaitCommand(0),
+                new WaitUntilCommand(() -> flywheel.withinTolerance(600)),
                 ejectorCommands.setPower(1).alongWith(
                         new WaitUntilCommand(() -> !slot.get().hasBall())
-                                .andThen(new WaitCommand(0.3))
+                                .andThen(new WaitCommand(0.2))
                                 .withTimeout(0.3)
                 ),
                 ejectorCommands.setPower(0),
-                new WaitCommand(0.2)
+                new WaitCommand(0.05)
         );
         cmd.schedule();
     }

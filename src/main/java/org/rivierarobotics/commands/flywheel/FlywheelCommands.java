@@ -43,6 +43,10 @@ public class FlywheelCommands {
         return flywheelSetPowerCreator.create(pwr);
     }
 
+    public FlywheelSetVelocity setVelocity() {
+        return flywheelSetVelocityCreator.create();
+    }
+
     public FlywheelSetVelocity setVelocity(double vel) {
         return flywheelSetVelocityCreator.create(vel);
     }
