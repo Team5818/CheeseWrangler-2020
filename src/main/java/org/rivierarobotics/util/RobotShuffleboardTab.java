@@ -28,17 +28,26 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;
     private final Map<String, NetworkTableEntry> entries;
+    private final Map<String, QueueEntry<?>> queue;
 
     public RobotShuffleboardTab(String name) {
         this.tab = Shuffleboard.getTab(name);
-        this.entries = new HashMap<>();
+        this.entries = new LinkedHashMap<>();
+        this.queue = new LinkedHashMap<>();
+
+        for (ShuffleboardComponent<?> comp : tab.getComponents()) {
+            if (comp instanceof SimpleWidget) {
+                entries.put(comp.getTitle(), ((SimpleWidget) comp).getEntry());
+            }
+        }
     }
 
     public RobotShuffleboardTab addSendable(Sendable sendable) {
@@ -46,20 +55,7 @@ public class RobotShuffleboardTab {
     }
 
     public <T> RobotShuffleboardTab setEntry(String title, T value) {
-        if (!entries.containsKey(title)) {
-            List<ShuffleboardComponent<?>> components = tab.getComponents();
-            for (ShuffleboardComponent<?> comp : components) {
-                if (comp.getTitle().equals(title) && comp instanceof SimpleWidget) {
-                    NetworkTableEntry entry = ((SimpleWidget) comp).getEntry();
-                    entry.setValue(value);
-                    entries.put(title, entry);
-                    return this;
-                }
-            }
-            entries.put(title, tab.add(title, value).getEntry());
-        } else {
-            entries.get(title).setValue(value);
-        }
+        queue.put(title, new QueueEntry<>(title, value));
         return this;
     }
 
@@ -67,18 +63,43 @@ public class RobotShuffleboardTab {
         return entries.get(title);
     }
 
-    public RobotShuffleboardTab deleteEntry(String title) {
-        entries.remove(title).delete();
-        return this;
+    public int getQueueLength() {
+        return queue.size();
     }
 
-    public RobotShuffleboardTab clear() {
-        for (Map.Entry<String, NetworkTableEntry> entry : entries.entrySet()) {
-            NetworkTableEntry value = entries.remove(entry.getKey());
-            if (value != null && value.isValid() && value.exists()) {
-                value.delete();
+    public void update(int minIdx, int maxIdx) {
+        List<QueueEntry<?>> queueValues = new LinkedList<>(queue.values());
+        for (int i = minIdx; i < maxIdx; i++) {
+            QueueEntry<?> queueEntry = queueValues.get(i);
+            String title = queueEntry.getTitle();
+            if (!entries.containsKey(title)) {
+                entries.put(title, tab.add(title, queueEntry.getValue()).getEntry());
+            } else {
+                entries.get(title).forceSetValue(queueEntry.getValue());
             }
+            queue.remove(title);
         }
-        return this;
+    }
+
+    private static class QueueEntry<T> {
+        private final String title;
+        private T value;
+
+        public QueueEntry(String title, T value) {
+            this.title = title;
+            this.value = value;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public T getValue() {
+            return value;
+        }
+
+        public void setValue(T value) {
+            this.value = value;
+        }
     }
 }
