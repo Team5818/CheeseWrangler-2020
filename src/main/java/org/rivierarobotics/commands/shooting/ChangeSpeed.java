@@ -35,18 +35,17 @@ import javax.inject.Inject;
 public class ChangeSpeed extends InstantCommand {
     private final PhysicsUtil physics;
     private final RobotShuffleboardTab tab;
-    private final double amount;
+    private final double velocity;
 
     @Inject
     public ChangeSpeed(@Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard, double amount) {
         this.physics = physics;
-        this.amount = amount;
+        this.velocity = amount + physics.getTargetVelocity();
         this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     @Override
     public void execute() {
-        physics.setVelocity(MathUtil.limit(physics.getTargetVelocity() + amount,
-                ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
+        physics.setVelocity(MathUtil.limit(velocity, ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
     }
 }

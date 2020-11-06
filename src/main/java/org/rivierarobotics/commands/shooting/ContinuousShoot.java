@@ -46,7 +46,7 @@ public class ContinuousShoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private SequentialCommandGroup cmd;
+    private static SequentialCommandGroup cmd;
     private final Flywheel flywheel;
 
     public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
@@ -65,20 +65,18 @@ public class ContinuousShoot extends CommandBase {
     public void initialize() {
         boolean isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
         CheeseWheel.AngleOffset offset = isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT;
-        Supplier<CheeseSlot> slot = () -> cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
-        SmartDashboard.putNumber("Slot Test", slot.get().ordinal());
+        CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
+        SmartDashboard.putNumber("Slot Test", slot.ordinal());
 
         cmd = new SequentialCommandGroup(
-                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(2),
+                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
                 new WaitCommand(0),
-                new WaitUntilCommand(() -> flywheel.withinTolerance(600)),
-                ejectorCommands.setPower(1).alongWith(
-                        new WaitUntilCommand(() -> !slot.get().hasBall())
-                                .andThen(new WaitCommand(0.2))
-                                .withTimeout(0.3)
-                ),
-                ejectorCommands.setPower(0),
-                new WaitCommand(0.05)
+                new WaitUntilCommand(() -> flywheel.withinTolerance(70)),
+                ejectorCommands.setPower(1),
+                new WaitUntilCommand(() -> !slot.hasBall()).andThen(new WaitCommand(0.1)).withTimeout(3),
+                ejectorCommands.setPower(-0.1),
+                new WaitCommand(0.1),
+                ejectorCommands.setPower(0)
         );
         cmd.schedule();
     }

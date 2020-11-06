@@ -44,10 +44,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         this.tab = shuffleboard.getTab("Vision");
 
         this.flywheelFalcon = new WPI_TalonFX(id);
+        //new PIDConfig((1023.0 * 0.5) / 500, (1023.0 * 0.01) / 500, 0.0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig((1023.0) / 500, (1023.0 * 0.1) / 500, 0.02, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
+            new PIDConfig(1.5, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
         flywheelFalcon.setInverted(false);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
+        flywheelFalcon.configPeakOutputReverse(0);
+
     }
 
     @Override

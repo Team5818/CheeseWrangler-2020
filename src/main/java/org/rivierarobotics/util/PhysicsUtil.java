@@ -29,7 +29,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PhysicsUtil {
-    private static final double g = 9.81 / 2;
+    private static final double g = 9.8 / 2;
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
@@ -39,7 +39,7 @@ public class PhysicsUtil {
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.VISION;
-    private static double velocity = 19;
+    private static double velocity = 9;
     private static boolean autoAimEnabled;
     private double[] vXYZ = new double[3];
 
@@ -59,7 +59,7 @@ public class PhysicsUtil {
         double x = aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
                 getLLDistance() * Math.cos(Math.toRadians(getLLTurretAngle()));
         tab.setEntry("x", x);
-        return x;
+        return x - x * 0.02;
     }
 
     public double getY() {

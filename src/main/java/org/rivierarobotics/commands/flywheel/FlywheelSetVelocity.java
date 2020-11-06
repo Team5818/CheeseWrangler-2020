@@ -31,7 +31,7 @@ import org.rivierarobotics.util.ShooterConstants;
 public class FlywheelSetVelocity extends CommandBase {
     private final Flywheel flywheel;
     private final PhysicsUtil util;
-    private double vel = 0;
+    private static double vel = 0;
 
     public FlywheelSetVelocity(@Provided Flywheel flywheel, @Provided PhysicsUtil util) {
         this.flywheel = flywheel;
@@ -41,7 +41,7 @@ public class FlywheelSetVelocity extends CommandBase {
 
     public FlywheelSetVelocity(@Provided Flywheel flywheel, double vel) {
         this.flywheel = flywheel;
-        this.vel = vel;
+        FlywheelSetVelocity.vel = vel;
         this.util = null;
         addRequirements(flywheel);
     }
@@ -49,7 +49,7 @@ public class FlywheelSetVelocity extends CommandBase {
     @Override
     public void execute() {
         if (util != null) {
-            vel = ShooterConstants.velocityToTicks(util.getBallVel());
+            vel = ShooterConstants.velocityToTicks(util.getTargetVelocity());
         }
         flywheel.setVelocity(vel);
     }

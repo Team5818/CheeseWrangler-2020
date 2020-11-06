@@ -36,7 +36,7 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
-    private static final int ZERO_TICKS = 2750;
+    private static final int ZERO_TICKS = 2800;
     private static final int FORWARD_TICKS = 2500;
     private static final int BACK_TICKS = 2200;
     private static final double CURVE_FACTOR = 1.5;

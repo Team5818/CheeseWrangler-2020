@@ -64,10 +64,12 @@ public class ButtonConfiguration {
         // Collecting
         new JoystickButton(coDriverLeft, 1)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
-                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT)));
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
+                        cmds.camera().setPosition(CameraPosition.FRONT)));
         new JoystickButton(coDriverLeft, 2)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
-                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK)));
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
+                        cmds.camera().setPosition(CameraPosition.BACK)));
 
         // Shooting
         new JoystickButton(coDriverRight, 1)

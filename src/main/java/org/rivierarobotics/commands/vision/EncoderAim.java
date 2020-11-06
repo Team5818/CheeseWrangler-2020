@@ -39,6 +39,7 @@ public class EncoderAim extends CommandBase {
     private final Flywheel flywheel;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
+    private final double extraDistance;
 
     public EncoderAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
                       @Provided RobotShuffleboard shuffleboard, @Provided PhysicsUtil physics,
@@ -47,8 +48,7 @@ public class EncoderAim extends CommandBase {
         this.flywheel = flywheel;
         this.turret = turret;
         this.physics = physics;
-        double extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
-        this.physics.setExtraDistance(extraDistance);
+        this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
         this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel, turret);
     }
@@ -56,6 +56,7 @@ public class EncoderAim extends CommandBase {
     @Override
     public void execute() {
         this.physics.setAimMode(PhysicsUtil.AimMode.ENCODER);
+        this.physics.setExtraDistance(extraDistance);
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();
@@ -82,6 +83,7 @@ public class EncoderAim extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         flywheel.setPower(0);
+        physics.setExtraDistance(0);
     }
 
     @Override
