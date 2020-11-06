@@ -61,10 +61,10 @@ public class EncoderAim extends CommandBase {
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();
         physics.getAngleToTarget();
-        if (hoodAngle > hood.getAngle(hood.getBackTicks())) {
+        if (hoodAngle > hood.getAngle(hood.getBackLimit())) {
             tab.setEntry("Limit?:", "Hood Angle");
-            ballVel = physics.getBallVel(hood.getAngle(hood.getForwardTicks()));
-            hoodAngle = hood.getAngle(hood.getBackTicks());
+            ballVel = physics.getBallVel(hood.getAngle(hood.getForwardLimit()));
+            hoodAngle = hood.getAngle(hood.getBackLimit());
         } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
             tab.setEntry("Limit?:", "Slow Ball Velocity");
             ballVel = ShooterConstants.getShooterMinVelocity();

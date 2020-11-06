@@ -44,8 +44,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 1652;
     private static final double MAX_ANGLE = 10;
     private static final double MIN_ANGLE = -50;
-    private static final int FORWARDS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
-    private static final int REVERSE = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
+    private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
+    private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -65,7 +65,15 @@ public class Turret extends SubsystemBase implements RRSubsystem {
                 PIDMode.POSITION.config, 800, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
-        MotorUtil.setSoftLimits(FORWARDS, REVERSE, turretTalon);
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
+    }
+
+    public int getForwardLimit() {
+        return FORWARD_LIMIT_TICKS;
+    }
+
+    public int getBackLimit() {
+        return BACK_LIMIT_TICKS;
     }
 
     @Override
@@ -153,10 +161,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
-    }
-
-    public double[] getSoftLimits() {
-        return new double[] { FORWARDS, REVERSE };
     }
 
     private enum PIDMode {

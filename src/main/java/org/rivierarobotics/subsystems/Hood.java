@@ -37,8 +37,8 @@ import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
     private static final int ZERO_TICKS = 2800;
-    private static final int FORWARD_TICKS = 2500;
-    private static final int BACK_TICKS = 2200;
+    private static final int FORWARD_LIMIT_TICKS = 2500;
+    private static final int BACK_LIMIT_TICKS = 2200;
     private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
@@ -56,19 +56,19 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.setSensorPhase(true);
         hoodTalon.setInverted(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
-        MotorUtil.setSoftLimits(FORWARD_TICKS, BACK_TICKS, hoodTalon);
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, hoodTalon);
     }
 
     public int getZeroTicks() {
         return ZERO_TICKS;
     }
     
-    public int getForwardTicks() {
-        return FORWARD_TICKS;
+    public int getForwardLimit() {
+        return FORWARD_LIMIT_TICKS;
     }
 
-    public int getBackTicks() {
-        return BACK_TICKS;
+    public int getBackLimit() {
+        return BACK_LIMIT_TICKS;
     }
 
     public double getPositionTicks() {
@@ -83,13 +83,10 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
     // Applies a bell curve power ramp for safety
     private double curvePower(double pwr) {
-        double range = FORWARD_TICKS - BACK_TICKS;
-        double pos = CURVE_FACTOR - (pwr >= 0 ? CURVE_FACTOR / (range / Math.abs((FORWARD_TICKS - getPositionTicks()))) :
-                CURVE_FACTOR / (range / Math.abs((getPositionTicks() - BACK_TICKS))));
-        shuffleTab.setEntry("curvePos", pos);
-        double curvedPwr = Math.pow(Math.E, -pos * pos) * pwr;
-        shuffleTab.setEntry("curvedPwr", curvedPwr);
-        return curvedPwr;
+        double range = FORWARD_LIMIT_TICKS - BACK_LIMIT_TICKS;
+        double pos = CURVE_FACTOR - (pwr >= 0 ? CURVE_FACTOR / (range / Math.abs((FORWARD_LIMIT_TICKS - getPositionTicks()))) :
+                CURVE_FACTOR / (range / Math.abs((getPositionTicks() - BACK_LIMIT_TICKS))));
+        return Math.pow(Math.E, -pos * pos) * pwr;
     }
 
     public double getAngle() {
@@ -98,10 +95,6 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
     public double getAngle(double ticks) {
         return MathUtil.ticksToDegrees(ZERO_TICKS - ticks);
-    }
-
-    public double[] getSoftLimits() {
-        return new double[]{FORWARD_TICKS, BACK_TICKS};
     }
 
     public void setAngle(double angle) {

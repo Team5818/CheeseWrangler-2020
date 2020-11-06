@@ -34,14 +34,12 @@ import javax.inject.Inject;
 @GenerateCreator
 public class ChangeSpeed extends InstantCommand {
     private final PhysicsUtil physics;
-    private final RobotShuffleboardTab tab;
     private final double velocity;
 
     @Inject
-    public ChangeSpeed(@Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard, double amount) {
+    public ChangeSpeed(@Provided PhysicsUtil physics, double amount) {
         this.physics = physics;
         this.velocity = amount + physics.getTargetVelocity();
-        this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     @Override
