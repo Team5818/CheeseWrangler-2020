@@ -24,7 +24,7 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.StatusFrame;
-import com.ctre.phoenix.motorcontrol.can.BaseMotorController;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 import org.rivierarobotics.subsystems.PIDConfig;
 
@@ -33,13 +33,19 @@ public class MotorUtil {
     }
 
     @SafeVarargs
-    public static <T extends BaseMotorController> void setupMotionMagic(FeedbackDevice sensor, PIDConfig pidConfig, int maxVel, T... motors) {
+    public static <T extends BaseTalon> void setupMotionMagic(FeedbackDevice sensor, PIDConfig pidConfig, int maxVel, T... motors) {
+        int periodMs = 10;
+        int timeoutMs = 10;
         for (T motor : motors) {
             motor.configFactoryDefault();
             motor.selectProfileSlot(0, 0);
-            motor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, 10, 10);
-            motor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, 10, 10);
-            motor.configSelectedFeedbackSensor(sensor, 0, 100);
+            motor.setStatusFramePeriod(StatusFrame.Status_13_Base_PIDF0, periodMs, timeoutMs);
+            motor.setStatusFramePeriod(StatusFrame.Status_10_MotionMagic, periodMs, timeoutMs);
+            if (sensor == FeedbackDevice.PulseWidthEncodedPosition || sensor == FeedbackDevice.IntegratedSensor) {
+                motor.setStatusFramePeriod(StatusFrameEnhanced.Status_8_PulseWidth, periodMs, timeoutMs);
+                motor.setStatusFramePeriod(StatusFrameEnhanced.Status_1_General, periodMs, timeoutMs);
+            }
+            motor.configSelectedFeedbackSensor(sensor, 0, timeoutMs);
 
             motor.configNominalOutputForward(0);
             motor.configNominalOutputReverse(0);

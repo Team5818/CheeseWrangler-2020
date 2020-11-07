@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
@@ -46,6 +47,9 @@ public class DriveTrainSide implements RRSubsystem {
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(0.05, 0, 0, 0), 0, masterLeft, slaveRight);
+        setStatusFrames(10, 10, 0x1240,
+                StatusFrameEnhanced.Status_4_AinTempVbat.value,
+                StatusFrameEnhanced.Status_2_Feedback0.value);
         masterLeft.setInverted(invert);
         slaveRight.setInverted(invert);
         masterLeft.setNeutralMode(NeutralMode.Brake);
@@ -57,6 +61,13 @@ public class DriveTrainSide implements RRSubsystem {
         shaftEncoder.setDistancePerPulse(1 / TICKS_PER_METER);
     }
 
+    private void setStatusFrames(int periodMs, int timeoutMs, int... frames) {
+        for (int frame : frames) {
+            masterLeft.setStatusFramePeriod(frame, periodMs, timeoutMs);
+            slaveRight.setStatusFramePeriod(frame, periodMs, timeoutMs);
+        }
+    }
+
     @Override
     public double getPositionTicks() {
         return getPosition() * TICKS_PER_METER;
@@ -64,15 +75,12 @@ public class DriveTrainSide implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
+        logger.powerChange(pwr);
         masterLeft.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
-    public double getLVoltage() {
-        return masterLeft.getMotorOutputVoltage();
-    }
-
-    public double getRVoltage() {
-        return slaveRight.getMotorOutputVoltage();
+    public double getVoltage(boolean isMasterLeft) {
+        return isMasterLeft ? masterLeft.getMotorOutputVoltage() : slaveRight.getMotorOutputVoltage();
     }
 
     public double getPosition() {
@@ -91,6 +99,7 @@ public class DriveTrainSide implements RRSubsystem {
     }
 
     public void setVoltage(double volts) {
+        logger.stateChange("voltageSet", volts);
         masterLeft.setVoltage(volts);
         slaveRight.setVoltage(volts);
     }

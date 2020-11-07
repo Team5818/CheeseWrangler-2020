@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
@@ -53,10 +54,10 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         this.hoodTalon = new WPI_TalonSRX(motorId);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
             new PIDConfig((0.8 * 1023 / 300), 0, 0, 0), 600, hoodTalon);
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, hoodTalon);
         hoodTalon.setSensorPhase(true);
         hoodTalon.setInverted(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
-        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, hoodTalon);
     }
 
     public int getZeroTicks() {
@@ -93,8 +94,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         return MathUtil.ticksToDegrees(ZERO_TICKS - getPositionTicks());
     }
 
-    public double getAngle(double ticks) {
-        return MathUtil.ticksToDegrees(ZERO_TICKS - ticks);
+    public double getZeroedAngle(double toZero) {
+        return MathUtil.ticksToDegrees(ZERO_TICKS - toZero);
     }
 
     public void setAngle(double angle) {

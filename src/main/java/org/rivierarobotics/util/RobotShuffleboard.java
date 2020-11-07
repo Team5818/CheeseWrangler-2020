@@ -31,7 +31,8 @@ import javax.inject.Singleton;
 
 @Singleton
 public class RobotShuffleboard {
-    private static final int maxSendCtr = 50;
+    private static final int maxSendCtr = 50; //Maximum value changes per update
+    private static final int updateInterval = 200; //Time between updates in ms
     private final Map<String, RobotShuffleboardTab> tabs;
     private final List<BufferEntry> buffer;
     private int robotLoopCtr;
@@ -63,7 +64,7 @@ public class RobotShuffleboard {
     }
 
     public void update() {
-        if (++robotLoopCtr % 5 == 0) {
+        if (++robotLoopCtr % (updateInterval / 20) == 0) {
             buffer.clear();
             int updateCtr = 0;
             for (Map.Entry<String, RobotShuffleboardTab> tabEntry : tabs.entrySet()) {

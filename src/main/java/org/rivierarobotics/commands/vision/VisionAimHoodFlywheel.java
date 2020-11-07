@@ -62,10 +62,10 @@ public class VisionAimHoodFlywheel extends CommandBase {
         if (vision.getLLValue("tv") == 1) {
             double ballVel = physics.getBallVel();
             double hoodAngle = physics.getCalculatedHoodAngle();
-            if (hoodAngle > hood.getAngle(hood.getBackLimit())) {
+            if (hoodAngle > hood.getZeroedAngle(hood.getBackLimit())) {
                 tab.setEntry("Limit?:", "Hood Angle");
-                ballVel = physics.getBallVel(hood.getAngle(hood.getForwardLimit()));
-                hoodAngle = hood.getAngle(hood.getBackLimit());
+                ballVel = physics.getBallVel(hood.getZeroedAngle(hood.getForwardLimit()));
+                hoodAngle = hood.getZeroedAngle(hood.getBackLimit());
             } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
                 tab.setEntry("Limit?:", "Slow Ball Velocity");
                 ballVel = ShooterConstants.getShooterMinVelocity();

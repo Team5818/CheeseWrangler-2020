@@ -56,8 +56,8 @@ public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> exten
         this.setPoint = setPoint;
         this.timeout = timeout;
         tab = shuffleboard.getTab("MM Tuning");
-        tab.setEntry(subsystem.getName() + " setPoint:", setPoint);
-        tab.setEntry(subsystem.getName() + " maxErrorTicks:", maxError);
+        tab.setEntry(subsystem.getName() + " setPoint", setPoint);
+        tab.setEntry(subsystem.getName() + " maxErrorTicks", maxError);
         addRequirements(subsystem);
     }
 

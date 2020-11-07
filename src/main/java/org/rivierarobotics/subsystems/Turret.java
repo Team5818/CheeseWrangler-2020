@@ -63,9 +63,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.turretTalon = new WPI_TalonSRX(id);
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 PIDMode.POSITION.config, 800, turretTalon);
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
-        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
     }
 
     public int getForwardLimit() {

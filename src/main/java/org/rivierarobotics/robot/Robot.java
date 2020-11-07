@@ -59,6 +59,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
+        SmartDashboard.putData(chooser);
 
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
@@ -129,8 +130,8 @@ public class Robot extends TimedRobot {
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
-        var shuffleboard = globalComponent.getShuffleboard();
         var physics = globalComponent.getPhysicsUtil();
+        var shuffleboard = globalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
@@ -147,7 +148,7 @@ public class Robot extends TimedRobot {
             .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
             .setEntry("Gyro Angle", gyro.getYaw())
             .setEntry("Adj tx", turret.getTurretCalculations(0, hood.getAngle())[1])
-            .setEntry("Target Velocity:", physics.getTargetVelocity());
+            .setEntry("Target Velocity", physics.getTargetVelocity());
 
         shuffleboard.getTab("Auto Aim")
                 .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
@@ -156,7 +157,11 @@ public class Robot extends TimedRobot {
             .setEntry("Left Enc", dt.getLeft().getPosition())
             .setEntry("Right Enc", dt.getRight().getPosition())
             .setEntry("Left Vel", dt.getLeft().getVelocity())
-            .setEntry("Right Vel", dt.getRight().getVelocity());
+            .setEntry("Right Vel", dt.getRight().getVelocity())
+            .setEntry("L Voltage M", dt.getLeft().getVoltage(true))
+            .setEntry("R Voltage M", dt.getRight().getVoltage(false))
+            .setEntry("L Voltage S", dt.getLeft().getVoltage(true))
+            .setEntry("R Voltage S", dt.getRight().getVoltage(false));
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
@@ -170,7 +175,5 @@ public class Robot extends TimedRobot {
             .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
             .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
             .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
-
-        SmartDashboard.putData(chooser);
     }
 }
