@@ -96,20 +96,15 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         double xInitialD = Math.sin(tx) * initialD;
         double yInitialD = Math.cos(tx) * initialD + extraDistance;
         double dist = Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
-        tab.setEntry("dist", dist);
         tx = Math.atan(xInitialD / yInitialD);
-        tab.setEntry("l", Math.toDegrees(tx));
+
         double angleA = Math.PI / 2 - tx;
         double z = ShooterConstants.getLLtoTurretZ();
         double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
-        tab.setEntry("a", a);
         double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a)));
-        tab.setEntry("finalAngle", finalAngle);
-        tab.setEntry("thing", Math.toDegrees(Math.asin(z / dist)));
-        finalAngle = tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
-        tab.setEntry("finalAngle2", finalAngle + getAngle(true));
-        return new double[] { a, MathUtil.wrapToCircle(finalAngle + getAngle(true)) };
 
+        finalAngle = tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
+        return new double[] { a, MathUtil.wrapToCircle(finalAngle + getAngle(true)) };
     }
 
     public void setPositionTicks(double positionTicks) {

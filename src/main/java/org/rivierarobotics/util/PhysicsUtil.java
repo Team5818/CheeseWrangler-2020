@@ -59,7 +59,7 @@ public class PhysicsUtil {
         double x = aimMode != AimMode.VISION ? positionTracker.getPosition()[1] :
                 getLLDistance() * Math.cos(Math.toRadians(getLLTurretAngle()));
         tab.setEntry("x", x);
-        return x - x * 0.02;
+        return x - x * 0.02 + extraDistance;
     }
 
     public double getY() {
@@ -157,6 +157,7 @@ public class PhysicsUtil {
             testTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;
         }
+
         tab.setEntry("vx", vXYZ[0]);
         tab.setEntry("vy", vXYZ[1]);
         tab.setEntry("vz", vXYZ[2]);

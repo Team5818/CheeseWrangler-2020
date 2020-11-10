@@ -98,8 +98,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
-        shuffleTab.setEntry("setAngle", angle);
         double ticks = ZERO_TICKS - MathUtil.degreesToTicks(angle);
+        shuffleTab.setEntry("setAngle", angle);
         shuffleTab.setEntry("setTicks", ticks);
         logger.setpointChange(ticks);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
