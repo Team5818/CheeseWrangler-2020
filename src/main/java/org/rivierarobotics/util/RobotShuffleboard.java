@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -69,7 +71,7 @@ public class RobotShuffleboard {
             int updateCtr = 0;
             for (Map.Entry<String, RobotShuffleboardTab> tabEntry : tabs.entrySet()) {
                 RobotShuffleboardTab tab = tabEntry.getValue();
-                int len = tab.getQueueLength();
+                int len = tab.getQueueLength() - 1;
                 if (updateCtr + len < maxSendCtr) {
                     tab.update(0, len);
                 } else if (updateCtr < maxSendCtr) {

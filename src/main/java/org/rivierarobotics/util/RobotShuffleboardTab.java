@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -35,11 +36,13 @@ import java.util.Map;
 
 public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;
+    private String name;
     private final Map<String, NetworkTableEntry> entries;
     private final Map<String, QueueEntry<?>> queue;
 
     public RobotShuffleboardTab(String name) {
         this.tab = Shuffleboard.getTab(name);
+        this.name = name;
         this.entries = new LinkedHashMap<>();
         this.queue = new LinkedHashMap<>();
 
@@ -67,8 +70,13 @@ public class RobotShuffleboardTab {
         return queue.size();
     }
 
+    public String getName() {
+        return name;
+    }
+
     public void update(int minIdx, int maxIdx) {
         List<QueueEntry<?>> queueValues = new LinkedList<>(queue.values());
+        SmartDashboard.putNumber("max",maxIdx);
         for (int i = minIdx; i < maxIdx; i++) {
             QueueEntry<?> queueEntry = queueValues.get(i);
             String title = queueEntry.getTitle();

@@ -40,7 +40,7 @@ public class PhysicsUtil {
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.VISION;
     private static double velocity = 9;
-    private static boolean autoAimEnabled;
+    private boolean autoAimEnabled;
     private double[] vXYZ = new double[3];
 
     @Inject
@@ -152,7 +152,7 @@ public class PhysicsUtil {
             if (Double.isNaN(tStraight)) {
                 tab.setEntry("Trajectory: ", "ARC");
             }
-            vXYZ = !Double.isNaN(t) ? new double[]{x / t, y / t, z / t + g * t} : tempXYZ;
+            vXYZ = !Double.isNaN(t) ? new double[]{x / t - driveTrain.getYVelocity() * 10, y / t - driveTrain.getXVelocity() * 10, z / t + g * t} : tempXYZ;
         } else {
             testTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;

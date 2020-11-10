@@ -113,8 +113,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
-        CommandScheduler.getInstance().cancelAll();
-        CommandScheduler.getInstance().unregisterSubsystem(globalComponent.getFlywheel());
+        CommandScheduler.getInstance().clearButtons();
     }
 
     @Override
@@ -158,10 +157,8 @@ public class Robot extends TimedRobot {
             .setEntry("Right Enc", dt.getRight().getPosition())
             .setEntry("Left Vel", dt.getLeft().getVelocity())
             .setEntry("Right Vel", dt.getRight().getVelocity())
-            .setEntry("L Voltage M", dt.getLeft().getVoltage(true))
-            .setEntry("R Voltage M", dt.getRight().getVoltage(false))
-            .setEntry("L Voltage S", dt.getLeft().getVoltage(true))
-            .setEntry("R Voltage S", dt.getRight().getVoltage(false));
+            .setEntry("XVel", dt.getXVelocity())
+            .setEntry("YVel",dt.getYVelocity());
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())
