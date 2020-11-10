@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.commands.camera;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.util.PhysicsUtil;
-
-import javax.inject.Inject;
+import org.rivierarobotics.util.CameraFlip;
 
 @GenerateCreator
-public class ToggleAutoAim extends InstantCommand {
-    private final PhysicsUtil physics;
+public class CameraImageFlip extends InstantCommand {
+    private final boolean flipSetState;
 
-    @Inject
-    public ToggleAutoAim(@Provided PhysicsUtil physics) {
-        this.physics = physics;
+    public CameraImageFlip(boolean flipSetState) {
+        this.flipSetState = flipSetState;
+    }
+
+    public CameraImageFlip() {
+        this(!CameraFlip.DO_FLIP);
     }
 
     @Override
     public void execute() {
-        physics.toggleAutoAim();
+        CameraFlip.DO_FLIP = flipSetState;
     }
 }

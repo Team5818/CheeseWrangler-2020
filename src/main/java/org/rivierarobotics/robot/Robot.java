@@ -113,6 +113,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledInit() {
+        CommandScheduler.getInstance().cancelAll();
         CommandScheduler.getInstance().clearButtons();
     }
 
@@ -158,7 +159,7 @@ public class Robot extends TimedRobot {
             .setEntry("Left Vel", dt.getLeft().getVelocity())
             .setEntry("Right Vel", dt.getRight().getVelocity())
             .setEntry("XVel", dt.getXVelocity())
-            .setEntry("YVel",dt.getYVelocity());
+            .setEntry("YVel", dt.getYVelocity());
 
         shuffleboard.getTab("Cheese Wheel")
             .setEntry("Position Ticks", cw.getPositionTicks())

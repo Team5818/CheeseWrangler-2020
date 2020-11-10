@@ -18,26 +18,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.commands.camera;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
-import org.rivierarobotics.util.CameraFlip;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CameraServo;
 
 @GenerateCreator
-public class CameraImageFlip extends InstantCommand {
-    private final boolean flipSetState;
+public class CameraServoSetPosition extends InstantCommand {
+    private final CameraServo servo;
+    private final double position;
 
-    public CameraImageFlip(boolean flipSetState) {
-        this.flipSetState = flipSetState;
-    }
-
-    public CameraImageFlip() {
-        this(!CameraFlip.DO_FLIP);
+    public CameraServoSetPosition(@Provided CameraServo servo, double position) {
+        this.servo = servo;
+        this.position = position;
+        addRequirements(servo);
     }
 
     @Override
     public void execute() {
-        CameraFlip.DO_FLIP = flipSetState;
+        servo.setValue(position);
     }
 }

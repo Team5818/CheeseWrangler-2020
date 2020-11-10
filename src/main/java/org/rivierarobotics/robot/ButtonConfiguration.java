@@ -21,14 +21,12 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -65,11 +63,11 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverLeft, 1)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
                         .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
-                        cmds.camera().setPosition(CameraPosition.FRONT)));
+                        cmds.camera().setServo(CameraPosition.FRONT)));
         new JoystickButton(coDriverLeft, 2)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
                         .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
-                        cmds.camera().setPosition(CameraPosition.BACK)));
+                        cmds.camera().setServo(CameraPosition.BACK)));
 
         // Shooting
         new JoystickButton(coDriverRight, 1)
@@ -109,15 +107,15 @@ public class ButtonConfiguration {
 
         // Camera servo
         new JoystickButton(driverButtons, 11)
-                .whenPressed(() -> CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP);
+                .whenPressed(cmds.camera().toggleFlipImage());
         new JoystickButton(driverButtons, 12)
-                .whenPressed(cmds.camera().setPosition(CameraPosition.FRONT)
+                .whenPressed(cmds.camera().setServo(CameraPosition.FRONT)
                         .alongWith(cmds.camera().flipImage(CameraPosition.FRONT)));
         new JoystickButton(driverButtons, 10)
-                .whenPressed(cmds.camera().setPosition(CameraPosition.BACK)
+                .whenPressed(cmds.camera().setServo(CameraPosition.BACK)
                         .alongWith(cmds.camera().flipImage(CameraPosition.BACK)));
         new JoystickButton(driverButtons, 8)
-                .whenPressed(cmds.camera().setPosition(CameraPosition.CLIMB)
+                .whenPressed(cmds.camera().setServo(CameraPosition.CLIMB)
                         .alongWith(cmds.camera().flipImage(CameraPosition.CLIMB)));
 
         // Testing/dev
@@ -130,8 +128,11 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 7)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
         new JoystickButton(driverButtons, 3)
-                .whileHeld(cmds.cheeseWheel().continuousShoot());
+                .whenPressed(cmds.cheeseWheel().shootNWedges(5));
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.cheeseWheel().all5Shoot());
+        new JoystickButton(driverButtons, 2)
+                .whenPressed(cmds.camera().shuffleboardPause());
+
     }
 }

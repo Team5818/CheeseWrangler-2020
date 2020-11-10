@@ -25,18 +25,13 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
-
-import javax.inject.Inject;
 
 @GenerateCreator
 public class ChangeSpeed extends InstantCommand {
     private final PhysicsUtil physics;
     private final double velocity;
 
-    @Inject
     public ChangeSpeed(@Provided PhysicsUtil physics, double amount) {
         this.physics = physics;
         this.velocity = amount + physics.getTargetVelocity();

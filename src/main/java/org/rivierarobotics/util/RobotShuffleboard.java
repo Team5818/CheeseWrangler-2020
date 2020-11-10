@@ -20,14 +20,10 @@
 
 package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -38,12 +34,14 @@ public class RobotShuffleboard {
     private final Map<String, RobotShuffleboardTab> tabs;
     private final List<BufferEntry> buffer;
     private int robotLoopCtr;
+    private boolean paused;
 
     @Inject
     public RobotShuffleboard() {
         this.tabs = new LinkedHashMap<>();
         this.buffer = new LinkedList<>();
         this.robotLoopCtr = 0;
+        this.paused = false;
     }
 
     public RobotShuffleboardTab getTab(String tabName) {
@@ -68,6 +66,9 @@ public class RobotShuffleboard {
     public void update() {
         if (++robotLoopCtr % (updateInterval / 20) == 0) {
             buffer.clear();
+            if (paused) {
+                return;
+            }
             int updateCtr = 0;
             for (Map.Entry<String, RobotShuffleboardTab> tabEntry : tabs.entrySet()) {
                 RobotShuffleboardTab tab = tabEntry.getValue();
@@ -104,6 +105,14 @@ public class RobotShuffleboard {
             buffer.clear();
             buffer.addAll(tempBuffer);
         }
+    }
+
+    public void setPaused(boolean paused) {
+        this.paused = paused;
+    }
+
+    public boolean isPaused() {
+        return paused;
     }
 
     private static class BufferEntry {

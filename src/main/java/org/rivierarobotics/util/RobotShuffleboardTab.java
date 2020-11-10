@@ -27,7 +27,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -76,7 +75,6 @@ public class RobotShuffleboardTab {
 
     public void update(int minIdx, int maxIdx) {
         List<QueueEntry<?>> queueValues = new LinkedList<>(queue.values());
-        SmartDashboard.putNumber("max",maxIdx);
         for (int i = minIdx; i < maxIdx; i++) {
             QueueEntry<?> queueEntry = queueValues.get(i);
             String title = queueEntry.getTitle();

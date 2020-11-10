@@ -160,13 +160,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }
-//        if (getPositionTicks() > FORWARD_LIMIT_TICKS + 1000) {
-//            turretTalon.disable();
-//            turretTalon.getSensorCollection().setPulseWidthPosition((int) getPositionTicks() - 4096,10);
-//        } else if (getPositionTicks() < BACK_LIMIT_TICKS - 1000) {
-//            turretTalon.disable();
-//            turretTalon.getSensorCollection().setPulseWidthPosition((int) getPositionTicks() + 4096,10);
-//        }
         super.periodic();
     }
 

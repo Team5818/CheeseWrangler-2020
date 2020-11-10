@@ -18,26 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.commands.camera;
 
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CameraServo;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
-public class CameraServoSetPosition extends InstantCommand {
-    private final CameraServo servo;
-    private final double position;
+public class ShuffleboardPause extends InstantCommand {
+    private final RobotShuffleboard shuffleboard;
 
-    public CameraServoSetPosition(@Provided CameraServo servo, double position) {
-        this.servo = servo;
-        this.position = position;
-        addRequirements(servo);
+    public ShuffleboardPause(@Provided RobotShuffleboard shuffleboard) {
+        this.shuffleboard = shuffleboard;
     }
 
     @Override
     public void execute() {
-        servo.setValue(position);
+        shuffleboard.setPaused(!shuffleboard.isPaused());
     }
 }

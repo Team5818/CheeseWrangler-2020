@@ -29,7 +29,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 
 public class DriveTrainSide implements RRSubsystem {

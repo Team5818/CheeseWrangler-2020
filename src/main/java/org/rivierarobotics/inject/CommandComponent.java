@@ -23,6 +23,7 @@ package org.rivierarobotics.inject;
 import dagger.Module;
 import dagger.Subcomponent;
 import org.rivierarobotics.autonomous.AutonomousCommands;
+import org.rivierarobotics.commands.camera.CameraCommands;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.climb.ClimbCommands;
 import org.rivierarobotics.commands.collect.CollectionCommands;
@@ -31,7 +32,6 @@ import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.commands.hood.HoodCommands;
 import org.rivierarobotics.commands.turret.TurretCommands;
-import org.rivierarobotics.commands.vision.CameraCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 
 @Subcomponent

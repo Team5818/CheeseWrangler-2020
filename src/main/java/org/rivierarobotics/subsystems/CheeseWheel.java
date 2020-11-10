@@ -25,7 +25,6 @@ import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
@@ -38,9 +37,9 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import javax.inject.Provider;
 
 public class CheeseWheel extends SubsystemBase implements RRSubsystem {
+    private static final double INDEX_SPACING = 4096.0 / 5;
     private final WPI_TalonSRX wheelTalon;
     private final Provider<CheeseWheelControl> command;
-    private static final double INDEX_SPACING = 4096.0 / 5;
     private final RobotShuffleboardTab tab;
 
     public CheeseWheel(int motor, Provider<CheeseWheelControl> command, RobotShuffleboard shuffleboard) {

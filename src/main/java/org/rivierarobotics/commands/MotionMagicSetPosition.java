@@ -30,7 +30,6 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
-import java.util.function.Supplier;
 
 public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> extends CommandBase {
     protected final T subsystem;

@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.commands.camera;
 
 import org.rivierarobotics.subsystems.CameraPosition;
 
@@ -27,19 +27,22 @@ import javax.inject.Inject;
 public class CameraCommands {
     private final CameraServoSetPositionCreator setPositionCreator;
     private final CameraImageFlipCreator imageFlipCreator;
+    private final ShuffleboardPauseCreator shuffleboardPauseCreator;
 
     @Inject
     public CameraCommands(CameraServoSetPositionCreator setPositionCreator,
-                          CameraImageFlipCreator imageFlipCreator) {
+                          CameraImageFlipCreator imageFlipCreator,
+                          ShuffleboardPauseCreator shuffleboardPauseCreator) {
         this.setPositionCreator = setPositionCreator;
         this.imageFlipCreator = imageFlipCreator;
+        this.shuffleboardPauseCreator = shuffleboardPauseCreator;
     }
 
-    public CameraServoSetPosition setAngle(double angle) {
+    public CameraServoSetPosition setServo(double angle) {
         return setPositionCreator.create(angle);
     }
 
-    public CameraServoSetPosition setPosition(CameraPosition position) {
+    public CameraServoSetPosition setServo(CameraPosition position) {
         return setPositionCreator.create(position.getServoValue());
     }
 
@@ -53,5 +56,9 @@ public class CameraCommands {
 
     public CameraImageFlip toggleFlipImage() {
         return imageFlipCreator.create();
+    }
+
+    public ShuffleboardPause shuffleboardPause() {
+        return shuffleboardPauseCreator.create();
     }
 }

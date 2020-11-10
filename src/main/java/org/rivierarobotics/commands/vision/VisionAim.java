@@ -23,7 +23,6 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 

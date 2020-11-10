@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous.advanced;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.autonomous.AutonomousCommands;
