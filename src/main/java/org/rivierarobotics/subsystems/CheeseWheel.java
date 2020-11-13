@@ -132,7 +132,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return wheelTalon.getSensorCollection().getPulseWidthPosition();
+        return wheelTalon.getSelectedSensorPosition();
     }
 
     public enum AngleOffset {

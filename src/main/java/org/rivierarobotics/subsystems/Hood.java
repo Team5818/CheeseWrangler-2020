@@ -72,7 +72,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public double getPositionTicks() {
-        return hoodTalon.getSensorCollection().getPulseWidthPosition();
+        return hoodTalon.getSelectedSensorPosition();
     }
 
     public void setPower(double pwr) {

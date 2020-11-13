@@ -21,6 +21,7 @@
 package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 
@@ -72,7 +73,10 @@ public enum Pose2dPath {
     }
 
     private Path getPath() {
-        return Filesystem.getDeployDirectory().toPath().resolve("paths/" + id + ".wpilib.json");
+        var baseDir = RobotBase.isReal()
+                ? Filesystem.getDeployDirectory().toPath().resolve("paths/")
+                : Filesystem.getLaunchDirectory().toPath().resolve("pathWeaver/main");
+        return baseDir.resolve(id + ".wpilib.json");
     }
 
     public Trajectory getTrajectory() {
