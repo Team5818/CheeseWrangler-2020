@@ -78,7 +78,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return turretTalon.getSensorCollection().getPulseWidthPosition();
+        return turretTalon.getSelectedSensorPosition();
     }
 
     public double getVelocity() {

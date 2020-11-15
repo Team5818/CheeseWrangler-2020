@@ -48,7 +48,7 @@ public class Climb extends SubsystemBase implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        //return climbTalon.getSensorCollection().getPulseWidthPosition();
+        //return climbTalon.getSelectedSensorPosition();
         throw new UnsupportedOperationException();
     }
 

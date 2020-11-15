@@ -52,7 +52,7 @@ public class RobotShuffleboardTab {
         }
     }
 
-    public RobotShuffleboardTab addSendable(Sendable sendable) {
+    public RobotShuffleboardTab setSendable(Sendable sendable) {
         return setEntry(SendableRegistry.getName(sendable), sendable);
     }
 
@@ -75,6 +75,7 @@ public class RobotShuffleboardTab {
 
     public void update(int minIdx, int maxIdx) {
         List<QueueEntry<?>> queueValues = new LinkedList<>(queue.values());
+        maxIdx = Math.min(maxIdx, queueValues.size());
         for (int i = minIdx; i < maxIdx; i++) {
             QueueEntry<?> queueEntry = queueValues.get(i);
             String title = queueEntry.getTitle();

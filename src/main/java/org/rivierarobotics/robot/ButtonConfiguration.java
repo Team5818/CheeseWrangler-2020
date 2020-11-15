@@ -133,6 +133,5 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.cheeseWheel().all5Shoot());
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.camera().shuffleboardPause());
-
     }
 }

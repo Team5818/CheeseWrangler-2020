@@ -64,11 +64,11 @@ public class RobotShuffleboard {
     }
 
     public void update() {
+        if (paused) {
+            return;
+        }
         if (++robotLoopCtr % (updateInterval / 20) == 0) {
             buffer.clear();
-            if (paused) {
-                return;
-            }
             int updateCtr = 0;
             for (Map.Entry<String, RobotShuffleboardTab> tabEntry : tabs.entrySet()) {
                 RobotShuffleboardTab tab = tabEntry.getValue();
@@ -89,7 +89,7 @@ public class RobotShuffleboard {
             int updateCtr = 0;
             for (BufferEntry entry : buffer) {
                 int min = entry.getMin();
-                int max = entry.getMax() - 1;
+                int max = entry.getMax();
                 if (updateCtr + (max - min) < maxSendCtr) {
                     entry.getTab().update(min, max);
                 } else if (updateCtr < maxSendCtr) {

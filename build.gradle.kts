@@ -36,7 +36,7 @@ tasks.register("windowsLaunchSim") {
     }
 }
 if (edu.wpi.first.toolchain.NativePlatforms.desktopOS() == "windows") {
-    tasks.getByName("simulateJava")
+    tasks.getByName("simulateExternalJava").finalizedBy(tasks.getByName("windowsLaunchSim"))
 }
 
 dependencies {
