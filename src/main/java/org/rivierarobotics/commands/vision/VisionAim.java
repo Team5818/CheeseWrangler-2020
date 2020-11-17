@@ -20,21 +20,59 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.PhysicsUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
+import org.rivierarobotics.util.VisionUtil;
 
 @GenerateCreator
-public class VisionAim extends ParallelCommandGroup {
-    public VisionAim(VisionTarget target, @Provided VisionCommands vision) {
-        if (target == VisionTarget.TOP) {
-            addCommands(vision.autoAimHood(0),
-                vision.autoAimTurret(0));
-        } else {
-            addCommands(vision.autoAimHood(ShooterConstants.getDistanceFromOuterToInnerTarget()),
-                vision.autoAimTurret(ShooterConstants.getDistanceFromOuterToInnerTarget()));
+public class VisionAim extends CommandBase {
+    private final PhysicsUtil physics;
+    private final AutoAimUtil autoAimUtil;
+    private final Flywheel flywheel;
+    private final VisionUtil vision;
+    private final double extraDistance;
+
+    public VisionAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
+                     @Provided RobotShuffleboard shuffleboard, @Provided PhysicsUtil physics, @Provided VisionUtil vision,
+                     VisionTarget target) {
+        this.flywheel = flywheel;
+        this.physics = physics;
+        this.vision = vision;
+        this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
+        RobotShuffleboardTab tab = shuffleboard.getTab("Auto Aim");
+        this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, tab);
+        addRequirements(hood, flywheel, turret);
+    }
+
+    @Override
+    public void execute() {
+        physics.setAimMode(PhysicsUtil.AimMode.VISION);
+        physics.setExtraDistance(extraDistance);
+        if (vision.getLLValue("tv") == 1) {
+            physics.calculateVelocities(false);
+            double ballVel = physics.getBallVel();
+            double hoodAngle = physics.getCalculatedHoodAngle();
+            autoAimUtil.setValues(physics, hoodAngle, ballVel, physics.getAngleToTarget(), false);
         }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        flywheel.setPower(0);
+        physics.setExtraDistance(0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

@@ -27,8 +27,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 
 public class VisionCommands {
-    private final VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator;
-    private final VisionAimTurretCreator visionAimTurretCreator;
     private final LimelightLedSetStateCreator limelightLedSetStateCreator;
     private final VisionAimCreator visionAimCreator;
     private final Provider<TrackerCorrectPosition> correctPositionProvider;
@@ -37,34 +35,22 @@ public class VisionCommands {
     private final CalcAimCreator calcAimCreator;
 
     @Inject
-    public VisionCommands(VisionAimHoodFlywheelCreator visionAimHoodFlywheelCreator,
-                          VisionAimTurretCreator visionAimTurretCreator,
-                          LimelightLedSetStateCreator limelightLedSetStateCreator,
+    public VisionCommands(LimelightLedSetStateCreator limelightLedSetStateCreator,
                           VisionAimCreator visionAimCreator,
                           Provider<TrackerCorrectPosition> correctPositionProvider,
                           EncoderAimCreator encoderAimCreator,
                           ToggleAutoAimCreator autoAimCreator,
                           CalcAimCreator calcAimCreater) {
-        this.visionAimHoodFlywheelCreator = visionAimHoodFlywheelCreator;
         this.calcAimCreator = calcAimCreater;
         this.visionAimCreator = visionAimCreator;
-        this.visionAimTurretCreator = visionAimTurretCreator;
         this.limelightLedSetStateCreator = limelightLedSetStateCreator;
         this.correctPositionProvider = correctPositionProvider;
         this.encoderAimCreator = encoderAimCreator;
         this.autoAimCreator = autoAimCreator;
     }
 
-    public VisionAimHoodFlywheel autoAimHood(double extraDistance) {
-        return visionAimHoodFlywheelCreator.create(extraDistance);
-    }
-
     public CalcAim calcAim(VisionTarget target) {
         return calcAimCreator.create(target);
-    }
-
-    public VisionAimTurret autoAimTurret(double extraDistance) {
-        return visionAimTurretCreator.create(extraDistance);
     }
 
     public VisionAim visionAim(VisionTarget target) {

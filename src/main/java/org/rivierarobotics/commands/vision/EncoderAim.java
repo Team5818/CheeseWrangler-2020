@@ -34,50 +34,30 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class EncoderAim extends CommandBase {
-    private final Hood hood;
     private final PhysicsUtil physics;
+    private final AutoAimUtil autoAimUtil;
     private final Flywheel flywheel;
-    private final Turret turret;
-    private final RobotShuffleboardTab tab;
     private final double extraDistance;
 
     public EncoderAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
                       @Provided RobotShuffleboard shuffleboard, @Provided PhysicsUtil physics,
                       VisionTarget target) {
-        this.hood = hood;
         this.flywheel = flywheel;
-        this.turret = turret;
         this.physics = physics;
         this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
-        this.tab = shuffleboard.getTab("Auto Aim");
+        RobotShuffleboardTab tab = shuffleboard.getTab("Auto Aim");
+        this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, tab);
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
-        this.physics.setAimMode(PhysicsUtil.AimMode.ENCODER);
-        this.physics.setExtraDistance(extraDistance);
+        physics.setAimMode(PhysicsUtil.AimMode.ENCODER);
+        physics.setExtraDistance(extraDistance);
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();
-        physics.getAngleToTarget();
-        if (hoodAngle > hood.getZeroedAngle(hood.getBackLimit())) {
-            tab.setEntry("Limit?:", "Hood Angle");
-            ballVel = physics.getBallVel(hood.getZeroedAngle(hood.getForwardLimit()));
-            hoodAngle = hood.getZeroedAngle(hood.getBackLimit());
-        } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
-            tab.setEntry("Limit?:", "Slow Ball Velocity");
-            ballVel = ShooterConstants.getShooterMinVelocity();
-        } else {
-            tab.setEntry("Limit?:", "None");
-        }
-        if (physics.isAutoAimEnabled()) {
-            turret.setAngle(physics.getAngleToTarget(), true);
-            flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
-            hood.setAngle(hoodAngle);
-        } else {
-            flywheel.setVelocity(0);
-        }
+        autoAimUtil.setValues(physics, hoodAngle, ballVel, physics.getAngleToTarget(), false);
     }
 
     @Override
