@@ -126,11 +126,11 @@ public class PhysicsUtil {
         double t = 0;
         double x = getX();
         double y = getY();
-        double vx = driveTrain.getXVelocity();
-        double vy = driveTrain.getYVelocity();
+        double vx = driveTrain.getYVelocity();
+        double vy = driveTrain.getXVelocity();
         double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2 * vy * y) * t + x * x + y * y);
         double velocityInDegrees = velocityInRads * (180 / Math.PI);
-        double velocityInTicksPer100ms = MathUtil.degreesToTicks(velocityInDegrees) / 10;
+        double velocityInTicksPer100ms = MathUtil.degreesToTicks(velocityInDegrees) / 10 - MathUtil.degreesToTicks(positionTracker.getGyroSpeed() / 10);
         tab.setEntry("Turret Velocity: ", velocityInTicksPer100ms);
         return velocityInTicksPer100ms;
     }
@@ -152,7 +152,7 @@ public class PhysicsUtil {
             if (Double.isNaN(tStraight)) {
                 tab.setEntry("Trajectory: ", "ARC");
             }
-            vXYZ = !Double.isNaN(t) ? new double[]{x / t - driveTrain.getYVelocity() * 10, y / t - driveTrain.getXVelocity() * 10, z / t + g * t} : tempXYZ;
+            vXYZ = !Double.isNaN(t) ? new double[]{x / t - driveTrain.getYVelocity(), y / t - driveTrain.getXVelocity(), z / t + g * t} : tempXYZ;
         } else {
             testTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;

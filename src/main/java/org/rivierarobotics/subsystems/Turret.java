@@ -82,7 +82,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getVelocity() {
-        return turretTalon.getSelectedSensorPosition();
+        return turretTalon.getSelectedSensorVelocity();
     }
 
     public double getAngle(boolean isAbsolute) {
@@ -130,7 +130,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         }
         initialTicks = MathUtil.limit(initialTicks, min, max);
         if (initialTicks == max || initialTicks == min) {
-            initialTicks = ticks;
+            initialTicks = getPositionTicks() - ZERO_TICKS < 0 ? ticks : max;
         }
         tab.setEntry("TFinalAngleTicks", initialTicks);
         logger.setpointChange(initialTicks);
@@ -140,8 +140,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     public void setVelocity(double ticksPer100ms) {
         logger.stateChange("Velocity Set", ticksPer100ms);
+        tab.setEntry("setVelTicks", ticksPer100ms);
         PIDMode.VELOCITY.enable(turretTalon);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
+        tab.setEntry("whatever", turretTalon.getClosedLoopTarget());
     }
 
     @Override
@@ -160,7 +162,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     private enum PIDMode {
         POSITION(new PIDConfig((1.5 * 1023 / 400), 0, 0, 0)),
-        VELOCITY(new PIDConfig((1.5 * 1023 / 400), 0, 0, 0));
+        VELOCITY(new PIDConfig(0.7 * 1023 / 400, 0, 1.5 * 1023 * 0.01 / 400, (1023.0 * 0.3) / 70));
 
         private final PIDConfig config;
         private static PIDMode current;

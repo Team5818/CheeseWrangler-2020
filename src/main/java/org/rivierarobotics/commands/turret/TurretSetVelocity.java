@@ -20,27 +20,32 @@
 
 package org.rivierarobotics.commands.turret;
 
-import javax.inject.Inject;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.PhysicsUtil;
+import org.rivierarobotics.util.ShooterConstants;
 
-public class TurretCommands {
-    private final TurretSetAngleCreator turretSetAngleCreator;
-    private final TurretSetVelocityCreator turretSetVelocityCreator;
+@GenerateCreator
+public class TurretSetVelocity extends CommandBase {
+    private final Turret turret;
+    private double vel;
 
-    @Inject
-    public TurretCommands(TurretSetAngleCreator turretSetAngleCreator, TurretSetVelocityCreator turretSetVelocityCreator) {
-        this.turretSetAngleCreator = turretSetAngleCreator;
-        this.turretSetVelocityCreator = turretSetVelocityCreator;
+    public TurretSetVelocity(@Provided Turret turret, double vel) {
+        this.turret = turret;
+        this.vel = vel;
+        addRequirements(turret);
     }
 
-    public TurretSetAngle setAbsoluteAngle(double angle) {
-        return turretSetAngleCreator.create(angle, true);
+    @Override
+    public void execute() {
+        turret.setVelocity(vel);
     }
 
-    public TurretSetAngle setRelativeAngle(double angle) {
-        return turretSetAngleCreator.create(angle, false);
-    }
-
-    public TurretSetVelocity setVelocity(double velocity) {
-        return turretSetVelocityCreator.create(velocity);
+    @Override
+    public void end(boolean interrupted) {
+        turret.setVelocity(0);
     }
 }

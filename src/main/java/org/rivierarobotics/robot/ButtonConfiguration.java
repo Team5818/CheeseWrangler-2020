@@ -21,6 +21,7 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
@@ -91,7 +92,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 8)
                 .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 9)
-                .toggleWhenPressed(cmds.vision().encoderAim(VisionTarget.INNER));
+                .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 10)
                 .toggleWhenPressed(cmds.vision().encoderAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
@@ -128,10 +129,8 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 7)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
         new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().shootNWedges(5));
+                .toggleWhenPressed(cmds.turret().setVelocity(70));
         new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().all5Shoot());
-        new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.camera().shuffleboardPause());
+                .toggleWhenPressed(cmds.turret().setVelocity(-70));
     }
 }

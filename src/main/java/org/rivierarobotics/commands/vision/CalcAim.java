@@ -23,13 +23,16 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
+import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class CalcAim extends CommandBase {
@@ -38,22 +41,27 @@ public class CalcAim extends CommandBase {
     private final Turret turret;
     private final RobotShuffleboardTab tab;
     private final PhysicsUtil physics;
+    private final DriveTrain driveTrain;
+    private double extraDistance;
 
     public CalcAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
                    @Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard,
-                   double extraDistance) {
+                   VisionTarget target, @Provided DriveTrain driveTrain) {
         this.hood = hood;
         this.flywheel = flywheel;
         this.turret = turret;
+        this.driveTrain = driveTrain;
         this.physics = physics;
-        physics.setExtraDistance(extraDistance);
-        physics.setAimMode(PhysicsUtil.AimMode.CALC);
+        this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
         this.tab = shuffleboard.getTab("Auto Aim");
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
+        physics.setExtraDistance(extraDistance);
+        physics.setAimMode(PhysicsUtil.AimMode.CALC);
+        physics.getTurretVelocity();
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();
@@ -68,7 +76,12 @@ public class CalcAim extends CommandBase {
             tab.setEntry("Limit?:", "None");
         }
         if (physics.isAutoAimEnabled()) {
-            turret.setVelocity(physics.getTurretVelocity());
+            if (MathUtil.isWithinTolerance(driveTrain.getYVelocity(), 0,  0.1) && MathUtil.isWithinTolerance(driveTrain.getXVelocity(), 0, 0.1)) {
+                turret.setAngle(physics.getAngleToTarget(), true);
+            } else {
+                turret.setVelocity(physics.getTurretVelocity());
+            }
+
             flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
             hood.setAngle(hoodAngle);
         } else {
