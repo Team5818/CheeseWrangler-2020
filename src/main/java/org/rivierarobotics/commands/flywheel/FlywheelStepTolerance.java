@@ -18,31 +18,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.turret;
+package org.rivierarobotics.commands.flywheel;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.Flywheel;
 
 @GenerateCreator
-public class TurretSetVelocity extends CommandBase {
-    private final Turret turret;
-    private final double vel;
+public class FlywheelStepTolerance extends InstantCommand {
+    private final Flywheel flywheel;
+    private final int amount;
 
-    public TurretSetVelocity(@Provided Turret turret, double vel) {
-        this.turret = turret;
-        this.vel = vel;
-        addRequirements(turret);
+    public FlywheelStepTolerance(@Provided Flywheel flywheel, int amount) {
+        this.flywheel = flywheel;
+        this.amount = amount;
     }
 
     @Override
     public void execute() {
-        turret.setVelocity(vel);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        turret.setVelocity(0);
+        flywheel.stepTolerance(amount);
     }
 }

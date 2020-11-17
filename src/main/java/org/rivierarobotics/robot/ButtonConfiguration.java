@@ -21,7 +21,6 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
@@ -100,12 +99,6 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(cmds.vision().toggleAutoAim());
 
-        // Toggles
-        new JoystickButton(coDriverButtons, 4)
-                .toggleWhenPressed(cmds.flywheel().setVelocity());
-        new JoystickButton(coDriverButtons, 1)
-                .toggleWhenPressed(cmds.ejector().setPower(1.0));
-
         // Camera servo
         new JoystickButton(driverButtons, 11)
                 .whenPressed(cmds.camera().toggleFlipImage());
@@ -119,18 +112,28 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.camera().setServo(CameraPosition.CLIMB)
                         .alongWith(cmds.camera().flipImage(CameraPosition.CLIMB)));
 
+        // Misc
+        new JoystickButton(coDriverButtons, 4)
+                .toggleWhenPressed(cmds.flywheel().setVelocity());
+        new JoystickButton(coDriverButtons, 1)
+                .whenPressed(cmds.drive().resetGyro());
+
         // Testing/dev
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
         new JoystickButton(driverButtons, 5)
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(-1));
+        new JoystickButton(driverButtons, 3)
+                .whenPressed(cmds.flywheel().stepTolerance(20));
+        new JoystickButton(driverButtons, 2)
+                .whenPressed(cmds.flywheel().stepTolerance(-20));
+        new JoystickButton(driverButtons, 4)
+                .toggleWhenPressed(cmds.turret().setVelocity(70));
+        new JoystickButton(driverButtons, 1)
+                .toggleWhenPressed(cmds.turret().setVelocity(-70));
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT));
         new JoystickButton(driverButtons, 7)
                 .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
-        new JoystickButton(driverButtons, 3)
-                .toggleWhenPressed(cmds.turret().setVelocity(70));
-        new JoystickButton(driverButtons, 2)
-                .toggleWhenPressed(cmds.turret().setVelocity(-70));
     }
 }

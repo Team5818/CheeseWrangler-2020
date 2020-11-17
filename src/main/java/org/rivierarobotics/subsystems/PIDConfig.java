@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+
 public class PIDConfig {
     private final double kP;
     private final double kI;
@@ -61,5 +63,12 @@ public class PIDConfig {
 
     public double getRange() {
         return pidRange;
+    }
+
+    public void applyTo(BaseTalon motor, int slotIdx) {
+        motor.config_kP(slotIdx, kP);
+        motor.config_kI(slotIdx, kI);
+        motor.config_kD(slotIdx, kD);
+        motor.config_kF(slotIdx, kF);
     }
 }

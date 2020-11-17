@@ -28,15 +28,18 @@ import javax.inject.Inject;
 public class FlywheelCommands {
     private final FlywheelSetPowerCreator flywheelSetPowerCreator;
     private final FlywheelSetVelocityCreator flywheelSetVelocityCreator;
+    private final FlywheelStepToleranceCreator flywheelStepToleranceCreator;
     private final ChangeSpeedCreator changeSpeedCreator;
 
     @Inject
     public FlywheelCommands(FlywheelSetPowerCreator flywheelSetPowerCreator,
                             FlywheelSetVelocityCreator flywheelSetVelocityCreator,
+                            FlywheelStepToleranceCreator flywheelStepToleranceCreator,
                             ChangeSpeedCreator changeSpeedCreator) {
         this.flywheelSetPowerCreator = flywheelSetPowerCreator;
-        this.changeSpeedCreator = changeSpeedCreator;
         this.flywheelSetVelocityCreator = flywheelSetVelocityCreator;
+        this.flywheelStepToleranceCreator = flywheelStepToleranceCreator;
+        this.changeSpeedCreator = changeSpeedCreator;
     }
 
     public FlywheelSetPower setPower(double pwr) {
@@ -49,6 +52,10 @@ public class FlywheelCommands {
 
     public FlywheelSetVelocity setVelocity(double vel) {
         return flywheelSetVelocityCreator.create(vel);
+    }
+
+    public FlywheelStepTolerance stepTolerance(int amount) {
+        return flywheelStepToleranceCreator.create(amount);
     }
 
     public ChangeSpeed changeAutoAimSpeed(double amount) {

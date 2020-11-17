@@ -18,31 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.turret;
+package org.rivierarobotics.commands.drive;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
-public class TurretSetVelocity extends CommandBase {
-    private final Turret turret;
-    private final double vel;
+public class GyroReset extends InstantCommand {
+    private final NavXGyro gyro;
 
-    public TurretSetVelocity(@Provided Turret turret, double vel) {
-        this.turret = turret;
-        this.vel = vel;
-        addRequirements(turret);
+    public GyroReset(@Provided NavXGyro gyro) {
+        this.gyro = gyro;
     }
 
     @Override
     public void execute() {
-        turret.setVelocity(vel);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        turret.setVelocity(0);
+        gyro.resetGyro();
     }
 }

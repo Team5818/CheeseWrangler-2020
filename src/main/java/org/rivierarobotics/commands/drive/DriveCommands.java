@@ -25,12 +25,15 @@ import javax.inject.Inject;
 public class DriveCommands {
     private final SpinInPlaceCreator spinInPlaceCreator;
     private final DriveDistanceCreator driveDistanceCreator;
+    private final GyroResetCreator gyroResetCreator;
 
     @Inject
     public DriveCommands(DriveDistanceCreator driveDistanceCreator,
-                         SpinInPlaceCreator spinInPlaceCreator) {
+                         SpinInPlaceCreator spinInPlaceCreator,
+                         GyroResetCreator gyroResetCreator) {
         this.driveDistanceCreator = driveDistanceCreator;
         this.spinInPlaceCreator = spinInPlaceCreator;
+        this.gyroResetCreator = gyroResetCreator;
     }
 
     public DriveDistance driveDistance(double finalDistance, double power) {
@@ -43,5 +46,9 @@ public class DriveCommands {
 
     public SpinInPlace rotateTo(double degreesHeading) {
         return spinInPlaceCreator.create(degreesHeading, true);
+    }
+
+    public GyroReset resetGyro() {
+        return gyroResetCreator.create();
     }
 }

@@ -27,7 +27,8 @@ public class TurretCommands {
     private final TurretSetVelocityCreator turretSetVelocityCreator;
 
     @Inject
-    public TurretCommands(TurretSetAngleCreator turretSetAngleCreator, TurretSetVelocityCreator turretSetVelocityCreator) {
+    public TurretCommands(TurretSetAngleCreator turretSetAngleCreator,
+                          TurretSetVelocityCreator turretSetVelocityCreator) {
         this.turretSetAngleCreator = turretSetAngleCreator;
         this.turretSetVelocityCreator = turretSetVelocityCreator;
     }

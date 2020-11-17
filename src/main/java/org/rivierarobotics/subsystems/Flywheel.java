@@ -34,10 +34,11 @@ import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
 public class Flywheel extends SubsystemBase implements RRSubsystem {
+    private static double targetVel = 0;
+    private static double tolerance = 70;
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
     private final RobotShuffleboardTab tab;
-    private static double targetVel = 0;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
@@ -63,8 +64,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         flywheelFalcon.set(ControlMode.PercentOutput, pwr);
     }
 
-    public boolean withinTolerance(double tolerance) {
+    public boolean withinTolerance() {
         return MathUtil.isWithinTolerance(getPositionTicks(), targetVel, tolerance);
+    }
+
+    public void stepTolerance(int amount) {
+        tab.setEntry("SetTolerance", tolerance);
+        tolerance += amount;
     }
 
     public void setVelocity(double vel) {
