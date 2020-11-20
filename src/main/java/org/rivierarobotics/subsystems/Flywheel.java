@@ -69,13 +69,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public void stepTolerance(int amount) {
-        tab.setEntry("SetTolerance", tolerance);
         tolerance += amount;
+        tab.setEntry("SetTolerance", tolerance);
     }
 
     public void setVelocity(double vel) {
         tab.setEntry("Flywheel Set Vel", vel);
-        Flywheel.targetVel = vel;
+        targetVel = vel;
         logger.setpointChange(vel);
         if (vel == 0) {
             flywheelFalcon.set(TalonFXControlMode.Velocity, 0.0);

@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.subsystems;
 
-
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
@@ -51,6 +50,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final NavXGyro gyro;
     private final VisionUtil vision;
     private final RobotShuffleboardTab tab;
+    private final MultiPID multiPID;
     private final MechLogger logger;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
@@ -60,10 +60,13 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.tab = shuffleboard.getTab("TurretHood");
         this.logger = Logging.getLogger(getClass());
 
+
         this.turretTalon = new WPI_TalonSRX(id);
+        this.multiPID = new MultiPID(turretTalon,
+                new PIDConfig((1.5 * 1023 / 400), 0, 0, 0),
+                new PIDConfig(0.7 * 1023 / 400, 0, 1.5 * 1023 * 0.01 / 400, (1023.0 * 0.3) / 70));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-                PIDMode.POSITION.config, 800, turretTalon);
-        PIDMode.VELOCITY.config.applyTo(turretTalon, 1);
+                multiPID.getConfig(MultiPID.Type.POSITION), 800, turretTalon);
         MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
@@ -110,7 +113,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     public void setPositionTicks(double positionTicks) {
         tab.setEntry("TurretSetPosTicks", positionTicks);
-        PIDMode.POSITION.enable(turretTalon);
+        multiPID.selectConfig(MultiPID.Type.POSITION);
         turretTalon.set(ControlMode.MotionMagic, positionTicks);
     }
 
@@ -135,14 +138,14 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         }
         tab.setEntry("TFinalAngleTicks", initialTicks);
         logger.setpointChange(initialTicks);
-        PIDMode.POSITION.enable(turretTalon);
+        multiPID.selectConfig(MultiPID.Type.POSITION);
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
     public void setVelocity(double ticksPer100ms) {
         logger.stateChange("Velocity Set", ticksPer100ms);
         tab.setEntry("setVelTicks", ticksPer100ms);
-        PIDMode.VELOCITY.enable(turretTalon);
+        multiPID.selectConfig(MultiPID.Type.VELOCITY);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
         tab.setEntry("whatever", turretTalon.getClosedLoopTarget());
     }
@@ -159,24 +162,5 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
-    }
-
-    private enum PIDMode {
-        POSITION(new PIDConfig((1.5 * 1023 / 400), 0, 0, 0)),
-        VELOCITY(new PIDConfig(0.7 * 1023 / 400, 0, 1.5 * 1023 * 0.01 / 400, (1023.0 * 0.3) / 70));
-
-        private final PIDConfig config;
-        private static PIDMode current;
-
-        PIDMode(PIDConfig config) {
-            this.config = config;
-        }
-
-        public void enable(BaseMotorController motor) {
-            if (this != current) {
-                motor.selectProfileSlot(ordinal(), 0);
-                current = this;
-            }
-        }
     }
 }

@@ -42,8 +42,9 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
-    private final MechLogger logger;
     private final RobotShuffleboardTab shuffleTab;
+    private final MultiPID multiPID;
+    private final MechLogger logger;
 
     public Hood(int motorId, Provider<HoodControl> command, RobotShuffleboard shuffleboard) {
         this.command = command;
@@ -51,8 +52,11 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         this.shuffleTab = shuffleboard.getTab("TurretHood");
 
         this.hoodTalon = new WPI_TalonSRX(motorId);
+        this.multiPID = new MultiPID(hoodTalon,
+                new PIDConfig((0.8 * 1023 / 300), 0, 0, 0),
+                new PIDConfig(0, 0, 0, 0));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-            new PIDConfig((0.8 * 1023 / 300), 0, 0, 0), 600, hoodTalon);
+                multiPID.getConfig(MultiPID.Type.POSITION), 600, hoodTalon);
         MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, hoodTalon);
         hoodTalon.setSensorPhase(true);
         hoodTalon.setInverted(true);
@@ -76,17 +80,12 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPower(double pwr) {
-        pwr = curvePower(pwr);
-        logger.powerChange(pwr);
-        hoodTalon.set(ControlMode.PercentOutput, pwr);
-    }
-
-    // Applies a bell curve power ramp for safety
-    private double curvePower(double pwr) {
         double range = FORWARD_LIMIT_TICKS - BACK_LIMIT_TICKS;
         double pos = CURVE_FACTOR - (pwr >= 0 ? CURVE_FACTOR / (range / Math.abs((FORWARD_LIMIT_TICKS - getPositionTicks()))) :
                 CURVE_FACTOR / (range / Math.abs((getPositionTicks() - BACK_LIMIT_TICKS))));
-        return Math.pow(Math.E, -pos * pos) * pwr;
+        pwr = Math.pow(Math.E, -pos * pos) * pwr;
+        logger.powerChange(pwr);
+        hoodTalon.set(ControlMode.PercentOutput, pwr);
     }
 
     public double getAngle() {
@@ -102,7 +101,14 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         shuffleTab.setEntry("setAngle", angle);
         shuffleTab.setEntry("setTicks", ticks);
         logger.setpointChange(ticks);
+        multiPID.selectConfig(MultiPID.Type.POSITION);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
+    }
+
+    public void setVelocity(double vel) {
+        shuffleTab.setEntry("setVel", vel);
+        multiPID.selectConfig(MultiPID.Type.VELOCITY);
+        hoodTalon.set(ControlMode.Velocity, vel);
     }
 
     @Override
