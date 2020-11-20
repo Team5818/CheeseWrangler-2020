@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.shooting;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -30,15 +31,15 @@ import org.rivierarobotics.util.ShooterConstants;
 @GenerateCreator
 public class ChangeSpeed extends InstantCommand {
     private final PhysicsUtil physics;
-    private final double velocity;
+    private final double amount;
 
     public ChangeSpeed(@Provided PhysicsUtil physics, double amount) {
         this.physics = physics;
-        this.velocity = amount + physics.getTargetVelocity();
+        this.amount = amount;
     }
 
     @Override
     public void execute() {
-        physics.setVelocity(MathUtil.limit(velocity, ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
+        physics.setVelocity(MathUtil.limit(physics.getTargetVelocity() + amount, ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
     }
 }

@@ -29,15 +29,10 @@ public class ShooterConstants {
     }
 
     public static double getShooterMinVelocity() {
-        return 9;
+        return 8;
     }
 
     public static double getShooterMaxVelocity() {
-        return 19;
-    }
-
-    public static double getMaxBallVelocity() {
-        //in m/s
         return 19;
     }
 

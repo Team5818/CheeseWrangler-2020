@@ -71,15 +71,15 @@ public class AutoAimUtil {
         } else {
             tab.setEntry("Limit?:", "None");
         }
-
+        tab.setEntry("bbvv", ballVel);
         if (physics.isAutoAimEnabled()) {
             flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
             hood.setAngle(hoodAngle);
             if (!useVelocity) {
                 turret.setAngle(turretAngle, true);
             } else {
-                if (driveTrain != null && MathUtil.isWithinTolerance(driveTrain.getYVelocity(), 0,  0.1) && MathUtil.isWithinTolerance(driveTrain.getXVelocity(), 0, 0.1)) {
-                    if (Timer.getFPGATimestamp() - start < 1) {
+                if (driveTrain != null && MathUtil.isWithinTolerance(driveTrain.getLeft().getVelocity(), 0,  0.1) && MathUtil.isWithinTolerance(driveTrain.getRight().getVelocity(), 0, 0.1)) {
+                    if (Timer.getFPGATimestamp() - start < 0.001) {
                         turret.setVelocity(physics.getTurretVelocity());
                     } else {
                         turret.setAngle(turretAngle, true);

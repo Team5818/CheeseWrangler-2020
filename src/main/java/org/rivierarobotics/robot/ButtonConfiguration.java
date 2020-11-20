@@ -68,11 +68,23 @@ public class ButtonConfiguration {
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
                         .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
                         cmds.camera().setServo(CameraPosition.BACK)));
+        new JoystickButton(driverLeft, 1)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
+                                cmds.camera().setServo(CameraPosition.FRONT)));
+        new JoystickButton(driverLeft, 2)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
+                                cmds.camera().setServo(CameraPosition.BACK)));
 
         // Shooting
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
+                .whileHeld(cmds.cheeseWheel().continuousShoot());
+        new JoystickButton(driverRight, 1)
+                .whenPressed(cmds.cheeseWheel().shootNWedges(1));
+        new JoystickButton(driverRight, 2)
                 .whileHeld(cmds.cheeseWheel().continuousShoot());
 
         // CheeseWheel manual cycles
