@@ -32,6 +32,7 @@ public class RobotShuffleboard {
     private static final int maxSendCtr = 50; //Maximum value changes per update
     private static final int updateInterval = 200; //Time between updates in ms
     private final Map<String, RobotShuffleboardTab> tabs;
+    private final Map<String, ShuffleboardTable> tables;
     private final List<BufferEntry> buffer;
     private int robotLoopCtr;
     private boolean paused;
@@ -39,6 +40,7 @@ public class RobotShuffleboard {
     @Inject
     public RobotShuffleboard() {
         this.tabs = new LinkedHashMap<>();
+        this.tables = new LinkedHashMap<>();
         this.buffer = new LinkedList<>();
         this.robotLoopCtr = 0;
         this.paused = false;
@@ -49,6 +51,17 @@ public class RobotShuffleboard {
             addTab(tabName);
         }
         return tabs.get(tabName);
+    }
+
+    public ShuffleboardTable getTable(String tableName, RobotShuffleboardTab tab) {
+        if(tables.get(tableName) == null) {
+            addTable(tableName, tab);
+        }
+        return tables.get(tableName);
+    }
+
+    public void addTable(String tableName, RobotShuffleboardTab tab) {
+        tables.put(tableName, new ShuffleboardTable(tableName, tab));
     }
 
     public void addTab(String... tabNames) {

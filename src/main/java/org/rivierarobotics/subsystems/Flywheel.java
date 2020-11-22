@@ -32,6 +32,7 @@ import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
+import org.rivierarobotics.util.ShooterConstants;
 
 public class Flywheel extends SubsystemBase implements RRSubsystem {
     private static double targetVel = 0;
@@ -56,6 +57,10 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     @Override
     public double getPositionTicks() {
         return flywheelFalcon.getSelectedSensorVelocity();
+    }
+
+    public double getBallVelocity() {
+        return ShooterConstants.ticksToVelocity(flywheelFalcon.getSelectedSensorPosition());
     }
 
     @Override

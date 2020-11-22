@@ -21,6 +21,7 @@
 package org.rivierarobotics.util;
 
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 
@@ -32,8 +33,8 @@ public class PhysicsUtil {
     private static final double g = 9.8 / 2;
     private final DriveTrain driveTrain;
     private final Hood hood;
-    private final VisionUtil vision;
     private final Turret turret;
+    private final Flywheel flywheel;
     private final RobotShuffleboardTab tab;
     private final RobotShuffleboardTab graphTab;
     private final NavXGyro gyro;
@@ -45,15 +46,15 @@ public class PhysicsUtil {
     private double[] vXYZ = new double[3];
 
     @Inject
-    public PhysicsUtil(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood,
+    public PhysicsUtil(DriveTrain dt, Turret turret, Hood hood,
                        RobotShuffleboard robotShuffleboard, PositionTracker positionTracker,
-                       NavXGyro gyro) {
+                       NavXGyro gyro, Flywheel flywheel) {
         this.turret = turret;
-        this.vision = vision;
         this.driveTrain = dt;
         this.hood = hood;
         this.gyro = gyro;
         this.positionTracker = positionTracker;
+        this.flywheel = flywheel;
         this.tab = robotShuffleboard.getTab("Auto Aim");
         this.graphTab = robotShuffleboard.getTab("Physics");
     }
@@ -115,7 +116,6 @@ public class PhysicsUtil {
     public double getHoodVel() {
         double currAng = hood.getAngle();
         double targetAng = getCalculatedHoodAngle();
-        double t = 1;
 
         double velocityInTicksPer100ms = MathUtil.degreesToTicks((targetAng - currAng) / (0.1)) / 10;
 
@@ -202,6 +202,10 @@ public class PhysicsUtil {
         graphTab.setEntry("vy", vXYZ[1]);
         graphTab.setEntry("vz", vXYZ[2]);
         graphTab.setEntry("g", g);
+
+        graphTab.setEntry("turretAngle", turret.getAngle(true));
+        graphTab.setEntry("hoodAngle", hood.getAngle());
+        graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
     }
 
     public double getTurretVelocity() {

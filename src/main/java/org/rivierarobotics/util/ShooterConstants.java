@@ -21,6 +21,9 @@
 package org.rivierarobotics.util;
 
 public class ShooterConstants {
+
+    private static final double VEL_CONVERSION = 1077.97;
+
     private ShooterConstants() {
     }
 
@@ -83,7 +86,11 @@ public class ShooterConstants {
     }
 
     public static double velocityToTicks(double vel) {
-        return (1077.97 * vel);
+        return (VEL_CONVERSION * vel);
+    }
+
+    public static double ticksToVelocity(double ticks) {
+        return (ticks / VEL_CONVERSION);
     }
 
     public static double getFieldLength() {

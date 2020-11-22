@@ -101,6 +101,10 @@ public class RobotShuffleboardTab {
         return entries.get(title);
     }
 
+    public Map<String, NetworkTableEntry> getEntries() {
+        return entries;
+    }
+
     public int getQueueLength() {
         return queue.size();
     }
