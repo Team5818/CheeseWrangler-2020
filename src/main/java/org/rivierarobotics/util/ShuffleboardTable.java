@@ -21,20 +21,26 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class ShuffleboardTable {
     private final LinkedHashMap<String, NetworkTableEntry> entries;
-    private final ShuffleboardTab tab;
     private final String tableName;
+    private final ShuffleboardLayout layout;
+    private final RSTOptions options;
 
-    public ShuffleboardTable(String tableName, RobotShuffleboardTab tab) {
+    public ShuffleboardTable(String tableName, RobotShuffleboardTab tab, RSTOptions options) {
         this.tableName = tableName;
-        this.tab = tab.getAPITab();
+        this.options = options;
+        this.layout = tab.getAPITab().getLayout(tableName, BuiltInLayouts.kList)
+                .withSize(options.getWidth(), options.getHeight())
+                .withPosition(options.getPosX(), options.getPosY())
+                .withProperties(Map.of("Label position", "HIDDEN"));
         this.entries = new LinkedHashMap<>();
     }
 
@@ -42,7 +48,7 @@ public class ShuffleboardTable {
         if (entries.containsKey(name)) {
             entries.get(name).setValue(value);
         } else {
-            entries.put(name, tab.add(tableName + "/" + name, value)
+            entries.put(name, layout.add(tableName + "/" + name, value)
                     .withWidget("Network Table Tree")
                     .getEntry());
         }
@@ -60,7 +66,7 @@ public class ShuffleboardTable {
     }
 
     public ShuffleboardTable copyToTab(RobotShuffleboardTab targetTab) {
-        ShuffleboardTable table = new ShuffleboardTable(tableName, targetTab).addEntries(entries.values());
+        ShuffleboardTable table = new ShuffleboardTable(tableName, targetTab, options).addEntries(entries.values());
         targetTab.addTable(table);
         return table;
     }

@@ -30,7 +30,6 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
-import org.rivierarobotics.robot.Robot;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -102,14 +101,22 @@ public class RobotShuffleboardTab {
     }
 
     public ShuffleboardTable getTable(String tableName) {
+        return getTable(tableName, RSTOptions.DEFAULT);
+    }
+
+    public ShuffleboardTable getTable(String tableName, RSTOptions options) {
         if (tables.get(tableName) == null) {
-            addTable(tableName);
+            addTable(tableName, options);
         }
         return tables.get(tableName);
     }
 
     public void addTable(String tableName) {
-        tables.put(tableName, new ShuffleboardTable(tableName, this));
+        addTable(tableName, RSTOptions.DEFAULT);
+    }
+
+    public void addTable(String tableName, RSTOptions options) {
+        tables.put(tableName, new ShuffleboardTable(tableName, this, options));
     }
 
     public void addTable(ShuffleboardTable table) {

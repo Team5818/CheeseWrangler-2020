@@ -37,20 +37,6 @@ public class RSTOptions {
         this.posY = posY;
     }
 
-    public RSTOptions(int primary, int secondary, boolean isPos) {
-        if (isPos) {
-            this.width = -1;
-            this.height = -1;
-            this.posX = primary;
-            this.posY = secondary;
-        } else {
-            this.width = primary;
-            this.height = secondary;
-            this.posX = -1;
-            this.posY = -1;
-        }
-    }
-
     public int getWidth() {
         return width;
     }

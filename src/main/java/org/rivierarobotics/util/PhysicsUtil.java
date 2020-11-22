@@ -203,7 +203,8 @@ public class PhysicsUtil {
         graphTab.setEntry("vz", vXYZ[2]);
         graphTab.setEntry("g", g);
 
-        graphTab.getTable("Auto Aim Stuff").addTabData(tab);
+        graphTab.getTable("Auto Aim Stuff",
+                new RSTOptions(3, 3, 0, 0)).addTabData(tab);
 
         graphTab.setEntry("turretAngle", turret.getAngle(true));
         graphTab.setEntry("hoodAngle", hood.getAngle());
