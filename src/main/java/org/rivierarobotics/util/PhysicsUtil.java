@@ -20,8 +20,6 @@
 
 package org.rivierarobotics.util;
 
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
@@ -33,7 +31,6 @@ import javax.inject.Singleton;
 public class PhysicsUtil {
     private static final double g = 9.8 / 2;
     private final DriveTrain driveTrain;
-    private double previousTime = 0;
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;

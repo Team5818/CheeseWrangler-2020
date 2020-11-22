@@ -21,28 +21,22 @@
 package org.rivierarobotics.commands.vision;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
-import org.rivierarobotics.util.VisionTarget;
 
 public class AutoAimUtil {
-
     private final Hood hood;
     private final Flywheel flywheel;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
     private final DriveTrain driveTrain;
     private double start = 0;
-
 
     public AutoAimUtil(Hood hood, Flywheel flywheel, Turret turret, RobotShuffleboardTab tab, DriveTrain driveTrain) {
         this.hood = hood;
@@ -78,7 +72,8 @@ public class AutoAimUtil {
             if (!useVelocity) {
                 turret.setAngle(turretAngle, true);
             } else {
-                if (driveTrain != null && MathUtil.isWithinTolerance(driveTrain.getLeft().getVelocity(), 0,  0.1) && MathUtil.isWithinTolerance(driveTrain.getRight().getVelocity(), 0, 0.1)) {
+                if (driveTrain != null && MathUtil.isWithinTolerance(driveTrain.getLeft().getVelocity(), 0,  0.1)
+                        && MathUtil.isWithinTolerance(driveTrain.getRight().getVelocity(), 0, 0.1)) {
                     if (Timer.getFPGATimestamp() - start < 0.001) {
                         turret.setVelocity(physics.getTurretVelocity());
                     } else {
@@ -93,5 +88,4 @@ public class AutoAimUtil {
             flywheel.setVelocity(0);
         }
     }
-
 }

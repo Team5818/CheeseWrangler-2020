@@ -20,11 +20,10 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.cscore.MjpegServer;
+import edu.wpi.cscore.VideoException;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.rivierarobotics.autonomous.Pose2dPath;
@@ -32,9 +31,11 @@ import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
+import org.rivierarobotics.util.RSTOptions;
 
 import java.util.Objects;
 
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot {
     private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
-    private Thread cameraThread;
+    private CameraFlip cameraThread;
 
     @Override
     public void robotInit() {
@@ -60,13 +61,20 @@ public class Robot extends TimedRobot {
         chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
-        SmartDashboard.putData(chooser);
-
 
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
             cameraThread.start();
+        }
+
+        try {
+            globalComponent.getShuffleboard().getTab("Driver")
+                    .setSendable(chooser, new RSTOptions(2, 1, 0, 4))
+                    .setCamera("Flipped", new RSTOptions(4, 4, 0, 0))
+                    .setCamera("limelight", new RSTOptions(4, 4, 4, 0));
+        } catch (VideoException ignored) {
+            // Padding for checkstyle
         }
         globalComponent.getNavXGyro().resetGyro();
     }
@@ -175,5 +183,10 @@ public class Robot extends TimedRobot {
             .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
             .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
             .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
+
+        shuffleboard.getTab("Driver")
+                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTOptions(1, 1, 2, 4))
+                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
+                .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
     }
 }

@@ -69,8 +69,12 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public void stepTolerance(int amount) {
-        tolerance += amount;
+        tolerance = Math.max(0, tolerance + amount);
         tab.setEntry("SetTolerance", tolerance);
+    }
+
+    public static double getTolerance() {
+        return tolerance;
     }
 
     public void setVelocity(double vel) {

@@ -55,9 +55,7 @@ public class EncoderAim extends CommandBase {
         physics.setAimMode(PhysicsUtil.AimMode.ENCODER);
         physics.setExtraDistance(extraDistance);
         physics.calculateVelocities(false);
-        double ballVel = physics.getBallVel();
-        double hoodAngle = physics.getCalculatedHoodAngle();
-        autoAimUtil.setValues(physics, hoodAngle, ballVel, physics.getAngleToTarget(), false);
+        autoAimUtil.setValues(physics, physics.getBallVel(), physics.getCalculatedHoodAngle(), physics.getAngleToTarget(), false);
     }
 
     @Override

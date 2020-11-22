@@ -20,6 +20,9 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.cscore.VideoException;
+import edu.wpi.cscore.VideoSource;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.Sendable;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -35,7 +38,7 @@ import java.util.Map;
 
 public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;
-    private String name;
+    private final String name;
     private final Map<String, NetworkTableEntry> entries;
     private final Map<String, QueueEntry<?>> queue;
 
@@ -52,12 +55,45 @@ public class RobotShuffleboardTab {
         }
     }
 
+    public RobotShuffleboardTab setCamera(String name) throws VideoException {
+        return setCamera(name, RSTOptions.DEFAULT);
+    }
+
+    public RobotShuffleboardTab setCamera(String name, RSTOptions options) throws VideoException {
+        tab.add(name, CameraServer.getInstance().getVideo(name).getSource())
+                .withSize(options.getWidth(), options.getHeight())
+                .withPosition(options.getPosX(), options.getPosY());
+        return this;
+    }
+
+    public RobotShuffleboardTab setVideoSource(VideoSource src) {
+        return setVideoSource(src, RSTOptions.DEFAULT);
+    }
+
+    public RobotShuffleboardTab setVideoSource(VideoSource src, RSTOptions options) {
+        tab.add(src.getName(), src)
+                .withSize(options.getWidth(), options.getHeight())
+                .withPosition(options.getPosX(), options.getPosY());
+        return this;
+    }
+
     public RobotShuffleboardTab setSendable(Sendable sendable) {
-        return setEntry(SendableRegistry.getName(sendable), sendable);
+        return setSendable(sendable, RSTOptions.DEFAULT);
+    }
+
+    public RobotShuffleboardTab setSendable(Sendable sendable, RSTOptions options) {
+        tab.add(SendableRegistry.getName(sendable), sendable)
+                .withSize(options.getWidth(), options.getHeight())
+                .withPosition(options.getPosX(), options.getPosY());
+        return this;
     }
 
     public <T> RobotShuffleboardTab setEntry(String title, T value) {
-        queue.put(title, new QueueEntry<>(title, value));
+        return setEntry(title, value, RSTOptions.DEFAULT);
+    }
+
+    public <T> RobotShuffleboardTab setEntry(String title, T value, RSTOptions options) {
+        queue.put(title, new QueueEntry<>(title, value, options));
         return this;
     }
 
@@ -80,7 +116,10 @@ public class RobotShuffleboardTab {
             QueueEntry<?> queueEntry = queueValues.get(i);
             String title = queueEntry.getTitle();
             if (!entries.containsKey(title)) {
-                entries.put(title, tab.add(title, queueEntry.getValue()).getEntry());
+                RSTOptions opts = queueEntry.getOptions();
+                entries.put(title, tab.add(title, queueEntry.getValue())
+                        .withSize(opts.getWidth(), opts.getHeight())
+                        .withPosition(opts.getPosX(), opts.getPosY()).getEntry());
             } else {
                 entries.get(title).forceSetValue(queueEntry.getValue());
             }
@@ -91,10 +130,12 @@ public class RobotShuffleboardTab {
     private static class QueueEntry<T> {
         private final String title;
         private T value;
+        private final RSTOptions options;
 
-        public QueueEntry(String title, T value) {
+        public QueueEntry(String title, T value, RSTOptions options) {
             this.title = title;
             this.value = value;
+            this.options = options;
         }
 
         public String getTitle() {
@@ -107,6 +148,10 @@ public class RobotShuffleboardTab {
 
         public void setValue(T value) {
             this.value = value;
+        }
+
+        public RSTOptions getOptions() {
+            return options;
         }
     }
 }

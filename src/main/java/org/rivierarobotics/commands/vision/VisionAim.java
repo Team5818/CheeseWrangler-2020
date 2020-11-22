@@ -48,8 +48,7 @@ public class VisionAim extends CommandBase {
         this.physics = physics;
         this.vision = vision;
         this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
-        RobotShuffleboardTab tab = shuffleboard.getTab("Auto Aim");
-        this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, tab);
+        this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, shuffleboard.getTab("Auto Aim"));
         addRequirements(hood, flywheel, turret);
     }
 

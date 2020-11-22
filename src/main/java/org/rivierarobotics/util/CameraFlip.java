@@ -28,12 +28,16 @@ import org.opencv.core.Mat;
 
 public class CameraFlip extends Thread {
     public static boolean DO_FLIP = false;
+    private final CvSink cvSink;
+    private final CvSource outputStream;
+
+    public CameraFlip() {
+        this.cvSink = CameraServer.getInstance().getVideo("USB Camera 0");
+        this.outputStream = CameraServer.getInstance().putVideo("Flipped", 320, 240);
+    }
 
     @Override
     public void run() {
-        CvSink cvSink = CameraServer.getInstance().getVideo("USB Camera 0");
-        CvSource outputStream = CameraServer.getInstance().putVideo("Flipped", 320, 240);
-
         Mat source = new Mat();
         Mat output = new Mat();
 
