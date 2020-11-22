@@ -41,12 +41,14 @@ public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;
     private final String name;
     private final Map<String, NetworkTableEntry> entries;
+    private final Map<String, ShuffleboardTable> tables;
     private final Map<String, QueueEntry<?>> queue;
 
     public RobotShuffleboardTab(String name) {
         this.tab = Shuffleboard.getTab(name);
         this.name = name;
         this.entries = new LinkedHashMap<>();
+        this.tables = new LinkedHashMap<>();
         this.queue = new LinkedHashMap<>();
 
         for (ShuffleboardComponent<?> comp : tab.getComponents()) {
@@ -61,10 +63,7 @@ public class RobotShuffleboardTab {
     }
 
     public RobotShuffleboardTab setCamera(String name, RSTOptions options) throws VideoException {
-        tab.add(name, CameraServer.getInstance().getVideo(name).getSource())
-                .withSize(options.getWidth(), options.getHeight())
-                .withPosition(options.getPosX(), options.getPosY());
-        return this;
+        return setVideoSource(CameraServer.getInstance().getVideo(name).getSource(), options);
     }
 
     public RobotShuffleboardTab setVideoSource(VideoSource src) {
@@ -72,9 +71,7 @@ public class RobotShuffleboardTab {
     }
 
     public RobotShuffleboardTab setVideoSource(VideoSource src, RSTOptions options) {
-        tab.add(src.getName(), src)
-                .withSize(options.getWidth(), options.getHeight())
-                .withPosition(options.getPosX(), options.getPosY());
+        options.applyToComplex(tab.add(src.getName(), src));
         return this;
     }
 
@@ -83,9 +80,7 @@ public class RobotShuffleboardTab {
     }
 
     public RobotShuffleboardTab setSendable(Sendable sendable, RSTOptions options) {
-        tab.add(SendableRegistry.getName(sendable), sendable)
-                .withSize(options.getWidth(), options.getHeight())
-                .withPosition(options.getPosX(), options.getPosY());
+        options.applyToComplex(tab.add(SendableRegistry.getName(sendable), sendable));
         return this;
     }
 
@@ -106,8 +101,19 @@ public class RobotShuffleboardTab {
         return entries;
     }
 
-    public ShuffleboardTable getTable(String title) {
-        return RobotShuffleboard.getTable(title, this);
+    public ShuffleboardTable getTable(String tableName) {
+        if (tables.get(tableName) == null) {
+            addTable(tableName);
+        }
+        return tables.get(tableName);
+    }
+
+    public void addTable(String tableName) {
+        tables.put(tableName, new ShuffleboardTable(tableName, this));
+    }
+
+    public void addTable(ShuffleboardTable table) {
+        tables.put(table.getName(), table);
     }
 
     public int getQueueLength() {
@@ -118,17 +124,19 @@ public class RobotShuffleboardTab {
         return name;
     }
 
+    public ShuffleboardTab getAPITab() {
+        return tab;
+    }
+
     public void update(int minIdx, int maxIdx) {
         List<QueueEntry<?>> queueValues = new LinkedList<>(queue.values());
-        maxIdx = Math.min(maxIdx, queueValues.size());
+        maxIdx = Math.min(maxIdx, queueValues.size() - 1);
         for (int i = minIdx; i < maxIdx; i++) {
             QueueEntry<?> queueEntry = queueValues.get(i);
             String title = queueEntry.getTitle();
             if (!entries.containsKey(title)) {
-                RSTOptions opts = queueEntry.getOptions();
-                entries.put(title, tab.add(title, queueEntry.getValue())
-                        .withSize(opts.getWidth(), opts.getHeight())
-                        .withPosition(opts.getPosX(), opts.getPosY()).getEntry());
+                entries.put(title, queueEntry.getOptions()
+                        .applyToSimple(tab.add(title, queueEntry.getValue())).getEntry());
             } else {
                 entries.get(title).forceSetValue(queueEntry.getValue());
             }

@@ -20,6 +20,9 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.shuffleboard.ComplexWidget;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+
 public class RSTOptions {
     public static final RSTOptions DEFAULT = new RSTOptions(-1, -1, -1, -1);
     private final int width;
@@ -62,5 +65,15 @@ public class RSTOptions {
 
     public int getPosY() {
         return posY;
+    }
+
+    public SimpleWidget applyToSimple(SimpleWidget sWidget) {
+        sWidget.withSize(width, height).withPosition(posX, posY);
+        return sWidget;
+    }
+
+    public ComplexWidget applyToComplex(ComplexWidget cWidget) {
+        cWidget.withSize(width, height).withPosition(posX, posY);
+        return cWidget;
     }
 }
