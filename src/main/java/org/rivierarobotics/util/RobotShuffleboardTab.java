@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
+import org.rivierarobotics.robot.Robot;
 
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -103,6 +104,10 @@ public class RobotShuffleboardTab {
 
     public Map<String, NetworkTableEntry> getEntries() {
         return entries;
+    }
+
+    public ShuffleboardTable getTable(String title) {
+        return RobotShuffleboard.getTable(title, this);
     }
 
     public int getQueueLength() {
