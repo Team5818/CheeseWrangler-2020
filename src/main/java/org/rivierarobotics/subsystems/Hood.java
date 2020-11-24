@@ -57,6 +57,8 @@ public class Hood extends SubsystemBase implements RRSubsystem {
                 new PIDConfig(0, 0, 0, 0));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 600, hoodTalon);
+        multiPID.getConfig(MultiPID.Type.VELOCITY).applyTo(hoodTalon, 1);
+        multiPID.getConfig(MultiPID.Type.POSITION).applyTo(hoodTalon, 0);
         MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, hoodTalon);
         hoodTalon.setSensorPhase(true);
         hoodTalon.setInverted(true);

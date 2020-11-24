@@ -49,7 +49,6 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private CameraFlip cameraThread;
-    private double [] robotPosition = new double[]{0,0};
 
     @Override
     public void robotInit() {
@@ -67,9 +66,6 @@ public class Robot extends TimedRobot {
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
 
-        Shuffleboard.getTab("Pathweaver").addNumber("PositionGraphX", this::getRobotX).withWidget("Graph");
-        Shuffleboard.getTab("Pathweaver").addNumber("PositionGraphY", this::getRobotY).withWidget("Graph");
-
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
@@ -85,14 +81,6 @@ public class Robot extends TimedRobot {
             // Padding for checkstyle
         }
         globalComponent.getNavXGyro().resetGyro();
-    }
-
-    public double getRobotX() {
-        return globalComponent.getPositionTracker().getPosition()[1];
-    }
-
-    public double getRobotY() {
-        return globalComponent.getPositionTracker().getPosition()[0];
     }
 
     @Override

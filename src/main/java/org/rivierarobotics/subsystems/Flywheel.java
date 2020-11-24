@@ -60,7 +60,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public double getBallVelocity() {
-        return ShooterConstants.ticksToVelocity(flywheelFalcon.getSelectedSensorPosition());
+        return ShooterConstants.ticksToVelocity(flywheelFalcon.getSelectedSensorVelocity());
     }
 
     @Override

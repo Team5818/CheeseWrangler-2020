@@ -21,6 +21,7 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class MultiPID {
     private final BaseTalon motor;
@@ -49,6 +50,7 @@ public class MultiPID {
     }
 
     public void selectConfig(int idx) {
+        SmartDashboard.putNumber("idx", idx);
         if (currentIdx != idx) {
             motor.selectProfileSlot(idx, 0);
             currentIdx = idx;
