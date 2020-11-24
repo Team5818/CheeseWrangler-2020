@@ -102,7 +102,7 @@ public class DriveTrain extends SubsystemBase {
     }
 
     public void resetOdometry() {
-        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(gyro.getYaw()));
+        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(-gyro.getYaw()));
         left.resetEncoder();
         right.resetEncoder();
     }

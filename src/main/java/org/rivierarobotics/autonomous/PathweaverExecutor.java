@@ -46,13 +46,13 @@ import java.util.stream.Collectors;
 
 @GenerateCreator
 public class PathweaverExecutor extends CommandBase {
-    private static final double MAX_VEL = 2.0; // Maximum velocity (in m/s)
-    private static final double MAX_ACCEL = 1.0; // Maximum acceleration (in m/s)
-    private static final double MAX_DRAW_VOLTAGE = 11.0; // Maximum motor draw voltage (< robot)
+    private static final double MAX_VEL = 2.5; // Maximum velocity (in m/s)
+    private static final double MAX_ACCEL = 0.75; // Maximum acceleration (in m/s)
+    private static final double MAX_DRAW_VOLTAGE = 6.0; // Maximum motor draw voltage (< robot)
     // Specifies ks, kv, and ka constants - found via robot characterization
     //TODO do robot-characterization for MOTOR_FF and tune voltage PID
-    private static final SimpleMotorFeedforward MOTOR_FF = new SimpleMotorFeedforward(0.776, 1.89, 0.194);
-    private static final PIDConfig PID_CONFIG = new PIDConfig(0.05, 0, 0);
+    private static final SimpleMotorFeedforward MOTOR_FF = new SimpleMotorFeedforward(0.713, 2.3, 0.6);
+    private static final PIDConfig PID_CONFIG = new PIDConfig(0.002, 0, 0);
     private static final Twist2d ADD_180_FLIP = new Twist2d(0, 0, Math.toRadians(180));
 
     private final DriveTrain driveTrain;
@@ -91,8 +91,7 @@ public class PathweaverExecutor extends CommandBase {
                 .setKinematics(driveTrain.getKinematics())
                 .addConstraint(new DifferentialDriveVoltageConstraint(
                     MOTOR_FF, driveTrain.getKinematics(), MAX_DRAW_VOLTAGE)));
-        out = out.relativeTo(pathTraj.getInitialPose());
-        return isAbsolute ? out : out.relativeTo(driveTrain.getPose());
+        return out.relativeTo(pathTraj.getInitialPose());
     }
 
     private RamseteCommand createCommand() {
@@ -123,6 +122,7 @@ public class PathweaverExecutor extends CommandBase {
     @Override
     public void initialize() {
         tab.setEntry("TotalTime", trajectory.getTotalTimeSeconds());
+        driveTrain.resetOdometry();
         command.schedule();
     }
 

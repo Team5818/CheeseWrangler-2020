@@ -167,7 +167,8 @@ public class Robot extends TimedRobot {
         shuffleboard.getTab("Auto Aim")
                 .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
 
-        shuffleboard.getTab("Auto Aim").getTable("Random").addTabData(shuffleboard.getTab("Cheese Wheel"));
+        shuffleboard.getTab("Auto Aim").getTable("Random")
+                .addTabData(shuffleboard.getTab("Cheese Wheel"));
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())

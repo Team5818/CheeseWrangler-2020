@@ -66,8 +66,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
                 new PIDConfig(0.7 * 1023 / 400, 0, 1.5 * 1023 * 0.01 / 400, (1023.0 * 0.3) / 70));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 800, turretTalon);
-        multiPID.getConfig(MultiPID.Type.VELOCITY).applyTo(turretTalon, 1);
-        multiPID.getConfig(MultiPID.Type.POSITION).applyTo(turretTalon, 0);
+        multiPID.applyAllConfigs();
         MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);

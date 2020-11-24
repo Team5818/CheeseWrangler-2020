@@ -21,7 +21,6 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
 
 public class PIDConfig {
     private final double kP;
