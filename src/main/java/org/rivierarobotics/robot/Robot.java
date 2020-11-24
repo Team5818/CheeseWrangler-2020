@@ -23,6 +23,9 @@ package org.rivierarobotics.robot;
 import edu.wpi.cscore.VideoException;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -37,6 +40,7 @@ import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RSTOptions;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class Robot extends TimedRobot {
@@ -45,6 +49,7 @@ public class Robot extends TimedRobot {
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
     private CameraFlip cameraThread;
+    private double [] robotPosition = new double[]{0,0};
 
     @Override
     public void robotInit() {
@@ -62,6 +67,9 @@ public class Robot extends TimedRobot {
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
 
+        Shuffleboard.getTab("Pathweaver").addNumber("PositionGraphX", this::getRobotX).withWidget("Graph");
+        Shuffleboard.getTab("Pathweaver").addNumber("PositionGraphY", this::getRobotY).withWidget("Graph");
+
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
@@ -77,6 +85,14 @@ public class Robot extends TimedRobot {
             // Padding for checkstyle
         }
         globalComponent.getNavXGyro().resetGyro();
+    }
+
+    public double getRobotX() {
+        return globalComponent.getPositionTracker().getPosition()[1];
+    }
+
+    public double getRobotY() {
+        return globalComponent.getPositionTracker().getPosition()[0];
     }
 
     @Override
@@ -162,6 +178,8 @@ public class Robot extends TimedRobot {
 
         shuffleboard.getTab("Auto Aim")
                 .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
+
+        shuffleboard.getTab("Auto Aim").getTable("Random").addTabData(shuffleboard.getTab("Cheese Wheel"));
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
