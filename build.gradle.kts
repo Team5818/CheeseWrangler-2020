@@ -19,7 +19,7 @@ afterEvaluate {
     deploy {
         artifactsKt {
             fileTreeArtifact("frcPathsDeploy") {
-                files.set(fileTree(pathWeaver.destinationDirectory))
+                files.set(fileTree(pathWeaver.srcDirs))
                 targets.add("roboRio")
                 directory = "/home/lvuser/deploy/paths"
             }
