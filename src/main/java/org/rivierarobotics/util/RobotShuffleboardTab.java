@@ -41,14 +41,12 @@ public class RobotShuffleboardTab {
     private final String name;
     private final Map<String, NetworkTableEntry> entries;
     private final Map<String, ShuffleboardTable> tables;
-    private final Map<String, QueueEntry<?>> queue;
 
     public RobotShuffleboardTab(String name) {
         this.tab = Shuffleboard.getTab(name);
         this.name = name;
         this.entries = new LinkedHashMap<>();
         this.tables = new LinkedHashMap<>();
-        this.queue = new LinkedHashMap<>();
 
         for (ShuffleboardComponent<?> comp : tab.getComponents()) {
             if (comp instanceof SimpleWidget) {
@@ -88,7 +86,11 @@ public class RobotShuffleboardTab {
     }
 
     public <T> RobotShuffleboardTab setEntry(String title, T value, RSTOptions options) {
-        queue.put(title, new QueueEntry<>(title, value, options));
+        if (!entries.containsKey(title)) {
+            entries.put(title, options.applyToSimple(tab.add(title, value)).getEntry());
+        } else {
+            entries.get(title).forceSetValue(value);
+        }
         return this;
     }
 
@@ -123,59 +125,11 @@ public class RobotShuffleboardTab {
         tables.put(table.getName(), table);
     }
 
-    public int getQueueLength() {
-        return queue.size();
-    }
-
     public String getName() {
         return name;
     }
 
     public ShuffleboardTab getAPITab() {
         return tab;
-    }
-
-    public void update(int minIdx, int maxIdx) {
-        List<QueueEntry<?>> queueValues = new LinkedList<>(queue.values());
-        maxIdx = Math.min(maxIdx, queueValues.size() - 1);
-        for (int i = minIdx; i < maxIdx; i++) {
-            QueueEntry<?> queueEntry = queueValues.get(i);
-            String title = queueEntry.getTitle();
-            if (!entries.containsKey(title)) {
-                entries.put(title, queueEntry.getOptions()
-                        .applyToSimple(tab.add(title, queueEntry.getValue())).getEntry());
-            } else {
-                entries.get(title).forceSetValue(queueEntry.getValue());
-            }
-            queue.remove(title);
-        }
-    }
-
-    private static class QueueEntry<T> {
-        private final String title;
-        private T value;
-        private final RSTOptions options;
-
-        public QueueEntry(String title, T value, RSTOptions options) {
-            this.title = title;
-            this.value = value;
-            this.options = options;
-        }
-
-        public String getTitle() {
-            return title;
-        }
-
-        public T getValue() {
-            return value;
-        }
-
-        public void setValue(T value) {
-            this.value = value;
-        }
-
-        public RSTOptions getOptions() {
-            return options;
-        }
     }
 }

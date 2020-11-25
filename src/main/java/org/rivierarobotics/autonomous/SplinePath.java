@@ -20,31 +20,56 @@
 
 package org.rivierarobotics.autonomous;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class SplinePath {
+    private static final double MAX_POSSIBLE_VEL = 4.5;
     private final List<SplinePoint> path;
+    private final Map<Double, Output> precomputedSpline;
     private final double maxAllowedVel;
+    private Output extrema;
+    private double maxY;
     private double estimatedSeconds;
 
     public SplinePath(List<SplinePoint> path, double maxVel) {
         this.path = path;
         this.maxAllowedVel = maxVel;
+        this.precomputedSpline = new LinkedHashMap<>();
+        this.extrema = new Output(0, 0, 0, 0);
         if (maxVel != -1) {
             estimatedSeconds = timeAtMaxVel(maxVel);
         }
+        double maxX = 0;
+        double maxY = 0;
+        for (SplinePoint p : path) {
+            if (Math.abs(p.getX()) > maxX) {
+                maxX = Math.abs(p.getX());
+            }
+            if (Math.abs(p.getY()) > maxY) {
+                maxY = Math.abs(p.getY());
+            }
+        }
+        extrema.setPosX(maxX);
+        extrema.setPosY(maxY);
     }
 
     public SplinePath(List<SplinePoint> path) {
-        this(path, -1);
+        this(path, MAX_POSSIBLE_VEL);
     }
 
-    public double[] calculate(double t) {
+    public List<SplinePoint> getPathPoints() {
+        return path;
+    }
+
+    public Output calculate(double t) {
         return calculate(path.get((int) t), path.get((int) Math.ceil(t)), t);
     }
 
-    public double[] calculate(SplinePoint p0, SplinePoint p1, double t) {
+    public Output calculate(SplinePoint p0, SplinePoint p1, double t) {
         //TODO replace Math.pow() with t * t * t...
+        t %= 1;
         double[] h = {
             1 - 10 * Math.pow(t, 3) + 15 * Math.pow(t, 4) - 6 * Math.pow(t, 5),
             t - 6 * Math.pow(t, 3) + 8 * Math.pow(t, 4) - 3 * Math.pow(t, 5),
@@ -74,35 +99,103 @@ public class SplinePath {
         //TODO add acceleration control (h[[2], h[3])
         double[] ax = new double[2];
         double[] ay = new double[2];
-        return new double[] {
-            hd[0] * p0.getX() + hd[1] * tanVX[0] + hd[2] * ax[0] + hd[3] * ax[1] + hd[4] * tanVX[1] + hd[5] * p1.getX(), //velX
-            hd[0] * p0.getY() + hd[1] * tanVY[0] + hd[2] * ay[0] + hd[3] * ay[1] + hd[4] * tanVY[1] + hd[5] * p1.getY(), //velY
-            h[0] * p0.getX() + h[1] * tanVX[0] + h[2] * ax[0] + h[3] * ax[1] + h[4] * tanVX[1] + h[5] * p1.getX(), //posX
-            h[0] * p0.getY() + h[1] * tanVY[0] + h[2] * ay[0] + h[3] * ay[1] + h[4] * tanVY[1] + h[5] * p1.getY(), //posY
-        };
+        return new Output(
+            h[0] * p0.getX() + h[1] * tanVX[0] + h[2] * ax[0] + h[3] * ax[1] + h[4] * tanVX[1] + h[5] * p1.getX(),
+            h[0] * p0.getY() + h[1] * tanVY[0] + h[2] * ay[0] + h[3] * ay[1] + h[4] * tanVY[1] + h[5] * p1.getY(),
+            hd[0] * p0.getX() + hd[1] * tanVX[0] + hd[2] * ax[0] + hd[3] * ax[1] + hd[4] * tanVX[1] + hd[5] * p1.getX(),
+            hd[0] * p0.getY() + hd[1] * tanVY[0] + hd[2] * ay[0] + hd[3] * ay[1] + hd[4] * tanVY[1] + hd[5] * p1.getY()
+        );
     }
 
-    public double[] getLRVel(double[] velXY) {
+    public double[] getLRVel(double velX, double velY) {
         //TODO XY-->LR
-        return velXY;
+        return new double[2];
     }
 
     public double timeAtMaxVel(double maxVel) {
-        double[] out;
+        double[] tempVel;
+        Output tempOut;
         double maxObservedVel = 0;
-        for (int t = 0; t < path.size(); t += 0.02) {
-            out = getLRVel(calculate(t));
-            if (out[0] > maxObservedVel) {
-                maxObservedVel = out[0];
+        for (double t = 0; t < path.size() - 1; t += 0.02) {
+            tempOut = calculate(t);
+            precomputedSpline.put(t, tempOut);
+            tempVel = getLRVel(tempOut.getVelX(), tempOut.getVelY());
+            if (tempVel[0] > maxObservedVel) {
+                maxObservedVel = tempVel[0];
             }
-            if (out[1] > maxObservedVel) {
-                maxObservedVel = out[1];
+            if (tempVel[1] > maxObservedVel) {
+                maxObservedVel = tempVel[1];
             }
         }
         return maxObservedVel / maxVel;
     }
 
+    public Output getExtrema() {
+        return extrema;
+    }
+
+    public Map<Double, Output> getPrecomputedSpline() {
+        return precomputedSpline;
+    }
+
     public double getEstimatedSeconds() {
         return estimatedSeconds;
+    }
+
+    public static class Output {
+        private double posX;
+        private double posY;
+        private double velX;
+        private double velY;
+
+        public Output(double posX, double posY, double velX, double velY) {
+
+            this.posX = posX;
+            this.posY = posY;
+            this.velX = velX;
+            this.velY = velY;
+        }
+
+        public void setPosX(double posX) {
+            this.posX = posX;
+        }
+
+        public void setPosY(double posY) {
+            this.posY = posY;
+        }
+
+        public void setVelX(double velX) {
+            this.velX = velX;
+        }
+
+        public void setVelY(double velY) {
+            this.velY = velY;
+        }
+
+        public double getPosX() {
+            return posX;
+        }
+
+        public double getPosY() {
+            return posY;
+        }
+
+        public double getVelX() {
+            return velX;
+        }
+
+        public double getVelY() {
+            return velY;
+        }
+
+        @Override
+        public String toString() {
+            return "Output{" +
+                    "posX=" + posX +
+                    ", posY=" + posY +
+                    ", velX=" + velX +
+                    ", velY=" + velY +
+                    '}';
+        }
     }
 }

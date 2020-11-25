@@ -86,7 +86,6 @@ public class Robot extends TimedRobot {
     @Override
     public void robotPeriodic() {
         displayShuffleboard();
-        globalComponent.getShuffleboard().update();
         if (isEnabled()) {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();

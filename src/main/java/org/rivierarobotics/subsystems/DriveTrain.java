@@ -39,7 +39,6 @@ public class DriveTrain extends SubsystemBase {
     private final DriveTrainSide left;
     private final DriveTrainSide right;
     private final NavXGyro gyro;
-    private final DifferentialDriveKinematics kinematics;
     private final DifferentialDriveOdometry odometry;
 
     @Inject
@@ -49,7 +48,6 @@ public class DriveTrain extends SubsystemBase {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
-        this.kinematics = new DifferentialDriveKinematics(TRACKWIDTH);
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }
@@ -91,10 +89,6 @@ public class DriveTrain extends SubsystemBase {
 
     public DriveTrainSide getRight() {
         return right;
-    }
-
-    public DifferentialDriveKinematics getKinematics() {
-        return kinematics;
     }
 
     public Pose2d getPose() {

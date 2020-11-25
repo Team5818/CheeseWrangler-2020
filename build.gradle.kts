@@ -27,6 +27,12 @@ afterEvaluate {
     }
 }
 
+tasks.register<Copy>("copyPathTracerLocal") {
+    from("PathWeaver/Paths")
+    into("$buildDir/pathWeaver/main")
+}
+tasks.getByName("compilePathWeaver").finalizedBy(tasks.getByName("copyPathTracerLocal"))
+
 tasks.register("windowsLaunchSim") {
     doLast {
         project.exec{

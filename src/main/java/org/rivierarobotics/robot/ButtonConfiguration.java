@@ -144,8 +144,8 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 1)
                 .toggleWhenPressed(cmds.turret().setVelocity(-70));
         new JoystickButton(driverButtons, 9)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE));
         new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT, 1));
     }
 }
