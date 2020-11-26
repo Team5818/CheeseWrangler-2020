@@ -56,6 +56,8 @@ public class Robot extends TimedRobot {
         globalComponent.robotInit();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
 
+
+
         chooser = new SendableChooser<>();
         chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
         chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
@@ -114,6 +116,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
+        commandComponent.auto().pathtracer(Pose2dPath.FLEX_TAPE).schedule();
         globalComponent.getNavXGyro().resetGyro();
         commandComponent.flywheel().setPower(0).schedule();
         globalComponent.getButtonConfiguration().initTeleop();

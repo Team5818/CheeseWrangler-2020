@@ -23,7 +23,9 @@ package org.rivierarobotics.autonomous;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.drive.Vector2d;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -43,10 +45,11 @@ import java.util.Arrays;
 
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
-    private static final int WIDTH = 640;
-    private static final int HEIGHT = 480;
+    private static final int WIDTH = 300;
+    private static final int HEIGHT = 300;
     private static final double BORDER_WIDTH = 10;
     private static final double BUFFER_SECONDS = 0.5;
+    private static final int ARROW_DENSITY = 60;
     private static final String PATH_TRACER = "PathTracer";
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
@@ -58,6 +61,7 @@ public class PathTracerExecutor extends CommandBase {
     private double t;
     private double scale;
     private int thickness;
+    private int loopRun = 0;
 
     public PathTracerExecutor(@Provided DriveTrain driveTrain, @Provided DriveCommands driveCommands,
                               @Provided NavXGyro gyro, @Provided RobotShuffleboard shuffleboard, SplinePath path) {
@@ -74,12 +78,12 @@ public class PathTracerExecutor extends CommandBase {
     }
 
     private void initGraph() {
-        double mWidth = path.getExtrema().getPosX() + (2 * BORDER_WIDTH);
-        double mHeight = path.getExtrema().getPosY() + (2 * BORDER_WIDTH);
+        double mWidth = path.getExtrema().getPosX() + BORDER_WIDTH;
+        double mHeight = path.getExtrema().getPosY() + BORDER_WIDTH;
         scale = Math.max(WIDTH / mWidth, HEIGHT / mHeight);
-        thickness = (int) (scale / 4);
+        thickness = (int) (scale *  (0.1));
 
-        graphPublish = CameraServer.getInstance().putVideo(PATH_TRACER, WIDTH, HEIGHT);
+        graphPublish = CameraServer.getInstance().putVideo(PATH_TRACER, (int) mWidth, (int) mHeight);
         boolean makeWidget = true;
         for (ShuffleboardComponent<?> comp : tab.getAPITab().getComponents()) {
             if (comp.getTitle().equals(PATH_TRACER)) {
@@ -92,17 +96,19 @@ public class PathTracerExecutor extends CommandBase {
         }
 
         mat = new Mat(WIDTH, HEIGHT, CvType.CV_8UC3, new Scalar(255, 255, 255));
-        for (SplinePath.Output out : path.getPrecomputedSpline()) {
-            drawGraphPoint(out, fromAWT(Color.ORANGE), fromAWT(Color.CYAN));
+        for(int i = 0; i < path.getPrecomputedSpline().size(); i++) {
+            drawGraphPoint(path.getPrecomputedSpline().get(i), fromAWT(Color.ORANGE), fromAWT(Color.CYAN), i);
+            graphPublish.putFrame(mat);
         }
-        graphPublish.putFrame(mat);
     }
 
-    private void drawGraphPoint(SplinePath.Output out, Scalar posColor, Scalar velColor) {
+    private void drawGraphPoint(SplinePath.Output out, Scalar posColor, Scalar velColor, int index) {
         Point posBounds = new Point(((int) (out.getPosX() * scale)) + (WIDTH / 2.0), ((int) (out.getPosY() * scale)) + (HEIGHT / 2.0));
-        Imgproc.circle(mat, posBounds, thickness, posColor, thickness);
-        Point velBounds = new Point(((int) (out.getVelX() * scale)) + (WIDTH / 2.0), ((int) (out.getVelY() * scale)) + (HEIGHT / 2.0));
-        Imgproc.circle(mat, velBounds, thickness, velColor, thickness);
+        if(index % ARROW_DENSITY == 0) {
+            Point velBounds = new Point((int) (posBounds.x + out.getVelX() * 20) ,(int) (posBounds.y + out.getVelY() * 20));
+            Imgproc.arrowedLine(mat, posBounds, velBounds, velColor, thickness);
+        }
+        Imgproc.circle(mat, posBounds, thickness, posColor, -1);
     }
 
     @Override
@@ -122,7 +128,8 @@ public class PathTracerExecutor extends CommandBase {
     public void execute() {
         if (t < path.getTotalTime()) {
             SplinePath.Output calc = path.calculate(t);
-            drawGraphPoint(calc, fromAWT(Color.RED), fromAWT(Color.BLUE));
+            drawGraphPoint(calc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun);
+            loopRun++;
             graphPublish.putFrame(mat);
             tab.setEntry("calc", calc.toString());
             tab.setEntry("currTime", t);
@@ -135,6 +142,7 @@ public class PathTracerExecutor extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         SplinePoint endPt = path.getPathPoints().get(path.getPathPoints().size() - 1);
+        loopRun = 0;
         driveCommands.rotateTo(endPt.isPrecomputedTan() ? Math.acos(endPt.getTanVX()) : endPt.getHeading()).schedule();
     }
 
