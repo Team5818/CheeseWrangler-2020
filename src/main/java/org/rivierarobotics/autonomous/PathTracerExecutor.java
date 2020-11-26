@@ -22,7 +22,6 @@ package org.rivierarobotics.autonomous;
 
 import edu.wpi.cscore.CvSource;
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
@@ -35,11 +34,12 @@ import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.awt.Color;
-import java.util.Arrays;
+import java.util.Map;
 
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
@@ -53,6 +53,8 @@ public class PathTracerExecutor extends CommandBase {
     private final NavXGyro gyro;
     private final RobotShuffleboardTab tab;
     private final SplinePath path;
+    private final boolean absPos;
+    private final boolean absHeading;
     private Mat mat;
     private CvSource graphPublish;
     private double t;
@@ -60,12 +62,15 @@ public class PathTracerExecutor extends CommandBase {
     private int thickness;
 
     public PathTracerExecutor(@Provided DriveTrain driveTrain, @Provided DriveCommands driveCommands,
-                              @Provided NavXGyro gyro, @Provided RobotShuffleboard shuffleboard, SplinePath path) {
+                              @Provided NavXGyro gyro, @Provided RobotShuffleboard shuffleboard,
+                              SplinePath path, boolean absPos, boolean absHeading) {
         this.driveTrain = driveTrain;
         this.driveCommands = driveCommands;
         this.gyro = gyro;
         this.tab = shuffleboard.getTab(PATH_TRACER);
         this.path = path;
+        this.absPos = absPos;
+        this.absHeading = absHeading;
         addRequirements(driveTrain);
     }
 
@@ -74,9 +79,8 @@ public class PathTracerExecutor extends CommandBase {
     }
 
     private void initGraph() {
-        double mWidth = path.getExtrema().getPosX() + (2 * BORDER_WIDTH);
-        double mHeight = path.getExtrema().getPosY() + (2 * BORDER_WIDTH);
-        scale = Math.max(WIDTH / mWidth, HEIGHT / mHeight);
+        //TODO fix graph scaling
+        scale = Math.min(WIDTH / (2 * path.getExtrema().getA()), HEIGHT / (2 * path.getExtrema().getB()));
         thickness = (int) (scale / 4);
 
         graphPublish = CameraServer.getInstance().putVideo(PATH_TRACER, WIDTH, HEIGHT);
@@ -88,20 +92,20 @@ public class PathTracerExecutor extends CommandBase {
             }
         }
         if (makeWidget) {
-            tab.setVideoSource(graphPublish);
+            tab.getAPITab().add(PATH_TRACER, graphPublish).withProperties(Map.of("Crosshair color", "Black"));
         }
 
         mat = new Mat(WIDTH, HEIGHT, CvType.CV_8UC3, new Scalar(255, 255, 255));
-        for (SplinePath.Output out : path.getPrecomputedSpline()) {
+        for (SPOutput out : path.getPrecomputedSpline()) {
             drawGraphPoint(out, fromAWT(Color.ORANGE), fromAWT(Color.CYAN));
         }
         graphPublish.putFrame(mat);
     }
 
-    private void drawGraphPoint(SplinePath.Output out, Scalar posColor, Scalar velColor) {
-        Point posBounds = new Point(((int) (out.getPosX() * scale)) + (WIDTH / 2.0), ((int) (out.getPosY() * scale)) + (HEIGHT / 2.0));
+    private void drawGraphPoint(SPOutput out, Scalar posColor, Scalar velColor) {
+        Point posBounds = new Point(((int) (out.getPosX() * scale)) + (WIDTH / 2.0), -((int) (out.getPosY() * scale)) + (HEIGHT / 2.0));
         Imgproc.circle(mat, posBounds, thickness, posColor, thickness);
-        Point velBounds = new Point(((int) (out.getVelX() * scale)) + (WIDTH / 2.0), ((int) (out.getVelY() * scale)) + (HEIGHT / 2.0));
+        Point velBounds = new Point(((int) (out.getVelX() * scale)) + (WIDTH / 2.0), -((int) (out.getVelY() * scale)) + (HEIGHT / 2.0));
         Imgproc.circle(mat, velBounds, thickness, velColor, thickness);
     }
 
@@ -109,33 +113,43 @@ public class PathTracerExecutor extends CommandBase {
     public void initialize() {
         t = 0;
         initGraph();
-        System.out.println(Arrays.toString(path.getSections().keySet().toArray(new Double[0])));
+        if (absPos) {
+            path.getPathPoints().add(0, new SplinePoint(driveTrain.getPose()));
+            path.recalculatePath();
+        } else if (absHeading) {
+            rotateToPointHeading(path.getPathPoints().get(0));
+        }
         tab.setEntry("totalTime", path.getTotalTime());
         tab.setEntry("scale", scale);
     }
 
-    public double[] getLRVel(double velX, double velY) {
+    public Pair<Double> getLRVel(double velX, double velY) {
         return path.getLRVel(velX, velY, Math.toRadians(gyro.getYaw()));
+    }
+
+    public void rotateToPointHeading(SplinePoint pt) {
+        driveCommands.rotateTo(pt.isPrecomputedTan() ? Math.acos(pt.getTanVX()) : pt.getHeading()).schedule();
     }
 
     @Override
     public void execute() {
         if (t < path.getTotalTime()) {
-            SplinePath.Output calc = path.calculate(t);
+            SPOutput calc = path.calculate(t);
             drawGraphPoint(calc, fromAWT(Color.RED), fromAWT(Color.BLUE));
             graphPublish.putFrame(mat);
             tab.setEntry("calc", calc.toString());
             tab.setEntry("currTime", t);
-            double[] wheelSpeeds = getLRVel(calc.getVelX(), calc.getVelY());
-            driveTrain.setVelocity(wheelSpeeds[0], wheelSpeeds[1]);
+            Pair<Double> wheelSpeeds = getLRVel(calc.getVelX(), calc.getVelY());
+            tab.setEntry("vL", wheelSpeeds.getA());
+            tab.setEntry("vR", wheelSpeeds.getB());
+            driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
         }
         t += 0.0025; //time scale
     }
 
     @Override
     public void end(boolean interrupted) {
-        SplinePoint endPt = path.getPathPoints().get(path.getPathPoints().size() - 1);
-        driveCommands.rotateTo(endPt.isPrecomputedTan() ? Math.acos(endPt.getTanVX()) : endPt.getHeading()).schedule();
+        rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
     }
 
     @Override

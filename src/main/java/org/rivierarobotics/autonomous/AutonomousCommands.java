@@ -51,16 +51,24 @@ public class AutonomousCommands {
         this.trenchRunCreator = trenchRunCreator;
     }
 
-    public PathTracerExecutor pathtracer(SplinePath path) {
-        return pathTracerExecutorCreator.create(path);
+    public PathTracerExecutor pathtracer(SplinePath path, boolean absPos, boolean absHeading) {
+        return pathTracerExecutorCreator.create(path, absPos, absHeading);
     }
 
     public PathTracerExecutor pathtracer(Pose2dPath path) {
-        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline()));
+        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline()), false, false);
     }
 
-    public PathTracerExecutor pathtracer(Pose2dPath path, double maxVel) {
-        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), maxVel));
+    public PathTracerExecutor pathtracer(Pose2dPath path, boolean absPos, boolean absHeading) {
+        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline()), absPos, absHeading);
+    }
+
+    public PathTracerExecutor pathtracer(Pose2dPath path, double maxVel, double maxAccel) {
+        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), maxVel, maxAccel), false, false);
+    }
+
+    public PathTracerExecutor pathtracer(Pose2dPath path, double maxVel, double maxAccel, boolean absPos, boolean absHeading) {
+        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), maxVel, maxAccel), absPos, absHeading);
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {

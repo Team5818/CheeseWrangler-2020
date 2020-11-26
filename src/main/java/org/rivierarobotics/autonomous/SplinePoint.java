@@ -20,6 +20,8 @@
 
 package org.rivierarobotics.autonomous;
 
+import edu.wpi.first.wpilibj.geometry.Pose2d;
+
 public class SplinePoint {
     private final double x;
     private final double y;
@@ -41,6 +43,10 @@ public class SplinePoint {
         this.y = y;
         this.headingRadians = Math.toRadians(headingDegrees);
         this.precomputedTan = false;
+    }
+
+    public SplinePoint(Pose2d pose) {
+        this(pose.getTranslation().getX(), pose.getTranslation().getY(), pose.getRotation().getDegrees());
     }
 
     public double getX() {

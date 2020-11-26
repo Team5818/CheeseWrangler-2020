@@ -21,6 +21,7 @@
 package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.Pair;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -30,21 +31,23 @@ import java.util.Map;
 
 public class SplinePath {
     private static final double MAX_POSSIBLE_VEL = 4.5; // m/s
+    private static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
     private static final double RIO_LOOP_TIME_MS = 0.02;
     private final List<SplinePoint> points;
     private final double maxVel;
-    private final List<Output> precomputed;
+    private final double maxAccel;
+    private final List<SPOutput> precomputed;
     private final HashMap<Double, Section> sections;
-    private final Output extrema;
+    private Pair<Double> extrema;
     private double totalTime;
 
-    public SplinePath(List<SplinePoint> points, double maxVel) {
+    public SplinePath(List<SplinePoint> points, double maxVel, double maxAccel) {
         this.points = points;
         this.maxVel = Math.min(maxVel, MAX_POSSIBLE_VEL);
+        this.maxAccel = Math.min(maxAccel, MAX_POSSIBLE_ACCEL);
         this.precomputed = new LinkedList<>();
         this.sections = new LinkedHashMap<>();
 
-        this.extrema = new Output(0, 0, 0, 0);
         double maxX = 0;
         double maxY = 0;
         for (SplinePoint p : points) {
@@ -55,29 +58,31 @@ public class SplinePath {
                 maxY = Math.abs(p.getY());
             }
         }
-        extrema.setPosX(maxX);
-        extrema.setPosY(maxY);
+        this.extrema = new Pair<>(maxX, maxY);
+        recalculatePath();
+    }
 
+    public SplinePath(List<SplinePoint> points) {
+        this(points, MAX_POSSIBLE_VEL, MAX_POSSIBLE_ACCEL);
+    }
+
+    public void recalculatePath() {
+        totalTime = 0;
+        sections.clear();
+        precomputed.clear();
         Section sc;
         double scTime;
         for (int i = 1; i < points.size(); i++) {
             sc = new Section(points.get(i - 1), points.get(i));
-            scTime = timeAtOptVel(sc, maxVel, true);
+            scTime = timeAtLimited(sc, true);
             sc.setTime(scTime);
+            sc.setAccel(calculate(sc, 0, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
             sections.put(totalTime, sc);
             totalTime += scTime;
         }
     }
 
-    public SplinePath(List<SplinePoint> points) {
-        this(points, MAX_POSSIBLE_VEL);
-    }
-
-    public List<SplinePoint> getPathPoints() {
-        return points;
-    }
-
-    public Output calculate(double t) {
+    public SPOutput calculate(double t) {
         double prev = 0;
         for (double d : sections.keySet()) {
             if (d > t) {
@@ -87,79 +92,106 @@ public class SplinePath {
             }
         }
         Section curr = sections.get(prev);
-        return calculate(curr, (t - prev) / curr.time);
+        return calculate(curr, (t - prev) / curr.time, true);
     }
 
-    public Output calculate(Section section, double t) {
-        //TODO replace Math.pow() with t * t * t...
+    public SPOutput calculate(Section section, double t, boolean timeCorrected) {
+        double[] td = {
+            1, t, t * t, t * t * t, t * t * t * t, t * t * t * t * t
+        };
         double[] h = {
-            1 - 10 * Math.pow(t, 3) + 15 * Math.pow(t, 4) - 6 * Math.pow(t, 5),
-            t - 6 * Math.pow(t, 3) + 8 * Math.pow(t, 4) - 3 * Math.pow(t, 5),
-            0.5 * Math.pow(t, 2) - 1.5 * Math.pow(t, 3) + 1.5 * Math.pow(t, 4) - 0.5 * Math.pow(t, 5),
-            0.5 * Math.pow(t, 3) - Math.pow(t, 4) + 0.5 * Math.pow(t, 5),
-            -4 * Math.pow(t, 3) + 7 * Math.pow(t, 4) - 3 * Math.pow(t, 5),
-            10 * Math.pow(t, 3) - 15 * Math.pow(t, 4) + 6 * Math.pow(t, 5)
+            1 - 10 * td[3] + 15 * td[4] - 6 * td[5],
+            t - 6 * td[3] + 8 * td[4] - 3 * td[5],
+            0.5 * td[2] - 1.5 * td[3] + 1.5 * td[4] - 0.5 * td[5],
+            0.5 * td[3] - td[4] + 0.5 * td[5],
+            -4 * td[3] + 7 * td[4] - 3 * td[5],
+            10 * td[3] - 15 * td[4] + 6 * td[5]
         };
         double[] hd = {
-            -30 * Math.pow(t, 4) + 60 * Math.pow(t, 3) - 30 * Math.pow(t, 2),
-            -15 * Math.pow(t, 4) + 32 * Math.pow(t, 3) - 18 * Math.pow(t, 2) + 1,
-            -2.5 * Math.pow(t, 4) + 6 * Math.pow(t, 3) - 4.5 * Math.pow(t, 2) + t,
-            2.5 * Math.pow(t, 4) - 4 * Math.pow(t, 3) + 1.5 * Math.pow(t, 2),
-            -15 * Math.pow(t, 4) + 28 * Math.pow(t, 3) - 12 * Math.pow(t, 2),
-            30 * Math.pow(t, 4) - 60 * Math.pow(t, 3) + 30 * Math.pow(t, 2)
+            -30 * td[4] + 60 * td[3] - 30 * td[2],
+            -15 * td[4] + 32 * td[3] - 18 * td[2] + 1,
+            -2.5 * td[4] + 6 * td[3] - 4.5 * td[2] + t,
+            2.5 * td[4] - 4 * td[3] + 1.5 * td[2],
+            -15 * td[4] + 28 * td[3] - 12 * td[2],
+            30 * td[4] - 60 * td[3] + 30 * td[2]
+        };
+        double[] hdd = {
+            -120 * td[3] + 180 * td[2] - 60 * t,
+            -60 * td[3] + 96 * td[2] - 36 * t,
+            -10 * td[3] + 18 * td[2] - 9 * t + 1,
+            10 * td[3] - 12 * td[2] + 3 * t,
+            -60 * td[3] + 84 * td[2] - 24 * t,
+            120 * td[3] - 180 * td[2] + 60 * t
         };
 
-        //TODO add acceleration control (h[[2], h[3])
-        double[] ax = new double[2];
-        double[] ay = new double[2];
-        return new Output(
-            h[0] * section.p0.getX() + h[1] * section.tanVX[0] + h[2] * ax[0] + h[3] * ax[1] + h[4] * section.tanVX[1] + h[5] * section.p1.getX(),
-            h[0] * section.p0.getY() + h[1] * section.tanVY[0] + h[2] * ay[0] + h[3] * ay[1] + h[4] * section.tanVY[1] + h[5] * section.p1.getY(),
-            hd[0] * section.p0.getX() + hd[1] * section.tanVX[0] + hd[2] * ax[0] + hd[3] * ax[1] + hd[4] * section.tanVX[1] + hd[5] * section.p1.getX(),
-            hd[0] * section.p0.getY() + hd[1] * section.tanVY[0] + hd[2] * ay[0] + hd[3] * ay[1] + hd[4] * section.tanVY[1] + hd[5] * section.p1.getY()
+        double time = timeCorrected ? section.time : 1;
+        return new SPOutput(
+            h[0] * section.p0.getX() + h[1] * section.tanVX[0] + h[2] * section.accelX[0] + h[3] * section.accelX[1] + h[4] * section.tanVX[1] + h[5] * section.p1.getX(),
+            h[0] * section.p0.getY() + h[1] * section.tanVY[0] + h[2] * section.accelY[0] + h[3] * section.accelY[1] + h[4] * section.tanVY[1] + h[5] * section.p1.getY(),
+            (hd[0] * section.p0.getX() + hd[1] * section.tanVX[0] + hd[2] * section.accelX[0] + hd[3] * section.accelX[1] + hd[4] * section.tanVX[1] + hd[5] * section.p1.getX()) / time,
+            (hd[0] * section.p0.getY() + hd[1] * section.tanVY[0] + hd[2] * section.accelY[0] + hd[3] * section.accelY[1] + hd[4] * section.tanVY[1] + hd[5] * section.p1.getY()) / time,
+            (hdd[0] * section.p0.getX() + hdd[1] * section.tanVX[0] + hdd[2] * section.accelX[0] + hdd[3] * section.accelX[1] + hdd[4] * section.tanVX[1] + hdd[5] * section.p1.getX()) / time,
+            (hdd[0] * section.p0.getY() + hdd[1] * section.tanVY[0] + hdd[2] * section.accelY[0] + hdd[3] * section.accelY[1] + hdd[4] * section.tanVY[1] + hdd[5] * section.p1.getY()) / time
         );
     }
 
     // Assumes the robot is moving with the correct trajectory
-    public double[] getLRVel(Output calc) {
+    public Pair<Double> getLRVel(SPOutput calc) {
         return getLRVel(calc.getVelX(), calc.getVelY(), Math.atan2(calc.getPosX(), calc.getPosY()));
     }
 
-    public double[] getLRVel(double velX, double velY, double angle) {
+    public Pair<Double> getLRVel(double velX, double velY, double angle) {
         double rate = Math.atan2(velX, velY);
         double vxProc = velX * Math.cos(angle) + velY * Math.sin(angle);
-        return new double[] {
+        return new Pair<>(
             vxProc - DriveTrain.getTrackwidth() / 2 * rate,
             vxProc + DriveTrain.getTrackwidth() / 2 * rate
-        };
+        );
     }
 
-    public double timeAtOptVel(Section section, double maxVel, boolean addPrecomputed) {
-        double[] tempVel;
-        Output tempOut;
+    public double timeAtLimited(Section section, boolean addPrecomputed) {
+        Pair<Double> tempVel;
+        Pair<Double> tempAccel;
+        SPOutput tempOut;
         double maxObservedVel = 0;
+        double maxObservedAccel = 0;
         for (double t = 0; t < 1; t += RIO_LOOP_TIME_MS) {
-            tempOut = calculate(section, t);
+            tempOut = calculate(section, t, false);
             if (addPrecomputed) {
                 precomputed.add(tempOut);
             }
+
             tempVel = getLRVel(tempOut);
-            if (Math.abs(tempVel[0]) > maxObservedVel) {
-                maxObservedVel = Math.abs(tempVel[0]);
+            if (Math.abs(tempVel.getA()) > maxObservedVel) {
+                maxObservedVel = Math.abs(tempVel.getA());
             }
-            if (Math.abs(tempVel[1]) > maxObservedVel) {
-                maxObservedVel = Math.abs(tempVel[1]);
+            if (Math.abs(tempVel.getB()) > maxObservedVel) {
+                maxObservedVel = Math.abs(tempVel.getB());
+            }
+
+            // Just use accel/vel instead of vel/pos (?)
+            tempAccel = getLRVel(tempOut.getAccelX(), tempOut.getAccelY(),
+                    Math.atan2(tempOut.getVelX(), tempOut.getVelY()));
+            if (Math.abs(tempAccel.getA()) > maxObservedAccel) {
+                maxObservedAccel = Math.abs(tempAccel.getA());
+            }
+            if (Math.abs(tempAccel.getB()) > maxObservedAccel) {
+                maxObservedAccel = Math.abs(tempAccel.getB());
             }
         }
-        return maxObservedVel / maxVel;
+        return ((maxObservedVel / maxVel) + (maxObservedAccel / maxAccel)) / 2;
     }
 
-    public Output getExtrema() {
+    public Pair<Double> getExtrema() {
         return extrema;
     }
 
-    public List<Output> getPrecomputedSpline() {
+    public List<SPOutput> getPrecomputedSpline() {
         return precomputed;
+    }
+
+    public List<SplinePoint> getPathPoints() {
+        return points;
     }
 
     public Map<Double, Section> getSections() {
@@ -180,6 +212,8 @@ public class SplinePath {
         private final double dist;
         private final double[] tanVX;
         private final double[] tanVY;
+        private double[] accelX;
+        private double[] accelY;
         private double time;
 
         public Section(SplinePoint p0, SplinePoint p1) {
@@ -194,62 +228,23 @@ public class SplinePath {
                 p0.isPrecomputedTan() ? p0.getTanVY() : Math.sin(p0.getHeading()) * dist,
                 p1.isPrecomputedTan() ? p1.getTanVY() : Math.sin(p1.getHeading()) * dist
             };
+            this.accelX = new double[2];
+            this.accelY = new double[2];
         }
 
         public void setTime(double time) {
             this.time = time;
         }
-    }
 
-    public static class Output {
-        private double posX;
-        private double posY;
-        private double velX;
-        private double velY;
-
-        public Output(double posX, double posY, double velX, double velY) {
-            this.posX = posX;
-            this.posY = posY;
-            this.velX = velX;
-            this.velY = velY;
-        }
-
-        public void setPosX(double posX) {
-            this.posX = posX;
-        }
-
-        public void setPosY(double posY) {
-            this.posY = posY;
-        }
-
-        public void setVelX(double velX) {
-            this.velX = velX;
-        }
-
-        public void setVelY(double velY) {
-            this.velY = velY;
-        }
-
-        public double getPosX() {
-            return posX;
-        }
-
-        public double getPosY() {
-            return posY;
-        }
-
-        public double getVelX() {
-            return velX;
-        }
-
-        public double getVelY() {
-            return velY;
-        }
-
-        @Override
-        public String toString() {
-            return "Output{" + "posX=" + posX + ", posY=" + posY
-                    + ", velX=" + velX + ", velY=" + velY + '}';
+        public void setAccel(SPOutput start, SPOutput end) {
+            this.accelX = new double[] {
+                start.getAccelX(),
+                end.getAccelX()
+            };
+            this.accelY = new double[] {
+                start.getAccelY(),
+                end.getAccelY()
+            };
         }
     }
 }
