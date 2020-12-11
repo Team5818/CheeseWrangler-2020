@@ -194,6 +194,10 @@ public class SplinePath {
         return points;
     }
 
+    public void addPathPoint(int idx, SplinePoint point) {
+        points.add(idx, point);
+    }
+
     public Map<Double, Section> getSections() {
         return sections;
     }

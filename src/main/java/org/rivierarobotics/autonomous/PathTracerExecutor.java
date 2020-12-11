@@ -120,7 +120,7 @@ public class PathTracerExecutor extends CommandBase {
         t = 0;
         initGraph();
         if (absPos) {
-            path.getPathPoints().add(0, new SplinePoint(driveTrain.getPose()));
+            path.addPathPoint(0, new SplinePoint(driveTrain.getPose()));
             path.recalculatePath();
         } else if (absHeading) {
             rotateToPointHeading(path.getPathPoints().get(0));
