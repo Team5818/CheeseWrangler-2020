@@ -30,7 +30,7 @@ public class IntegrationUtil {
     private final int n;
 
     /**
-     * Numerical integration helper class using Gauss-Legendre Quadrature
+     * Numerical integration helper class using Gauss-Legendre Quadrature.
      * @param n The number of points to evaluate with
      */
     public IntegrationUtil(int n) {
@@ -85,7 +85,7 @@ public class IntegrationUtil {
     }
 
     /**
-     * Integrates a function numerically using Gauss-Legendre Quadrature
+     * Integrates a function numerically using Gauss-Legendre Quadrature.
      * @param fn The function to be integrated
      * @param a Lower bound
      * @param b Upper bound

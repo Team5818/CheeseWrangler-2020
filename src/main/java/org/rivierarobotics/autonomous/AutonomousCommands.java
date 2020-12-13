@@ -64,11 +64,11 @@ public class AutonomousCommands {
     }
 
     public PathTracerExecutor pathtracer(Pose2dPath path, double maxVel, double maxAccel) {
-        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), maxVel, maxAccel), false, false);
+        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), true, maxVel, maxAccel), false, false);
     }
 
     public PathTracerExecutor pathtracer(Pose2dPath path, double maxVel, double maxAccel, boolean absPos, boolean absHeading) {
-        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), maxVel, maxAccel), absPos, absHeading);
+        return pathTracerExecutorCreator.create(new SplinePath(path.getSpline(), true, maxVel, maxAccel), absPos, absHeading);
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {

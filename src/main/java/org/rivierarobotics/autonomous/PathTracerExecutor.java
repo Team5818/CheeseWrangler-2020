@@ -100,7 +100,7 @@ public class PathTracerExecutor extends CommandBase {
         }
 
         mat = new Mat(WIDTH, HEIGHT, CvType.CV_8UC3, new Scalar(255, 255, 255));
-        for(int i = 0; i < path.getPrecomputedSpline().size(); i++) {
+        for (int i = 0; i < path.getPrecomputedSpline().size(); i++) {
             drawGraphPoint(path.getPrecomputedSpline().get(i), fromAWT(Color.ORANGE), fromAWT(Color.CYAN), i);
             graphPublish.putFrame(mat);
         }
