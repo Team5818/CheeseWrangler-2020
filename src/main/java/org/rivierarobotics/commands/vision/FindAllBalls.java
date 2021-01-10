@@ -42,21 +42,17 @@ import javax.inject.Inject;
 public class FindAllBalls extends CommandBase {
     private static final Pair<Double> FOCAL_LENGTH_PX = new Pair<>(0.0, 0.0);
     private final AutonomousCommands autonomousCommands;
-    private final NavXGyro gyro;
     private SimpleMatrix intrinsic;
     private Mat frame;
-    private boolean finished;
     private PathTracerExecutor cmd;
 
     @Inject
-    public FindAllBalls(AutonomousCommands autonomousCommands, NavXGyro gyro) {
+    public FindAllBalls(AutonomousCommands autonomousCommands) {
         this.autonomousCommands = autonomousCommands;
-        this.gyro = gyro;
     }
 
     @Override
     public void initialize() {
-        finished = false;
         intrinsic = new SimpleMatrix(3, 3, MatrixType.DDRM);
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
         intrinsic.set(0, 0, FOCAL_LENGTH_PX.getA());
@@ -70,11 +66,8 @@ public class FindAllBalls extends CommandBase {
     public void execute() {
         List<SplinePoint> points = new LinkedList<>();
         List<SimpleMatrix> balls = findBalls();
-        SimpleMatrix last = null;
-        for (int i = 0; i < balls.size(); i++) {
-            var loc3d = intrinsic.mult(balls.get(i));
-            last = loc3d;
-            //TODO final gyro angle dynamic
+        for (SimpleMatrix ball : balls) {
+            var loc3d = intrinsic.mult(ball);
             points.add(new SplinePoint(loc3d.get(0, 0), loc3d.get(1, 0), 0));
         }
         cmd = autonomousCommands.pathtracer(new SplinePath(points), false, false);

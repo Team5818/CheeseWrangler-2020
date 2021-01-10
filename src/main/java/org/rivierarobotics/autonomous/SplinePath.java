@@ -21,6 +21,8 @@
 package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.IntegrationUtil;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
@@ -103,7 +105,7 @@ public class SplinePath {
             1, t, t * t, t * t * t, t * t * t * t, t * t * t * t * t
         };
         double time = timeCorrected ? section.time : 1;
-        // fixedTheta = Quintic Hermite Splines, else Catmull-Rom Splines
+        // fixedTheta = Cubic Hermite Splines, else Catmull-Rom Splines
         if (fixedTheta) {
             double[] h = {
                 1 - 10 * te[3] + 15 * te[4] - 6 * te[5],
@@ -147,23 +149,29 @@ public class SplinePath {
                 points.get(section.p0idx + 1),
                 (points.size() <= section.p0idx + 2) ? new Vec2D(section.p1.getX() + linearSlope, section.p1.getY() + linearSlope) : points.get(section.p0idx + 2)
             };
-            double t01 = Math.sqrt(dist(sps[0], sps[1]));
-            double t12 = Math.sqrt(dist(sps[1], sps[2]));
-            double t23 = Math.sqrt(dist(sps[2], sps[3]));
+            double t01 = Math.sqrt(sps[0].dist(sps[1]));
+            double t12 = Math.sqrt(sps[1].dist(sps[2]));
+            double t23 = Math.sqrt(sps[2].dist(sps[3]));
 
             Vec2D m1 = sps[2].addVec(sps[1].negate()).addVec(sps[1].addVec(sps[0].negate()).multNum(1 / t01).addVec(sps[2].addVec(sps[0].negate()).multNum(1 / (t01 + t12)).negate()).multNum(t12));
             Vec2D m2 = sps[2].addVec(sps[1].negate()).addVec(sps[3].addVec(sps[2].negate()).multNum(1 / t23).addVec(sps[3].addVec(sps[1].negate()).multNum(1 / (t12 + t23)).negate()).multNum(t12));
-            Vec2D out = sps[1].addVec(sps[2].negate()).multNum(2).addVec(m1).addVec(m2).multNum(te[3])
-                    .addVec((sps[1].addVec(sps[2].negate())).multNum(-3).addVec(m1.negate()).addVec(m1.negate()).addVec(m2.negate()).multNum(te[2]))
-                    .addVec(m1.multNum(t)).addVec(sps[1]);
-            //TODO velocity and acceleration for Catmull-Rom Splines
-            return new SPOutput(out.getX(), out.getY(), 0, 0, 0, 0);
+            Vec2D[] sec = {
+                sps[1].addVec(sps[2].negate()).multNum(2).addVec(m1).addVec(m2),
+                sps[1].addVec(sps[2].negate()).multNum(-3).addVec(m1.negate()).addVec(m1.negate()).addVec(m2.negate()),
+                m1,
+                sps[1]
+            };
+            Vec2D pos = sec[0].multNum(te[3]).addVec(sec[1].multNum(te[2])).addVec(sec[2].multNum(t)).addVec(sec[3]);
+            Vec2D vel = sec[0].multNum(3 * te[2]).addVec(sec[1].multNum(2 * t)).addVec(sec[2]).multNum(1 / time);
+            Vec2D accel = sec[0].multNum(6 * t).addVec(sec[1].multNum(2)).multNum(1 / time);
+
+            return new SPOutput(pos.getX(), pos.getY(), vel.getX(), vel.getY(), accel.getX(), accel.getY());
         }
     }
 
     // Assumes the robot is moving with the correct trajectory
     public Pair<Double> getLRVel(SPOutput calc) {
-        return getLRVel(calc.getVelX(), calc.getVelY(), Math.atan2(calc.getPosX(), calc.getPosY()));
+        return getLRVel(calc.getVelX(), calc.getVelY(), Math.atan2(calc.getVelY(), calc.getVelX()));
     }
 
     public Pair<Double> getLRVel(double velX, double velY, double angle) {
@@ -198,6 +206,7 @@ public class SplinePath {
             // Just use accel/vel instead of vel/pos (?)
             tempAccel = getLRVel(tempOut.getAccelX(), tempOut.getAccelY(),
                     Math.atan2(tempOut.getVelX(), tempOut.getVelY()));
+            // tempAccel = new Pair<>(tempOut.getAccelX(), tempOut.getAccelY());
             if (Math.abs(tempAccel.getA()) > maxObservedAccel) {
                 maxObservedAccel = Math.abs(tempAccel.getA());
             }
@@ -205,7 +214,7 @@ public class SplinePath {
                 maxObservedAccel = Math.abs(tempAccel.getB());
             }
         }
-        return ((maxObservedVel / maxVel) + (maxObservedAccel / maxAccel)) / 2;
+        return Math.max(maxObservedVel / maxVel, 2 * maxObservedAccel / maxAccel);
     }
 
     public Pair<Double> getExtrema() {
@@ -236,8 +245,12 @@ public class SplinePath {
         return totalTime;
     }
 
-    public static double dist(Vec2D p0, Vec2D p1) {
-        return Math.sqrt(Math.pow(p1.getX() - p0.getX(), 2) + Math.pow(p1.getY() - p0.getY(), 2));
+    public double getTotalDistance() {
+        double dist = 0;
+        for (Section s : sections.values()) {
+            dist += s.dist;
+        }
+        return dist;
     }
 
     public static class Section {
@@ -255,7 +268,7 @@ public class SplinePath {
             this.p0 = p0;
             this.p1 = p1;
             this.p0idx = p0idx;
-            this.dist = dist(p0, p1);
+            this.dist = p0.dist(p1);
             this.tanVX = new double[] {
                 p0.isPrecomputedTan() ? p0.getTanVX() : Math.cos(p0.getHeading()) * dist,
                 p1.isPrecomputedTan() ? p1.getTanVX() : Math.cos(p1.getHeading()) * dist

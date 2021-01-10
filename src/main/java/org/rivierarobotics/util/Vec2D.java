@@ -57,6 +57,10 @@ public class Vec2D {
         return x * vec.x + y * vec.y;
     }
 
+    public double dist(Vec2D p1) {
+        return Math.sqrt(Math.pow(p1.getX() - this.getX(), 2) + Math.pow(p1.getY() - this.getY(), 2));
+    }
+
     public Vec2D negate() {
         return new Vec2D(this.x * -1, this.y * -1);
     }

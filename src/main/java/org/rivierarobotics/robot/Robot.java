@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.cscore.VideoException;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -81,6 +82,7 @@ public class Robot extends TimedRobot {
             // Padding for checkstyle
         }
         globalComponent.getNavXGyro().resetGyro();
+        DriverStation.getInstance().silenceJoystickConnectionWarning(true);
     }
 
     @Override

@@ -33,8 +33,10 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
+import org.rivierarobotics.util.RSTOptions;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
@@ -48,7 +50,9 @@ public class PathTracerExecutor extends CommandBase {
     private static final double BORDER_WIDTH = 10;
     private static final double BUFFER_SECONDS = 0.5;
     private static final int ARROW_DENSITY = 180;
+    private static final int VEL_SCALE = 20;
     private static final String PATH_TRACER = "PathTracer";
+
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
     private final NavXGyro gyro;
@@ -107,9 +111,9 @@ public class PathTracerExecutor extends CommandBase {
     }
 
     private void drawGraphPoint(SPOutput out, Scalar posColor, Scalar velColor, int index) {
-        Point posBounds = new Point(((int) (out.getPosX() * scale)) + (WIDTH / 2.0), ((int) (out.getPosY() * scale)) + (HEIGHT / 2.0));
+        Point posBounds = new Point((int) (out.getPosX() * scale), (int) (out.getPosY() * -scale));
         if (index % ARROW_DENSITY == 0) {
-            Point velBounds = new Point((int) (posBounds.x + out.getVelX() * 20), (int) (posBounds.y + out.getVelY() * 20));
+            Point velBounds = new Point((int) (posBounds.x + out.getVelX() * VEL_SCALE), (int) (posBounds.y + out.getVelY() * VEL_SCALE));
             Imgproc.arrowedLine(mat, posBounds, velBounds, velColor, thickness);
         }
         Imgproc.circle(mat, posBounds, thickness, posColor, -1);
@@ -127,10 +131,9 @@ public class PathTracerExecutor extends CommandBase {
         }
         tab.setEntry("totalTime", path.getTotalTime());
         tab.setEntry("scale", scale);
-    }
-
-    public Pair<Double> getLRVel(double velX, double velY) {
-        return path.getLRVel(velX, velY, Math.toRadians(gyro.getYaw()));
+        tab.setEntry("totalDist", path.getTotalDistance());
+        tab.setEntry("vLMax", 0);
+        tab.setEntry("vRMax", 0);
     }
 
     public void rotateToPointHeading(SplinePoint pt) {
@@ -144,19 +147,36 @@ public class PathTracerExecutor extends CommandBase {
             drawGraphPoint(calc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun);
             loopRun++;
             graphPublish.putFrame(mat);
-            tab.setEntry("calc", calc.toString());
             tab.setEntry("currTime", t);
-            Pair<Double> wheelSpeeds = getLRVel(calc.getVelX(), calc.getVelY());
+            // tab.setEntry("pX", calc.getPosX());
+            // tab.setEntry("pY", calc.getPosY());
+            tab.setEntry("vX", calc.getVelX());
+            tab.setEntry("vY", calc.getVelY());
+            tab.setEntry("aX", calc.getAccelX());
+            tab.setEntry("aY", calc.getAccelY());
+            tab.setEntry("simAngleAuto", Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
+            // Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(), Math.toRadians(gyro.getYaw()));
+            Pair<Double> wheelSpeeds = path.getLRVel(calc);
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
+            double vLMax = tab.getEntry("vLMax").getDouble(0);
+            double vRMax = tab.getEntry("vRMax").getDouble(0);
+            if (Math.abs(vLMax) < Math.abs(wheelSpeeds.getA())) {
+                tab.setEntry("vLMax", wheelSpeeds.getA());
+            }
+            if (Math.abs(vRMax) < Math.abs(wheelSpeeds.getB())) {
+                tab.setEntry("vRMax", wheelSpeeds.getB());
+            }
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
         }
-        t += 0.0025; //time scale
+        t += 0.01; // time scale
     }
 
     @Override
     public void end(boolean interrupted) {
-        rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
+        if (!interrupted) {
+            rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
+        }
     }
 
     @Override

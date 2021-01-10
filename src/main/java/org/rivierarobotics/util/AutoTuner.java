@@ -63,14 +63,14 @@ public class AutoTuner {
 
     private void getZeros() {
         config.applyTo(motor, 0);
-        int initPos = motor.getSelectedSensorPosition();
+        int initPos = (int) motor.getSelectedSensorPosition();
         int pos;
         double startTime = Timer.getFPGATimestamp();
         double currTime;
         double lastTime = startTime;
         motor.set(ControlMode.MotionMagic, set);
         while ((currTime = Timer.getFPGATimestamp()) < startTime + RUN_TIME) {
-            pos = motor.getSelectedSensorPosition();
+            pos = (int) motor.getSelectedSensorPosition();
             setRSTEntry("pos", pos);
             if (MathUtil.isWithinTolerance(pos, set, MAX_POS_ERR)) {
                 zeroTimes.add(currTime - lastTime);

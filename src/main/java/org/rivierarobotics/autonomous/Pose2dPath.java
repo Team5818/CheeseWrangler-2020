@@ -33,6 +33,7 @@ import java.util.Locale;
 
 public enum Pose2dPath {
     // An underscore indicates a camelCase filename, keep all lowercase filenames and uppercase enums otherwise
+    TESTING,
     STRAIGHT,
     FLEX,
     FLEX_TAPE,
@@ -73,7 +74,7 @@ public enum Pose2dPath {
     private Path getPath() {
         var baseDir = RobotBase.isReal()
                 ? Filesystem.getDeployDirectory().toPath().resolve("paths/")
-                : Filesystem.getLaunchDirectory().toPath().resolve("pathWeaver/main");
+                : Filesystem.getLaunchDirectory().toPath().resolve("PathWeaver/Paths");
         return baseDir.resolve(id);
     }
 

@@ -35,6 +35,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;
@@ -95,7 +96,12 @@ public class RobotShuffleboardTab {
     }
 
     public NetworkTableEntry getEntry(String title) {
-        return entries.get(title);
+        NetworkTableEntry entry = entries.get(title);
+        if (entry == null) {
+            entry = tab.add(title, "").getEntry();
+            entries.put(title, entry);
+        }
+        return entry;
     }
 
     public Map<String, NetworkTableEntry> getEntries() {

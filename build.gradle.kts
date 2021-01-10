@@ -3,7 +3,7 @@ import org.rivierarobotics.gradlerioredux.artifactsKt
 import org.rivierarobotics.gradlerioredux.tasks.PathWeaverSourceSetExtension
 
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.7.10"
+    id("org.rivierarobotics.gradlerioredux") version "0.8.0"
 }
 
 gradleRioRedux {
@@ -41,9 +41,11 @@ tasks.register("windowsLaunchSim") {
         }
     }
 }
+/*
 if (edu.wpi.first.toolchain.NativePlatforms.desktopOS() == "windows") {
     tasks.getByName("simulateExternalJava").finalizedBy(tasks.getByName("windowsLaunchSim"))
 }
+*/
 
 dependencies {
     simulation("edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${edu.wpi.first.toolchain.NativePlatforms.desktop}@zip")
