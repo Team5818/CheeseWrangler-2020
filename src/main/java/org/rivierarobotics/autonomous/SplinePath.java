@@ -21,8 +21,6 @@
 package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.IntegrationUtil;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
@@ -33,23 +31,23 @@ import java.util.List;
 import java.util.Map;
 
 public class SplinePath {
-    private static final double MAX_POSSIBLE_VEL = 4.5; // m/s
-    private static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
+    public static final double MAX_POSSIBLE_VEL = 4.5; // m/s
+    public static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
     private static final double RIO_LOOP_TIME_MS = 0.02;
     private final List<SplinePoint> points;
-    private final boolean fixedTheta;
     private final double maxVel;
     private final double maxAccel;
+    private final PathConstraints constraints;
     private final List<SPOutput> precomputed;
     private final HashMap<Double, Section> sections;
     private Pair<Double> extrema;
     private double totalTime;
 
-    public SplinePath(List<SplinePoint> points, boolean fixedTheta, double maxVel, double maxAccel) {
+    public SplinePath(List<SplinePoint> points, PathConstraints constraints) {
         this.points = points;
-        this.fixedTheta = fixedTheta;
-        this.maxVel = Math.min(maxVel, MAX_POSSIBLE_VEL);
-        this.maxAccel = Math.min(maxAccel, MAX_POSSIBLE_ACCEL);
+        this.constraints = constraints;
+        this.maxVel = Math.min(constraints.getMaxVel(), MAX_POSSIBLE_VEL);
+        this.maxAccel = Math.min(constraints.getMaxAccel(), MAX_POSSIBLE_ACCEL);
         this.precomputed = new LinkedList<>();
         this.sections = new LinkedHashMap<>();
 
@@ -68,7 +66,7 @@ public class SplinePath {
     }
 
     public SplinePath(List<SplinePoint> points) {
-        this(points, true, MAX_POSSIBLE_VEL, MAX_POSSIBLE_ACCEL);
+        this(points, PathConstraints.create());
     }
 
     public void recalculatePath() {
@@ -106,7 +104,7 @@ public class SplinePath {
         };
         double time = timeCorrected ? section.time : 1;
         // fixedTheta = Cubic Hermite Splines, else Catmull-Rom Splines
-        if (fixedTheta) {
+        if (constraints.getFixedTheta()) {
             double[] h = {
                 1 - 10 * te[3] + 15 * te[4] - 6 * te[5],
                 t - 6 * te[3] + 8 * te[4] - 3 * te[5],
@@ -214,6 +212,7 @@ public class SplinePath {
                 maxObservedAccel = Math.abs(tempAccel.getB());
             }
         }
+        // accel *2 b/c of derivative 1/2
         return Math.max(maxObservedVel / maxVel, 2 * maxObservedAccel / maxAccel);
     }
 
@@ -251,6 +250,10 @@ public class SplinePath {
             dist += s.dist;
         }
         return dist;
+    }
+
+    public PathConstraints getConstraints() {
+        return constraints;
     }
 
     public static class Section {

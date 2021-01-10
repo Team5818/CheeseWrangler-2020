@@ -70,7 +70,7 @@ public class FindAllBalls extends CommandBase {
             var loc3d = intrinsic.mult(ball);
             points.add(new SplinePoint(loc3d.get(0, 0), loc3d.get(1, 0), 0));
         }
-        cmd = autonomousCommands.pathtracer(new SplinePath(points), false, false);
+        cmd = autonomousCommands.pathtracer(new SplinePath(points));
         cmd.schedule();
     }
 

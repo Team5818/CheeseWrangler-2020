@@ -20,12 +20,23 @@
 
 package org.rivierarobotics.autonomous;
 
-//TODO implement
 public class PathConstraints {
-    private Double maxAccel = null;
-    private Double maxVel = null;
-    private Boolean absPath = null;
-    private Boolean absHeading = null;
+    private double maxAccel = SplinePath.MAX_POSSIBLE_ACCEL;
+    private double maxVel = SplinePath.MAX_POSSIBLE_VEL;
+    private boolean absPos = false;
+    private boolean absHeading = false;
+    private boolean fixedTheta = true;
+
+    private PathConstraints() {
+    }
+
+    public PathConstraints(double maxAccel, double maxVel, boolean absPos, boolean absHeading, boolean fixedTheta) {
+        this.maxAccel = maxAccel;
+        this.maxVel = maxVel;
+        this.absPos = absPos;
+        this.absHeading = absHeading;
+        this.fixedTheta = fixedTheta;
+    }
 
     public PathConstraints setMaxAccel(double maxAccel) {
         this.maxAccel = maxAccel;
@@ -37,8 +48,8 @@ public class PathConstraints {
         return this;
     }
 
-    public PathConstraints setAbsPath(boolean absPath) {
-        this.absPath = absPath;
+    public PathConstraints setAbsPos(boolean absPos) {
+        this.absPos = absPos;
         return this;
     }
 
@@ -47,19 +58,32 @@ public class PathConstraints {
         return this;
     }
 
-    public Double getMaxAccel() {
+    public PathConstraints setFixedTheta(boolean fixedTheta) {
+        this.fixedTheta = fixedTheta;
+        return this;
+    }
+
+    public double getMaxAccel() {
         return maxAccel;
     }
 
-    public Double getMaxVel() {
+    public double getMaxVel() {
         return maxVel;
     }
 
-    public Boolean getAbsPath() {
-        return absPath;
+    public boolean getAbsPos() {
+        return absPos;
     }
 
-    public Boolean getAbsHeading() {
+    public boolean getAbsHeading() {
         return absHeading;
+    }
+
+    public boolean getFixedTheta() {
+        return fixedTheta;
+    }
+
+    public static PathConstraints create() {
+        return new PathConstraints();
     }
 }

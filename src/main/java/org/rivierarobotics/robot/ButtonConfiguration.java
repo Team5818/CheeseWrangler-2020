@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.autonomous.PathConstraints;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
@@ -140,12 +141,14 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
         new JoystickButton(driverButtons, 4)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING, 1, 1));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING,
+                        PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
         new JoystickButton(driverButtons, 1)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING));
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT));
         new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE, 1, 1));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE,
+                        PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
     }
 }

@@ -33,10 +33,8 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
-import org.rivierarobotics.util.RSTOptions;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
@@ -58,8 +56,7 @@ public class PathTracerExecutor extends CommandBase {
     private final NavXGyro gyro;
     private final RobotShuffleboardTab tab;
     private final SplinePath path;
-    private final boolean absPos;
-    private final boolean absHeading;
+    private final PathConstraints constraints;
     private int loopRun = 0;
     private Mat mat;
     private CvSource graphPublish;
@@ -69,14 +66,13 @@ public class PathTracerExecutor extends CommandBase {
 
     public PathTracerExecutor(@Provided DriveTrain driveTrain, @Provided DriveCommands driveCommands,
                               @Provided NavXGyro gyro, @Provided RobotShuffleboard shuffleboard,
-                              SplinePath path, boolean absPos, boolean absHeading) {
+                              SplinePath path) {
         this.driveTrain = driveTrain;
         this.driveCommands = driveCommands;
         this.gyro = gyro;
         this.tab = shuffleboard.getTab(PATH_TRACER);
         this.path = path;
-        this.absPos = absPos;
-        this.absHeading = absHeading;
+        this.constraints = path.getConstraints();
         addRequirements(driveTrain);
     }
 
@@ -123,10 +119,10 @@ public class PathTracerExecutor extends CommandBase {
     public void initialize() {
         t = 0;
         initGraph();
-        if (absPos) {
+        if (constraints.getAbsPos()) {
             path.addPathPoint(0, new SplinePoint(driveTrain.getPose()));
             path.recalculatePath();
-        } else if (absHeading) {
+        } else if (constraints.getAbsHeading()) {
             rotateToPointHeading(path.getPathPoints().get(0));
         }
         tab.setEntry("totalTime", path.getTotalTime());
