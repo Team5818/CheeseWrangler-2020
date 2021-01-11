@@ -23,6 +23,7 @@ package org.rivierarobotics.commands.vision;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
@@ -33,22 +34,20 @@ import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.autonomous.PathTracerExecutor;
-import org.rivierarobotics.autonomous.Pose2dPath;
 
-import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 
 @GenerateCreator
-public class FindSidedBalls extends CommandBase {
+public class GalacticSearch extends CommandBase {
     private static final Scalar LOWER_COLOR_BOUNDS = new Scalar(27, 100, 6);
     private static final Scalar UPPER_COLOR_BOUNDS = new Scalar(64, 255, 255);
     private static final double LEFT_BALL_AREA = 0.5;
     private final AutonomousCommands autonomousCommands;
     private PathTracerExecutor cmd;
 
-    @Inject
-    public FindSidedBalls(AutonomousCommands autonomousCommands) {
+    public GalacticSearch(@Provided AutonomousCommands autonomousCommands) {
         this.autonomousCommands = autonomousCommands;
     }
 

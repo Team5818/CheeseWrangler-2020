@@ -144,8 +144,6 @@ public class PathTracerExecutor extends CommandBase {
             loopRun++;
             graphPublish.putFrame(mat);
             tab.setEntry("currTime", t);
-            // tab.setEntry("pX", calc.getPosX());
-            // tab.setEntry("pY", calc.getPosY());
             tab.setEntry("vX", calc.getVelX());
             tab.setEntry("vY", calc.getVelY());
             tab.setEntry("aX", calc.getAccelX());

@@ -69,23 +69,11 @@ public class ButtonConfiguration {
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
                         .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
                         cmds.camera().setServo(CameraPosition.BACK)));
-        new JoystickButton(driverLeft, 1)
-                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
-                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
-                                cmds.camera().setServo(CameraPosition.FRONT)));
-        new JoystickButton(driverLeft, 2)
-                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
-                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
-                                cmds.camera().setServo(CameraPosition.BACK)));
 
         // Shooting
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
-                .whileHeld(cmds.cheeseWheel().continuousShoot());
-        new JoystickButton(driverRight, 1)
-                .whenPressed(cmds.cheeseWheel().shootNWedges(1));
-        new JoystickButton(driverRight, 2)
                 .whileHeld(cmds.cheeseWheel().continuousShoot());
 
         // CheeseWheel manual cycles
@@ -131,16 +119,26 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 1)
                 .whenPressed(cmds.drive().resetGyro());
 
-        // Testing/dev
-        new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
-        new JoystickButton(driverButtons, 5)
-                .whenPressed(cmds.flywheel().changeAutoAimSpeed(-1));
+        // Challenges
         new JoystickButton(driverButtons, 3)
+                .whenPressed(cmds.vision().galacticSearch());
+        //new JoystickButton(driverButtons, 6)
+        //        .whenPressed(cmds.auto().pathtracer(Pose2dPath.AUTO_NAV_BARREL_RACING));
+        //new JoystickButton(driverButtons, 5)
+        //        .whenPressed(cmds.auto().pathtracer(Pose2dPath.AUTO_NAV_SLALOM));
+        //new JoystickButton(driverButtons, 4)
+        //        .whenPressed(cmds.auto().pathtracer(Pose2dPath.AUTO_NAV_BOUNCE));
+
+        // Testing/dev
+        new JoystickButton(driverLeft, 1)
+                .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
+        new JoystickButton(driverLeft, 2)
+                .whenPressed(cmds.flywheel().changeAutoAimSpeed(-1));
+        new JoystickButton(driverRight, 1)
                 .whenPressed(cmds.flywheel().stepTolerance(20));
-        new JoystickButton(driverButtons, 2)
+        new JoystickButton(driverRight, 2)
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
-        new JoystickButton(driverButtons, 4)
+        new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING,
                         PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
         new JoystickButton(driverButtons, 1)
