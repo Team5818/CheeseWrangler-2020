@@ -51,6 +51,10 @@ public class AutonomousCommands {
         this.trenchRunCreator = trenchRunCreator;
     }
 
+    public PathTracerExecutor challengePath(ChallengePath cPath) {
+        return pathtracer(cPath.getPath());
+    }
+
     public PathTracerExecutor pathtracer(Pose2dPath path) {
         return pathtracer(path, PathConstraints.create());
     }

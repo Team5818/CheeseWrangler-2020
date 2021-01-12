@@ -33,22 +33,25 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.autonomous.AutonomousCommands;
+import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathTracerExecutor;
+import org.rivierarobotics.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.inject.Inject;
 
 @GenerateCreator
 public class GalacticSearch extends CommandBase {
     private static final Scalar LOWER_COLOR_BOUNDS = new Scalar(27, 100, 6);
     private static final Scalar UPPER_COLOR_BOUNDS = new Scalar(64, 255, 255);
-    private static final double LEFT_BALL_AREA = 0.5;
+    private static final Pair<Double> LEFT_BALL_AREAS = new Pair<>(0.5, 0.5);
     private final AutonomousCommands autonomousCommands;
+    private final boolean isPathA;
     private PathTracerExecutor cmd;
 
-    public GalacticSearch(@Provided AutonomousCommands autonomousCommands) {
+    public GalacticSearch(@Provided AutonomousCommands autonomousCommands, boolean isPathA) {
         this.autonomousCommands = autonomousCommands;
+        this.isPathA = isPathA;
     }
 
     @Override
@@ -56,16 +59,17 @@ public class GalacticSearch extends CommandBase {
         Mat frame = new Mat();
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
         List<Point> ballLocs = findBallLocations(frame);
+        double leftArea = isPathA ? LEFT_BALL_AREAS.getA() : LEFT_BALL_AREAS.getB();
         int countLeft = 0;
         for (Point loc : ballLocs) {
-            if (loc.x < frame.width() * LEFT_BALL_AREA) {
+            if (loc.x < frame.width() * leftArea) {
                 countLeft++;
             }
         }
-        //TODO make paths and uncomment
-        // cmd = autonomousCommands.pathtracer(countLeft > ballLocs.size() - countLeft ?
-        //         Pose2dPath.LEFT_FAH_CHALLENGE : Pose2dPath.RIGHT_FAH_CHALLENGE);
-        // cmd.schedule();
+        boolean isLeft = countLeft > ballLocs.size() - countLeft;
+        String pathName = "GS_" + (isPathA ? "A" : "B") + "_" + (isLeft ? "LEFT" : "RIGHT");
+        cmd = autonomousCommands.challengePath(ChallengePath.valueOf(pathName));
+        cmd.schedule();
     }
 
     private List<Point> findBallLocations(Mat img) {

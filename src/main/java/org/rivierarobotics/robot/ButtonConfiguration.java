@@ -22,6 +22,7 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathConstraints;
 import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
@@ -120,14 +121,16 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.drive().resetGyro());
 
         // Challenges
-        new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.vision().galacticSearch());
-        //new JoystickButton(driverButtons, 6)
-        //        .whenPressed(cmds.auto().pathtracer(Pose2dPath.AUTO_NAV_BARREL_RACING));
-        //new JoystickButton(driverButtons, 5)
-        //        .whenPressed(cmds.auto().pathtracer(Pose2dPath.AUTO_NAV_SLALOM));
-        //new JoystickButton(driverButtons, 4)
-        //        .whenPressed(cmds.auto().pathtracer(Pose2dPath.AUTO_NAV_BOUNCE));
+        new JoystickButton(driverButtons, 9)
+                .whenPressed(cmds.vision().galacticSearch(true));
+        new JoystickButton(driverButtons, 7)
+                .whenPressed(cmds.vision().galacticSearch(false));
+        new JoystickButton(driverButtons, 6)
+                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BARREL_RACING));
+        new JoystickButton(driverButtons, 5)
+                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_SLALOM));
+        new JoystickButton(driverButtons, 4)
+                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BOUNCE));
 
         // Testing/dev
         new JoystickButton(driverLeft, 1)

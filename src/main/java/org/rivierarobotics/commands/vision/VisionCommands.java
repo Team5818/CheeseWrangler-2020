@@ -76,7 +76,7 @@ public class VisionCommands {
         return limelightLedSetStateCreator.create(state);
     }
 
-    public GalacticSearch galacticSearch() {
-        return galacticSearchCreator.create();
+    public GalacticSearch galacticSearch(boolean isPathA) {
+        return galacticSearchCreator.create(isPathA);
     }
 }
