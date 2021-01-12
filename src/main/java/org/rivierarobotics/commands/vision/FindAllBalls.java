@@ -22,16 +22,21 @@ package org.rivierarobotics.commands.vision;
 
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import org.ejml.data.MatrixType;
 import org.ejml.simple.SimpleMatrix;
 import org.opencv.core.Mat;
+import org.opencv.core.Point;
 import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.autonomous.PathTracerExecutor;
 import org.rivierarobotics.autonomous.SplinePath;
 import org.rivierarobotics.autonomous.SplinePoint;
+import org.rivierarobotics.commands.collect.CollectionCommands;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
+import org.rivierarobotics.util.VisionUtil;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -42,42 +47,42 @@ import javax.inject.Inject;
 public class FindAllBalls extends CommandBase {
     private static final Pair<Double> FOCAL_LENGTH_PX = new Pair<>(0.0, 0.0);
     private final AutonomousCommands autonomousCommands;
-    private SimpleMatrix intrinsic;
-    private Mat frame;
-    private PathTracerExecutor cmd;
+    private final CollectionCommands collectionCommands;
+    private final VisionUtil visionUtil;
+    private ParallelDeadlineGroup cmd;
 
     @Inject
-    public FindAllBalls(AutonomousCommands autonomousCommands) {
+    public FindAllBalls(AutonomousCommands autonomousCommands,
+                        CollectionCommands collectionCommands,
+                        VisionUtil visionUtil) {
         this.autonomousCommands = autonomousCommands;
+        this.collectionCommands = collectionCommands;
+        this.visionUtil = visionUtil;
     }
 
     @Override
     public void initialize() {
-        intrinsic = new SimpleMatrix(3, 3, MatrixType.DDRM);
+        SimpleMatrix intrinsic = new SimpleMatrix(3, 3, MatrixType.DDRM);
+        Mat frame = new Mat();
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
         intrinsic.set(0, 0, FOCAL_LENGTH_PX.getA());
         intrinsic.set(1, 1, FOCAL_LENGTH_PX.getB());
         intrinsic.set(0, 2, frame.width() / 2.0);
         intrinsic.set(1, 2, frame.height() / 2.0);
         intrinsic = intrinsic.invert();
-    }
 
-    @Override
-    public void execute() {
         List<SplinePoint> points = new LinkedList<>();
-        List<SimpleMatrix> balls = findBalls();
-        for (SimpleMatrix ball : balls) {
-            var loc3d = intrinsic.mult(ball);
+        List<Point> cvBalls = visionUtil.findBallLocations(frame);
+        for (Point ballPt : cvBalls) {
+            SimpleMatrix ballMatrix = new SimpleMatrix(3, 1, MatrixType.DDRM);
+            ballMatrix.setColumn(0, 0, ballPt.x, ballPt.y, 1);
+            var loc3d = intrinsic.mult(ballMatrix);
             points.add(new SplinePoint(loc3d.get(0, 0), loc3d.get(1, 0), 0));
         }
-        cmd = autonomousCommands.pathtracer(new SplinePath(points));
-        cmd.schedule();
-    }
 
-    private List<SimpleMatrix> findBalls() {
-        //TODO ball finding, transmitted as [x y 1]
-        //new SimpleMatrix(3, 1, MatrixType.DDRM)
-        return new ArrayList<>();
+        cmd = autonomousCommands.pathtracer(new SplinePath(points))
+                .deadlineWith(collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT));
+        cmd.schedule();
     }
 
     @Override

@@ -23,12 +23,24 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import org.opencv.core.Core;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfPoint;
+import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Scalar;
+import org.opencv.core.Size;
+import org.opencv.imgproc.Imgproc;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class VisionUtil {
+    private static final Scalar LOWER_COLOR_BOUNDS = new Scalar(27, 100, 6);
+    private static final Scalar UPPER_COLOR_BOUNDS = new Scalar(64, 255, 255);
     private final NetworkTable limelight;
 
     @Inject
@@ -60,5 +72,26 @@ public class VisionUtil {
         NetworkTableEntry led = limelight.getEntry("ledMode");
         int cs = (int) led.getNumber(1.0);
         led.setNumber(cs == 1 ? 3 : 1);
+    }
+
+    public List<Point> findBallLocations(Mat img) {
+        List<Point> out = new ArrayList<>();
+        Mat matA = img.clone();
+        Mat matB = new Mat();
+        Imgproc.GaussianBlur(matA, matB, new Size(11, 11), 0);
+        Imgproc.cvtColor(matB, matA, Imgproc.COLOR_BGR2HSV);
+        Core.inRange(matA, LOWER_COLOR_BOUNDS, UPPER_COLOR_BOUNDS, matB);
+        //TODO ensure this doesn't break b/c kernel=null
+        Imgproc.erode(matB, matA, null, new Point(-1, -1), 2);
+        Imgproc.dilate(matA, matB, null, new Point(-1, -1), 2);
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(matB, contours, null, Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+        for (MatOfPoint contour : contours) {
+            Point center = new Point();
+            float[] radius = new float[1];
+            Imgproc.minEnclosingCircle(new MatOfPoint2f(contour.toArray()), center, radius);
+            out.add(center);
+        }
+        return out;
     }
 }

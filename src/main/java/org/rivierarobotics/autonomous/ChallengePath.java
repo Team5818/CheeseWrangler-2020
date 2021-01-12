@@ -25,10 +25,10 @@ import java.util.List;
 
 public enum ChallengePath {
     // Galactic search (2.4.6)
-    GS_A_LEFT(),
-    GS_A_RIGHT(),
-    GS_B_LEFT(),
-    GS_B_RIGHT(),
+    GS_A_RED(),
+    GS_A_BLUE(),
+    GS_B_RED(),
+    GS_B_BLUE(),
 
     // AutoNav (2.4.7)
     AN_BARREL_RACING(),
