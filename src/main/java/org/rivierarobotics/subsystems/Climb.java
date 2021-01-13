@@ -33,6 +33,10 @@ import org.rivierarobotics.util.MotorUtil;
 public class Climb extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX climbTalon;
     private final MechLogger logger;
+    private final double zeroTicks = 100.0;
+    private final double maxTicks = 1000.0;
+    private final double minTicks = 100.0;
+    //gotta figure out these values
 
     public Climb(int id) {
         climbTalon = new WPI_TalonFX(id);

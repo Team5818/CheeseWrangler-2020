@@ -15,7 +15,7 @@ public class ClimbControl extends CommandBase {
 
 
     @Inject
-    public ClimbControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJoystick, @Input(Input.Selector.CODRIVER_BUTTONS) Joystick driverButtons, Climb climb){
+    public ClimbControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJoystick, @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons, Climb climb){
         this.climb = climb;
         this.coDriverRightJoystick = coDriverRightJoystick;
         this.driverButtons = driverButtons;
@@ -23,11 +23,13 @@ public class ClimbControl extends CommandBase {
 
     @Override
     public void execute(){
-        climb.setPower(MathUtil.fitDeadband(coDriverRightJoystick.getX()));
+        if (driverButtons.getRawButton(3)) {
+            climb.setPower(MathUtil.fitDeadband(coDriverRightJoystick.getX()));
+        }
     }
 
     @Override
     public boolean isFinished() {
-        return !driverButtons.getRawButton(3);
+        return false;
     }
 }

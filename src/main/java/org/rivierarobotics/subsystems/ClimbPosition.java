@@ -21,9 +21,10 @@
 package org.rivierarobotics.subsystems;
 
 public enum ClimbPosition {
-    FORTY_FIVE(0),
-    SIXTY(0),
-    SEVENTY_TWO(0);
+    maxPosition(0),
+    retractedPosition(0),
+    halfPosition(0);
+    //gotta figure out these values
 
     public final int position;
 
