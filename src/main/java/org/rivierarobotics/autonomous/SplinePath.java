@@ -65,16 +65,14 @@ public class SplinePath {
         }
         this.extrema = new Pair<>(maxX, maxY);
 
-        if (points.size() >= 2 && !constraints.getFixedTheta()) {
-            if (points.size() < 2) {
-                throw new IllegalArgumentException("Paths with non fixed thetas must have two or more points");
-            }
-            // Scaling factor of 0.1m (10cm) offset for endpoints (required to not be control sequence t=[0,1])
-            nftCtrlPoints = new Pair<>(
+        if (!constraints.getFixedTheta()) {
+            // Scaling factor of 0.1m (10cm) offset for Catmull-Rom endpoints
+            // (required to not be control sequence t=[0,1])
+            nftCtrlPoints = points.size() >= 2 ? new Pair<>(
                     extrapolateEndpoint(0, 1, 0, true),
                     extrapolateEndpoint(points.size() - 2, points.size() - 1,
                             points.size() - 1, false)
-            );
+            ) : new Pair<>(new Vec2D(0, 0), new Vec2D(0, 0));
         }
         recalculatePath();
     }
@@ -320,17 +318,17 @@ public class SplinePath {
 
         @Override
         public String toString() {
-            return "Section{" +
-                    "p0=" + p0 +
-                    ", p1=" + p1 +
-                    ", p0idx=" + p0idx +
-                    ", tanVX=" + Arrays.toString(tanVX) +
-                    ", tanVY=" + Arrays.toString(tanVY) +
-                    ", dist=" + dist +
-                    ", accelX=" + Arrays.toString(accelX) +
-                    ", accelY=" + Arrays.toString(accelY) +
-                    ", time=" + time +
-                    '}';
+            return "Section{"
+                    + "p0=" + p0
+                    + ", p1=" + p1
+                    + ", p0idx=" + p0idx
+                    + ", tanVX=" + Arrays.toString(tanVX)
+                    + ", tanVY=" + Arrays.toString(tanVY)
+                    + ", dist=" + dist
+                    + ", accelX=" + Arrays.toString(accelX)
+                    + ", accelY=" + Arrays.toString(accelY)
+                    + ", time=" + time
+                    + '}';
         }
     }
 }

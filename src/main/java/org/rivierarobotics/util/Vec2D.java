@@ -88,9 +88,9 @@ public class Vec2D {
 
     @Override
     public String toString() {
-        return "Vec2D{" +
-                "x=" + x +
-                ", y=" + y +
-                '}';
+        return "Vec2D{"
+                + "x=" + x
+                + ", y=" + y
+                + '}';
     }
 }
