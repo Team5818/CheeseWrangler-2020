@@ -26,16 +26,19 @@ public class PathConstraints {
     private boolean absPos = false;
     private boolean absHeading = false;
     private boolean fixedTheta = true;
+    private double crKnotParam = 0.5;
 
     private PathConstraints() {
     }
 
-    public PathConstraints(double maxAccel, double maxVel, boolean absPos, boolean absHeading, boolean fixedTheta) {
+    public PathConstraints(double maxAccel, double maxVel, boolean absPos,
+                           boolean absHeading, boolean fixedTheta, double crKnotParam) {
         this.maxAccel = maxAccel;
         this.maxVel = maxVel;
         this.absPos = absPos;
         this.absHeading = absHeading;
         this.fixedTheta = fixedTheta;
+        this.crKnotParam = crKnotParam;
     }
 
     public PathConstraints setMaxAccel(double maxAccel) {
@@ -63,6 +66,11 @@ public class PathConstraints {
         return this;
     }
 
+    public PathConstraints setCrKnotParam(double crKnotParam) {
+        this.crKnotParam = crKnotParam;
+        return this;
+    }
+
     public double getMaxAccel() {
         return maxAccel;
     }
@@ -81,6 +89,10 @@ public class PathConstraints {
 
     public boolean getFixedTheta() {
         return fixedTheta;
+    }
+
+    public double getCrKnotParam() {
+        return crKnotParam;
     }
 
     public static PathConstraints create() {

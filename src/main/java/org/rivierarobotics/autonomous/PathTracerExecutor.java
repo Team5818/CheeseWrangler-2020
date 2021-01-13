@@ -33,6 +33,7 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.RobotShuffleboard;
@@ -57,7 +58,9 @@ public class PathTracerExecutor extends CommandBase {
     private final RobotShuffleboardTab tab;
     private final SplinePath path;
     private final PathConstraints constraints;
+
     private int loopRun = 0;
+    private double gyroOffset = 0;
     private Mat mat;
     private CvSource graphPublish;
     private double t;
@@ -124,6 +127,9 @@ public class PathTracerExecutor extends CommandBase {
             path.recalculatePath();
         } else if (constraints.getAbsHeading()) {
             rotateToPointHeading(path.getPathPoints().get(0));
+        } else {
+            gyroOffset = MathUtil.wrapToCircle(gyro.getYaw()) -
+                    MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
         }
         tab.setEntry("totalTime", path.getTotalTime());
         tab.setEntry("scale", scale);
@@ -149,7 +155,7 @@ public class PathTracerExecutor extends CommandBase {
             tab.setEntry("aX", calc.getAccelX());
             tab.setEntry("aY", calc.getAccelY());
             tab.setEntry("simAngleAuto", Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
-            // Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(), Math.toRadians(gyro.getYaw()));
+            // Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(), Math.toRadians(gyro.getYaw() - gyroOffset));
             Pair<Double> wheelSpeeds = path.getLRVel(calc);
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());

@@ -164,9 +164,9 @@ public class SplinePath {
                 points.get(section.p0idx + 1),
                 (points.size() <= section.p0idx + 2) ? nftCtrlPoints.getB() : points.get(section.p0idx + 2)
             };
-            double t01 = Math.sqrt(sps[0].dist(sps[1]));
-            double t12 = Math.sqrt(sps[1].dist(sps[2]));
-            double t23 = Math.sqrt(sps[2].dist(sps[3]));
+            double t01 = Math.pow(sps[0].dist(sps[1]), constraints.getCrKnotParam());
+            double t12 = Math.pow(sps[1].dist(sps[2]), constraints.getCrKnotParam());
+            double t23 = Math.pow(sps[2].dist(sps[3]), constraints.getCrKnotParam());
 
             Vec2D m1 = sps[2].addVec(sps[1].negate()).addVec(sps[1].addVec(sps[0].negate()).multNum(1 / t01).addVec(sps[2].addVec(sps[0].negate()).multNum(1 / (t01 + t12)).negate()).multNum(t12));
             Vec2D m2 = sps[2].addVec(sps[1].negate()).addVec(sps[3].addVec(sps[2].negate()).multNum(1 / t23).addVec(sps[3].addVec(sps[1].negate()).multNum(1 / (t12 + t23)).negate()).multNum(t12));

@@ -25,10 +25,10 @@ import java.util.List;
 
 public enum ChallengePath {
     // Galactic search (2.4.6)
-    GS_A_RED("C1","C3","D5","A6","A11"),
-    GS_A_BLUE("C1","E6","B7","C9","D11"),
-    GS_B_RED("C1","B3","D5","B7","A11"),
-    GS_B_BLUE("C1","D6","B8","D10","E11"),
+    GS_A_RED("C1", "C3", "D5", "A6", "A11"),
+    GS_A_BLUE("C1", "E6", "B7", "C9", "D11"),
+    GS_B_RED("C1", "B3", "D5", "B7", "A11"),
+    GS_B_BLUE("C1", "D6", "B8", "D10", "E11"),
 
     // AutoNav (2.4.7)
     AN_BARREL_RACING(),
@@ -41,10 +41,11 @@ public enum ChallengePath {
     /**
      * Converts control strings into PathTracer paths for FIRST at Home challenges.
      * Figure 2-2 (2021 FAH manual) for layout. Use upper case letters for rows.
+     * @param constraints the constraints for the path, always non-fixed theta
      * @param controlSeq a sequence of 2-char control strings formatted as [A:E][1:11].
      */
-    ChallengePath(String... controlSeq) {
-        PathConstraints nonFixedThetaConstraints = PathConstraints.create().setFixedTheta(false);
+    ChallengePath(PathConstraints constraints, String... controlSeq) {
+        constraints = constraints.setFixedTheta(false);
         List<SplinePoint> points = new LinkedList<>();
         for (String control : controlSeq) {
             if (control.length() < 2) {
@@ -59,10 +60,12 @@ public enum ChallengePath {
             // Heading degrees doesn't matter b/c non fixed theta, reverse y b/c PathWeaver
             points.add(new SplinePoint(METERS_PER_GRID * col, -METERS_PER_GRID * row, 0));
         }
-        this.path = new SplinePath(points, nonFixedThetaConstraints);
+        this.path = new SplinePath(points, constraints);
     }
 
-
+    ChallengePath(String... controlSeq) {
+        this(PathConstraints.create(), controlSeq);
+    }
 
     /**
      * Wrapper constructor for PathWeaver generated splines.
@@ -79,5 +82,14 @@ public enum ChallengePath {
 
     private void invalidControlError(String control) {
         throw new IllegalArgumentException("Control sequences must be of type [A:E][1:11]. Given: " + control);
+    }
+
+    // Knot parameterization types. Use alpha() with PathConstraints.
+    private enum CRKnotParam {
+        UNIFORM, CENTRIPETAL, CHORDAL;
+
+        public double alpha() {
+            return this.ordinal() / 2.0;
+        }
     }
 }
