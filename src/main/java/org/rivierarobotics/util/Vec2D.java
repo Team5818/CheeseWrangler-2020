@@ -85,4 +85,12 @@ public class Vec2D {
     public Vec2D multVec(Vec2D toMult) {
         return new Vec2D(this.x * toMult.getX(), this.y * toMult.getX());
     }
+
+    @Override
+    public String toString() {
+        return "Vec2D{" +
+                "x=" + x +
+                ", y=" + y +
+                '}';
+    }
 }

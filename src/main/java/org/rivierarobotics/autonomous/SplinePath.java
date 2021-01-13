@@ -24,6 +24,7 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -40,6 +41,7 @@ public class SplinePath {
     private final PathConstraints constraints;
     private final List<SPOutput> precomputed;
     private final HashMap<Double, Section> sections;
+    private Pair<Vec2D> nftCtrlPoints;
     private Pair<Double> extrema;
     private double totalTime;
 
@@ -62,11 +64,30 @@ public class SplinePath {
             }
         }
         this.extrema = new Pair<>(maxX, maxY);
+
+        if (points.size() >= 2 && !constraints.getFixedTheta()) {
+            if (points.size() < 2) {
+                throw new IllegalArgumentException("Paths with non fixed thetas must have two or more points");
+            }
+            // Scaling factor of 0.1m (10cm) offset for endpoints (required to not be control sequence t=[0,1])
+            nftCtrlPoints = new Pair<>(
+                    extrapolateEndpoint(0, 1, 0, true),
+                    extrapolateEndpoint(points.size() - 2, points.size() - 1,
+                            points.size() - 1, false)
+            );
+        }
         recalculatePath();
     }
 
     public SplinePath(List<SplinePoint> points) {
         this(points, PathConstraints.create());
+    }
+
+    private Vec2D extrapolateEndpoint(int p0idx, int p1idx, int focusIdx, boolean invert) {
+        final double m = 0.1;
+        double dy = points.get(p1idx).getY() - points.get(p0idx).getY();
+        double dx = points.get(p1idx).getX() - points.get(p0idx).getX();
+        return points.get(focusIdx).addVec(new Vec2D(invert ? -m : m * dx, invert ? -m : m * dy));
     }
 
     public void recalculatePath() {
@@ -77,7 +98,7 @@ public class SplinePath {
         double scTime;
         for (int i = 1; i < points.size(); i++) {
             sc = new Section(points.get(i - 1), points.get(i), i - 1);
-            scTime = timeAtLimited(sc, true);
+            scTime = Math.max(0.05, timeAtLimited(sc, true));
             sc.setTime(scTime);
             sc.setAccel(calculate(sc, 0, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
             sections.put(totalTime, sc);
@@ -139,13 +160,11 @@ public class SplinePath {
                 (hdd[0] * section.p0.getY() + hdd[1] * section.tanVY[0] + hdd[2] * section.accelY[0] + hdd[3] * section.accelY[1] + hdd[4] * section.tanVY[1] + hdd[5] * section.p1.getY()) / time
             );
         } else {
-            // Scaling factor of 0.01m (1cm) offset for endpoints (required to not be control sequence t=[0,1])
-            double linearSlope = ((section.p1.getY() - section.p0.getY()) / (section.p1.getX() - section.p0.getX())) * 0.01;
             Vec2D[] sps = {
-                section.p0idx == 0 ? new Vec2D(section.p0.getX() - linearSlope, section.p0.getY() - linearSlope) : points.get(section.p0idx - 1),
+                section.p0idx == 0 ? nftCtrlPoints.getA() : points.get(section.p0idx - 1),
                 points.get(section.p0idx),
                 points.get(section.p0idx + 1),
-                (points.size() <= section.p0idx + 2) ? new Vec2D(section.p1.getX() + linearSlope, section.p1.getY() + linearSlope) : points.get(section.p0idx + 2)
+                (points.size() <= section.p0idx + 2) ? nftCtrlPoints.getB() : points.get(section.p0idx + 2)
             };
             double t01 = Math.sqrt(sps[0].dist(sps[1]));
             double t12 = Math.sqrt(sps[1].dist(sps[2]));
@@ -297,6 +316,21 @@ public class SplinePath {
                 start.getAccelY(),
                 end.getAccelY()
             };
+        }
+
+        @Override
+        public String toString() {
+            return "Section{" +
+                    "p0=" + p0 +
+                    ", p1=" + p1 +
+                    ", p0idx=" + p0idx +
+                    ", tanVX=" + Arrays.toString(tanVX) +
+                    ", tanVY=" + Arrays.toString(tanVY) +
+                    ", dist=" + dist +
+                    ", accelX=" + Arrays.toString(accelX) +
+                    ", accelY=" + Arrays.toString(accelY) +
+                    ", time=" + time +
+                    '}';
         }
     }
 }
