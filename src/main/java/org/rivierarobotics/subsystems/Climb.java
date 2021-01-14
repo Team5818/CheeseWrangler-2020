@@ -20,35 +20,41 @@
 
 package org.rivierarobotics.subsystems;
 
-public class Climb extends BasePIDSubsystem {
-    // private final WPI_TalonSRX climbTalon;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.util.MotorUtil;
+
+public class Climb extends SubsystemBase implements RRSubsystem {
+    //private final WPI_TalonSRX climbTalon;
+    //private final MechLogger logger;
 
     public Climb(int id) {
-        super(new PIDConfig(0, 0, 0, 1));
-        //        this.climbTalon = new WPI_TalonSRX(id);
-        //        climbTalon.configFactoryDefault();
-        //        climbTalon.setSensorPhase(true);
-        //        climbTalon.setNeutralMode(NeutralMode.Brake);
+        //climbTalon = new WPI_TalonSRX(id);
+        //MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+        //        new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, climbTalon);
+        //logger = Logging.getLogger(getClass());
+        //climbTalon.setSensorPhase(true);
+        //climbTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public void setPositionTicks(double position) {
+        //climbTalon.set(ControlMode.MotionMagic, position);
     }
 
     @Override
     public double getPositionTicks() {
-        //        return climbTalon.getSensorCollection().getPulseWidthPosition();
+        //return climbTalon.getSelectedSensorPosition();
         throw new UnsupportedOperationException();
     }
 
     @Override
-    protected void setPower(double pwr) {
-        //        climbTalon.set(pwr);
-    }
-
-    public enum Height {
-        FORTY_FIVE(0), SIXTY(0), SEVENTY_TWO(0);
-
-        public final int position;
-
-        Height(int position) {
-            this.position = position;
-        }
+    public void setPower(double pwr) {
+        //logger.powerChange(pwr);
+        //climbTalon.set(ControlMode.PercentOutput, pwr);
     }
 }

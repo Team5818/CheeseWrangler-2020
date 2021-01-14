@@ -23,7 +23,6 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import org.rivierarobotics.subsystems.LimelightServo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,36 +30,35 @@ import javax.inject.Singleton;
 @Singleton
 public class VisionUtil {
     private final NetworkTable limelight;
-    private final LimelightServo limelightServo;
 
     @Inject
-    public VisionUtil(LimelightServo limelightServo) {
-        this.limelightServo = limelightServo;
-        limelight = NetworkTableInstance.getDefault().getTable("limelight");
+    public VisionUtil() {
+        this.limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
 
-    public final double getLLValue(String key) {
-        return limelight.getEntry(key).getDouble(0);
+    public double getLLValue(String key) {
+        return getLLValue(key, -1);
     }
 
-    public final double getActualTY() {
-        double llDist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(getLLValue("ty") + limelightServo.getAngle()));
-        return Math.toDegrees(Math.atan2(ShooterUtil.getTopHeight(),
-            llDist + ShooterUtil.getLLtoTurretX()));
+    public double getLLValue(String key, double def) {
+        return limelight.getEntry(key).getDouble(def);
     }
 
-    public final void setLedState(LimelightLedState state) {
-        limelight.getEntry("ledMode").setNumber(state.set);
+    public double getActualTY(double hoodAbsPos) {
+        return getLLValue("ty") + hoodAbsPos -  3;
     }
 
-    public final void setPipMode(LimelightPIPMode mode) {
-        limelight.getEntry("stream").setNumber(mode.set);
+    public void setLEDState(LimelightLEDState state) {
+        limelight.getEntry("ledMode").setNumber(state.ordinal());
+    }
+    
+    public boolean hasLEDState(LimelightLEDState state) {
+        return (int) limelight.getEntry("ledMode").getNumber(-1) == state.ordinal();
     }
 
-    public final void invertLedState() {
+    public void invertLedState() {
         NetworkTableEntry led = limelight.getEntry("ledMode");
-        double cs = (double) led.getNumber(1.0);
+        int cs = (int) led.getNumber(1.0);
         led.setNumber(cs == 1 ? 3 : 1);
     }
-
 }

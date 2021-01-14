@@ -24,11 +24,9 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
-import edu.wpi.first.wpilibj.util.Units;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.commands.DriveControlCreator;
+import org.rivierarobotics.commands.drive.DriveControlCreator;
 import org.rivierarobotics.inject.Sided;
-import org.rivierarobotics.util.Dimensions;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Side;
 
@@ -37,6 +35,7 @@ import javax.inject.Singleton;
 
 @Singleton
 public class DriveTrain extends SubsystemBase {
+    private static final double TRACKWIDTH = 0.7366; // meters
     private final DriveTrainSide left;
     private final DriveTrainSide right;
     private final NavXGyro gyro;
@@ -50,8 +49,8 @@ public class DriveTrain extends SubsystemBase {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
-        this.kinematics = new DifferentialDriveKinematics(Dimensions.TRACKWIDTH);
-        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(gyro.getYaw()));
+        this.kinematics = new DifferentialDriveKinematics(TRACKWIDTH);
+        this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
     }
 
@@ -64,9 +63,14 @@ public class DriveTrain extends SubsystemBase {
         right.setVelocity(r);
     }
 
+    public void setVoltage(double l, double r) {
+        left.setVoltage(l);
+        right.setVoltage(r);
+    }
+
     public void setPower(double l, double r) {
-        left.setManualPower(l);
-        right.setManualPower(r);
+        left.setPower(l);
+        right.setPower(r);
     }
 
     public double getAvgVelocity() {
@@ -97,8 +101,8 @@ public class DriveTrain extends SubsystemBase {
         return odometry.getPoseMeters();
     }
 
-    public void resetEncoder() {
-        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(gyro.getYaw()));
+    public void resetOdometry() {
+        odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(-gyro.getYaw()));
         left.resetEncoder();
         right.resetEncoder();
     }
@@ -106,9 +110,9 @@ public class DriveTrain extends SubsystemBase {
     @Override
     public void periodic() {
         odometry.update(
-            Rotation2d.fromDegrees(gyro.getYaw()),
-            Units.inchesToMeters(left.getPosition()),
-            Units.inchesToMeters(right.getPosition())
+            Rotation2d.fromDegrees(-gyro.getYaw()),
+            left.getPosition(),
+            right.getPosition()
         );
     }
 }

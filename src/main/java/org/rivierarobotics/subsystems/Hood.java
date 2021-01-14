@@ -20,80 +20,97 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpiutil.math.MathUtil;
-import org.rivierarobotics.commands.HoodControl;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.commands.hood.HoodControl;
+import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Provider;
 
-public class Hood extends BasePIDSubsystem {
-    private static final double LOWER_HARD = 2028;
-    private static final double LOWER_SOFT = 2158;
-    private static final double HIGHER_HARD = 2410;
-    private static final double HIGHER_SOFT = 2250;
-    private static final double zeroTicks = 2786;
+public class Hood extends SubsystemBase implements RRSubsystem {
+    private static final int ZERO_TICKS = 2800;
+    private static final int FORWARD_LIMIT_TICKS = 2500;
+    private static final int BACK_LIMIT_TICKS = 2200;
+    private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
-    private final LimelightServo servo;
     private final Provider<HoodControl> command;
+    private final RobotShuffleboardTab shuffleTab;
+    private final MultiPID multiPID;
+    private final MechLogger logger;
 
-    public Hood(int motorId, LimelightServo servo, Provider<HoodControl> command) {
-        super(new PIDConfig(0.0015, 0.0, 0.0, 0.0, 10, 0.4), 4096 / 360.0);
-        this.servo = servo;
+    public Hood(int motorId, Provider<HoodControl> command, RobotShuffleboard shuffleboard) {
         this.command = command;
-        hoodTalon = new WPI_TalonSRX(motorId);
-        hoodTalon.configFactoryDefault();
-        hoodTalon.setSensorPhase(false);
+        this.logger = Logging.getLogger(getClass());
+        this.shuffleTab = shuffleboard.getTab("TurretHood");
+
+        this.hoodTalon = new WPI_TalonSRX(motorId);
+        this.multiPID = new MultiPID(hoodTalon,
+                new PIDConfig((0.8 * 1023 / 300), 0, 0, 0),
+                new PIDConfig(0, 0, 0, 0));
+        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+                multiPID.getConfig(MultiPID.Type.POSITION), 600, hoodTalon);
+        multiPID.getConfig(MultiPID.Type.VELOCITY).applyTo(hoodTalon, 1);
+        multiPID.getConfig(MultiPID.Type.POSITION).applyTo(hoodTalon, 0);
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, hoodTalon);
+        hoodTalon.setSensorPhase(true);
+        hoodTalon.setInverted(true);
         hoodTalon.setNeutralMode(NeutralMode.Brake);
-        hoodTalon.configSelectedFeedbackSensor(FeedbackDevice.PulseWidthEncodedPosition);
     }
 
-    public final WPI_TalonSRX getHoodTalon() {
-        return hoodTalon;
+    public int getZeroTicks() {
+        return ZERO_TICKS;
+    }
+    
+    public int getForwardLimit() {
+        return FORWARD_LIMIT_TICKS;
     }
 
-    @Override
+    public int getBackLimit() {
+        return BACK_LIMIT_TICKS;
+    }
+
     public double getPositionTicks() {
-        return hoodTalon.getSensorCollection().getPulseWidthPosition();
+        return hoodTalon.getSelectedSensorPosition();
     }
 
-    @Override
     public void setPower(double pwr) {
-        pwr = limitPower(pwr);
-        hoodTalon.set(pwr);
+        double range = FORWARD_LIMIT_TICKS - BACK_LIMIT_TICKS;
+        double pos = CURVE_FACTOR - (pwr >= 0 ? CURVE_FACTOR / (range / Math.abs((FORWARD_LIMIT_TICKS - getPositionTicks()))) :
+                CURVE_FACTOR / (range / Math.abs((getPositionTicks() - BACK_LIMIT_TICKS))));
+        pwr = Math.pow(Math.E, -pos * pos) * pwr;
+        logger.powerChange(pwr);
+        hoodTalon.set(ControlMode.PercentOutput, pwr);
     }
 
-    @Override
-    public void setManualPower(double pwr) {
-        pwr = limitPower(pwr);
-        super.setManualPower(pwr);
+    public double getAngle() {
+        return MathUtil.ticksToDegrees(ZERO_TICKS - getPositionTicks());
     }
 
-    private double limitPower(double pwr) {
-        double sign = Math.signum(pwr);
-        if (pwr <= 0 && getPositionTicks() < LOWER_SOFT) {
-            pwr = MathUtil.clamp(pwr, 0.6 * -(getPositionTicks() - LOWER_HARD) / (LOWER_SOFT - LOWER_HARD), 0);
-        } else if (pwr > 0 && getPositionTicks() > HIGHER_SOFT) {
-            pwr = MathUtil.clamp(pwr, 0, 0.6 * (HIGHER_HARD - getPositionTicks()) / (HIGHER_HARD - HIGHER_SOFT));
-        }
-        return sign * MathUtil.clamp(Math.abs(pwr), 0, 0.6);
+    public double getZeroedAngle(double toZero) {
+        return MathUtil.ticksToDegrees(ZERO_TICKS - toZero);
     }
 
-    public double getAbsolutePosition() {
-        return (zeroTicks - getPositionTicks()) * 360 / 4096;
+    public void setAngle(double angle) {
+        double ticks = ZERO_TICKS - MathUtil.degreesToTicks(angle);
+        shuffleTab.setEntry("setAngle", angle);
+        shuffleTab.setEntry("setTicks", ticks);
+        logger.setpointChange(ticks);
+        multiPID.selectConfig(MultiPID.Type.POSITION);
+        hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 
-    public void setAbsoluteAngle(double angle) {
-        SmartDashboard.putNumber("SetHoodAngle", angle);
-        if (angle >= 33 && angle <= 66) {
-            double value = zeroTicks - angle * getAnglesOrInchesToTicks();
-            SmartDashboard.putNumber("Hood SetTicks", value);
-            setPositionTicks(value);
-        } else {
-            setPositionTicks(0);
-        }
+    public void setVelocity(double vel) {
+        shuffleTab.setEntry("setVel", vel);
+        multiPID.selectConfig(MultiPID.Type.VELOCITY);
+        hoodTalon.set(ControlMode.Velocity, vel);
     }
 
     @Override
@@ -101,7 +118,6 @@ public class Hood extends BasePIDSubsystem {
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }
-        servo.setAngle(95 - getAbsolutePosition());
         super.periodic();
     }
 }

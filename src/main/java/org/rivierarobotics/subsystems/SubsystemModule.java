@@ -23,12 +23,12 @@ package org.rivierarobotics.subsystems;
 import dagger.Module;
 import dagger.Provides;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.CheeseWheelControl;
-import org.rivierarobotics.commands.EjectorControl;
-import org.rivierarobotics.commands.HoodControl;
-import org.rivierarobotics.commands.TurretControl;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
+import org.rivierarobotics.commands.hood.HoodControl;
+import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.Side;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -41,24 +41,18 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 5;
     private static final int FLYWHEEL_FALCON = 4;
     private static final int CHEESE_WHEEL_TALON = 6;
-    private static final int EJECTOR_VICTOR = 8;
+    private static final int EJECTOR_VICTOR_LEFT = 8;
+    private static final int EJECTOR_VICTOR_RIGHT = 11;
     private static final int INTAKE_VICTOR_FRONT = 9;
     private static final int INTAKE_VICTOR_BACK = 10;
     private static final int CLIMB_FALCON = 21;
 
-    private static final int LIMELIGHT_SERVO = 1;
     private static final int CAMERA_SERVO = 0;
-    private static final int CW_FRONT_SENSOR = 1;
-    private static final int CW_BACK_SENSOR = 0;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
-        new DTMotorIds(
-            1, 0,
-            0, 1);
+        new DTMotorIds(1, 0, 0, 1);
     private static final DTMotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
-        new DTMotorIds(
-            13, 14,
-            2, 4);
+        new DTMotorIds(13, 14, 2, 4);
 
     private SubsystemModule() {
     }
@@ -79,26 +73,34 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision) {
-        return new Turret(TURRET_TALON, command, gyro, vision);
+    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard) {
+        return new Turret(TURRET_TALON, command, gyro, vision, shuffleboard);
     }
 
     @Provides
     @Singleton
-    public static Hood provideHood(LimelightServo servo, Provider<HoodControl> command) {
-        return new Hood(HOOD_TALON, servo, command);
+    public static Hood provideHood(Provider<HoodControl> command, @Provided RobotShuffleboard shuffleboard) {
+        return new Hood(HOOD_TALON, command, shuffleboard);
     }
 
     @Provides
     @Singleton
-    public static Ejector provideEjector(Provider<EjectorControl> command) {
-        return new Ejector(EJECTOR_VICTOR, command);
+    @Sided(Side.LEFT)
+    public static EjectorSide provideEjectorLeft() {
+        return new EjectorSide(EJECTOR_VICTOR_LEFT, false);
     }
 
     @Provides
     @Singleton
-    public static Flywheel provideFlywheel() {
-        return new Flywheel(FLYWHEEL_FALCON);
+    @Sided(Side.RIGHT)
+    public static EjectorSide provideEjectorRight() {
+        return new EjectorSide(EJECTOR_VICTOR_RIGHT, false);
+    }
+
+    @Provides
+    @Singleton
+    public static Flywheel provideFlywheel(@Provided RobotShuffleboard shuffleboard) {
+        return new Flywheel(FLYWHEEL_FALCON, shuffleboard);
     }
 
 
@@ -118,20 +120,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command) {
-        return new CheeseWheel(CHEESE_WHEEL_TALON, CW_FRONT_SENSOR, CW_BACK_SENSOR, command);
-    }
-
-    @Provides
-    @Singleton
-    public static PistonController providePistonController() {
-        return new PistonController();
-    }
-
-    @Provides
-    @Singleton
-    public static LimelightServo provideLimelightServo() {
-        return new LimelightServo(LIMELIGHT_SERVO);
+    public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command, @Provided RobotShuffleboard shuffleboard) {
+        return new CheeseWheel(CHEESE_WHEEL_TALON, command, shuffleboard);
     }
 
     @Provides

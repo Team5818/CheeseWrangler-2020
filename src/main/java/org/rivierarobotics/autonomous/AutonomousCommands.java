@@ -20,72 +20,43 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.advanced.ShootLoop;
+import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
+import org.rivierarobotics.autonomous.advanced.TrenchRun;
+import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
 import org.rivierarobotics.autonomous.basic.ForwardAuto;
 import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
 import org.rivierarobotics.autonomous.basic.ShootAndDrive;
 import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 
 import javax.inject.Inject;
-import javax.inject.Provider;
 
 public class AutonomousCommands {
-    private PathweaverExecutorCreator pathweaverExecutorCreator;
-    private Provider<FlexRoutine> flexRoutineProvider;
-    private Provider<FlexTapeRoutine> flexTapeProvider;
-    private Provider<TrenchRun> trenchRunProvider;
-    private Provider<BasicAuto> basicAutoProvider;
-    private Provider<BasicAuto2> basicAuto2Provider;
-    private Provider<BasicAuto3> basicAuto3Provider;
-    private ForwardAutoCreator forwardAutoCreator;
-    private ShootAndDriveCreator shootAndDriveCreator;
+    private final PathweaverExecutorCreator pathweaverExecutorCreator;
+    private final ForwardAutoCreator forwardAutoCreator;
+    private final ShootAndDriveCreator shootAndDriveCreator;
+    private final ShootLoopCreator shootLoopCreator;
+    private final TrenchRunCreator trenchRunCreator;
 
     @Inject
-    public AutonomousCommands(Provider<FlexRoutine> flexRoutineProvider,
-                              Provider<FlexTapeRoutine> flexTapeProvider,
-                              PathweaverExecutorCreator pathweaverExecutorCreator,
-                              Provider<TrenchRun> trenchRunProvider,
-                              Provider<BasicAuto> basicAutoProvider,
-                              Provider<BasicAuto2> basicAuto2Provider,
-                              Provider<BasicAuto3> basicAuto3Provider,
+    public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
                               ForwardAutoCreator forwardAutoCreator,
-                              ShootAndDriveCreator shootAndDriveCreator) {
+                              ShootAndDriveCreator shootAndDriveCreator,
+                              ShootLoopCreator shootLoopCreator,
+                              TrenchRunCreator trenchRunCreator) {
         this.pathweaverExecutorCreator = pathweaverExecutorCreator;
-        this.flexRoutineProvider = flexRoutineProvider;
-        this.flexTapeProvider = flexTapeProvider;
-        this.trenchRunProvider = trenchRunProvider;
-        this.basicAutoProvider = basicAutoProvider;
-        this.basicAuto2Provider = basicAuto2Provider;
-        this.basicAuto3Provider = basicAuto3Provider;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
+        this.shootLoopCreator = shootLoopCreator;
+        this.trenchRunCreator = trenchRunCreator;
     }
 
     public PathweaverExecutor pathweaver(Pose2dPath path) {
         return pathweaverExecutorCreator.create(path);
     }
 
-    public FlexRoutine flex() {
-        return flexRoutineProvider.get();
-    }
-
-    public FlexTapeRoutine flexTape() {
-        return flexTapeProvider.get();
-    }
-
-    public TrenchRun trenchRun() {
-        return trenchRunProvider.get();
-    }
-
-    public BasicAuto basicAuto() {
-        return basicAutoProvider.get();
-    }
-
-    public BasicAuto2 basicAuto2() {
-        return basicAuto2Provider.get();
-    }
-
-    public BasicAuto3 basicAuto3() {
-        return basicAuto3Provider.get();
+    public PathweaverExecutor pathweaver(Pose2dPath path, boolean isAbsolute, boolean flip) {
+        return pathweaverExecutorCreator.create(path, isAbsolute, flip);
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {
@@ -96,4 +67,11 @@ public class AutonomousCommands {
         return shootAndDriveCreator.create();
     }
 
+    public ShootLoop shootLoop(Pose2dPath loop) {
+        return shootLoopCreator.create(loop);
+    }
+
+    public TrenchRun trenchRun() {
+        return trenchRunCreator.create();
+    }
 }

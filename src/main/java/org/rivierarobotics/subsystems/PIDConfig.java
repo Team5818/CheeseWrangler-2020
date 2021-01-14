@@ -20,30 +20,29 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
+
 public class PIDConfig {
     private final double kP;
     private final double kI;
     private final double kD;
     private final double kF;
-    private final double tolerance;
     private final double pidRange;
 
-    public PIDConfig(double kP, double kI, double kD, double kF, double tolerance, double pidRange) {
+    public PIDConfig(double kP, double kI, double kD, double kF, double pidRange) {
         this.kP = kP;
         this.kI = kI;
         this.kD = kD;
         this.kF = kF;
-        this.tolerance = tolerance;
         this.pidRange = pidRange;
     }
 
-    public PIDConfig(double kP, double kI, double kD, double pidRange) {
-        this.kP = kP;
-        this.kI = kI;
-        this.kD = kD;
-        this.kF = 0;
-        this.tolerance = 0;
-        this.pidRange = pidRange;
+    public PIDConfig(double kP, double kI, double kD, double kF) {
+        this(kP, kI, kD, kF, 1.0);
+    }
+
+    public PIDConfig(double kP, double kI, double kD) {
+        this(kP, kI, kD, 0.0, 1.0);
     }
 
     public double getP() {
@@ -62,11 +61,14 @@ public class PIDConfig {
         return kF;
     }
 
-    public double getTolerance() {
-        return tolerance;
-    }
-
     public double getRange() {
         return pidRange;
+    }
+
+    public void applyTo(BaseTalon motor, int slotIdx) {
+        motor.config_kP(slotIdx, kP);
+        motor.config_kI(slotIdx, kI);
+        motor.config_kD(slotIdx, kD);
+        motor.config_kF(slotIdx, kF);
     }
 }

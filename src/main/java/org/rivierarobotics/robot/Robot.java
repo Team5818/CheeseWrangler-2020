@@ -20,19 +20,27 @@
 
 package org.rivierarobotics.robot;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.cscore.VideoException;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
-import org.rivierarobotics.util.LimelightLedState;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.util.CameraFlip;
+import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.LimelightLEDState;
+import org.rivierarobotics.util.RSTOptions;
 
+import java.util.Map;
 import java.util.Objects;
 
 public class Robot extends TimedRobot {
@@ -40,7 +48,7 @@ public class Robot extends TimedRobot {
     private CommandComponent commandComponent;
     private Command autonomousCommand;
     private SendableChooser<Command> chooser;
-    private Command flyingWheelman;
+    private CameraFlip cameraThread;
 
     @Override
     public void robotInit() {
@@ -53,15 +61,34 @@ public class Robot extends TimedRobot {
         chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
+        chooser.addOption("TrenchRun", commandComponent.auto().trenchRun());
+        chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
+        chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
+        chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
 
-        flyingWheelman = commandComponent.flywheel().setVelocity(15_900);
+        CameraServer.getInstance().startAutomaticCapture();
+        if (cameraThread == null) {
+            cameraThread = new CameraFlip();
+            cameraThread.start();
+        }
+
+        try {
+            globalComponent.getShuffleboard().getTab("Driver")
+                    .setSendable(chooser, new RSTOptions(2, 1, 0, 4))
+                    .setCamera("Flipped", new RSTOptions(4, 4, 0, 0))
+                    .setCamera("limelight", new RSTOptions(4, 4, 4, 0));
+        } catch (VideoException ignored) {
+            // Padding for checkstyle
+        }
+        globalComponent.getNavXGyro().resetGyro();
     }
 
     @Override
     public void robotPeriodic() {
         displayShuffleboard();
+        globalComponent.getShuffleboard().update();
         if (isEnabled()) {
-            globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_ON);
+            globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
         }
     }
@@ -69,8 +96,8 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousInit() {
         globalComponent.getNavXGyro().resetGyro();
-        globalComponent.getNavXGyro().setAngleAdjustment(180);
-        globalComponent.getDriveTrain().resetEncoder();
+        globalComponent.getDriveTrain().resetOdometry();
+        globalComponent.getPositionTracker().reset();
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
             () -> commandComponent.auto().shootAndDrive()
@@ -88,105 +115,85 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
         }
-
+        globalComponent.getNavXGyro().resetGyro();
+        commandComponent.flywheel().setPower(0).schedule();
         globalComponent.getButtonConfiguration().initTeleop();
-        globalComponent.getLimelightServo().setAngle(70);
     }
 
     @Override
     public void teleopPeriodic() {
-        if (!flyingWheelman.isScheduled()) {
-            flyingWheelman.schedule();
-        }
         CommandScheduler.getInstance().run();
     }
 
     @Override
     public void disabledInit() {
-        globalComponent.getVisionUtil().setLedState(LimelightLedState.FORCE_OFF);
+        CommandScheduler.getInstance().cancelAll();
+        CommandScheduler.getInstance().clearButtons();
     }
 
     @Override
     public void disabledPeriodic() {
-        CommandScheduler.getInstance().run();
+        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
-
-    private final ShuffleboardTab visionConfTab = Shuffleboard.getTab("Vision Conf");
-    private final ShuffleboardTab driveTrainTab = Shuffleboard.getTab("Drive Train");
-    private final ShuffleboardTab cheeseTab = Shuffleboard.getTab("Cheese Wheel");
-    private final NetworkTableEntry turretTargetPos = visionConfTab.add("TurrTargetPos", 0)
-        .getEntry();
-    private final NetworkTableEntry turretPositionTicks = visionConfTab.add("TurretPosTicks", 0)
-        .getEntry();
-    private final NetworkTableEntry turretAbsoluteAngle = visionConfTab.add("TurretAbsAngle", 0)
-        .getEntry();
-    private final NetworkTableEntry hoodPositionTicks = visionConfTab.add("HoodPosTicks", 0)
-        .getEntry();
-    private final NetworkTableEntry hoodAbsoluteAngle = visionConfTab.add("HoodAbsAngle", 0)
-        .getEntry();
-    private final NetworkTableEntry gyroYaw = visionConfTab.add("Gyro Yaw", 0)
-        .getEntry();
-    private final NetworkTableEntry ty = visionConfTab.add("ty", 0)
-        .getEntry();
-    private final NetworkTableEntry tx = visionConfTab.add("tx", 0)
-        .getEntry();
-    private final NetworkTableEntry adjustedTy = visionConfTab.add("Adj. ty", 0)
-        .getEntry();
-    private final NetworkTableEntry servoAngle = visionConfTab.add("Servo Angle", 0)
-        .getEntry();
-    private final NetworkTableEntry flyVel = visionConfTab.add("Fly Vel", 0)
-        .getEntry();
-
-    private final NetworkTableEntry leftEnc = driveTrainTab.add("Left Enc", 0)
-        .getEntry();
-    private final NetworkTableEntry rightEnc = driveTrainTab.add("Right Enc", 0)
-        .getEntry();
-
-    private final NetworkTableEntry leftVel = driveTrainTab.add("Left Vel", 0)
-        .getEntry();
-    private final NetworkTableEntry rightVel = driveTrainTab.add("Right Vel", 0)
-        .getEntry();
-
-    private final NetworkTableEntry frontSensor = driveTrainTab.add("Front Sensor", 0)
-        .getEntry();
-    private final NetworkTableEntry backSensor = driveTrainTab.add("Back Sensor", 0)
-        .getEntry();
 
     private void displayShuffleboard() {
         var turret = globalComponent.getTurret();
-        turretTargetPos.setNumber(turret.getAbsolutePosition());
-        turretPositionTicks.setNumber(turret.getPositionTicks());
-        turretAbsoluteAngle.setNumber(turret.getAbsoluteAngle());
-        SmartDashboard.putNumber("TurrAbsAng", turret.getAbsoluteAngle());
-
         var hood = globalComponent.getHood();
-        hoodPositionTicks.setNumber(hood.getPositionTicks());
-        hoodAbsoluteAngle.setNumber(hood.getAbsolutePosition());
-
         var gyro = globalComponent.getNavXGyro();
-        gyroYaw.setNumber(gyro.getYaw());
-
         var visionUtil = globalComponent.getVisionUtil();
-        ty.setNumber(visionUtil.getLLValue("ty"));
-        tx.setNumber(visionUtil.getLLValue("tx"));
-        adjustedTy.setNumber(visionUtil.getActualTY());
-
-        var llServo = globalComponent.getLimelightServo();
-        servoAngle.setNumber(llServo.getAngle());
-
         var flywheel = globalComponent.getFlywheel();
-        flyVel.setNumber(flywheel.getPositionTicks());
-
         var dt = globalComponent.getDriveTrain();
-        leftEnc.setNumber(dt.getLeft().getPosition());
-        rightEnc.setNumber(dt.getRight().getPosition());
-        leftVel.setNumber(dt.getLeft().getVelocity());
-        rightVel.setNumber(dt.getLeft().getVelocity());
-
         var cw = globalComponent.getCheeseWheel();
-        frontSensor.setNumber(cw.getFrontSensorValue());
-        backSensor.setNumber(cw.getBackSensorValue());
+        var physics = globalComponent.getPhysicsUtil();
+        var shuffleboard = globalComponent.getShuffleboard();
 
-        SmartDashboard.putData(chooser);
+        shuffleboard.getTab("TurretHood")
+            .setEntry("Hood Pos Ticks", hood.getPositionTicks())
+            .setEntry("Hood Abs Angle", hood.getAngle())
+            .setEntry("Turret Abs Angle", turret.getAngle(true))
+            .setEntry("Turret Rel Angle", turret.getAngle(false))
+            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
+            .setEntry("turretVel", turret.getVelocity());
+
+        shuffleboard.getTab("Vision")
+            .setEntry("tx", visionUtil.getLLValue("tx"))
+            .setEntry("ty", visionUtil.getLLValue("ty"))
+            .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
+            .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
+            .setEntry("Gyro Angle", gyro.getYaw())
+            .setEntry("Adj tx", turret.getTurretCalculations(0, hood.getAngle())[1])
+            .setEntry("Target Velocity", physics.getTargetVelocity());
+
+        shuffleboard.getTab("Auto Aim")
+                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
+
+        shuffleboard.getTab("Auto Aim").getTable("Random")
+                .addTabData(shuffleboard.getTab("Cheese Wheel"));
+
+        shuffleboard.getTab("Drive Train")
+            .setEntry("Left Enc", dt.getLeft().getPosition())
+            .setEntry("Right Enc", dt.getRight().getPosition())
+            .setEntry("Left Vel", dt.getLeft().getVelocity())
+            .setEntry("Right Vel", dt.getRight().getVelocity())
+            .setEntry("XVel", dt.getXVelocity())
+            .setEntry("YVel", dt.getYVelocity());
+
+        shuffleboard.getTab("Cheese Wheel")
+            .setEntry("Position Ticks", cw.getPositionTicks())
+            .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
+            .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
+            .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
+            .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
+            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
+            .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+            .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
+            .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
+            .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
+            .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
+
+        shuffleboard.getTab("Driver")
+                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTOptions(1, 1, 2, 4))
+                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
+                .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
     }
 }

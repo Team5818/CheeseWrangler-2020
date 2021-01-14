@@ -20,73 +20,28 @@
 
 package org.rivierarobotics.util;
 
-import org.rivierarobotics.subsystems.CheeseWheel;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 public enum CheeseSlot {
     // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
+    // Labeled with labelmaker (small) labels
     ZERO, ONE, TWO, THREE, FOUR;
 
-    private final int index;
-    private final double frontCollectPosition;
-    private final double backCollectPosition;
-    private final double frontFixPosition;
-    private final double backFixPosition;
-    private final double shootPosition;
-    public boolean isFilled;
-
-    public static final double INDEX_DIFF = 4096.0 / 5;
-    private static final double frontOffset = 1000;
-    private static final double backOffset = (frontOffset + INDEX_DIFF * 2) + 30;
-    private static final double frontFixOffset = 577;
-    private static final double backFixOffset = 3090;
-    private static final double shootOffset = 3870;
-    private static final int NUMBER_OF_SLOTS = values().length;
-
-    private static double boundPosition(double pos) {
-        if (pos < 0) {
-            return pos + 4096;
-        } else if (pos > 4095) {
-            return pos - 4096;
-        }
-        return pos;
-    }
+    private final DigitalInput sensor;
 
     CheeseSlot() {
-        this.index = ordinal();
-        double indexOffset = INDEX_DIFF * index;
-        this.frontCollectPosition = boundPosition(indexOffset + frontOffset);
-        this.backCollectPosition = boundPosition(indexOffset + backOffset);
-        this.frontFixPosition = boundPosition(indexOffset + frontFixOffset);
-        this.backFixPosition = boundPosition(indexOffset + backFixOffset);
-        this.shootPosition = boundPosition(indexOffset + shootOffset);
+        this.sensor = new DigitalInput(this.ordinal() == 0 ? 5 : 10 - this.ordinal());
     }
 
-    public CheeseSlot next(int amount) {
-        var next = (index + amount) % NUMBER_OF_SLOTS;
-        while (next < 0) {
-            next += NUMBER_OF_SLOTS;
-        }
-        return values()[next];
+    public boolean hasBall() {
+        return !sensor.get();
     }
 
-    public double getModePosition(CheeseWheel.Mode mode) {
-        switch (mode) {
-            case COLLECT_FRONT:
-                return this.frontCollectPosition;
-            case COLLECT_BACK:
-                return this.backCollectPosition;
-            case FIX_FRONT:
-                return this.frontFixPosition;
-            case FIX_BACK:
-                return this.backFixPosition;
-            case SHOOTING:
-                return this.shootPosition;
-            default:
-                throw new IllegalStateException("Unexpected mode: " + mode);
-        }
+    public static CheeseSlot slotOfNum(int num) {
+        return CheeseSlot.values()[num];
     }
 
-    public int getIndex() {
-        return index;
+    public enum State {
+        BALL, NO_BALL, EITHER
     }
 }

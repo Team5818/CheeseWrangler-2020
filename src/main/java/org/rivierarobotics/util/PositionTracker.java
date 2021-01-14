@@ -21,8 +21,8 @@
 package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 
 import javax.inject.Inject;
@@ -30,61 +30,54 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PositionTracker {
-    static double[] pos = new double[2];
-    static double beforeT = 0;
-    private final Timer time;
-    private final NavXGyro gyro;
+    private double[] pos = new double[2];
+    private double previousGyro = 0;
+    private double beforeT = 0;
     private final DriveTrain driveTrain;
+    private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
-    double t;
+    private final RobotShuffleboardTab tab;
+    private final NavXGyro gyro;
 
     @Inject
-    public PositionTracker(DriveTrain dt, NavXGyro gyro, VisionUtil vision, Turret turret) {
+    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret,
+                           Hood hood, RobotShuffleboard shuffleboard, NavXGyro gyro) {
         this.turret = turret;
         this.vision = vision;
         this.gyro = gyro;
         this.driveTrain = dt;
-        time = new Timer();
+        this.hood = hood;
+        this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     public void trackPosition() {
-        SmartDashboard.putNumber("before", beforeT);
-        t = Timer.getFPGATimestamp();
-        double timeDifference = (t - beforeT);
-        SmartDashboard.putNumber("change in time", t - beforeT);
+        double timeDifference = Timer.getFPGATimestamp() - beforeT;
         beforeT = Timer.getFPGATimestamp();
-        pos[0] = pos[0] + driveTrain.getXVelocity() * timeDifference;
-        pos[1] = pos[1] + driveTrain.getYVelocity() * timeDifference;
-        SmartDashboard.putNumber("EncoderX", pos[0]);
-        SmartDashboard.putNumber("EncoderY", pos[1]);
+        pos[0] -= driveTrain.getXVelocity() * timeDifference;
+        pos[1] -= driveTrain.getYVelocity() * timeDifference;
+        //TODO change manual gyro rate to gyro.getRate() in next branch
+        tab.setEntry("GyroSpeed", (gyro.getYaw() - previousGyro) / timeDifference);
+        previousGyro = gyro.getYaw();
+        tab.setEntry("xFromGoal", pos[1]);
+        tab.setEntry("zFromGoal", pos[0]);
     }
 
     public void correctPosition() {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
+        double dist = turret.getTurretCalculations(0, hood.getAngle())[0];
+        double turretAngle = turret.getTurretCalculations(0, hood.getAngle())[1];
+        double xFromTarget = dist * Math.sin(Math.toRadians(turretAngle));
+        double yFromTarget = dist * Math.cos(Math.toRadians(turretAngle));
+        pos[0] = xFromTarget;
+        pos[1] = yFromTarget;
+    }
 
-        double dist = ShooterUtil.getTopHeight() + ShooterUtil.getLLtoTurretY() / Math.tan(Math.toRadians(vision.getActualTY()));
-
-        double txTurret = turret.getTxTurret(dist, 0); //returns turret tx as it is offset from the camera.
-        double xFromTarget = dist * Math.sin(Math.abs(txTurret));
-        if ((turret.getAbsoluteAngle() < -90 && turret.getAbsoluteAngle() > -270) || (turret.getAbsoluteAngle() > 90
-             && turret.getAbsoluteAngle() < 270)) {
-            if (txTurret >= 0) {
-                pos[0] = xFromTarget + ShooterUtil.getLeftFieldToCloseGoal();
-            } else {
-                pos[0] = -xFromTarget + ShooterUtil.getLeftFieldToCloseGoal();
-            }
-            pos[1] = dist * Math.cos(txTurret);
-        } else {
-            if (txTurret >= 0) {
-                pos[0] = ShooterUtil.getLeftFieldToFarGoal() - xFromTarget;
-            } else {
-                pos[0] = xFromTarget + ShooterUtil.getLeftFieldToFarGoal();
-            }
-            pos[1] = ShooterUtil.getFieldLength() - dist * Math.cos(txTurret);
-        }
+    public void reset() {
+        pos[0] = 0;
+        pos[1] = 0;
     }
 
     public double[] getPosition() {

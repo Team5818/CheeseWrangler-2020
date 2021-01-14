@@ -23,24 +23,20 @@ package org.rivierarobotics.inject;
 import dagger.Module;
 import dagger.Subcomponent;
 import org.rivierarobotics.autonomous.AutonomousCommands;
-import org.rivierarobotics.commands.CameraServoCommands;
-import org.rivierarobotics.commands.CheeseWheelCommands;
-import org.rivierarobotics.commands.ClimbCommands;
-import org.rivierarobotics.commands.CollectionCommands;
-import org.rivierarobotics.commands.DriveCommands;
-import org.rivierarobotics.commands.EjectorCommands;
-import org.rivierarobotics.commands.FlywheelCommands;
-import org.rivierarobotics.commands.HoodCommands;
-import org.rivierarobotics.commands.LimelightServoCommands;
-import org.rivierarobotics.commands.PistonCommands;
-import org.rivierarobotics.commands.TurretCommands;
-import org.rivierarobotics.commands.VisionCommands;
+import org.rivierarobotics.commands.camera.CameraCommands;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
+import org.rivierarobotics.commands.climb.ClimbCommands;
+import org.rivierarobotics.commands.collect.CollectionCommands;
+import org.rivierarobotics.commands.drive.DriveCommands;
+import org.rivierarobotics.commands.ejector.EjectorCommands;
+import org.rivierarobotics.commands.flywheel.FlywheelCommands;
+import org.rivierarobotics.commands.hood.HoodCommands;
+import org.rivierarobotics.commands.turret.TurretCommands;
+import org.rivierarobotics.commands.vision.VisionCommands;
 
 @Subcomponent
 public abstract class CommandComponent {
     public abstract DriveCommands drive();
-
-    public abstract PistonCommands piston();
 
     public abstract HoodCommands hood();
 
@@ -58,9 +54,7 @@ public abstract class CommandComponent {
 
     public abstract AutonomousCommands auto();
 
-    public abstract LimelightServoCommands limelightServo();
-
-    public abstract CameraServoCommands cameraServo();
+    public abstract CameraCommands camera();
 
     public abstract ClimbCommands climb();
 

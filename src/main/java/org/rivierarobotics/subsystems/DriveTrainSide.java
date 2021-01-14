@@ -20,52 +20,66 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
+import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.rivierarobotics.util.NeutralIdleMode;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.util.MotorUtil;
 
-public class DriveTrainSide extends SubsystemBase {
-    // same units as distance per pulse
-    private static final double MAX_VELOCITY = 5.7912;
-    private static final double FEED_FORWARD = 1.0 / MAX_VELOCITY;
-    private final PIDController pidController;
-    private final boolean invert;
-    private WPI_TalonFX tl;
-    private WPI_TalonFX tr;
-    private Encoder shaftEncoder;
-    private boolean pidEnabled;
-    private final double pidRange;
+public class DriveTrainSide implements RRSubsystem {
+    private static final double TICKS_PER_METER = 7916 / 1.8288;
+    private static final double MOTOR_TO_WHEEL_RATIO = 17.0 / 48;
+    private final WPI_TalonFX masterLeft;
+    private final WPI_TalonFX slaveRight;
+    private final Encoder shaftEncoder;
+    private final MechLogger logger;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        this.tl = new WPI_TalonFX(motors.topLeft);
-        this.tr = new WPI_TalonFX(motors.topRight);
-        this.invert = invert;
-        this.pidController = new PIDController(0, 0, 0, 0.02);
-        this.pidController.setTolerance(5);
-        this.pidRange = 1.0;
+        this.masterLeft = new WPI_TalonFX(motors.master);
+        this.slaveRight = new WPI_TalonFX(motors.slave);
+        this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
-        setupMotors(tl, tr);
-        NeutralIdleMode.BRAKE.applyTo(tl, tr);
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
+            new PIDConfig(0.05, 0, 0, 0), 0, masterLeft, slaveRight);
+        setStatusFrames(10, 10, 0x1240,
+                StatusFrameEnhanced.Status_4_AinTempVbat.value,
+                StatusFrameEnhanced.Status_2_Feedback0.value);
+        masterLeft.setInverted(invert);
+        slaveRight.setInverted(invert);
+        masterLeft.setNeutralMode(NeutralMode.Brake);
+        slaveRight.setNeutralMode(NeutralMode.Brake);
+        slaveRight.follow(masterLeft);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
-        // meters / ticks
-        shaftEncoder.setDistancePerPulse(-1.8288 / 7916);
+        shaftEncoder.setReverseDirection(true);
+        shaftEncoder.setDistancePerPulse(1 / TICKS_PER_METER);
     }
 
-    private void setupMotors(WPI_TalonFX... motors) {
-        for (WPI_TalonFX motor : motors) {
-            motor.configFactoryDefault();
-            motor.setInverted(invert);
-            motor.configSelectedFeedbackSensor(FeedbackDevice.QuadEncoder);
+    private void setStatusFrames(int periodMs, int timeoutMs, int... frames) {
+        for (int frame : frames) {
+            masterLeft.setStatusFramePeriod(frame, periodMs, timeoutMs);
+            slaveRight.setStatusFramePeriod(frame, periodMs, timeoutMs);
         }
     }
 
+    @Override
+    public double getPositionTicks() {
+        return getPosition() * TICKS_PER_METER;
+    }
+
+    @Override
     public void setPower(double pwr) {
-        tl.set(pwr);
-        tr.set(pwr);
+        logger.powerChange(pwr);
+        masterLeft.set(TalonFXControlMode.PercentOutput, pwr);
+    }
+
+    public double getVoltage(boolean isMasterLeft) {
+        return isMasterLeft ? masterLeft.getMotorOutputVoltage() : slaveRight.getMotorOutputVoltage();
     }
 
     public double getPosition() {
@@ -77,30 +91,16 @@ public class DriveTrainSide extends SubsystemBase {
     }
 
     public void setVelocity(double vel) {
-        pidEnabled = true;
-        pidController.setSetpoint(vel);
+        // Converts m/s to ticks/100ms and sets velocity
+        double set = (vel * TICKS_PER_METER) / (MOTOR_TO_WHEEL_RATIO * 10);
+        logger.setpointChange(set);
+        masterLeft.set(ControlMode.Velocity, set);
     }
 
-    public void setManualPower(double pwr) {
-        pidEnabled = false;
-        setPower(pwr);
-    }
-
-    private void tickPid() {
-        if (pidEnabled) {
-            double pidPower = Math.min(pidRange, Math.max(-pidRange, pidController.calculate(getPosition())));
-            pidPower += pidController.getSetpoint() * FEED_FORWARD;
-            setPower(pidPower);
-        }
-    }
-
-    @Override
-    public void periodic() {
-        tickPid();
-    }
-
-    public void setNeutralIdle(NeutralIdleMode mode) {
-        mode.applyTo(tl, tr);
+    public void setVoltage(double volts) {
+        logger.stateChange("voltageSet", volts);
+        masterLeft.setVoltage(volts);
+        slaveRight.setVoltage(volts);
     }
 
     public void resetEncoder() {

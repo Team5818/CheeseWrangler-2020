@@ -3,7 +3,7 @@ import org.rivierarobotics.gradlerioredux.artifactsKt
 import org.rivierarobotics.gradlerioredux.tasks.PathWeaverSourceSetExtension
 
 plugins {
-    id("org.rivierarobotics.gradlerioredux") version "0.7.8"
+    id("org.rivierarobotics.gradlerioredux") version "0.7.10"
 }
 
 gradleRioRedux {
@@ -27,7 +27,20 @@ afterEvaluate {
     }
 }
 
+tasks.register("windowsLaunchSim") {
+    doLast {
+        project.exec{
+            workingDir = file("./build/")
+            commandLine("cmd", "/C", "start", "gradlerio_simulateJava.bat")
+        }
+    }
+}
+if (edu.wpi.first.toolchain.NativePlatforms.desktopOS() == "windows") {
+    tasks.getByName("simulateExternalJava").finalizedBy(tasks.getByName("windowsLaunchSim"))
+}
+
 dependencies {
+    simulation("edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${edu.wpi.first.toolchain.NativePlatforms.desktop}@zip")
     implementation("org.rivierarobotics.apparjacktus:apparjacktus:0.1.1")
     commonLib("net.octyl.apt-creator", "apt-creator", "0.1.4") {
         compileOnly(lib("annotations"))

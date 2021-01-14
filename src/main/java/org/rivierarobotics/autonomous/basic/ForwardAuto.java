@@ -25,34 +25,33 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.CheeseWheelCommands;
-import org.rivierarobotics.commands.CollectionCommands;
-import org.rivierarobotics.commands.DriveCommands;
-import org.rivierarobotics.commands.VisionCommands;
-import org.rivierarobotics.util.Side;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
+import org.rivierarobotics.commands.collect.CollectionCommands;
+import org.rivierarobotics.commands.drive.DriveCommands;
+import org.rivierarobotics.commands.vision.VisionCommands;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class ForwardAuto extends SequentialCommandGroup {
-
-    public ForwardAuto(@Provided DriveCommands commands,
-                       @Provided CheeseWheelCommands cheeseWheelCommands,
+    public ForwardAuto(@Provided DriveCommands drive,
+                       @Provided CheeseWheelCommands cheeseWheel,
                        @Provided CollectionCommands intake,
                        @Provided VisionCommands vision,
-                       boolean useVisionAim) {
+                       boolean useAutoAim) {
         addCommands(
-            cheeseWheelCommands.shootNWedges(VisionTarget.INNER, 5),
+            cheeseWheel.shootNWedges(5),
             new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                    commands.driveDistance(-5, 0.25).withTimeout(6.0),
-                    commands.driveDistance(5, 0.5).withTimeout(6.0)
+                    drive.driveDistance(-5, 0.25).withTimeout(6.0),
+                    drive.driveDistance(5, 0.5).withTimeout(6.0)
                 ),
-                intake.continuous(Side.BACK)
+                intake.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
             ),
-            useVisionAim
-                ? vision.visionAim(VisionTarget.INNER).withTimeout(1.0)
+            useAutoAim
+                ? vision.encoderAim(VisionTarget.INNER).withTimeout(1.0)
                 : new InstantCommand(),
-            cheeseWheelCommands.shootNWedges(VisionTarget.INNER, 5)
+            cheeseWheel.shootNWedges(5)
         );
     }
 }

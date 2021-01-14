@@ -32,12 +32,12 @@ import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Intake;
-import org.rivierarobotics.subsystems.LimelightServo;
-import org.rivierarobotics.subsystems.PistonController;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.PositionTracker;
+import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Singleton;
@@ -54,13 +54,13 @@ public abstract class GlobalComponent {
         getEjector();
         getCheeseWheel();
         getClimb();
-        getPistonController();
         getNavXGyro();
+        getShuffleboard();
         getButtonConfiguration();
         getVisionUtil();
-        getLimelightServo();
         getCameraServo();
         getPositionTracker();
+        getPhysicsUtil();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -73,26 +73,25 @@ public abstract class GlobalComponent {
 
     public abstract Intake getIntake();
 
+    public abstract PhysicsUtil getPhysicsUtil();
+
     public abstract Ejector getEjector();
 
     public abstract CheeseWheel getCheeseWheel();
 
     public abstract Climb getClimb();
 
-    public abstract PistonController getPistonController();
-
     public abstract NavXGyro getNavXGyro();
+
+    public abstract RobotShuffleboard getShuffleboard();
 
     public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract VisionUtil getVisionUtil();
-
-    public abstract LimelightServo getLimelightServo();
 
     public abstract CameraServo getCameraServo();
 
     public abstract PositionTracker getPositionTracker();
 
     public abstract CommandComponent.Builder getCommandComponentBuilder();
-
 }
