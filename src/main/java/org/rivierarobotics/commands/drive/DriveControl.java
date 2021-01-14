@@ -73,9 +73,4 @@ public class DriveControl extends CommandBase {
 
         driveTrain.setPower(left, right);
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

@@ -134,12 +134,6 @@ public class PhysicsUtil {
         return ballVel;
     }
 
-    public double getBallVel(double hoodAngle) {
-        //Returns ball's velocity in m/s
-        double t = 0.2;
-        return 10;
-    }
-
     private double captainKalbag() {
         //Equation: (vx*y - vy*x)/((vx^2 + vy^2)*t^2 + (-2*vx*x - 2*vy*y)*t + x^2 + y^2)
         //Returns change in ticks per 100ms

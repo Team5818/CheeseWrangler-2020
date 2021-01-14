@@ -44,9 +44,4 @@ public class HoodControl extends CommandBase {
     public void execute() {
         hood.setPower(MathUtil.fitDeadband(-coDriverRightJs.getY()));
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

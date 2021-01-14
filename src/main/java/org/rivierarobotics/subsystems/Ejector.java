@@ -37,7 +37,7 @@ public class Ejector extends SubsystemBase {
 
     @Inject
     public Ejector(@Sided(Side.LEFT) EjectorSide left,
-                  @Sided(Side.RIGHT) EjectorSide right,
+                   @Sided(Side.RIGHT) EjectorSide right,
                    Provider<EjectorControl> command) {
         this.left = left;
         this.right = right;
@@ -49,7 +49,6 @@ public class Ejector extends SubsystemBase {
     }
 
     public void setPower(double leftPwr, double rightPwr) {
-        //TODO change this to reflect shooting offset
         left.setPower(leftPwr);
         right.setPower(rightPwr);
     }

@@ -44,9 +44,4 @@ public class EjectorControl extends CommandBase {
     public void execute() {
         ejector.setPower(MathUtil.fitDeadband(coDriverLeftJs.getX()));
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }
