@@ -47,7 +47,7 @@ public class SubsystemModule {
     private static final int INTAKE_VICTOR_FRONT = 9;
     private static final int INTAKE_VICTOR_BACK = 10;
     private static final int CLIMB_FALCON = 12;
-//find correct value
+    //find correct value
     private static final int CAMERA_SERVO = 0;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =

@@ -24,7 +24,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
@@ -50,7 +49,7 @@ public class Climb extends SubsystemBase implements RRSubsystem {
                 new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, climbTalon);
         logger = Logging.getLogger(getClass());
         climbTalon.setSensorPhase(true);
-        MotorUtil.setSoftLimits((int)MAX_TICKS, (int)MIN_TICKS, climbTalon);
+        MotorUtil.setSoftLimits((int) MAX_TICKS, (int) MIN_TICKS, climbTalon);
         climbTalon.setNeutralMode(NeutralMode.Brake);
     }
 
