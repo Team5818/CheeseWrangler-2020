@@ -24,26 +24,33 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
+import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.util.MotorUtil;
+
+import javax.inject.Provider;
+
 
 public class Climb extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX climbTalon;
     private final MechLogger logger;
-    private final double zeroTicks = 100.0;
-    private final double maxTicks = 1000.0;
-    private final double minTicks = 100.0;
+    private final Provider<ClimbControl> command;
+    private static final double ZERO_TICKS = 100.0;
+    private static final double MAX_TICKS = 1000.0 + ZERO_TICKS;
+    private static final double MIN_TICKS = 100.0 + ZERO_TICKS;
     //gotta figure out these values
 
-    public Climb(int id) {
+    public Climb(int id, Provider<ClimbControl> command) {
         climbTalon = new WPI_TalonFX(id);
-        MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
+        this.command = command;
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
                 new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, climbTalon);
         logger = Logging.getLogger(getClass());
         climbTalon.setSensorPhase(true);
+        MotorUtil.setSoftLimits((int)MAX_TICKS, (int)MIN_TICKS, climbTalon);
         climbTalon.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -60,5 +67,13 @@ public class Climb extends SubsystemBase implements RRSubsystem {
     public void setPower(double pwr) {
         logger.powerChange(pwr);
         climbTalon.set(ControlMode.PercentOutput, pwr);
+    }
+
+    @Override
+    public void periodic() {
+        if (getDefaultCommand() == null) {
+            setDefaultCommand(command.get());
+        }
+        super.periodic();
     }
 }
