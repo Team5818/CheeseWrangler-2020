@@ -38,9 +38,10 @@ public class Climb extends SubsystemBase implements RRSubsystem {
     private final MechLogger logger;
     private final Provider<ClimbControl> command;
     private static final double ZERO_TICKS = 100.0;
-    private static final double MAX_TICKS = 1000.0 + ZERO_TICKS;
-    private static final double MIN_TICKS = 100.0 + ZERO_TICKS;
-    //gotta figure out these values
+    //TBD
+    private static final double MAX_TICKS = 39114 * 35.93 + ZERO_TICKS;
+    private static final double MIN_TICKS = ZERO_TICKS;
+    //TBD
 
     public Climb(int id, Provider<ClimbControl> command) {
         climbTalon = new WPI_TalonFX(id);
