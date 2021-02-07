@@ -128,8 +128,11 @@ public class PathTracerExecutor extends CommandBase {
         } else if (constraints.getAbsHeading()) {
             rotateToPointHeading(path.getPathPoints().get(0));
         } else {
-            gyroOffset = MathUtil.wrapToCircle(gyro.getYaw()) -
-                    MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
+            double firstAngle = MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
+            gyroOffset = MathUtil.wrapToCircle(gyro.getYaw())
+                - MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
+            tab.setEntry("firstAngle", firstAngle);
+            tab.setEntry("gyroOffset", gyroOffset);
         }
         tab.setEntry("totalTime", path.getTotalTime());
         tab.setEntry("scale", scale);
@@ -155,8 +158,9 @@ public class PathTracerExecutor extends CommandBase {
             tab.setEntry("aX", calc.getAccelX());
             tab.setEntry("aY", calc.getAccelY());
             tab.setEntry("simAngleAuto", Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
-            // Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(), Math.toRadians(gyro.getYaw() - gyroOffset));
-            Pair<Double> wheelSpeeds = path.getLRVel(calc);
+            Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(),
+                Math.toRadians(gyro.getYaw() - gyroOffset), Math.toRadians(gyro.getRate()));
+            //Pair<Double> wheelSpeeds = path.getLRVel(calc);
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
             double vLMax = tab.getEntry("vLMax").getDouble(0);
@@ -169,14 +173,15 @@ public class PathTracerExecutor extends CommandBase {
             }
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
         }
-        t += 0.01; // time scale
+        t += 0.02; // time scale
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (!interrupted) {
-            rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
-        }
+        //if (!interrupted) {
+        //    rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
+        //}
+        driveTrain.setVelocity(0);
     }
 
     @Override

@@ -23,7 +23,6 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
@@ -33,7 +32,7 @@ import org.rivierarobotics.util.MotorUtil;
 
 public class DriveTrainSide implements RRSubsystem {
     private static final double TICKS_PER_METER = 7916 / 1.8288;
-    private static final double MOTOR_TO_WHEEL_RATIO = 17.0 / 48;
+    private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
     private final WPI_TalonFX masterLeft;
     private final WPI_TalonFX slaveRight;
     private final Encoder shaftEncoder;
@@ -45,26 +44,16 @@ public class DriveTrainSide implements RRSubsystem {
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(0.05, 0, 0, 0), 0, masterLeft, slaveRight);
-        setStatusFrames(10, 10, 0x1240,
-                StatusFrameEnhanced.Status_4_AinTempVbat.value,
-                StatusFrameEnhanced.Status_2_Feedback0.value);
+            new PIDConfig(0.15, 0, 0, 0.051), 0, masterLeft, slaveRight);
         masterLeft.setInverted(invert);
         slaveRight.setInverted(invert);
         masterLeft.setNeutralMode(NeutralMode.Brake);
-        slaveRight.setNeutralMode(NeutralMode.Brake);
+        slaveRight.setNeutralMode(NeutralMode.Coast);
         slaveRight.follow(masterLeft);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
         shaftEncoder.setDistancePerPulse(1 / TICKS_PER_METER);
-    }
-
-    private void setStatusFrames(int periodMs, int timeoutMs, int... frames) {
-        for (int frame : frames) {
-            masterLeft.setStatusFramePeriod(frame, periodMs, timeoutMs);
-            slaveRight.setStatusFramePeriod(frame, periodMs, timeoutMs);
-        }
     }
 
     @Override
@@ -92,9 +81,10 @@ public class DriveTrainSide implements RRSubsystem {
 
     public void setVelocity(double vel) {
         // Converts m/s to ticks/100ms and sets velocity
-        double set = (vel * TICKS_PER_METER) / (MOTOR_TO_WHEEL_RATIO * 10);
+        double set = vel * TICKS_PER_METER / MOTOR_TO_WHEEL_RATIO / 10;
         logger.setpointChange(set);
         masterLeft.set(ControlMode.Velocity, set);
+        slaveRight.set(ControlMode.Velocity, set);
     }
 
     public void setVoltage(double volts) {

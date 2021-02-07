@@ -20,7 +20,9 @@
 
 package org.rivierarobotics.autonomous;
 
+import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
@@ -44,6 +46,7 @@ public class SplinePath {
     private Pair<Vec2D> nftCtrlPoints;
     private Pair<Double> extrema;
     private double totalTime;
+    private double lastAngle;
 
     public SplinePath(List<SplinePoint> points, PathConstraints constraints) {
         this.points = points;
@@ -186,11 +189,14 @@ public class SplinePath {
 
     // Assumes the robot is moving with the correct trajectory
     public Pair<Double> getLRVel(SPOutput calc) {
-        return getLRVel(calc.getVelX(), calc.getVelY(), Math.atan2(calc.getVelY(), calc.getVelX()));
+        double angle = Math.atan2(calc.getVelY(), calc.getVelX());
+        Pair<Double> out = getLRVel(calc.getVelX(), calc.getVelY(), angle,
+            MathUtil.wrapToCircle(angle - lastAngle));
+        lastAngle = angle;
+        return out;
     }
 
-    public Pair<Double> getLRVel(double velX, double velY, double angle) {
-        double rate = Math.atan2(velX, velY);
+    public Pair<Double> getLRVel(double velX, double velY, double angle, double rate) {
         double vxProc = velX * Math.cos(angle) + velY * Math.sin(angle);
         return new Pair<>(
             vxProc - DriveTrain.getTrackwidth() / 2 * rate,
@@ -218,9 +224,9 @@ public class SplinePath {
                 maxObservedVel = Math.abs(tempVel.getB());
             }
 
-            // Just use accel/vel instead of vel/pos (?)
+            // TODO Just use accel/vel instead of vel/pos (?)
             tempAccel = getLRVel(tempOut.getAccelX(), tempOut.getAccelY(),
-                    Math.atan2(tempOut.getVelX(), tempOut.getVelY()));
+                    Math.atan2(tempOut.getVelX(), tempOut.getVelY()), 0);
             // tempAccel = new Pair<>(tempOut.getAccelX(), tempOut.getAccelY());
             if (Math.abs(tempAccel.getA()) > maxObservedAccel) {
                 maxObservedAccel = Math.abs(tempAccel.getA());

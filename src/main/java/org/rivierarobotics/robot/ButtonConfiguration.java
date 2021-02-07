@@ -141,15 +141,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.flywheel().stepTolerance(20));
         new JoystickButton(driverRight, 2)
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
-        new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING,
-                        PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
         new JoystickButton(driverButtons, 1)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING));
-        new JoystickButton(driverButtons, 9)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT));
-        new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE,
-                        PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING,
+                    PathConstraints.create().setMaxVel(1)));
+        new JoystickButton(driverButtons, 3)
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT,
+                    PathConstraints.create().setMaxVel(2)));
+        new JoystickButton(driverButtons, 2)
+                .whenPressed(cmds.drive().setVelocity(1));
     }
 }
