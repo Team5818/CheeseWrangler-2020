@@ -29,31 +29,41 @@ import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
 import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathTracerExecutor;
-import org.rivierarobotics.util.Pair;
-import org.rivierarobotics.util.VisionUtil;
+import org.rivierarobotics.util.MathUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @GenerateCreator
 public class GalacticSearch extends CommandBase {
-    private static final Pair<Double> LEFT_BALL_AREAS = new Pair<>(0.75, 0.5);
-    private static final Pair<Integer> NUM_LEFT_BALLS = new Pair<>(3, 2);
+    private static final Scalar LOWER_COLOR_BOUNDS = new Scalar(32, 20, 120);
+    private static final Scalar UPPER_COLOR_BOUNDS = new Scalar(50, 140, 255);
+    private static final double[] GS_CONSTANTS = new double[] {
+        0.75,   // Area for balls on left side, path A
+        0.5,    // Area for balls on left side, path B
+        3,      // Balls on left side, path A
+        2,      // Balls on left side, path B
+        5,      // Erode iterations
+        8,      // Dilate iterations
+        0,      // Minimum contour area
+        1,      // Maximum contour tolerance from 1:1 aspect ratio
+        0.5,    // Minimum proportion of bounding box filled by contour
+        10,     // Minimum enclosing circle radius
+        50      // Maximum enclosing circle radius
+    };
     private final AutonomousCommands autonomousCommands;
-    private final VisionUtil visionUtil;
     private final boolean isPathA;
     private PathTracerExecutor cmd;
 
-    public GalacticSearch(@Provided AutonomousCommands autonomousCommands,
-                          @Provided VisionUtil visionUtil, boolean isPathA) {
+    public GalacticSearch(@Provided AutonomousCommands autonomousCommands, boolean isPathA) {
         this.autonomousCommands = autonomousCommands;
-        this.visionUtil = visionUtil;
         this.isPathA = isPathA;
     }
 
@@ -61,15 +71,16 @@ public class GalacticSearch extends CommandBase {
     public void initialize() {
         Mat frame = new Mat();
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
-        List<Point> ballLocs = visionUtil.findBallLocations(frame);
-        double leftArea = isPathA ? LEFT_BALL_AREAS.getA() : LEFT_BALL_AREAS.getB();
+        frame = frame.submat(new Rect(0, frame.height() / 2, frame.width(), frame.height()));
+        List<Point> ballLocs = findBallLocations(frame);
+        double leftArea =  GS_CONSTANTS[isPathA ? 0 : 1];
         int countLeft = 0;
         for (Point loc : ballLocs) {
             if (loc.x < frame.width() * leftArea) {
                 countLeft++;
             }
         }
-        int leftBalls = isPathA ? NUM_LEFT_BALLS.getA() : NUM_LEFT_BALLS.getB();
+        int leftBalls = (int) GS_CONSTANTS[isPathA ? 2 : 3];
         String pathName = "GS_" + (isPathA ? "A" : "B") + "_" + (countLeft == leftBalls ? "RED" : "BLUE");
         cmd = autonomousCommands.challengePath(ChallengePath.valueOf(pathName));
         cmd.schedule();
@@ -78,5 +89,36 @@ public class GalacticSearch extends CommandBase {
     @Override
     public boolean isFinished() {
         return cmd != null && cmd.isScheduled();
+    }
+
+    public List<Point> findBallLocations(Mat img) {
+        List<Point> out = new ArrayList<>();
+        Mat matA = img.clone();
+        Mat matB = new Mat();
+
+        Imgproc.GaussianBlur(matA, matB, new Size(11, 11), 0);
+        Imgproc.cvtColor(matB, matA, Imgproc.COLOR_BGR2HSV);
+        Core.inRange(matA, LOWER_COLOR_BOUNDS, UPPER_COLOR_BOUNDS, matB);
+        Imgproc.erode(matB, matA, new Mat(), new Point(-1, -1), (int) GS_CONSTANTS[4]);
+        Imgproc.dilate(matA, matB, new Mat(), new Point(-1, -1), (int) GS_CONSTANTS[5]);
+        List<MatOfPoint> contours = new ArrayList<>();
+        Imgproc.findContours(matB, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
+
+        for (MatOfPoint contour : contours) {
+            double area = Imgproc.contourArea(contour);
+            Rect bounds = Imgproc.boundingRect(contour);
+            double aspectRatio = (double) bounds.width / bounds.height;
+            double filledProp = area / (bounds.width * bounds.height);
+            if (MathUtil.isWithinTolerance(aspectRatio, 1, GS_CONSTANTS[7])
+                    && area > GS_CONSTANTS[6] && filledProp > GS_CONSTANTS[8]) {
+                Point center = new Point();
+                float[] radius = new float[1];
+                Imgproc.minEnclosingCircle(new MatOfPoint2f(contour.toArray()), center, radius);
+                if (radius[0] < GS_CONSTANTS[9] && radius[0] < GS_CONSTANTS[10]) {
+                    out.add(center);
+                }
+            }
+        }
+        return out;
     }
 }

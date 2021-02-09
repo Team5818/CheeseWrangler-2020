@@ -24,8 +24,6 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.ShooterConstants;
 
 @GenerateCreator
 public class DriveSetVelocity extends CommandBase {

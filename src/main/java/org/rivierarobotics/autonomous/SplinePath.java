@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.autonomous;
 
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;

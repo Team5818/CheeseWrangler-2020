@@ -31,9 +31,9 @@ public enum ChallengePath {
     GS_B_BLUE("C1", "D6", "B8", "D10", "E11"),
 
     // AutoNav (2.4.7)
-    AN_BARREL_RACING(),
-    AN_SLALOM(),
-    AN_BOUNCE();
+    AN_BARREL_RACING(Pose2dPath.AN_BARREL_RACING),
+    AN_SLALOM(Pose2dPath.AN_SLALOM),
+    AN_BOUNCE(Pose2dPath.AN_BOUNCE);
 
     private static final double METERS_PER_GRID = 0.762;
     private final SplinePath path;
