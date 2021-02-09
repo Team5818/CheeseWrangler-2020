@@ -47,7 +47,7 @@ public class PathTracerExecutor extends CommandBase {
     private static final int WIDTH = 300;
     private static final int HEIGHT = 300;
     private static final double BORDER_WIDTH = 10;
-    private static final double BUFFER_SECONDS = 0.5;
+    private static final double BUFFER_SECONDS = 1;
     private static final int ARROW_DENSITY = 180;
     private static final int VEL_SCALE = 20;
     private static final String PATH_TRACER = "PathTracer";
@@ -134,6 +134,9 @@ public class PathTracerExecutor extends CommandBase {
             tab.setEntry("firstAngle", firstAngle);
             tab.setEntry("gyroOffset", gyroOffset);
         }
+        if (constraints.getReversed()) {
+            gyroOffset = MathUtil.wrapToCircle(gyroOffset + 180);
+        }
         tab.setEntry("totalTime", path.getTotalTime());
         tab.setEntry("scale", scale);
         tab.setEntry("totalDist", path.getTotalDistance());
@@ -158,8 +161,12 @@ public class PathTracerExecutor extends CommandBase {
             tab.setEntry("aX", calc.getAccelX());
             tab.setEntry("aY", calc.getAccelY());
             tab.setEntry("simAngleAuto", Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
+            double gyroRate = gyro.getRate();
+            if (constraints.getReversed()) {
+                gyroRate *= -1;
+            }
             Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(),
-                Math.toRadians(gyro.getYaw() - gyroOffset), Math.toRadians(gyro.getRate()));
+                Math.toRadians(gyro.getYaw() - gyroOffset), Math.toRadians(gyroRate));
             //Pair<Double> wheelSpeeds = path.getLRVel(calc);
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
@@ -170,6 +177,10 @@ public class PathTracerExecutor extends CommandBase {
             }
             if (Math.abs(vRMax) < Math.abs(wheelSpeeds.getB())) {
                 tab.setEntry("vRMax", wheelSpeeds.getB());
+            }
+            if (constraints.getReversed()) {
+                wheelSpeeds.setA(-wheelSpeeds.getA());
+                wheelSpeeds.setB(-wheelSpeeds.getB());
             }
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
         }

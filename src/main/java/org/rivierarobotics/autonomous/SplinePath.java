@@ -124,7 +124,7 @@ public class SplinePath {
             1, t, t * t, t * t * t, t * t * t * t, t * t * t * t * t
         };
         double time = timeCorrected ? section.time : 1;
-        // fixedTheta = Cubic Hermite Splines, else Catmull-Rom Splines
+        // fixedTheta = Quintic Hermite Splines, else Catmull-Rom Splines
         if (constraints.getFixedTheta()) {
             double[] h = {
                 1 - 10 * te[3] + 15 * te[4] - 6 * te[5],

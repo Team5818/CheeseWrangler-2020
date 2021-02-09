@@ -37,27 +37,24 @@ import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathTracerExecutor;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @GenerateCreator
 public class GalacticSearch extends CommandBase {
-    private static final Scalar LOWER_COLOR_BOUNDS = new Scalar(32, 20, 120);
-    private static final Scalar UPPER_COLOR_BOUNDS = new Scalar(50, 140, 255);
-    private static final double[] GS_CONSTANTS = new double[] {
-        0.75,   // Area for balls on left side, path A
-        0.5,    // Area for balls on left side, path B
-        3,      // Balls on left side, path A
-        2,      // Balls on left side, path B
-        5,      // Erode iterations
-        8,      // Dilate iterations
-        0,      // Minimum contour area
-        1,      // Maximum contour tolerance from 1:1 aspect ratio
-        0.5,    // Minimum proportion of bounding box filled by contour
-        10,     // Minimum enclosing circle radius
-        50      // Maximum enclosing circle radius
-    };
+    private static final Pair<Scalar> HSV_MASK_BOUNDS =
+            new Pair<>(new Scalar(32, 20, 120), new Scalar(50, 140, 255));
+    private static final Pair<Double> BALL_AREA_LEFT = new Pair<>(0.75, 0.5);
+    private static final Pair<Integer> BALL_NUM_LEFT = new Pair<>(3, 2);
+    private static final Pair<Integer> ENCL_CIRCLE_RADIUS = new Pair<>(10, 50);
+    private static final double MIN_CONTOUR_AREA = 0;
+    private static final double MAX_ASPECT_TOLERANCE = 1;
+    private static final double MIN_BOUNDBOX_FILLED = 0.5;
+    private static final int ERODE_ITERATIONS = 5;
+    private static final int DILATE_ITERATIONS = 8;
+
     private final AutonomousCommands autonomousCommands;
     private final boolean isPathA;
     private PathTracerExecutor cmd;
@@ -73,14 +70,14 @@ public class GalacticSearch extends CommandBase {
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
         frame = frame.submat(new Rect(0, frame.height() / 2, frame.width(), frame.height()));
         List<Point> ballLocs = findBallLocations(frame);
-        double leftArea =  GS_CONSTANTS[isPathA ? 0 : 1];
+        double leftArea = isPathA ? BALL_AREA_LEFT.getA() : BALL_AREA_LEFT.getB();
         int countLeft = 0;
         for (Point loc : ballLocs) {
             if (loc.x < frame.width() * leftArea) {
                 countLeft++;
             }
         }
-        int leftBalls = (int) GS_CONSTANTS[isPathA ? 2 : 3];
+        int leftBalls = isPathA ? BALL_NUM_LEFT.getA() : BALL_NUM_LEFT.getB();
         String pathName = "GS_" + (isPathA ? "A" : "B") + "_" + (countLeft == leftBalls ? "RED" : "BLUE");
         cmd = autonomousCommands.challengePath(ChallengePath.valueOf(pathName));
         cmd.schedule();
@@ -98,9 +95,9 @@ public class GalacticSearch extends CommandBase {
 
         Imgproc.GaussianBlur(matA, matB, new Size(11, 11), 0);
         Imgproc.cvtColor(matB, matA, Imgproc.COLOR_BGR2HSV);
-        Core.inRange(matA, LOWER_COLOR_BOUNDS, UPPER_COLOR_BOUNDS, matB);
-        Imgproc.erode(matB, matA, new Mat(), new Point(-1, -1), (int) GS_CONSTANTS[4]);
-        Imgproc.dilate(matA, matB, new Mat(), new Point(-1, -1), (int) GS_CONSTANTS[5]);
+        Core.inRange(matA, HSV_MASK_BOUNDS.getA(), HSV_MASK_BOUNDS.getB(), matB);
+        Imgproc.erode(matB, matA, new Mat(), new Point(-1, -1), ERODE_ITERATIONS);
+        Imgproc.dilate(matA, matB, new Mat(), new Point(-1, -1), DILATE_ITERATIONS);
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(matB, contours, new Mat(), Imgproc.RETR_EXTERNAL, Imgproc.CHAIN_APPROX_SIMPLE);
 
@@ -109,12 +106,12 @@ public class GalacticSearch extends CommandBase {
             Rect bounds = Imgproc.boundingRect(contour);
             double aspectRatio = (double) bounds.width / bounds.height;
             double filledProp = area / (bounds.width * bounds.height);
-            if (MathUtil.isWithinTolerance(aspectRatio, 1, GS_CONSTANTS[7])
-                    && area > GS_CONSTANTS[6] && filledProp > GS_CONSTANTS[8]) {
+            if (MathUtil.isWithinTolerance(aspectRatio, 1, MAX_ASPECT_TOLERANCE)
+                    && area > MIN_CONTOUR_AREA && filledProp > MIN_BOUNDBOX_FILLED) {
                 Point center = new Point();
                 float[] radius = new float[1];
                 Imgproc.minEnclosingCircle(new MatOfPoint2f(contour.toArray()), center, radius);
-                if (radius[0] < GS_CONSTANTS[9] && radius[0] < GS_CONSTANTS[10]) {
+                if (radius[0] > ENCL_CIRCLE_RADIUS.getA() && radius[0] < ENCL_CIRCLE_RADIUS.getB()) {
                     out.add(center);
                 }
             }

@@ -21,11 +21,19 @@
 package org.rivierarobotics.util;
 
 public class Pair<T> {
-    private final T a;
-    private final T b;
+    private T a;
+    private T b;
 
     public Pair(T a, T b) {
         this.a = a;
+        this.b = b;
+    }
+
+    public void setA(T a) {
+        this.a = a;
+    }
+
+    public void setB(T b) {
         this.b = b;
     }
 
