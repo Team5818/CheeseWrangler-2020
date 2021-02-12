@@ -109,6 +109,9 @@ public class PhysicsUtil {
     public double getCalculatedHoodAngle() {
         //Returns the hood angle using the relationship between horizontal and vertical velocities
         double hoodAngle = Math.toDegrees(Math.atan2(vXYZ[2], Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1])));
+        if (Math.abs(driveTrain.getYVelocity()) > 0.1) {
+            hoodAngle += (driveTrain.getYVelocity());
+        }
         tab.setEntry("Hood Angle", hoodAngle);
         return hoodAngle;
     }
@@ -126,14 +129,9 @@ public class PhysicsUtil {
     public double getBallVel() {
         //Returns ball's velocity in m/s
         double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
+
         tab.setEntry("ballVel", ballVel);
         return ballVel;
-    }
-
-    public double getBallVel(double hoodAngle) {
-        //Returns ball's velocity in m/s
-        double t = 0.7;
-        return (getZ() / t + g * t) / Math.sin(Math.toRadians(hoodAngle));
     }
 
     private double captainKalbag() {
@@ -193,6 +191,9 @@ public class PhysicsUtil {
         tab.setEntry("vy", vXYZ[1]);
         tab.setEntry("vz", vXYZ[2]);
 
+        graphTab.getTable("Auto Aim Stuff",
+                new RSTOptions(3, 3, 0, 0)).addTabData(tab);
+
         graphTab.setEntry("x", x);
         graphTab.setEntry("y", y);
         graphTab.setEntry("z", z);
@@ -202,9 +203,6 @@ public class PhysicsUtil {
         graphTab.setEntry("vy", vXYZ[1]);
         graphTab.setEntry("vz", vXYZ[2]);
         graphTab.setEntry("g", g);
-
-        graphTab.getTable("Auto Aim Stuff",
-                new RSTOptions(3, 3, 0, 0)).addTabData(tab);
 
         graphTab.setEntry("turretAngle", turret.getAngle(true));
         graphTab.setEntry("hoodAngle", hood.getAngle());

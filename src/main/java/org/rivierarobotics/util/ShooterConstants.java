@@ -21,8 +21,7 @@
 package org.rivierarobotics.util;
 
 public class ShooterConstants {
-
-    private static final double VEL_CONVERSION = 1077.97;
+    private static final double TICKS_PER_VEL = 1077.97;
 
     private ShooterConstants() {
     }
@@ -39,26 +38,13 @@ public class ShooterConstants {
         return 19;
     }
 
-    public static double getLLtoTurretX() {
-        //meters
-        return 0.203;
-    }
-
-    public static double getLLtoTurretY() {
-        //meters
-        //return 0.137;
-        return 0;
-    }
-
     public static double getLLtoTurretZ() {
-        //meters
         //return 0.1778;
-        return 0.14;
+        return 0.14; // meters
     }
 
     public static double getDistanceFromOuterToInnerTarget() {
-        //meters
-        return 0.74295;
+        return 0.74295; // meters
     }
 
     public static double getZVelocityConstant() {
@@ -67,10 +53,6 @@ public class ShooterConstants {
 
     public static double getExtraVelocity() {
         return 0.5 * 0.2 * Math.pow(getTConstant(), 2);
-    }
-
-    public static double getBallMass() {
-        return 0.14; //KG
     }
 
     public static double getEstimatedHoodAngle(double distance) {
@@ -82,23 +64,23 @@ public class ShooterConstants {
     }
 
     public static double getMaxFlywheelVelocity() {
-        return 19880; //encoder value
+        return 19880; // ticks per 100ms
     }
 
     public static double velocityToTicks(double vel) {
-        return (VEL_CONVERSION * vel);
+        return (TICKS_PER_VEL * vel);
     }
 
     public static double ticksToVelocity(double ticks) {
-        return (ticks / VEL_CONVERSION);
+        return (ticks / TICKS_PER_VEL);
     }
 
     public static double getFieldLength() {
-        return 16; //meters
+        return 16; // meters
     }
 
     public static double getLeftFieldToFarGoal() {
-        return 5.8; //meters
+        return 5.8; // meters
     }
 
     public static double getLeftFieldToCloseGoal() {
@@ -107,5 +89,9 @@ public class ShooterConstants {
 
     public static double getLeftFieldToBallCollect() {
         return 2.778; // meters
+    }
+
+    public static double getDefaultBallVel() {
+        return 10; // meters per second
     }
 }

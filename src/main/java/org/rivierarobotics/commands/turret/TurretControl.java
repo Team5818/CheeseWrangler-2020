@@ -44,9 +44,4 @@ public class TurretControl extends CommandBase {
     public void execute() {
         turret.setPower(MathUtil.fitDeadband(coDriverRightJs.getX()));
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

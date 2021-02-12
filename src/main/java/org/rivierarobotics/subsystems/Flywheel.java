@@ -51,7 +51,6 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
             new PIDConfig(1.5, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
         flywheelFalcon.setInverted(false);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
-        flywheelFalcon.configPeakOutputReverse(0);
     }
 
     @Override
