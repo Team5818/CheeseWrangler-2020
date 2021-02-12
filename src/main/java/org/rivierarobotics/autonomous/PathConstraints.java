@@ -68,6 +68,11 @@ public class PathConstraints {
         return this;
     }
 
+    public PathConstraints setCrKnotParam(ChallengePath.CRKnotParam crKnotParam) {
+        this.crKnotParam = crKnotParam.alpha();
+        return this;
+    }
+
     public PathConstraints setCrKnotParam(double crKnotParam) {
         this.crKnotParam = crKnotParam;
         return this;

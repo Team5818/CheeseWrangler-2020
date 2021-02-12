@@ -85,7 +85,7 @@ public enum ChallengePath {
     }
 
     // Knot parameterization types. Use alpha() with PathConstraints.
-    private enum CRKnotParam {
+    public enum CRKnotParam {
         UNIFORM, CENTRIPETAL, CHORDAL;
 
         public double alpha() {
