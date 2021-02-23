@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.wpi.first.wpilibj.I2C;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.commands.hood.HoodControl;
@@ -41,6 +42,7 @@ public class SubsystemModule {
     private static final int HOOD_TALON = 5;
     private static final int FLYWHEEL_FALCON = 4;
     private static final int CHEESE_WHEEL_TALON = 6;
+    private static final int COLOR_WHEEL_FALCON = 21;
     private static final int EJECTOR_VICTOR_LEFT = 8;
     private static final int EJECTOR_VICTOR_RIGHT = 11;
     private static final int INTAKE_VICTOR_FRONT = 9;
@@ -48,6 +50,7 @@ public class SubsystemModule {
     private static final int CLIMB_FALCON = 21;
 
     private static final int CAMERA_SERVO = 0;
+    private static final I2C.Port COLOR_WHEEL_SENSOR = I2C.Port.kOnboard;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(1, 0, 0, 1);
@@ -122,6 +125,12 @@ public class SubsystemModule {
     @Singleton
     public static CheeseWheel provideCheeseWheel(Provider<CheeseWheelControl> command, @Provided RobotShuffleboard shuffleboard) {
         return new CheeseWheel(CHEESE_WHEEL_TALON, command, shuffleboard);
+    }
+
+    @Provides
+    @Singleton
+    public static ColorWheel provideColorWheel() {
+        return new ColorWheel(COLOR_WHEEL_FALCON, COLOR_WHEEL_SENSOR);
     }
 
     @Provides

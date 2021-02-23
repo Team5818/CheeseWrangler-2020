@@ -27,6 +27,7 @@ import org.rivierarobotics.robot.ControlsModule;
 import org.rivierarobotics.subsystems.CameraServo;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Climb;
+import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Flywheel;
@@ -53,6 +54,7 @@ public abstract class GlobalComponent {
         getIntake();
         getEjector();
         getCheeseWheel();
+        getColorWheel();
         getClimb();
         getNavXGyro();
         getShuffleboard();
@@ -78,6 +80,8 @@ public abstract class GlobalComponent {
     public abstract Ejector getEjector();
 
     public abstract CheeseWheel getCheeseWheel();
+
+    public abstract ColorWheel getColorWheel();
 
     public abstract Climb getClimb();
 
