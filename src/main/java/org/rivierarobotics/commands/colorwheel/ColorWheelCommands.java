@@ -27,23 +27,30 @@ import javax.inject.Inject;
 public class ColorWheelCommands {
     private final COWRotateNTimesCreator cowRotateNTimesCreator;
     private final COWRotateToColorCreator cowRotateToColorCreator;
+    private final COWCenterOnColorCreator cowCenterOnColorCreator;
 
     @Inject
     public ColorWheelCommands(COWRotateNTimesCreator cowRotateNTimesCreator,
-                              COWRotateToColorCreator cowRotateToColorCreator) {
+                              COWRotateToColorCreator cowRotateToColorCreator,
+                              COWCenterOnColorCreator cowCenterOnColorCreator) {
         this.cowRotateNTimesCreator = cowRotateNTimesCreator;
         this.cowRotateToColorCreator = cowRotateToColorCreator;
+        this.cowCenterOnColorCreator = cowCenterOnColorCreator;
     }
 
     public COWRotateNTimes rotateNTimes(double rotations) {
         return cowRotateNTimesCreator.create(rotations);
     }
 
-    public COWRotateToColor rotateToColor(ColorWheel.GameColor color) {
-        return cowRotateToColorCreator.create(color);
+    public COWRotateToColor rotateToColor(ColorWheel.GameColor color, boolean isField) {
+        return cowRotateToColorCreator.create(color, isField);
     }
 
     public COWRotateToColor rotateToFMS() {
-        return cowRotateToColorCreator.create(ColorWheel.GameColor.getFMSColor());
+        return cowRotateToColorCreator.create(ColorWheel.GameColor.getFMSColor(), true);
+    }
+
+    public COWCenterOnColor centerOnColor() {
+        return cowCenterOnColorCreator.create();
     }
 }

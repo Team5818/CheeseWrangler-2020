@@ -21,7 +21,6 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.ColorMatch;
@@ -33,13 +32,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
-import org.rivierarobotics.util.MotorUtil;
 
 import javax.inject.Singleton;
 
 @Singleton
 public class ColorWheel extends SubsystemBase implements RRSubsystem {
-    private static final int TICKS_PER_WHEEL_REVOLUTION = 16384;
     private final WPI_TalonFX wheelFalcon;
     private final ColorSensorV3 colorSensor;
     private final ColorMatch colorMatcher;
@@ -51,8 +48,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         this.colorMatcher = new ColorMatch();
         this.logger = Logging.getLogger(getClass());
 
-        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-                new PIDConfig(0, 0, 0, 0), 0, wheelFalcon);
+        wheelFalcon.configFactoryDefault();
         wheelFalcon.setInverted(false);
         wheelFalcon.setNeutralMode(NeutralMode.Brake);
 
@@ -60,10 +56,6 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         colorMatcher.addColorMatch(GameColor.GREEN.matchColor);
         colorMatcher.addColorMatch(GameColor.BLUE.matchColor);
         colorMatcher.addColorMatch(GameColor.YELLOW.matchColor);
-    }
-
-    public static int getTicksPerWheelRevolution() {
-        return TICKS_PER_WHEEL_REVOLUTION;
     }
 
     // Game color is matched against possible values
@@ -121,9 +113,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         RED(0.561, 0.232, 0.114),
         GREEN(0.197, 0.561, 0.240),
         BLUE(0.143, 0.427, 0.429),
-        YELLOW(0.361, 0.524, 0.113),
-        CORRUPT,
-        NULL;
+        YELLOW(0.361, 0.524, 0.113);
 
         private final char gameChar = name().toLowerCase().charAt(0);
         private final Color matchColor;
@@ -139,7 +129,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
                     return color;
                 }
             }
-            return GameColor.NULL;
+            return null;
         }
     }
 }

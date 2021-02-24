@@ -20,46 +20,45 @@
 
 package org.rivierarobotics.commands.colorwheel;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.ColorWheel;
 
 @GenerateCreator
-public class COWRotateNTimes extends CommandBase {
-    protected static final int NUM_COLOR_SLICES_PER_ROT = 8;
-    protected static final int TIMEOUT_SECONDS = 10;
-    protected final ColorWheel colorWheel;
-    protected final double rotations;
-    private final double rotatePower;
-    protected int colorChangeCtr;
-    protected ColorWheel.GameColor lastColor;
-    protected double startTime;
+public class COWCenterOnColor extends CommandBase {
+    private static final int TICKS_PER_HALF_SLICE = 1024;
+    private static final double MAX_POWER = 0.1;
+    private final ColorWheel colorWheel;
+    private ColorWheel.GameColor centerColor;
+    private double tickStart;
+    private int stage = 0;
 
-    public COWRotateNTimes(@Provided ColorWheel colorWheel, double rotations, double rotatePower) {
+    public COWCenterOnColor(@Provided ColorWheel colorWheel) {
         this.colorWheel = colorWheel;
-        this.rotations = rotations;
-        this.rotatePower = rotatePower;
         addRequirements(colorWheel);
-    }
-
-    public COWRotateNTimes(@Provided ColorWheel colorWheel, double rotations) {
-        this(colorWheel, rotations, 1.0);
     }
 
     @Override
     public void initialize() {
-        startTime = Timer.getFPGATimestamp();
+        centerColor = colorWheel.getGameColor();
     }
 
     @Override
     public void execute() {
-        colorWheel.setPower(rotatePower);
-        ColorWheel.GameColor currentColor = colorWheel.getGameColor();
-        if (lastColor == null || !lastColor.equals(currentColor)) {
-            colorChangeCtr++;
-            lastColor = currentColor;
+        if (stage == 0) {
+            if (!colorWheel.getGameColor().equals(centerColor)) {
+                stage++;
+                tickStart = colorWheel.getPositionTicks();
+            } else {
+                colorWheel.setPower(MAX_POWER);
+            }
+        } else if (stage == 1) {
+            if (colorWheel.getPositionTicks() - tickStart >= TICKS_PER_HALF_SLICE) {
+                stage++;
+            } else {
+                colorWheel.setPower(-MAX_POWER);
+            }
         }
     }
 
@@ -70,7 +69,6 @@ public class COWRotateNTimes extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        return colorChangeCtr > rotations * NUM_COLOR_SLICES_PER_ROT
-                || Timer.getFPGATimestamp() - startTime > TIMEOUT_SECONDS * rotations;
+        return stage == 2;
     }
 }

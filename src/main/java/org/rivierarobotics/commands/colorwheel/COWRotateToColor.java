@@ -20,37 +20,26 @@
 
 package org.rivierarobotics.commands.colorwheel;
 
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.ColorWheel;
 
 @GenerateCreator
-public class COWRotateToColor extends CommandBase {
-    private static final double TIMEOUT = 10;
-    private final ColorWheel colorWheel;
+public class COWRotateToColor extends COWRotateNTimes {
     private final ColorWheel.GameColor color;
-    private double start;
 
-    public COWRotateToColor(@Provided ColorWheel colorWheel, ColorWheel.GameColor color) {
-        this.colorWheel = colorWheel;
-        this.color = color;
-        addRequirements(colorWheel);
+    public COWRotateToColor(@Provided ColorWheel colorWheel, ColorWheel.GameColor color, boolean isField) {
+        super(colorWheel, 0, 0.1);
+        this.color = isField ? robotToFieldColor(color) : color;
     }
 
-    @Override
-    public void initialize() {
-        start = Timer.getFPGATimestamp();
-    }
-
-    @Override
-    public void execute() {
-        colorWheel.setPower(0.1);
+    private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
+        ColorWheel.GameColor[] gcs = ColorWheel.GameColor.values();
+        return gcs[(robotColor.ordinal() + 2) % gcs.length];
     }
 
     @Override
     public boolean isFinished() {
-        return colorWheel.getGameColor().equals(color) || Timer.getFPGATimestamp() - start > TIMEOUT;
+        return colorWheel.getGameColor().equals(color);
     }
 }
