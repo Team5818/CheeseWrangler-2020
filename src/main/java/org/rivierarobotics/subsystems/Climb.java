@@ -44,10 +44,9 @@ public class Climb extends SubsystemBase implements RRSubsystem {
     private static final double MIN_TICKS = ZERO_TICKS;
     //TBD
     private final DigitalInput limit;
-    private final int limitId = 99;
     //TBD
 
-    public Climb(int motorId, Provider<ClimbControl> command) {
+    public Climb(int limitId,int motorId, Provider<ClimbControl> command) {
         climbTalon = new WPI_TalonFX(motorId);
         this.command = command;
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,

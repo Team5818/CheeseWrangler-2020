@@ -49,6 +49,8 @@ public class SubsystemModule {
     private static final int CLIMB_FALCON = 12;
     //find correct value
     private static final int CAMERA_SERVO = 0;
+    private static final int CLIMB_LIMIT = 99;
+    //find correct value
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(1, 0, 0, 1);
@@ -134,6 +136,6 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Climb provideClimb(Provider<ClimbControl> command) {
-        return new Climb(CLIMB_FALCON, command);
+        return new Climb(CLIMB_LIMIT, CLIMB_FALCON, command);
     }
 }
