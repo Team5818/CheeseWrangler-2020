@@ -27,23 +27,31 @@ import javax.inject.Inject;
 public class ClimbCommands {
     private final ClimbSetPositionCreator climbSetPositionCreator;
     private final ClimbSetPowerCreator climbSetPowerCreator;
+    private final ClimbSetZeroCreator climbSetZeroCreator;
+    private final HookSetPositionCreator hookSetPositionCreator;
 
     @Inject
     public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
-                         ClimbSetPowerCreator climbSetPowerCreator) {
+                         ClimbSetPowerCreator climbSetPowerCreator, ClimbSetZeroCreator climbSetZeroCreator, HookSetPositionCreator hookSetPositionCreator) {
         this.climbSetPositionCreator = climbSetPositionCreator;
+        this.climbSetZeroCreator = climbSetZeroCreator;
         this.climbSetPowerCreator = climbSetPowerCreator;
+        this.hookSetPositionCreator = hookSetPositionCreator;
     }
 
-    public ClimbSetPosition setPosition(double position) {
+    public ClimbSetPosition setClimbPosition(double position) {
         return climbSetPositionCreator.create(position);
     }
 
-    public ClimbSetPosition setPosition(ClimbPosition height) {
+    public ClimbSetPosition setClimbPosition(ClimbPosition height) {
         return climbSetPositionCreator.create(height.position);
     }
+
+    public ClimbSetZero setZero(){return climbSetZeroCreator.create();}
 
     public ClimbSetPower setPower(double power) {
         return climbSetPowerCreator.create(power);
     }
+
+    public HookSetPosition setHookPosition(double position) { return hookSetPositionCreator.create(position); }
 }

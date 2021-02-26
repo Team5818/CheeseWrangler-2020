@@ -24,16 +24,7 @@ import dagger.Component;
 import org.rivierarobotics.inject.CommandComponent.CCModule;
 import org.rivierarobotics.robot.ButtonConfiguration;
 import org.rivierarobotics.robot.ControlsModule;
-import org.rivierarobotics.subsystems.CameraServo;
-import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Climb;
-import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.subsystems.Ejector;
-import org.rivierarobotics.subsystems.Flywheel;
-import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.Intake;
-import org.rivierarobotics.subsystems.SubsystemModule;
-import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.subsystems.*;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.PositionTracker;
@@ -54,6 +45,7 @@ public abstract class GlobalComponent {
         getEjector();
         getCheeseWheel();
         getClimb();
+        getHook();
         getNavXGyro();
         getShuffleboard();
         getButtonConfiguration();
@@ -80,6 +72,8 @@ public abstract class GlobalComponent {
     public abstract CheeseWheel getCheeseWheel();
 
     public abstract Climb getClimb();
+
+    public abstract Hook getHook();
 
     public abstract NavXGyro getNavXGyro();
 

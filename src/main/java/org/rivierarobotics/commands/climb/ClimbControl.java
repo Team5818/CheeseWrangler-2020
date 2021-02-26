@@ -44,11 +44,7 @@ public class ClimbControl extends CommandBase {
     @Override
     public void execute() {
         if (driverButtons.getRawButton(3)) {
-            if (climb.isAtBottom() && MathUtil.fitDeadband(coDriverRightJoystick.getX()) <= 0) {
-                climb.setPower(0);
-            } else {
-                climb.setPower(MathUtil.fitDeadband(coDriverRightJoystick.getX()));
-            }
+            climb.setPower(MathUtil.fitDeadband(coDriverRightJoystick.getX()));
         }
     }
 

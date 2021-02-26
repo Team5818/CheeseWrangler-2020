@@ -62,6 +62,10 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         return !limit.get();
     }
 
+    public void resetEncoder(){
+        climbTalon.setSelectedSensorPosition(0);
+    }
+
     public void setPositionTicks(double position) {
         climbTalon.set(ControlMode.MotionMagic, position);
     }

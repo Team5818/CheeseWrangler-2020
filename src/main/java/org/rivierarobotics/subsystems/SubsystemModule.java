@@ -25,6 +25,7 @@ import dagger.Provides;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
 import org.rivierarobotics.commands.climb.ClimbControl;
+import org.rivierarobotics.commands.climb.HookControl;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.inject.Sided;
@@ -48,8 +49,10 @@ public class SubsystemModule {
     private static final int INTAKE_VICTOR_BACK = 10;
     private static final int CLIMB_FALCON = 12;
     //find correct value
+    private static final int HOOK_FALCON = 21;
+    //find correct value
     private static final int CAMERA_SERVO = 0;
-    private static final int CLIMB_LIMIT = 99;
+    private static final int CLIMB_LIMIT = 21;
     //find correct value
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
@@ -138,4 +141,11 @@ public class SubsystemModule {
     public static Climb provideClimb(Provider<ClimbControl> command) {
         return new Climb(CLIMB_LIMIT, CLIMB_FALCON, command);
     }
+
+    @Provides
+    @Singleton
+    public static Hook provideHook(Provider<HookControl> command) {
+        return new Hook(HOOK_FALCON, command);
+    }
+
 }
