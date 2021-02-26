@@ -47,13 +47,11 @@ public class SubsystemModule {
     private static final int EJECTOR_VICTOR_RIGHT = 11;
     private static final int INTAKE_VICTOR_FRONT = 9;
     private static final int INTAKE_VICTOR_BACK = 10;
-    private static final int CLIMB_FALCON = 12;
-    //find correct value
-    private static final int HOOK_FALCON = 21;
-    //find correct value
+    private static final int CLIMB_FALCON = 2;
+    private static final int HOOK_FALCON = 3;
+
     private static final int CAMERA_SERVO = 0;
-    private static final int CLIMB_LIMIT = 21;
-    //find correct value
+    private static final int CLIMB_LIMIT_SWITCH = 3;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(1, 0, 0, 1);
@@ -139,7 +137,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Climb provideClimb(Provider<ClimbControl> command) {
-        return new Climb(CLIMB_LIMIT, CLIMB_FALCON, command);
+        return new Climb(CLIMB_FALCON, CLIMB_LIMIT_SWITCH, command);
     }
 
     @Provides

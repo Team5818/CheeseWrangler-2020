@@ -20,7 +20,7 @@
 
 package org.rivierarobotics.commands.climb;
 
-import org.rivierarobotics.subsystems.ClimbPosition;
+import org.rivierarobotics.subsystems.Climb;
 
 import javax.inject.Inject;
 
@@ -32,7 +32,9 @@ public class ClimbCommands {
 
     @Inject
     public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
-                         ClimbSetPowerCreator climbSetPowerCreator, ClimbSetZeroCreator climbSetZeroCreator, HookSetPositionCreator hookSetPositionCreator) {
+                         ClimbSetPowerCreator climbSetPowerCreator,
+                         ClimbSetZeroCreator climbSetZeroCreator,
+                         HookSetPositionCreator hookSetPositionCreator) {
         this.climbSetPositionCreator = climbSetPositionCreator;
         this.climbSetZeroCreator = climbSetZeroCreator;
         this.climbSetPowerCreator = climbSetPowerCreator;
@@ -43,15 +45,19 @@ public class ClimbCommands {
         return climbSetPositionCreator.create(position);
     }
 
-    public ClimbSetPosition setClimbPosition(ClimbPosition height) {
-        return climbSetPositionCreator.create(height.position);
+    public ClimbSetPosition setClimbPosition(Climb.Position position) {
+        return climbSetPositionCreator.create(position.getTicks());
     }
 
-    public ClimbSetZero setZero(){return climbSetZeroCreator.create();}
+    public ClimbSetZero resetEncoder() {
+        return climbSetZeroCreator.create();
+    }
 
     public ClimbSetPower setPower(double power) {
         return climbSetPowerCreator.create(power);
     }
 
-    public HookSetPosition setHookPosition(double position) { return hookSetPositionCreator.create(position); }
+    public HookSetPosition setHookPosition(double position) {
+        return hookSetPositionCreator.create(position);
+    }
 }

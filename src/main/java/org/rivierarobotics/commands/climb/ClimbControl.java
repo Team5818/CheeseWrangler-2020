@@ -29,27 +29,23 @@ import org.rivierarobotics.util.MathUtil;
 import javax.inject.Inject;
 
 public class ClimbControl extends CommandBase {
-    private final Climb climb;
-    private final Joystick coDriverRightJoystick;
+    private final Joystick coDriverRightJs;
     private final Joystick driverButtons;
-
+    private final Climb climb;
 
     @Inject
-    public ClimbControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJoystick, @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons, Climb climb) {
-        this.climb = climb;
-        this.coDriverRightJoystick = coDriverRightJoystick;
+    public ClimbControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
+                        @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
+                        Climb climb) {
+        this.coDriverRightJs = coDriverRightJs;
         this.driverButtons = driverButtons;
+        this.climb = climb;
     }
 
     @Override
     public void execute() {
         if (driverButtons.getRawButton(3)) {
-            climb.setPower(MathUtil.fitDeadband(coDriverRightJoystick.getX()));
+            climb.setPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
         }
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

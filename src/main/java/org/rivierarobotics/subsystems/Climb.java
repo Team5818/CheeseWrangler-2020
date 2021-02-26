@@ -35,26 +35,22 @@ import javax.inject.Provider;
 
 
 public class Climb extends SubsystemBase implements RRSubsystem {
+    private static final double MAX_TICKS = 39114 * 35.93;
     private final WPI_TalonFX climbTalon;
-    private final MechLogger logger;
-    private final Provider<ClimbControl> command;
-    private static final double ZERO_TICKS = 100.0;
-    //TBD
-    private static final double MAX_TICKS = 39114 * 35.93 + ZERO_TICKS;
-    private static final double MIN_TICKS = ZERO_TICKS;
-    //TBD
     private final DigitalInput limit;
-    //TBD
+    private final Provider<ClimbControl> command;
+    private final MechLogger logger;
 
-    public Climb(int limitId,int motorId, Provider<ClimbControl> command) {
-        climbTalon = new WPI_TalonFX(motorId);
+    public Climb(int motorId, int limitId, Provider<ClimbControl> command) {
+        this.climbTalon = new WPI_TalonFX(motorId);
+        this.limit = new DigitalInput(limitId);
         this.command = command;
+        this.logger = Logging.getLogger(getClass());
+
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-                new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, climbTalon);
-        logger = Logging.getLogger(getClass());
-        limit = new DigitalInput(limitId);
+                new PIDConfig(0, 0, 0, 0), 0, climbTalon);
         climbTalon.setSensorPhase(true);
-        MotorUtil.setSoftLimits((int) MAX_TICKS, (int) MIN_TICKS, climbTalon);
+        MotorUtil.setSoftLimits((int) MAX_TICKS, 0, climbTalon);
         climbTalon.setNeutralMode(NeutralMode.Brake);
     }
 
@@ -62,7 +58,7 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         return !limit.get();
     }
 
-    public void resetEncoder(){
+    public void resetEncoder() {
         climbTalon.setSelectedSensorPosition(0);
     }
 
@@ -87,5 +83,13 @@ public class Climb extends SubsystemBase implements RRSubsystem {
             setDefaultCommand(command.get());
         }
         super.periodic();
+    }
+
+    public enum Position {
+        ZERO, HALF, MAX;
+
+        public double getTicks() {
+            return this.ordinal() / 2.0 * MAX_TICKS;
+        }
     }
 }
