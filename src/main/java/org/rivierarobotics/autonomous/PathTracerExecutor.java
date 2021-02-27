@@ -60,6 +60,7 @@ public class PathTracerExecutor extends CommandBase {
     private final PathConstraints constraints;
 
     private int loopRun = 0;
+    private SPOutput lastCalc;
     private double gyroOffset = 0;
     private Mat mat;
     private CvSource graphPublish;
@@ -151,23 +152,19 @@ public class PathTracerExecutor extends CommandBase {
     @Override
     public void execute() {
         if (t < path.getTotalTime()) {
-            SPOutput calc = path.calculate(t);
-            drawGraphPoint(calc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun);
-            loopRun++;
+            SPOutput instCalc = path.calculate(t);
+            drawGraphPoint(instCalc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun++);
             graphPublish.putFrame(mat);
-            tab.setEntry("currTime", t);
-            tab.setEntry("vX", calc.getVelX());
-            tab.setEntry("vY", calc.getVelY());
-            tab.setEntry("aX", calc.getAccelX());
-            tab.setEntry("aY", calc.getAccelY());
-            tab.setEntry("simAngleAuto", Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
-            double gyroRate = gyro.getRate();
-            if (constraints.getReversed()) {
-                gyroRate *= -1;
+            if (lastCalc == null) {
+                lastCalc = instCalc;
             }
-            Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(),
-                Math.toRadians(gyro.getYaw() - gyroOffset), Math.toRadians(gyroRate));
-            //Pair<Double> wheelSpeeds = path.getLRVel(calc);
+            Pair<Double> wheelSpeeds = path.getLRVel(lastCalc, instCalc);
+
+            tab.setEntry("currTime", t);
+            tab.setEntry("vX", instCalc.getVelX());
+            tab.setEntry("vY", instCalc.getVelY());
+            tab.setEntry("aX", instCalc.getAccelX());
+            tab.setEntry("aY", instCalc.getAccelY());
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
             double vLMax = tab.getEntry("vLMax").getDouble(0);
@@ -178,11 +175,13 @@ public class PathTracerExecutor extends CommandBase {
             if (Math.abs(vRMax) < Math.abs(wheelSpeeds.getB())) {
                 tab.setEntry("vRMax", wheelSpeeds.getB());
             }
+
             if (constraints.getReversed()) {
                 wheelSpeeds.setA(-wheelSpeeds.getA());
                 wheelSpeeds.setB(-wheelSpeeds.getB());
             }
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
+            lastCalc = instCalc;
         }
         t += 0.02; // time scale
     }

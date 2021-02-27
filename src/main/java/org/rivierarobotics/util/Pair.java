@@ -44,4 +44,9 @@ public class Pair<T> {
     public T getB() {
         return b;
     }
+
+    @Override
+    public String toString() {
+        return "Pair{" + "a=" + a + ", b=" + b + "}";
+    }
 }

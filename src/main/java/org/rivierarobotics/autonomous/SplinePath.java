@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
@@ -36,6 +35,7 @@ public class SplinePath {
     public static final double MAX_POSSIBLE_VEL = 4.5; // m/s
     public static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
     private static final double RIO_LOOP_TIME_MS = 0.02;
+    private static final double ROTATION_GAIN = 2.0;
     private final List<SplinePoint> points;
     private final double maxVel;
     private final double maxAccel;
@@ -45,7 +45,6 @@ public class SplinePath {
     private Pair<Vec2D> nftCtrlPoints;
     private Pair<Double> extrema;
     private double totalTime;
-    private double lastAngle;
 
     public SplinePath(List<SplinePoint> points, PathConstraints constraints) {
         this.points = points;
@@ -187,52 +186,59 @@ public class SplinePath {
     }
 
     // Assumes the robot is moving with the correct trajectory
-    public Pair<Double> getLRVel(SPOutput calc) {
-        double angle = Math.atan2(calc.getVelY(), calc.getVelX());
-        Pair<Double> out = getLRVel(calc.getVelX(), calc.getVelY(), angle,
-            MathUtil.wrapToCircle(angle - lastAngle));
-        lastAngle = angle;
-        return out;
-    }
-
-    public Pair<Double> getLRVel(double velX, double velY, double angle, double rate) {
-        double vxProc = velX * Math.cos(angle) + velY * Math.sin(angle);
+    public Pair<Double> getLRVel(SPOutput lastCalc, SPOutput instCalc) {
+        double magnitude = Math.sqrt((instCalc.getVelX() * instCalc.getVelX()) + (instCalc.getVelY() * instCalc.getVelY()));
+        double omega = ROTATION_GAIN * Math.atan2((instCalc.getPosY() -  lastCalc.getPosY()),
+                (instCalc.getPosX() - lastCalc.getPosX())) * RIO_LOOP_TIME_MS;
+        if (constraints.getReversed()) {
+            omega *= -1;
+        }
         return new Pair<>(
-            vxProc - DriveTrain.getTrackwidth() / 2 * rate,
-            vxProc + DriveTrain.getTrackwidth() / 2 * rate
+            magnitude - (DriveTrain.getTrackwidth() * omega),
+            magnitude + (DriveTrain.getTrackwidth() * omega)
         );
     }
 
     public double timeAtLimited(Section section, boolean addPrecomputed) {
-        Pair<Double> tempVel;
-        Pair<Double> tempAccel;
-        SPOutput tempOut;
+        Pair<Double> lastTempVel = null;
+        Pair<Double> instTempVel;
+        SPOutput lastTempOut = null;
+        SPOutput instTempOut;
         double maxObservedVel = 0;
         double maxObservedAccel = 0;
         for (double t = 0; t < 1; t += RIO_LOOP_TIME_MS) {
-            tempOut = calculate(section, t, false);
+            instTempOut = calculate(section, t, false);
             if (addPrecomputed) {
-                precomputed.add(tempOut);
+                precomputed.add(instTempOut);
             }
 
-            tempVel = getLRVel(tempOut);
-            if (Math.abs(tempVel.getA()) > maxObservedVel) {
-                maxObservedVel = Math.abs(tempVel.getA());
-            }
-            if (Math.abs(tempVel.getB()) > maxObservedVel) {
-                maxObservedVel = Math.abs(tempVel.getB());
+            if (lastTempOut == null) {
+                lastTempOut = instTempOut;
             }
 
-            // TODO Just use accel/vel instead of vel/pos (?)
-            tempAccel = getLRVel(tempOut.getAccelX(), tempOut.getAccelY(),
-                    Math.atan2(tempOut.getVelX(), tempOut.getVelY()), 0);
-            // tempAccel = new Pair<>(tempOut.getAccelX(), tempOut.getAccelY());
+            instTempVel = getLRVel(lastTempOut, instTempOut);
+            if (Math.abs(instTempVel.getA()) > maxObservedVel) {
+                maxObservedVel = Math.abs(instTempVel.getA());
+            }
+            if (Math.abs(instTempVel.getB()) > maxObservedVel) {
+                maxObservedVel = Math.abs(instTempVel.getB());
+            }
+
+            if (lastTempVel == null) {
+                lastTempVel = instTempVel;
+            }
+
+            Pair<Double> tempAccel = new Pair<>(
+                (instTempVel.getA() - lastTempVel.getA()) * RIO_LOOP_TIME_MS,
+                (instTempVel.getB() - lastTempVel.getB()) * RIO_LOOP_TIME_MS
+            );
             if (Math.abs(tempAccel.getA()) > maxObservedAccel) {
                 maxObservedAccel = Math.abs(tempAccel.getA());
             }
             if (Math.abs(tempAccel.getB()) > maxObservedAccel) {
                 maxObservedAccel = Math.abs(tempAccel.getB());
             }
+            lastTempOut = instTempOut;
         }
         // accel *2 b/c of derivative 1/2
         return Math.max(maxObservedVel / maxVel, 2 * maxObservedAccel / maxAccel);
