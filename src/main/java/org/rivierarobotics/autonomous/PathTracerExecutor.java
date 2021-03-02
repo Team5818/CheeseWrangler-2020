@@ -191,6 +191,7 @@ public class PathTracerExecutor extends CommandBase {
         //if (!interrupted) {
         //    rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
         //}
+        path.resetOmega();
         driveTrain.setVelocity(0);
     }
 
