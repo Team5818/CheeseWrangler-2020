@@ -146,6 +146,7 @@ public class Robot extends TimedRobot {
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
         var physics = globalComponent.getPhysicsUtil();
+        var climb = globalComponent.getClimb();
         var shuffleboard = globalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
@@ -166,10 +167,10 @@ public class Robot extends TimedRobot {
             .setEntry("Target Velocity", physics.getTargetVelocity());
 
         shuffleboard.getTab("Auto Aim")
-                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
+            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
 
         shuffleboard.getTab("Auto Aim").getTable("Random")
-                .addTabData(shuffleboard.getTab("Cheese Wheel"));
+            .addTabData(shuffleboard.getTab("Cheese Wheel"));
 
         shuffleboard.getTab("Drive Train")
             .setEntry("Left Enc", dt.getLeft().getPosition())
@@ -193,8 +194,12 @@ public class Robot extends TimedRobot {
             .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
 
         shuffleboard.getTab("Driver")
-                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTOptions(1, 1, 2, 4))
-                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
-                .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
+            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTOptions(1, 1, 2, 4))
+            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
+            .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
+
+        shuffleboard.getTab("Climb")
+            .setEntry("Limit Closed", climb.isAtBottom())
+            .setEntry("Rel Pos", climb.getPositionTicks());
     }
 }

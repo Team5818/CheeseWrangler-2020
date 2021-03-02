@@ -22,9 +22,10 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
@@ -37,25 +38,24 @@ import javax.inject.Provider;
 public class Climb extends SubsystemBase implements RRSubsystem {
     private static final double MAX_TICKS = 39114 * 35.93;
     private final WPI_TalonFX climbTalon;
-    private final DigitalInput limit;
     private final Provider<ClimbControl> command;
     private final MechLogger logger;
 
-    public Climb(int motorId, int limitId, Provider<ClimbControl> command) {
+    public Climb(int motorId, Provider<ClimbControl> command) {
         this.climbTalon = new WPI_TalonFX(motorId);
-        this.limit = new DigitalInput(limitId);
         this.command = command;
         this.logger = Logging.getLogger(getClass());
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
                 new PIDConfig(0, 0, 0, 0), 0, climbTalon);
         climbTalon.setSensorPhase(true);
-        MotorUtil.setSoftLimits((int) MAX_TICKS, 0, climbTalon);
+        climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled);
+        climbTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
         climbTalon.setNeutralMode(NeutralMode.Brake);
     }
 
     public boolean isAtBottom() {
-        return !limit.get();
+        return climbTalon.isRevLimitSwitchClosed() == 1;
     }
 
     public void resetEncoder() {
