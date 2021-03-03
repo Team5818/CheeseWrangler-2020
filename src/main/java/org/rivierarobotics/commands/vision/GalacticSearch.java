@@ -34,8 +34,8 @@ import org.opencv.core.Scalar;
 import org.opencv.core.Size;
 import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.autonomous.AutonomousCommands;
-import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathTracerExecutor;
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 

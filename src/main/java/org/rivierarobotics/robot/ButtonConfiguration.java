@@ -22,9 +22,9 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathConstraints;
 import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;

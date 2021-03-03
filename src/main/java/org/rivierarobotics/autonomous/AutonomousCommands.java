@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
 import org.rivierarobotics.autonomous.advanced.TrenchRun;

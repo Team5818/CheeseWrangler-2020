@@ -21,8 +21,8 @@
 package org.rivierarobotics.util;
 
 public class Pair<T> {
-    private T a;
-    private T b;
+    protected T a;
+    protected T b;
 
     public Pair(T a, T b) {
         this.a = a;

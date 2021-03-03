@@ -145,7 +145,7 @@ public class PathTracerExecutor extends CommandBase {
         tab.setEntry("vRMax", 0);
     }
 
-    public void rotateToPointHeading(SplinePoint pt) {
+    private void rotateToPointHeading(SplinePoint pt) {
         driveCommands.rotateTo(pt.isPrecomputedTan() ? Math.acos(pt.getTanVX()) : pt.getHeading()).schedule();
     }
 
@@ -183,14 +183,11 @@ public class PathTracerExecutor extends CommandBase {
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
             lastCalc = instCalc;
         }
-        t += 0.02; // time scale
+        t += SplinePath.RIO_LOOP_TIME_MS;
     }
 
     @Override
     public void end(boolean interrupted) {
-        //if (!interrupted) {
-        //    rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
-        //}
         path.resetOmega();
         driveTrain.setVelocity(0);
     }

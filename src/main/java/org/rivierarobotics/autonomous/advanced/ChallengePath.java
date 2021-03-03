@@ -18,7 +18,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.autonomous;
+package org.rivierarobotics.autonomous.advanced;
+
+import org.rivierarobotics.autonomous.PathConstraints;
+import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.autonomous.SplinePath;
+import org.rivierarobotics.autonomous.SplinePoint;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +50,7 @@ public enum ChallengePath {
      * @param controlSeq a sequence of 2-char control strings formatted as [A:E][1:11].
      */
     ChallengePath(PathConstraints constraints, String... controlSeq) {
-        constraints = constraints.setFixedTheta(false);
+        constraints = constraints.setCreationMode(PathConstraints.CreationMode.CATMULL_ROM);
         List<SplinePoint> points = new LinkedList<>();
         for (String control : controlSeq) {
             if (control.length() < 2) {
@@ -82,14 +87,5 @@ public enum ChallengePath {
 
     private void invalidControlError(String control) {
         throw new IllegalArgumentException("Control sequences must be of type [A:E][1:11]. Given: " + control);
-    }
-
-    // Knot parameterization types. Use alpha() with PathConstraints.
-    public enum CRKnotParam {
-        UNIFORM, CENTRIPETAL, CHORDAL;
-
-        public double alpha() {
-            return this.ordinal() / 2.0;
-        }
     }
 }
