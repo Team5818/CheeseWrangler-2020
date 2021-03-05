@@ -41,6 +41,7 @@ public class Climb extends SubsystemBase implements RRSubsystem {
     private final Provider<ClimbControl> command;
     private final MechLogger logger;
 
+
     public Climb(int motorId, Provider<ClimbControl> command) {
         this.climbTalon = new WPI_TalonFX(motorId);
         this.command = command;
@@ -49,7 +50,9 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
                 new PIDConfig(0, 0, 0, 0), 0, climbTalon);
         climbTalon.setSensorPhase(true);
-        climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled);
+        climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        climbTalon.configForwardSoftLimitThreshold(MAX_TICKS);
+        climbTalon.configForwardSoftLimitEnable(true);
         climbTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
         climbTalon.setNeutralMode(NeutralMode.Brake);
     }
