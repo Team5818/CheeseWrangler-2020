@@ -146,7 +146,7 @@ public class ButtonConfiguration {
                     PathConstraints.create().setMaxVel(1)));
         new JoystickButton(driverButtons, 3)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT,
-                    PathConstraints.create().setMaxVel(2)));
+                    PathConstraints.create().setStraight(true).setMaxVel(2)));
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.drive().setVelocity(1));
     }

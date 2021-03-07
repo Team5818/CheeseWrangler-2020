@@ -28,12 +28,13 @@ public class PathConstraints {
     private CreationMode creationMode = CreationMode.QUINTIC_HERMITE;
     private double crKnotParam = CRKnotParam.CENTRIPETAL.alpha();
     private boolean reversed = false;
+    private boolean straight = false;
 
     private PathConstraints() {
     }
 
     public PathConstraints(double maxAccel, double maxVel, boolean absPos, boolean absHeading,
-                           CreationMode creationMode, double crKnotParam, boolean reversed) {
+                           CreationMode creationMode, double crKnotParam, boolean reversed, boolean straight) {
         this.maxAccel = maxAccel;
         this.maxVel = maxVel;
         this.absPos = absPos;
@@ -41,6 +42,7 @@ public class PathConstraints {
         this.creationMode = creationMode;
         this.crKnotParam = crKnotParam;
         this.reversed = reversed;
+        this.straight = straight;
     }
 
     public PathConstraints setMaxAccel(double maxAccel) {
@@ -83,6 +85,11 @@ public class PathConstraints {
         return this;
     }
 
+    public PathConstraints setStraight(boolean straight) {
+        this.straight = straight;
+        return this;
+    }
+
     public double getMaxAccel() {
         return maxAccel;
     }
@@ -109,6 +116,10 @@ public class PathConstraints {
 
     public boolean getReversed() {
         return reversed;
+    }
+
+    public boolean getStraight() {
+        return straight;
     }
 
     public static PathConstraints create() {

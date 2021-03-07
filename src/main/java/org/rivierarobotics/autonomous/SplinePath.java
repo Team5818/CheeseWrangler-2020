@@ -25,7 +25,6 @@ import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,20 +34,19 @@ public class SplinePath {
     public static final double MAX_POSSIBLE_VEL = 4.5; // m/s
     public static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
     public static final double RIO_LOOP_TIME_MS = 0.02;
-    private static final double MAX_VEL_DIFF = 5;
-    private final List<SplinePoint> points;
+    private final LinkedList<SplinePoint> points;
     private final double maxVel;
     private final double maxAccel;
     private final PathConstraints constraints;
-    private final List<SPOutput> precomputed;
-    private final HashMap<Double, Section> sections;
+    private final LinkedList<SPOutput> precomputed;
+    private final LinkedHashMap<Double, Section> sections;
     private Pair<Vec2D> nftCtrlPoints;
     private Pair<Double> extrema;
     private double totalTime;
     private Double lastOmega;
 
     public SplinePath(List<SplinePoint> points, PathConstraints constraints) {
-        this.points = points;
+        this.points = new LinkedList<>(points);
         this.constraints = constraints;
         this.maxVel = Math.min(constraints.getMaxVel(), MAX_POSSIBLE_VEL);
         this.maxAccel = Math.min(constraints.getMaxAccel(), MAX_POSSIBLE_ACCEL);
@@ -76,7 +74,6 @@ public class SplinePath {
                             points.size() - 1, false)
             ) : new Pair<>(Vec2D.createBlank(), Vec2D.createBlank());
         }
-        recalculatePath();
     }
 
     public SplinePath(List<SplinePoint> points) {
@@ -91,6 +88,7 @@ public class SplinePath {
     }
 
     public void recalculatePath() {
+        System.out.println();
         totalTime = 0;
         sections.clear();
         precomputed.clear();
@@ -100,10 +98,11 @@ public class SplinePath {
             sc = new Section(points.get(i - 1), points.get(i), i - 1);
             scTime = Math.max(0.05, timeAtLimited(sc, true));
             sc.setTime(scTime);
-            sc.setAccel(calculate(sc, 0, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
+            sc.setAccel(calculate(sc, RIO_LOOP_TIME_MS, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
             sections.put(totalTime, sc);
             totalTime += scTime;
         }
+        resetOmega();
     }
 
     public SPOutput calculate(double t) {
@@ -135,12 +134,12 @@ public class SplinePath {
                     10 * te[3] - 15 * te[4] + 6 * te[5]
                 };
                 double[] qhd = {
-                    -30 * te[4] + 60 * te[3] - 30 * te[2],
-                    -15 * te[4] + 32 * te[3] - 18 * te[2] + 1,
-                    -2.5 * te[4] + 6 * te[3] - 4.5 * te[2] + t,
-                    2.5 * te[4] - 4 * te[3] + 1.5 * te[2],
-                    -15 * te[4] + 28 * te[3] - 12 * te[2],
-                    30 * te[4] - 60 * te[3] + 30 * te[2]
+                    -30 * te[2] + 60 * te[3] - 30 * te[4],
+                    1 - 18  * te[2] + 32 * te[3] - 15 * te[4],
+                    t - 4.5 * te[2] + 6 * te[3] - 2.5 * te[4],
+                    1.5 * te[2] - 4 * te[3] + 2.5 * te[4],
+                    -12 * te[2] + 28 * te[3] - 15 * te[4],
+                    30 * te[2] - 60 * te[3] + 30 * te[4]
                 };
                 double[] qhdd = {
                     -120 * te[3] + 180 * te[2] - 60 * t,
@@ -170,13 +169,13 @@ public class SplinePath {
                     -6 * t + 6 * te[2],
                     1 - 4 * t + 3 * te[2],
                     -2 * t + 3 * te[2],
-                    2 * t - 6 * te[2]
+                    6 * t - 6 * te[2]
                 };
                 double[] chdd = {
                     -6 + 12 * t,
                     -4 + 6 * t,
                     -2 + 6 * t,
-                    2 - 12 * t
+                    6 - 12 * t
                 };
 
                 return new SPOutput(
@@ -216,20 +215,30 @@ public class SplinePath {
         }
     }
 
+    public static double angleDiff(double a1, double a2) {
+        double diff = (a2 - a1 + Math.PI) % (2 * Math.PI) - Math.PI;
+        return diff < -Math.PI ? diff + (2 * Math.PI) : diff;
+    }
+
     // Assumes the robot is moving with the correct trajectory
     public Pair<Double> getLRVel(SPOutput lastCalc, SPOutput instCalc) {
-        double angluarVel = Math.atan2(instCalc.getPosY() - lastCalc.getPosY(), instCalc.getPosX() - lastCalc.getPosX())
-                / RIO_LOOP_TIME_MS * DriveTrain.getTrackwidth() / 2;
-        if (constraints.getReversed()) {
-            angluarVel *= -1;
-        }
-        double tempOmega = angluarVel;
+        double omega = Math.atan2(instCalc.getPosY() - lastCalc.getPosY(), instCalc.getPosX() - lastCalc.getPosX());
+        double tempOmega = omega;
         if (lastOmega == null) {
             lastOmega = tempOmega;
         }
-        angluarVel -= lastOmega;
+        omega = angleDiff(omega, lastOmega);
         lastOmega = tempOmega;
+
+        double angluarVel = omega / RIO_LOOP_TIME_MS * DriveTrain.getTrackwidth() / 2;
+        if (constraints.getReversed()) {
+            angluarVel *= -1;
+        }
+
         double linearVel = Math.sqrt((instCalc.getVelX() * instCalc.getVelX()) + (instCalc.getVelY() * instCalc.getVelY()));
+        if (constraints.getStraight()) {
+            angluarVel = 0;
+        }
         return new Pair<>(
                 linearVel - angluarVel,
                 linearVel + angluarVel
@@ -253,17 +262,13 @@ public class SplinePath {
             }
 
             instTempVel = getLRVel(lastTempOut, instTempOut);
-            // Limit maximum velocity differential b/n states (error correction)
-            if (instTempVel.getA() < lastTempVel.getA() + MAX_VEL_DIFF && instTempVel.getB() < lastTempVel.getB() + MAX_VEL_DIFF) {
-                if (Math.abs(instTempVel.getA()) > maxObservedVel) {
-                    maxObservedVel = Math.abs(instTempVel.getA());
-                }
-                if (Math.abs(instTempVel.getB()) > maxObservedVel) {
-                    maxObservedVel = Math.abs(instTempVel.getB());
-                }
+            if (Math.abs(instTempVel.getA()) > maxObservedVel) {
+                maxObservedVel = Math.abs(instTempVel.getA());
+            }
+            if (Math.abs(instTempVel.getB()) > maxObservedVel) {
+                maxObservedVel = Math.abs(instTempVel.getB());
             }
         }
-        resetOmega();
         return maxObservedVel / maxVel;
     }
 

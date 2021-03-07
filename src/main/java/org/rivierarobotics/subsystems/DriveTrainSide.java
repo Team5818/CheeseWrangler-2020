@@ -48,8 +48,7 @@ public class DriveTrainSide implements RRSubsystem {
         masterLeft.setInverted(invert);
         slaveRight.setInverted(invert);
         masterLeft.setNeutralMode(NeutralMode.Brake);
-        slaveRight.setNeutralMode(NeutralMode.Coast);
-        slaveRight.follow(masterLeft);
+        slaveRight.setNeutralMode(NeutralMode.Brake);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);

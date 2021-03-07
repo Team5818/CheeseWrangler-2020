@@ -24,6 +24,7 @@ import edu.wpi.cscore.CvSource;
 import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.opencv.core.CvType;
@@ -41,13 +42,14 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.awt.Color;
 import java.util.Map;
+import java.util.Objects;
 
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
     private static final int WIDTH = 300;
     private static final int HEIGHT = 300;
     private static final double BORDER_WIDTH = 10;
-    private static final double BUFFER_SECONDS = 1;
+    private static final double BUFFER_SECONDS = 0.2;
     private static final int ARROW_DENSITY = 180;
     private static final int VEL_SCALE = 20;
     private static final String PATH_TRACER = "PathTracer";
@@ -59,14 +61,16 @@ public class PathTracerExecutor extends CommandBase {
     private final SplinePath path;
     private final PathConstraints constraints;
 
-    private int loopRun = 0;
+    private int loopRun;
     private SPOutput lastCalc;
-    private double gyroOffset = 0;
+    private double gyroOffset;
     private Mat mat;
     private CvSource graphPublish;
     private double t;
     private double scale;
     private int thickness;
+    private double pXAccum;
+    private double pYAccum;
 
     public PathTracerExecutor(@Provided DriveTrain driveTrain, @Provided DriveCommands driveCommands,
                               @Provided NavXGyro gyro, @Provided RobotShuffleboard shuffleboard,
@@ -78,6 +82,7 @@ public class PathTracerExecutor extends CommandBase {
         this.path = path;
         this.constraints = path.getConstraints();
         addRequirements(driveTrain);
+        path.recalculatePath();
     }
 
     public static Scalar fromAWT(Color color) {
@@ -121,8 +126,14 @@ public class PathTracerExecutor extends CommandBase {
 
     @Override
     public void initialize() {
+        lastCalc = null;
+        loopRun = 0;
+        gyroOffset = 0;
+        pXAccum = 0;
+        pYAccum = 0;
         t = 0;
-        initGraph();
+        tab.setEntry("ptReset", true);
+        // initGraph();
         if (constraints.getAbsPos()) {
             path.addPathPoint(0, new SplinePoint(driveTrain.getPose()));
             path.recalculatePath();
@@ -151,20 +162,28 @@ public class PathTracerExecutor extends CommandBase {
 
     @Override
     public void execute() {
+        tab.setEntry("ptReset", t < 0.2);
         if (t < path.getTotalTime()) {
             SPOutput instCalc = path.calculate(t);
-            drawGraphPoint(instCalc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun++);
-            graphPublish.putFrame(mat);
+            // drawGraphPoint(instCalc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun++);
+            // graphPublish.putFrame(mat);
             if (lastCalc == null) {
                 lastCalc = instCalc;
             }
-            Pair<Double> wheelSpeeds = path.getLRVel(lastCalc, instCalc);
 
             tab.setEntry("currTime", t);
+            tab.setEntry("pX", instCalc.getPosX());
+            tab.setEntry("pY", instCalc.getPosY());
             tab.setEntry("vX", instCalc.getVelX());
             tab.setEntry("vY", instCalc.getVelY());
+            pXAccum += instCalc.getVelX() * SplinePath.RIO_LOOP_TIME_MS;
+            pYAccum += instCalc.getVelY() * SplinePath.RIO_LOOP_TIME_MS;
+            tab.setEntry("pXA", pXAccum);
+            tab.setEntry("pYA", pYAccum);
             tab.setEntry("aX", instCalc.getAccelX());
             tab.setEntry("aY", instCalc.getAccelY());
+
+            Pair<Double> wheelSpeeds = path.getLRVel(lastCalc, instCalc);
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
             double vLMax = tab.getEntry("vLMax").getDouble(0);
@@ -182,6 +201,15 @@ public class PathTracerExecutor extends CommandBase {
             }
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
             lastCalc = instCalc;
+        } else {
+            path.resetOmega();
+            driveTrain.setPower(0, 0);
+            tab.setEntry("vX", 0);
+            tab.setEntry("vY", 0);
+            tab.setEntry("aX", 0);
+            tab.setEntry("aY", 0);
+            tab.setEntry("vL", 0);
+            tab.setEntry("vR", 0);
         }
         t += SplinePath.RIO_LOOP_TIME_MS;
     }
@@ -190,6 +218,13 @@ public class PathTracerExecutor extends CommandBase {
     public void end(boolean interrupted) {
         path.resetOmega();
         driveTrain.setVelocity(0);
+        driveTrain.setPower(0, 0);
+        tab.setEntry("vX", 0);
+        tab.setEntry("vY", 0);
+        tab.setEntry("aX", 0);
+        tab.setEntry("aY", 0);
+        tab.setEntry("vL", 0);
+        tab.setEntry("vR", 0);
     }
 
     @Override
