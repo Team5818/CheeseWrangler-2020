@@ -68,7 +68,7 @@ public class GalacticSearch extends CommandBase {
     public void initialize() {
         Mat frame = new Mat();
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
-        frame = frame.submat(new Rect(0, frame.height() / 2, frame.width(), frame.height()));
+        frame = frame.submat(new Rect(0, frame.height() / 2, frame.width(), frame.height() / 2));
         List<Point> ballLocs = findBallLocations(frame);
         double leftArea = isPathA ? BALL_AREA_LEFT.getA() : BALL_AREA_LEFT.getB();
         int countLeft = 0;
@@ -88,7 +88,7 @@ public class GalacticSearch extends CommandBase {
         return cmd != null && cmd.isScheduled();
     }
 
-    public List<Point> findBallLocations(Mat img) {
+    private static List<Point> findBallLocations(Mat img) {
         List<Point> out = new ArrayList<>();
         Mat matA = img.clone();
         Mat matB = new Mat();

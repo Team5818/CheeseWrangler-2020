@@ -1,0 +1,97 @@
+/*
+ * This file is part of CheeseWrangler-2020, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package org.rivierarobotics.autonomous;
+
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.Vec2D;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.util.LinkedList;
+import java.util.List;
+
+@GenerateCreator
+public class RecordPath extends CommandBase {
+    private final DriveTrain driveTrain;
+    private final Joystick driverButtons;
+    private List<Vec2D> vel;
+
+    public RecordPath(@Provided DriveTrain driveTrain,
+                      @Provided @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons) {
+        this.driveTrain = driveTrain;
+        this.driverButtons = driverButtons;
+    }
+
+    @Override
+    public void initialize() {
+        vel = new LinkedList<>();
+    }
+
+    @Override
+    public void execute() {
+        vel.add(new Vec2D(driveTrain.getXVelocity(), driveTrain.getYVelocity()));
+    }
+
+    private static Path getRobotDir() {
+        return (RobotBase.isReal()
+                ? Filesystem.getDeployDirectory()
+                : Filesystem.getLaunchDirectory())
+                .toPath().resolve("generated/paths");
+    }
+
+    private static void writeCsvString(FileWriter file, Object... data) throws IOException {
+        for (Object d : data) {
+            file.write(d.toString() + ",");
+        }
+        file.write("\n");
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        File out = getRobotDir().resolve(System.currentTimeMillis() + ".cwpath").toFile();
+        try (FileWriter file = new FileWriter(out)) {
+            file.write("X,Y,Tangent X,Tangent Y,Fixed Theta,Reversed,Name\n");
+            double vxAccum = 0;
+            double vyAccum = 0;
+            for (Vec2D vPair : vel) {
+                vxAccum += vPair.getX() * SplinePath.RIO_LOOP_TIME_MS;
+                vxAccum += vPair.getY() * SplinePath.RIO_LOOP_TIME_MS;
+                writeCsvString(file, vxAccum, vyAccum, vPair.getX(), vPair.getY(), true, false);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean isFinished() {
+        return driverButtons.getRawButton(1);
+    }
+}

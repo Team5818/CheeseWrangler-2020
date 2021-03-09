@@ -132,7 +132,7 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 4)
                 .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BOUNCE));
 
-        // Testing/dev
+        // Speed adjustments
         new JoystickButton(driverLeft, 1)
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
         new JoystickButton(driverLeft, 2)
@@ -141,13 +141,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.flywheel().stepTolerance(20));
         new JoystickButton(driverRight, 2)
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
-        new JoystickButton(driverButtons, 1)
+
+        // Testing/dev
+        new JoystickButton(driverButtons, 2)
             .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING_CURVE,
                 PathConstraints.create().setMaxVel(1).setReversed(true)));
         new JoystickButton(driverButtons, 3)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING_CURVE,
                     PathConstraints.create().setMaxVel(1)));
-        new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.drive().setVelocity(1));
     }
 }
