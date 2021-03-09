@@ -38,6 +38,8 @@ public enum Pose2dPath {
     AN_SLALOM,
 
     TESTING,
+    TESTING_CURVE,
+    TESTING_CURVE_LEFT,
     STRAIGHT,
     FLEX,
     FLEX_TAPE,

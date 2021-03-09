@@ -21,6 +21,7 @@
 package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
@@ -33,7 +34,8 @@ import java.util.Map;
 public class SplinePath {
     public static final double MAX_POSSIBLE_VEL = 4.5; // m/s
     public static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
-    public static final double RIO_LOOP_TIME_MS = 0.02;
+    public static final double RIO_LOOP_TIME_MS = 0.02; // s
+    private static final double MAX_VEL_DIFF = 10; // m/s
     private final LinkedList<SplinePoint> points;
     private final double maxVel;
     private final double maxAccel;
@@ -88,7 +90,6 @@ public class SplinePath {
     }
 
     public void recalculatePath() {
-        System.out.println();
         totalTime = 0;
         sections.clear();
         precomputed.clear();
@@ -215,27 +216,22 @@ public class SplinePath {
         }
     }
 
-    public static double angleDiff(double a1, double a2) {
-        double diff = (a2 - a1 + Math.PI) % (2 * Math.PI) - Math.PI;
-        return diff < -Math.PI ? diff + (2 * Math.PI) : diff;
-    }
-
     // Assumes the robot is moving with the correct trajectory
-    public Pair<Double> getLRVel(SPOutput lastCalc, SPOutput instCalc) {
-        double omega = Math.atan2(instCalc.getPosY() - lastCalc.getPosY(), instCalc.getPosX() - lastCalc.getPosX());
+    public Pair<Double> getLRVel(SPOutput calc) {
+        double omega = Math.atan2(calc.getVelY(), calc.getVelX());
         double tempOmega = omega;
         if (lastOmega == null) {
             lastOmega = tempOmega;
         }
-        omega = angleDiff(omega, lastOmega);
+        omega = (omega - lastOmega) % (2 * Math.PI);
         lastOmega = tempOmega;
 
-        double angluarVel = omega / RIO_LOOP_TIME_MS * DriveTrain.getTrackwidth() / 2;
+        double angluarVel = omega * (1 / RIO_LOOP_TIME_MS) * DriveTrain.getTrackwidth();
         if (constraints.getReversed()) {
             angluarVel *= -1;
         }
 
-        double linearVel = Math.sqrt((instCalc.getVelX() * instCalc.getVelX()) + (instCalc.getVelY() * instCalc.getVelY()));
+        double linearVel = Math.sqrt((calc.getVelX() * calc.getVelX()) + (calc.getVelY() * calc.getVelY()));
         if (constraints.getStraight()) {
             angluarVel = 0;
         }
@@ -248,25 +244,22 @@ public class SplinePath {
     public double timeAtLimited(Section section, boolean addPrecomputed) {
         Pair<Double> lastTempVel = new Pair<>(0.0, 0.0);
         Pair<Double> instTempVel;
-        SPOutput lastTempOut = null;
-        SPOutput instTempOut;
+        SPOutput tempOut;
         double maxObservedVel = 0;
         for (double t = 0; t < 1; t += RIO_LOOP_TIME_MS) {
-            instTempOut = calculate(section, t, false);
+            tempOut = calculate(section, t, false);
             if (addPrecomputed) {
-                precomputed.add(instTempOut);
+                precomputed.add(tempOut);
             }
 
-            if (lastTempOut == null) {
-                lastTempOut = instTempOut;
-            }
-
-            instTempVel = getLRVel(lastTempOut, instTempOut);
-            if (Math.abs(instTempVel.getA()) > maxObservedVel) {
-                maxObservedVel = Math.abs(instTempVel.getA());
-            }
-            if (Math.abs(instTempVel.getB()) > maxObservedVel) {
-                maxObservedVel = Math.abs(instTempVel.getB());
+            instTempVel = getLRVel(tempOut);
+            if (instTempVel.getA() < lastTempVel.getA() + MAX_VEL_DIFF && instTempVel.getB() < lastTempVel.getB() + MAX_VEL_DIFF) {
+                if (Math.abs(instTempVel.getA()) > maxObservedVel) {
+                    maxObservedVel = Math.abs(instTempVel.getA());
+                }
+                if (Math.abs(instTempVel.getB()) > maxObservedVel) {
+                    maxObservedVel = Math.abs(instTempVel.getB());
+                }
             }
         }
         return maxObservedVel / maxVel;

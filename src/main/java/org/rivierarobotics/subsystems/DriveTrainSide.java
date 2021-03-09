@@ -31,7 +31,7 @@ import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
 public class DriveTrainSide implements RRSubsystem {
-    private static final double TICKS_PER_METER = 7916 / 1.8288;
+    private static final double TICKS_PER_METER = 4380;
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
     private final WPI_TalonFX masterLeft;
     private final WPI_TalonFX slaveRight;
@@ -44,7 +44,7 @@ public class DriveTrainSide implements RRSubsystem {
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(0.15, 0, 0, 0.051), 0, masterLeft, slaveRight);
+            new PIDConfig(0.22, 0, 0, 0.051), 0, masterLeft, slaveRight);
         masterLeft.setInverted(invert);
         slaveRight.setInverted(invert);
         masterLeft.setNeutralMode(NeutralMode.Brake);
@@ -64,6 +64,7 @@ public class DriveTrainSide implements RRSubsystem {
     public void setPower(double pwr) {
         logger.powerChange(pwr);
         masterLeft.set(TalonFXControlMode.PercentOutput, pwr);
+        slaveRight.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
     public double getVoltage(boolean isMasterLeft) {
