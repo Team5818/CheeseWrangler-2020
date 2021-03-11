@@ -28,6 +28,8 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.Vec2D;
 
 import java.io.File;
@@ -41,17 +43,24 @@ import java.util.List;
 public class RecordPath extends CommandBase {
     private final DriveTrain driveTrain;
     private final Joystick driverButtons;
+    private final RobotShuffleboardTab tab;
     private List<Vec2D> vel;
+    private String recName;
 
     public RecordPath(@Provided DriveTrain driveTrain,
-                      @Provided @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons) {
+                      @Provided @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
+                      @Provided RobotShuffleboard shuffleboard) {
         this.driveTrain = driveTrain;
         this.driverButtons = driverButtons;
+        this.tab = shuffleboard.getTab("PathTracer");
     }
 
     @Override
     public void initialize() {
         vel = new LinkedList<>();
+        recName = "GEN_" + System.currentTimeMillis();
+        tab.setEntry("Rec Name", recName);
+        tab.setEntry("Rec Path", true);
     }
 
     @Override
@@ -59,11 +68,10 @@ public class RecordPath extends CommandBase {
         vel.add(new Vec2D(driveTrain.getXVelocity(), driveTrain.getYVelocity()));
     }
 
-    private static Path getRobotDir() {
-        return (RobotBase.isReal()
-                ? Filesystem.getDeployDirectory()
-                : Filesystem.getLaunchDirectory())
-                .toPath().resolve("generated/paths");
+    private static Path getPathDir() {
+        return RobotBase.isReal()
+                ? Filesystem.getDeployDirectory().toPath().resolve("paths/")
+                : Filesystem.getLaunchDirectory().toPath().resolve("PathWeaver/Paths");
     }
 
     private static void writeCsvString(FileWriter file, Object... data) throws IOException {
@@ -75,7 +83,8 @@ public class RecordPath extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        File out = getRobotDir().resolve(System.currentTimeMillis() + ".cwpath").toFile();
+        tab.setEntry("Rec Path", false);
+        File out = getPathDir().resolve(recName).toFile();
         try (FileWriter file = new FileWriter(out)) {
             file.write("X,Y,Tangent X,Tangent Y,Fixed Theta,Reversed,Name\n");
             double vxAccum = 0;

@@ -143,6 +143,8 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
 
         // Testing/dev
+        new JoystickButton(driverButtons, 1)
+                .whenPressed(cmds.auto().recordPath());
         new JoystickButton(driverButtons, 2)
             .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING_CURVE,
                 PathConstraints.create().setMaxVel(1).setReversed(true)));
