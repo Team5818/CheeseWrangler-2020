@@ -22,6 +22,8 @@ package org.rivierarobotics.commands.shooting;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -43,7 +45,7 @@ public class ContinuousShoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private static SequentialCommandGroup cmd;
+    private ParallelRaceGroup cmd;
     private final Flywheel flywheel;
     private final RobotShuffleboardTab tab;
 
@@ -76,7 +78,7 @@ public class ContinuousShoot extends CommandBase {
                 ejectorCommands.setPower(-0.1),
                 new WaitCommand(0.1),
                 ejectorCommands.setPower(0)
-        );
+        ).withTimeout(2);
         cmd.schedule();
     }
 

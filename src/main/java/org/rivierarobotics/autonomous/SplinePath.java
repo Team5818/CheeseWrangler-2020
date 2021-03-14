@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous;
 
 import org.rivierarobotics.subsystems.DriveTrain;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
@@ -226,18 +225,18 @@ public class SplinePath {
         omega = (omega - lastOmega) % (2 * Math.PI);
         lastOmega = tempOmega;
 
-        double angluarVel = omega * (1 / RIO_LOOP_TIME_MS) * DriveTrain.getTrackwidth();
+        double angularVel = omega * (1 / RIO_LOOP_TIME_MS) * DriveTrain.getTrackwidth() * 0.75;
         if (constraints.getReversed()) {
-            angluarVel *= -1;
+            angularVel *= -1;
         }
 
         double linearVel = Math.sqrt((calc.getVelX() * calc.getVelX()) + (calc.getVelY() * calc.getVelY()));
         if (constraints.getStraight()) {
-            angluarVel = 0;
+            angularVel = 0;
         }
         return new Pair<>(
-                linearVel - angluarVel,
-                linearVel + angluarVel
+                linearVel - angularVel,
+                linearVel + angularVel
         );
     }
 

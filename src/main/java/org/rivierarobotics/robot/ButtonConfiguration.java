@@ -79,13 +79,17 @@ public class ButtonConfiguration {
 
         // CheeseWheel manual cycles
         new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS,
+                    CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
         new JoystickButton(coDriverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS,
+                    CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
         new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS,
+                    CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER));
         new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS,
+                    CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
 
         // Autoaim
         new JoystickButton(coDriverButtons, 7)
@@ -126,11 +130,14 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 7)
                 .whenPressed(cmds.vision().galacticSearch(false));
         new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BARREL_RACING));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_BARREL_RACING,
+                    PathConstraints.create().setMaxVel(1)));
         new JoystickButton(driverButtons, 5)
-                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_SLALOM));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_SLALOM,
+                    PathConstraints.create().setMaxVel(2)));
         new JoystickButton(driverButtons, 4)
-                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BOUNCE));
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_BOUNCE,
+                    PathConstraints.create().setMaxVel(1)));
 
         // Speed adjustments
         new JoystickButton(driverLeft, 1)
@@ -146,10 +153,10 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 1)
                 .whenPressed(cmds.auto().recordPath());
         new JoystickButton(driverButtons, 2)
-            .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING_CURVE,
-                PathConstraints.create().setMaxVel(1).setReversed(true)));
+            .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT,
+                PathConstraints.create().setMaxVel(1)));
         new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING_CURVE,
-                    PathConstraints.create().setMaxVel(1)));
+            .whenPressed(cmds.auto().pathtracer(Pose2dPath.LOOP_TEST,
+                PathConstraints.create().setMaxVel(1)));
     }
 }

@@ -82,7 +82,6 @@ public class DriveTrain extends SubsystemBase {
         return getXVelocity(0);
     }
 
-    //TODO these are backwards
     public double getXVelocity(double yawOffset) {
         return getAvgVelocity() * Math.sin(Math.toRadians(gyro.getYaw() - yawOffset));
     }

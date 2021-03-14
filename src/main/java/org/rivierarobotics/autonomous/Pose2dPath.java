@@ -36,6 +36,7 @@ public enum Pose2dPath {
     AN_BARREL_RACING,
     AN_BOUNCE,
     AN_SLALOM,
+    LOOP_TEST,
 
     TESTING,
     TESTING_CURVE,

@@ -34,6 +34,7 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
     private static final String PATH_TRACER = "PathTracer";
+    private static final double ANGULAR_KP = 0.01;
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
     private final NavXGyro gyro;
@@ -91,6 +92,17 @@ public class PathTracerExecutor extends CommandBase {
         driveCommands.rotateTo(pt.isPrecomputedTan() ? Math.acos(pt.getTanVX()) : pt.getHeading()).schedule();
     }
 
+    private static double angDiff(double a1, double a2) {
+        a1 = MathUtil.wrapToCircle(a1);
+        a2 = MathUtil.wrapToCircle(a2);
+        if (a1 - a2 < -180) {
+            a2 -= 360;
+        } else if (a1 - a2 > 180) {
+            a2 += 360;
+        }
+        return a1 - a2;
+    }
+
     @Override
     public void execute() {
         tab.setEntry("ptReset", t < 0.2);
@@ -100,6 +112,12 @@ public class PathTracerExecutor extends CommandBase {
                 timeParam = path.getTotalTime() - t;
             }
             SPOutput calc = path.calculate(timeParam);
+            double fAng = -MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
+            double gAng = MathUtil.wrapToCircle(gyro.getYaw());
+            tab.setEntry("fAng", fAng);
+            tab.setEntry("gAng", gAng);
+            double angErr = angDiff(fAng, gAng);
+            tab.setEntry("angErr", angErr);
 
             tab.setEntry("currTime", t);
             tab.setEntry("pX", calc.getPosX());
@@ -118,6 +136,12 @@ public class PathTracerExecutor extends CommandBase {
             if (constraints.getReversed()) {
                 wheelSpeeds.setA(-wheelSpeeds.getA());
                 wheelSpeeds.setB(-wheelSpeeds.getB());
+            }
+            angErr *= ANGULAR_KP;
+            if (angErr > 0) {
+                wheelSpeeds.setA(wheelSpeeds.getA() + angErr);
+            } else {
+                wheelSpeeds.setB(wheelSpeeds.getB() - angErr);
             }
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
