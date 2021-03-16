@@ -24,7 +24,7 @@ def main():
     if platform.system() == 'Windows':
         cap = cv2.VideoCapture(cv2.CAP_DSHOW)
     else:
-        cap = cv2.VideoCapture('/dev/video0')
+        cap = cv2.VideoCapture('/dev/video2')
     # 640x480@30fps by default, works for calibration
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 640)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 480)
@@ -35,7 +35,7 @@ def main():
     while True:
         ret, img = cap.read()
         # Crop out top half of picture, no balls in FoV usually
-        img = img[int(img.shape[0] / 2):, :img.shape[1]]
+        img = img[int(img.shape[0] * 0.6):, :img.shape[1]]
         # Blur image to make processing easier
         blurred = cv2.GaussianBlur(img, (11, 11), 0)
         # Mask colors between lower and upper color ranges, then erode and dilate

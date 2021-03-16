@@ -21,7 +21,7 @@
 package org.rivierarobotics.subsystems;
 
 public enum CameraPosition {
-    FRONT(0.15, false),
+    FRONT(0.1, false),
     BACK(0.8, true),
     CLIMB(0.5, false);
 

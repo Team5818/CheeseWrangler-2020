@@ -30,10 +30,10 @@ import java.util.List;
 
 public enum ChallengePath {
     // Galactic search (2.4.6)
-    GS_A_RED("C1", "C3", "D5", "A6", "A11"),
-    GS_A_BLUE("C1", "E6", "B7", "C9", "D11"),
-    GS_B_RED("C1", "B3", "D5", "B7", "A11"),
-    GS_B_BLUE("C1", "D6", "B8", "D10", "E11"),
+    GS_A_RED("C0", "C3", "D5", "A6", "A10"),
+    GS_A_BLUE("C-1", "E7", "B7", "C9", "D10"),
+    GS_B_RED("C0", "B3", "D5", "B7", "A10"),
+    GS_B_BLUE("C0", "D6", "B8", "D10", "E10"),
 
     // AutoNav (2.4.7)
     AN_BARREL_RACING(Pose2dPath.AN_BARREL_RACING),
@@ -47,10 +47,10 @@ public enum ChallengePath {
      * Converts control strings into PathTracer paths for FIRST at Home challenges.
      * Figure 2-2 (2021 FAH manual) for layout. Use upper case letters for rows.
      * @param constraints the constraints for the path, always non-fixed theta
-     * @param controlSeq a sequence of 2-char control strings formatted as [A:E][1:11].
+     * @param controlSeq a sequence of 2-char control strings formatted as [A:E][#].
      */
     ChallengePath(PathConstraints constraints, String... controlSeq) {
-        constraints = constraints.setCreationMode(PathConstraints.CreationMode.CATMULL_ROM);
+        constraints = constraints.setCreationMode(PathConstraints.CreationMode.CATMULL_ROM).setMaxVel(2);
         List<SplinePoint> points = new LinkedList<>();
         for (String control : controlSeq) {
             if (control.length() < 2) {
@@ -58,9 +58,12 @@ public enum ChallengePath {
             }
             control = control.toUpperCase();
             int row = ((int) control.charAt(0)) - 64;
-            int col = Integer.parseInt(control.substring(1));
-            if (row < 1 || row > 5 || col < 1 || col > 11) {
-                invalidControlError(control);
+            control = control.substring(1);
+            double col;
+            try {
+                col = Double.parseDouble(control);
+            } catch (NumberFormatException ignored) {
+                col = Integer.parseInt(control);
             }
             // Heading degrees doesn't matter b/c non fixed theta, reverse y b/c PathWeaver
             points.add(new SplinePoint(METERS_PER_GRID * col, -METERS_PER_GRID * row, 0));
@@ -86,6 +89,6 @@ public enum ChallengePath {
     }
 
     private void invalidControlError(String control) {
-        throw new IllegalArgumentException("Control sequences must be of type [A:E][1:11]. Given: " + control);
+        throw new IllegalArgumentException("Control sequences must be of type [A:E][#]. Given: " + control);
     }
 }
