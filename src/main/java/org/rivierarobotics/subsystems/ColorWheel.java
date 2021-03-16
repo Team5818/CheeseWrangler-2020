@@ -118,8 +118,8 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         private final char gameChar = name().toLowerCase().charAt(0);
         private final Color matchColor;
 
-        GameColor(double... rgb) {
-            this.matchColor = new Color(rgb[0], rgb[1], rgb[2]);
+        GameColor(double r, double g, double b) {
+            this.matchColor = new Color(r, g, b);
         }
 
         public static GameColor getFMSColor() {

@@ -124,6 +124,12 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.camera().setServo(CameraPosition.CLIMB)
                         .alongWith(cmds.camera().flipImage(CameraPosition.CLIMB)));
 
+        // Color Wheel
+        new JoystickButton(driverButtons, 9)
+            .whenPressed(cmds.colorWheel().rotateNTimes(4));
+        new JoystickButton(driverButtons, 7)
+            .whenPressed(cmds.colorWheel().rotateToFMS());
+
         // Misc
         new JoystickButton(coDriverButtons, 4)
                 .toggleWhenPressed(cmds.flywheel().setVelocity());
@@ -143,9 +149,5 @@ public class ButtonConfiguration {
                 .toggleWhenPressed(cmds.turret().setVelocity(70));
         new JoystickButton(driverButtons, 1)
                 .toggleWhenPressed(cmds.turret().setVelocity(-70));
-        new JoystickButton(driverButtons, 9)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT));
-        new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.auto().pathweaver(Pose2dPath.STRAIGHT, false, true));
     }
 }
