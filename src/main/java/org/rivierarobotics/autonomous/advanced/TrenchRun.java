@@ -38,18 +38,18 @@ public class TrenchRun extends SequentialCommandGroup {
                      @Provided CheeseWheelCommands shoot, @Provided VisionCommands aim) {
         super(
                 sequence(auto.pathtracer(Pose2dPath.START_TOP_TO_SHOOT), shoot.shootNWedges(5))
-                        .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
+                        .deadlineWith(aim.calcAim(VisionTarget.INNER)),
                 auto.pathtracer(Pose2dPath.SHOOT_TO_TRENCH_PICKUP),
                 drive.driveDistance(1.8, 0.25)
                         .deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                 sequence(auto.pathtracer(Pose2dPath.TRENCH_END_TO_SHOOT), shoot.shootNWedges(5))
-                        .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
+                        .deadlineWith(aim.calcAim(VisionTarget.INNER)),
                 auto.pathtracer(Pose2dPath.SHOOT_TO_LEFT_CENTER_BALL)
                         .deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                 auto.pathtracer(Pose2dPath.SHIFT_LEFT_CENTER_BALL)
                         .deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                 sequence(auto.pathtracer(Pose2dPath.LEFT_CENTER_BALL_TO_SHOOT), shoot.shootNWedges(5))
-                        .deadlineWith(aim.encoderAim(VisionTarget.INNER))
+                        .deadlineWith(aim.calcAim(VisionTarget.INNER))
         );
     }
 }

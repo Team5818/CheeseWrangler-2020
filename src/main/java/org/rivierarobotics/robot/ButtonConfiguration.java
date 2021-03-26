@@ -22,9 +22,9 @@ package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.ChallengePath;
 import org.rivierarobotics.autonomous.PathConstraints;
 import org.rivierarobotics.autonomous.Pose2dPath;
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
@@ -81,13 +81,17 @@ public class ButtonConfiguration {
 
         // CheeseWheel manual cycles
         new JoystickButton(coDriverButtons, 2)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS,
+                    CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
         new JoystickButton(coDriverButtons, 3)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.BACKWARDS,
+                    CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL));
         new JoystickButton(coDriverButtons, 5)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS,
+                    CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER));
         new JoystickButton(coDriverButtons, 6)
-                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS, CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
+                .whenPressed(cmds.cheeseWheel().cycleSlot(CheeseWheel.Direction.FORWARDS,
+                    CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
 
         // Autoaim
         new JoystickButton(coDriverButtons, 7)
@@ -128,7 +132,6 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 1)
                 .whenPressed(cmds.drive().resetGyro());
 
-        // Testing/dev
         new JoystickButton(driverLeft, 1)
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
         new JoystickButton(driverLeft, 2)

@@ -29,12 +29,10 @@ import org.ejml.simple.SimpleMatrix;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.rivierarobotics.autonomous.AutonomousCommands;
-import org.rivierarobotics.autonomous.PathTracerExecutor;
 import org.rivierarobotics.autonomous.SplinePath;
 import org.rivierarobotics.autonomous.SplinePoint;
 import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -72,7 +70,7 @@ public class FindAllBalls extends CommandBase {
         intrinsic = intrinsic.invert();
 
         List<SplinePoint> points = new LinkedList<>();
-        List<Point> cvBalls = visionUtil.findBallLocations(frame);
+        List<Point> cvBalls = new ArrayList<>(); /*visionUtil.findBallLocations(frame);*/
         for (Point ballPt : cvBalls) {
             SimpleMatrix ballMatrix = new SimpleMatrix(3, 1, MatrixType.DDRM);
             ballMatrix.setColumn(0, 0, ballPt.x, ballPt.y, 1);

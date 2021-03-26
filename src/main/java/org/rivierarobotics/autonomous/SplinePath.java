@@ -25,7 +25,6 @@ import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.Vec2D;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -34,19 +33,21 @@ import java.util.Map;
 public class SplinePath {
     public static final double MAX_POSSIBLE_VEL = 4.5; // m/s
     public static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
-    private static final double RIO_LOOP_TIME_MS = 0.02;
-    private final List<SplinePoint> points;
+    public static final double RIO_LOOP_TIME_MS = 0.02; // s
+    private static final double MAX_VEL_DIFF = 10; // m/s
+    private final LinkedList<SplinePoint> points;
     private final double maxVel;
     private final double maxAccel;
     private final PathConstraints constraints;
-    private final List<SPOutput> precomputed;
-    private final HashMap<Double, Section> sections;
+    private final LinkedList<SPOutput> precomputed;
+    private final LinkedHashMap<Double, Section> sections;
     private Pair<Vec2D> nftCtrlPoints;
     private Pair<Double> extrema;
     private double totalTime;
+    private Double lastOmega;
 
     public SplinePath(List<SplinePoint> points, PathConstraints constraints) {
-        this.points = points;
+        this.points = new LinkedList<>(points);
         this.constraints = constraints;
         this.maxVel = Math.min(constraints.getMaxVel(), MAX_POSSIBLE_VEL);
         this.maxAccel = Math.min(constraints.getMaxAccel(), MAX_POSSIBLE_ACCEL);
@@ -65,16 +66,15 @@ public class SplinePath {
         }
         this.extrema = new Pair<>(maxX, maxY);
 
-        if (!constraints.getFixedTheta()) {
+        if (constraints.getCreationMode() == PathConstraints.CreationMode.CATMULL_ROM) {
             // Scaling factor of 0.1m (10cm) offset for Catmull-Rom endpoints
             // (required to not be control sequence t=[0,1])
             nftCtrlPoints = points.size() >= 2 ? new Pair<>(
                     extrapolateEndpoint(0, 1, 0, true),
                     extrapolateEndpoint(points.size() - 2, points.size() - 1,
                             points.size() - 1, false)
-            ) : new Pair<>(new Vec2D(0, 0), new Vec2D(0, 0));
+            ) : new Pair<>(Vec2D.createBlank(), Vec2D.createBlank());
         }
-        recalculatePath();
     }
 
     public SplinePath(List<SplinePoint> points) {
@@ -98,10 +98,11 @@ public class SplinePath {
             sc = new Section(points.get(i - 1), points.get(i), i - 1);
             scTime = Math.max(0.05, timeAtLimited(sc, true));
             sc.setTime(scTime);
-            sc.setAccel(calculate(sc, 0, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
+            sc.setAccel(calculate(sc, RIO_LOOP_TIME_MS, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
             sections.put(totalTime, sc);
             totalTime += scTime;
         }
+        resetOmega();
     }
 
     public SPOutput calculate(double t) {
@@ -122,115 +123,148 @@ public class SplinePath {
             1, t, t * t, t * t * t, t * t * t * t, t * t * t * t * t
         };
         double time = timeCorrected ? section.time : 1;
-        // fixedTheta = Cubic Hermite Splines, else Catmull-Rom Splines
-        if (constraints.getFixedTheta()) {
-            double[] h = {
-                1 - 10 * te[3] + 15 * te[4] - 6 * te[5],
-                t - 6 * te[3] + 8 * te[4] - 3 * te[5],
-                0.5 * te[2] - 1.5 * te[3] + 1.5 * te[4] - 0.5 * te[5],
-                0.5 * te[3] - te[4] + 0.5 * te[5],
-                -4 * te[3] + 7 * te[4] - 3 * te[5],
-                10 * te[3] - 15 * te[4] + 6 * te[5]
-            };
-            double[] hd = {
-                -30 * te[4] + 60 * te[3] - 30 * te[2],
-                -15 * te[4] + 32 * te[3] - 18 * te[2] + 1,
-                -2.5 * te[4] + 6 * te[3] - 4.5 * te[2] + t,
-                2.5 * te[4] - 4 * te[3] + 1.5 * te[2],
-                -15 * te[4] + 28 * te[3] - 12 * te[2],
-                30 * te[4] - 60 * te[3] + 30 * te[2]
-            };
-            double[] hdd = {
-                -120 * te[3] + 180 * te[2] - 60 * t,
-                -60 * te[3] + 96 * te[2] - 36 * t,
-                -10 * te[3] + 18 * te[2] - 9 * t + 1,
-                10 * te[3] - 12 * te[2] + 3 * t,
-                -60 * te[3] + 84 * te[2] - 24 * t,
-                120 * te[3] - 180 * te[2] + 60 * t
-            };
+        switch (constraints.getCreationMode()) {
+            case QUINTIC_HERMITE:
+                double[] qh = {
+                    1 - 10 * te[3] + 15 * te[4] - 6 * te[5],
+                    t - 6 * te[3] + 8 * te[4] - 3 * te[5],
+                    0.5 * te[2] - 1.5 * te[3] + 1.5 * te[4] - 0.5 * te[5],
+                    0.5 * te[3] - te[4] + 0.5 * te[5],
+                    -4 * te[3] + 7 * te[4] - 3 * te[5],
+                    10 * te[3] - 15 * te[4] + 6 * te[5]
+                };
+                double[] qhd = {
+                    -30 * te[2] + 60 * te[3] - 30 * te[4],
+                    1 - 18  * te[2] + 32 * te[3] - 15 * te[4],
+                    t - 4.5 * te[2] + 6 * te[3] - 2.5 * te[4],
+                    1.5 * te[2] - 4 * te[3] + 2.5 * te[4],
+                    -12 * te[2] + 28 * te[3] - 15 * te[4],
+                    30 * te[2] - 60 * te[3] + 30 * te[4]
+                };
+                double[] qhdd = {
+                    -120 * te[3] + 180 * te[2] - 60 * t,
+                    -60 * te[3] + 96 * te[2] - 36 * t,
+                    -10 * te[3] + 18 * te[2] - 9 * t + 1,
+                    10 * te[3] - 12 * te[2] + 3 * t,
+                    -60 * te[3] + 84 * te[2] - 24 * t,
+                    120 * te[3] - 180 * te[2] + 60 * t
+                };
 
-            return new SPOutput(
-                h[0] * section.p0.getX() + h[1] * section.tanVX[0] + h[2] * section.accelX[0] + h[3] * section.accelX[1] + h[4] * section.tanVX[1] + h[5] * section.p1.getX(),
-                h[0] * section.p0.getY() + h[1] * section.tanVY[0] + h[2] * section.accelY[0] + h[3] * section.accelY[1] + h[4] * section.tanVY[1] + h[5] * section.p1.getY(),
-                (hd[0] * section.p0.getX() + hd[1] * section.tanVX[0] + hd[2] * section.accelX[0] + hd[3] * section.accelX[1] + hd[4] * section.tanVX[1] + hd[5] * section.p1.getX()) / time,
-                (hd[0] * section.p0.getY() + hd[1] * section.tanVY[0] + hd[2] * section.accelY[0] + hd[3] * section.accelY[1] + hd[4] * section.tanVY[1] + hd[5] * section.p1.getY()) / time,
-                (hdd[0] * section.p0.getX() + hdd[1] * section.tanVX[0] + hdd[2] * section.accelX[0] + hdd[3] * section.accelX[1] + hdd[4] * section.tanVX[1] + hdd[5] * section.p1.getX()) / time,
-                (hdd[0] * section.p0.getY() + hdd[1] * section.tanVY[0] + hdd[2] * section.accelY[0] + hdd[3] * section.accelY[1] + hdd[4] * section.tanVY[1] + hdd[5] * section.p1.getY()) / time
-            );
-        } else {
-            Vec2D[] sps = {
-                section.p0idx == 0 ? nftCtrlPoints.getA() : points.get(section.p0idx - 1),
-                points.get(section.p0idx),
-                points.get(section.p0idx + 1),
-                (points.size() <= section.p0idx + 2) ? nftCtrlPoints.getB() : points.get(section.p0idx + 2)
-            };
-            double t01 = Math.pow(sps[0].dist(sps[1]), constraints.getCrKnotParam());
-            double t12 = Math.pow(sps[1].dist(sps[2]), constraints.getCrKnotParam());
-            double t23 = Math.pow(sps[2].dist(sps[3]), constraints.getCrKnotParam());
+                return new SPOutput(
+                    qh[0] * section.p0.getX() + qh[1] * section.tanVX[0] + qh[2] * section.accelX[0] + qh[3] * section.accelX[1] + qh[4] * section.tanVX[1] + qh[5] * section.p1.getX(),
+                    qh[0] * section.p0.getY() + qh[1] * section.tanVY[0] + qh[2] * section.accelY[0] + qh[3] * section.accelY[1] + qh[4] * section.tanVY[1] + qh[5] * section.p1.getY(),
+                    (qhd[0] * section.p0.getX() + qhd[1] * section.tanVX[0] + qhd[2] * section.accelX[0] + qhd[3] * section.accelX[1] + qhd[4] * section.tanVX[1] + qhd[5] * section.p1.getX()) / time,
+                    (qhd[0] * section.p0.getY() + qhd[1] * section.tanVY[0] + qhd[2] * section.accelY[0] + qhd[3] * section.accelY[1] + qhd[4] * section.tanVY[1] + qhd[5] * section.p1.getY()) / time,
+                    (qhdd[0] * section.p0.getX() + qhdd[1] * section.tanVX[0] + qhdd[2] * section.accelX[0] + qhdd[3] * section.accelX[1] + qhdd[4] * section.tanVX[1] + qhdd[5] * section.p1.getX()) / time,
+                    (qhdd[0] * section.p0.getY() + qhdd[1] * section.tanVY[0] + qhdd[2] * section.accelY[0] + qhdd[3] * section.accelY[1] + qhdd[4] * section.tanVY[1] + qhdd[5] * section.p1.getY()) / time
+                );
+            case CUBIC_HERMITE:
+                double[] ch = {
+                    1 - 3 * te[2] + 2 * te[3],
+                    t - 2 * te[2] + te[3],
+                    -te[2] + te[3],
+                    3 * te[2] - 2 * te[3]
+                };
+                double[] chd = {
+                    -6 * t + 6 * te[2],
+                    1 - 4 * t + 3 * te[2],
+                    -2 * t + 3 * te[2],
+                    6 * t - 6 * te[2]
+                };
+                double[] chdd = {
+                    -6 + 12 * t,
+                    -4 + 6 * t,
+                    -2 + 6 * t,
+                    6 - 12 * t
+                };
 
-            Vec2D m1 = sps[2].addVec(sps[1].negate()).addVec(sps[1].addVec(sps[0].negate()).multNum(1 / t01).addVec(sps[2].addVec(sps[0].negate()).multNum(1 / (t01 + t12)).negate()).multNum(t12));
-            Vec2D m2 = sps[2].addVec(sps[1].negate()).addVec(sps[3].addVec(sps[2].negate()).multNum(1 / t23).addVec(sps[3].addVec(sps[1].negate()).multNum(1 / (t12 + t23)).negate()).multNum(t12));
-            Vec2D[] sec = {
-                sps[1].addVec(sps[2].negate()).multNum(2).addVec(m1).addVec(m2),
-                sps[1].addVec(sps[2].negate()).multNum(-3).addVec(m1.negate()).addVec(m1.negate()).addVec(m2.negate()),
-                m1,
-                sps[1]
-            };
-            Vec2D pos = sec[0].multNum(te[3]).addVec(sec[1].multNum(te[2])).addVec(sec[2].multNum(t)).addVec(sec[3]);
-            Vec2D vel = sec[0].multNum(3 * te[2]).addVec(sec[1].multNum(2 * t)).addVec(sec[2]).multNum(1 / time);
-            Vec2D accel = sec[0].multNum(6 * t).addVec(sec[1].multNum(2)).multNum(1 / time);
+                return new SPOutput(
+                        ch[0] * section.p0.getX() + ch[1] * section.tanVX[0] + ch[2] * section.tanVX[1] + ch[3] * section.p1.getX(),
+                        ch[0] * section.p0.getY() + ch[1] * section.tanVY[0] + ch[2] * section.tanVY[1] + ch[3] * section.p1.getY(),
+                        (chd[0] * section.p0.getX() + chd[1] * section.tanVX[0] + chd[2] * section.tanVX[1] + chd[3] * section.p1.getX()) / time,
+                        (chd[0] * section.p0.getY() + chd[1] * section.tanVY[0] + chd[2] * section.tanVY[1] + chd[3] * section.p1.getY()) / time,
+                        (chdd[0] * section.p0.getX() + chdd[1] * section.tanVX[0] + chdd[2] * section.tanVX[1] + chdd[3] * section.p1.getX()) / time,
+                        (chdd[0] * section.p0.getY() + chdd[1] * section.tanVY[0] + chdd[2] * section.tanVY[1] + chdd[3] * section.p1.getY()) / time
+                );
+            case CATMULL_ROM:
+                Vec2D[] sps = {
+                    section.p0idx == 0 ? nftCtrlPoints.getA() : points.get(section.p0idx - 1),
+                    points.get(section.p0idx),
+                    points.get(section.p0idx + 1),
+                    (points.size() <= section.p0idx + 2) ? nftCtrlPoints.getB() : points.get(section.p0idx + 2)
+                };
+                double t01 = Math.pow(sps[0].dist(sps[1]), constraints.getCrKnotParam());
+                double t12 = Math.pow(sps[1].dist(sps[2]), constraints.getCrKnotParam());
+                double t23 = Math.pow(sps[2].dist(sps[3]), constraints.getCrKnotParam());
 
-            return new SPOutput(pos.getX(), pos.getY(), vel.getX(), vel.getY(), accel.getX(), accel.getY());
+                Vec2D m1 = sps[2].addVec(sps[1].negate()).addVec(sps[1].addVec(sps[0].negate()).multNum(1 / t01).addVec(sps[2].addVec(sps[0].negate()).multNum(1 / (t01 + t12)).negate()).multNum(t12));
+                Vec2D m2 = sps[2].addVec(sps[1].negate()).addVec(sps[3].addVec(sps[2].negate()).multNum(1 / t23).addVec(sps[3].addVec(sps[1].negate()).multNum(1 / (t12 + t23)).negate()).multNum(t12));
+                Vec2D[] sec = {
+                    sps[1].addVec(sps[2].negate()).multNum(2).addVec(m1).addVec(m2),
+                    sps[1].addVec(sps[2].negate()).multNum(-3).addVec(m1.negate()).addVec(m1.negate()).addVec(m2.negate()),
+                    m1,
+                    sps[1]
+                };
+                Vec2D pos = sec[0].multNum(te[3]).addVec(sec[1].multNum(te[2])).addVec(sec[2].multNum(t)).addVec(sec[3]);
+                Vec2D vel = sec[0].multNum(3 * te[2]).addVec(sec[1].multNum(2 * t)).addVec(sec[2]).multNum(1 / time);
+                Vec2D accel = sec[0].multNum(6 * t).addVec(sec[1].multNum(2)).multNum(1 / time);
+
+                return new SPOutput(pos.getX(), pos.getY(), vel.getX(), vel.getY(), accel.getX(), accel.getY());
+            default:
+                throw new IllegalArgumentException("No valid creation mode found");
         }
     }
 
     // Assumes the robot is moving with the correct trajectory
     public Pair<Double> getLRVel(SPOutput calc) {
-        return getLRVel(calc.getVelX(), calc.getVelY(), Math.atan2(calc.getVelY(), calc.getVelX()));
-    }
+        double omega = Math.atan2(calc.getVelY(), calc.getVelX());
+        double tempOmega = omega;
+        if (lastOmega == null) {
+            lastOmega = tempOmega;
+        }
+        omega = (omega - lastOmega) % (2 * Math.PI);
+        lastOmega = tempOmega;
 
-    public Pair<Double> getLRVel(double velX, double velY, double angle) {
-        double rate = Math.atan2(velX, velY);
-        double vxProc = velX * Math.cos(angle) + velY * Math.sin(angle);
+        double angularVel = omega * (1 / RIO_LOOP_TIME_MS) * DriveTrain.getTrackwidth() * 0.75;
+        if (constraints.getReversed()) {
+            angularVel *= -1;
+        }
+
+        double linearVel = Math.sqrt((calc.getVelX() * calc.getVelX()) + (calc.getVelY() * calc.getVelY()));
+        if (constraints.getStraight()) {
+            angularVel = 0;
+        }
         return new Pair<>(
-            vxProc - DriveTrain.getTrackwidth() / 2 * rate,
-            vxProc + DriveTrain.getTrackwidth() / 2 * rate
+                linearVel - angularVel,
+                linearVel + angularVel
         );
     }
 
     public double timeAtLimited(Section section, boolean addPrecomputed) {
-        Pair<Double> tempVel;
-        Pair<Double> tempAccel;
+        Pair<Double> lastTempVel = new Pair<>(0.0, 0.0);
+        Pair<Double> instTempVel;
         SPOutput tempOut;
         double maxObservedVel = 0;
-        double maxObservedAccel = 0;
         for (double t = 0; t < 1; t += RIO_LOOP_TIME_MS) {
             tempOut = calculate(section, t, false);
             if (addPrecomputed) {
                 precomputed.add(tempOut);
             }
-
-            tempVel = getLRVel(tempOut);
-            if (Math.abs(tempVel.getA()) > maxObservedVel) {
-                maxObservedVel = Math.abs(tempVel.getA());
-            }
-            if (Math.abs(tempVel.getB()) > maxObservedVel) {
-                maxObservedVel = Math.abs(tempVel.getB());
-            }
-
-            // Just use accel/vel instead of vel/pos (?)
-            tempAccel = getLRVel(tempOut.getAccelX(), tempOut.getAccelY(),
-                    Math.atan2(tempOut.getVelX(), tempOut.getVelY()));
-            // tempAccel = new Pair<>(tempOut.getAccelX(), tempOut.getAccelY());
-            if (Math.abs(tempAccel.getA()) > maxObservedAccel) {
-                maxObservedAccel = Math.abs(tempAccel.getA());
-            }
-            if (Math.abs(tempAccel.getB()) > maxObservedAccel) {
-                maxObservedAccel = Math.abs(tempAccel.getB());
+            instTempVel = getLRVel(tempOut);
+            if (instTempVel.getA() < lastTempVel.getA() + MAX_VEL_DIFF && instTempVel.getB() < lastTempVel.getB() + MAX_VEL_DIFF) {
+                if (Math.abs(instTempVel.getA()) > maxObservedVel) {
+                    maxObservedVel = Math.abs(instTempVel.getA());
+                }
+                if (Math.abs(instTempVel.getB()) > maxObservedVel) {
+                    maxObservedVel = Math.abs(instTempVel.getB());
+                }
             }
         }
-        // accel *2 b/c of derivative 1/2
-        return Math.max(maxObservedVel / maxVel, 2 * maxObservedAccel / maxAccel);
+        return maxObservedVel / maxVel;
+    }
+
+    public void resetOmega() {
+        lastOmega = null;
     }
 
     public Pair<Double> getExtrema() {

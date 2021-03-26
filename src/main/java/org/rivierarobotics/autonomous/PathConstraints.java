@@ -25,20 +25,24 @@ public class PathConstraints {
     private double maxVel = SplinePath.MAX_POSSIBLE_VEL;
     private boolean absPos = false;
     private boolean absHeading = false;
-    private boolean fixedTheta = true;
-    private double crKnotParam = 0.5;
+    private CreationMode creationMode = CreationMode.QUINTIC_HERMITE;
+    private double crKnotParam = CRKnotParam.CENTRIPETAL.alpha();
+    private boolean reversed = false;
+    private boolean straight = false;
 
     private PathConstraints() {
     }
-
-    public PathConstraints(double maxAccel, double maxVel, boolean absPos,
-                           boolean absHeading, boolean fixedTheta, double crKnotParam) {
+  
+    public PathConstraints(double maxAccel, double maxVel, boolean absPos, boolean absHeading,
+                           CreationMode creationMode, double crKnotParam, boolean reversed, boolean straight) {
         this.maxAccel = maxAccel;
         this.maxVel = maxVel;
         this.absPos = absPos;
         this.absHeading = absHeading;
-        this.fixedTheta = fixedTheta;
+        this.creationMode = creationMode;
         this.crKnotParam = crKnotParam;
+        this.reversed = reversed;
+        this.straight = straight;
     }
 
     public PathConstraints setMaxAccel(double maxAccel) {
@@ -60,9 +64,14 @@ public class PathConstraints {
         this.absHeading = absHeading;
         return this;
     }
+  
+    public PathConstraints setCreationMode(CreationMode creationMode) {
+        this.creationMode = creationMode;
+        return this;
+    }
 
-    public PathConstraints setFixedTheta(boolean fixedTheta) {
-        this.fixedTheta = fixedTheta;
+    public PathConstraints setCrKnotParam(CRKnotParam crKnotParam) {
+        this.crKnotParam = crKnotParam.alpha();
         return this;
     }
 
@@ -71,6 +80,16 @@ public class PathConstraints {
         return this;
     }
 
+    public PathConstraints setReversed(boolean reversed) {
+        this.reversed = reversed;
+        return this;
+    }
+
+    public PathConstraints setStraight(boolean straight) {
+        this.straight = straight;
+        return this;
+    }
+  
     public double getMaxAccel() {
         return maxAccel;
     }
@@ -87,15 +106,35 @@ public class PathConstraints {
         return absHeading;
     }
 
-    public boolean getFixedTheta() {
-        return fixedTheta;
+    public CreationMode getCreationMode() {
+        return creationMode;
     }
 
     public double getCrKnotParam() {
         return crKnotParam;
     }
 
+    public boolean getReversed() {
+        return reversed;
+    }
+
+    public boolean getStraight() {
+        return straight;
+    }
+
     public static PathConstraints create() {
         return new PathConstraints();
+    }
+
+    public enum CreationMode {
+        QUINTIC_HERMITE, CUBIC_HERMITE, CATMULL_ROM
+    }
+
+    public enum CRKnotParam {
+        UNIFORM, CENTRIPETAL, CHORDAL;
+
+        public double alpha() {
+            return this.ordinal() / 2.0;
+        }
     }
 }

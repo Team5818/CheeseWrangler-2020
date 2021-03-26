@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
 import org.rivierarobotics.autonomous.advanced.TrenchRun;
@@ -37,18 +38,21 @@ public class AutonomousCommands {
     private final ShootAndDriveCreator shootAndDriveCreator;
     private final ShootLoopCreator shootLoopCreator;
     private final TrenchRunCreator trenchRunCreator;
+    private RecordPathCreator recordPathCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
                               ForwardAutoCreator forwardAutoCreator,
                               ShootAndDriveCreator shootAndDriveCreator,
                               ShootLoopCreator shootLoopCreator,
-                              TrenchRunCreator trenchRunCreator) {
+                              TrenchRunCreator trenchRunCreator,
+                              RecordPathCreator recordPathCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
         this.shootLoopCreator = shootLoopCreator;
         this.trenchRunCreator = trenchRunCreator;
+        this.recordPathCreator = recordPathCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -81,5 +85,9 @@ public class AutonomousCommands {
 
     public TrenchRun trenchRun() {
         return trenchRunCreator.create();
+    }
+
+    public RecordPath recordPath() {
+        return recordPathCreator.create();
     }
 }

@@ -21,16 +21,12 @@
 package org.rivierarobotics.util;
 
 public class Vec2D {
-    private double x;
-    private double y;
+    protected final double x;
+    protected final double y;
 
     public Vec2D(double x, double y) {
         this.x = x;
         this.y = y;
-    }
-
-    public Vec2D() {
-        this(0, 0);
     }
 
     public double getX() {
@@ -50,7 +46,7 @@ public class Vec2D {
     }
 
     public double getAngle() {
-        return getDirection() * (180 / Math.PI);
+        return Math.toDegrees(getDirection());
     }
 
     public double dot(Vec2D vec) {
@@ -58,7 +54,9 @@ public class Vec2D {
     }
 
     public double dist(Vec2D p1) {
-        return Math.sqrt(Math.pow(p1.getX() - this.getX(), 2) + Math.pow(p1.getY() - this.getY(), 2));
+        final double dx = p1.getX() - this.getX();
+        final double dy = p1.getY() - this.getY();
+        return Math.sqrt(dx * dx + dy * dy);
     }
 
     public Vec2D negate() {
@@ -81,9 +79,12 @@ public class Vec2D {
         return new Vec2D(this.x * toMult, this.y * toMult);
     }
 
-    // Sorta cheating, but it works I guess
     public Vec2D multVec(Vec2D toMult) {
         return new Vec2D(this.x * toMult.getX(), this.y * toMult.getX());
+    }
+
+    public static Vec2D createBlank() {
+        return new Vec2D(0, 0);
     }
 
     @Override

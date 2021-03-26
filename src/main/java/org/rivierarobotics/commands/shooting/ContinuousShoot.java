@@ -20,9 +20,10 @@
 
 package org.rivierarobotics.commands.shooting;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
@@ -35,6 +36,8 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
 public class ContinuousShoot extends CommandBase {
@@ -42,19 +45,22 @@ public class ContinuousShoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private static SequentialCommandGroup cmd;
+    private ParallelRaceGroup cmd;
     private final Flywheel flywheel;
+    private final RobotShuffleboardTab tab;
 
     public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
                            @Provided EjectorCommands ejectorCommands,
                            @Provided Turret turret,
                            @Provided CheeseWheel cheeseWheel,
-                           @Provided Flywheel flywheel) {
+                           @Provided Flywheel flywheel,
+                           @Provided RobotShuffleboard shuffleboard) {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.ejectorCommands = ejectorCommands;
         this.turret = turret;
         this.cheeseWheel = cheeseWheel;
         this.flywheel = flywheel;
+        this.tab = shuffleboard.getTab("Cheese Wheel");
     }
 
     @Override
@@ -62,7 +68,7 @@ public class ContinuousShoot extends CommandBase {
         boolean isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
         CheeseWheel.AngleOffset offset = isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT;
         CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
-        SmartDashboard.putNumber("Slot Test", slot.ordinal());
+        tab.setEntry("ccShootSlot", slot.ordinal());
 
         cmd = new SequentialCommandGroup(
                 cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
@@ -72,13 +78,14 @@ public class ContinuousShoot extends CommandBase {
                 ejectorCommands.setPower(-0.1),
                 new WaitCommand(0.1),
                 ejectorCommands.setPower(0)
-        );
+        ).withTimeout(2);
         cmd.schedule();
     }
 
     @Override
     public boolean isFinished() {
-        SmartDashboard.putBoolean("cmdfinished", !CommandScheduler.getInstance().isScheduled(cmd));
-        return cmd != null && !CommandScheduler.getInstance().isScheduled(cmd);
+        boolean shootFinished = cmd != null && !CommandScheduler.getInstance().isScheduled(cmd);
+        tab.setEntry("shootFinished", shootFinished);
+        return shootFinished;
     }
 }

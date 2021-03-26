@@ -18,38 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.util;
+package org.rivierarobotics.commands.drive;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import javax.inject.Inject;
-import javax.inject.Singleton;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.DriveTrain;
 
-@Singleton
-public class RobotShuffleboard {
-    private final Map<String, RobotShuffleboardTab> tabs;
+@GenerateCreator
+public class DriveSetVelocity extends CommandBase {
+    private final DriveTrain driveTrain;
+    private double vel = 0;
 
-    @Inject
-    public RobotShuffleboard() {
-        this.tabs = new LinkedHashMap<>();
+    public DriveSetVelocity(@Provided DriveTrain driveTrain, double vel) {
+        this.driveTrain = driveTrain;
+        this.vel = vel;
+        addRequirements(driveTrain);
     }
 
-    public RobotShuffleboardTab getTab(String tabName) {
-        if (tabs.get(tabName) == null) {
-            addTab(tabName);
-        }
-        return tabs.get(tabName);
+    @Override
+    public void execute() {
+        driveTrain.setVelocity(vel);
     }
 
-    public void addTab(String... tabNames) {
-        for (String tab : tabNames) {
-            if (!tabs.containsKey(tab)) {
-                tabs.put(tab, new RobotShuffleboardTab(tab));
-            }
-        }
-    }
-
-    public void removeTab(String tabName) {
-        tabs.remove(tabName);
+    @Override
+    public void end(boolean interrupted) {
+        driveTrain.setVelocity(0);
     }
 }
+

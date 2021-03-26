@@ -38,11 +38,10 @@ public class ShootLoop extends SequentialCommandGroup {
                      @Provided CheeseWheelCommands shoot, @Provided VisionCommands aim, Pose2dPath loop) {
         super(
                 sequence(new WaitCommand(1), shoot.shootNWedges(5))
-                    .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
+                    .deadlineWith(aim.calcAim(VisionTarget.INNER)),
                 auto.pathtracer(loop).deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                 sequence(new WaitCommand(2), shoot.shootNWedges(5))
-                        .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
-                shoot.shootNWedges(5)
+                        .deadlineWith(aim.calcAim(VisionTarget.INNER))
         );
     }
 }

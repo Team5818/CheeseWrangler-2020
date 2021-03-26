@@ -20,17 +20,9 @@
 
 package org.rivierarobotics.autonomous;
 
-import edu.wpi.cscore.CvSource;
-import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardComponent;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.opencv.core.CvType;
-import org.opencv.core.Mat;
-import org.opencv.core.Point;
-import org.opencv.core.Scalar;
-import org.opencv.imgproc.Imgproc;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
@@ -39,33 +31,20 @@ import org.rivierarobotics.util.Pair;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
-import java.awt.Color;
-import java.util.Map;
-
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
-    private static final int WIDTH = 300;
-    private static final int HEIGHT = 300;
-    private static final double BORDER_WIDTH = 10;
-    private static final double BUFFER_SECONDS = 0.5;
-    private static final int ARROW_DENSITY = 180;
-    private static final int VEL_SCALE = 20;
     private static final String PATH_TRACER = "PathTracer";
-
+    private static final double ANGULAR_KP = 0.01;
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
     private final NavXGyro gyro;
     private final RobotShuffleboardTab tab;
     private final SplinePath path;
     private final PathConstraints constraints;
-
-    private int loopRun = 0;
-    private double gyroOffset = 0;
-    private Mat mat;
-    private CvSource graphPublish;
+    private double gyroOffset;
     private double t;
-    private double scale;
-    private int thickness;
+    private double pXAccum;
+    private double pYAccum;
 
     public PathTracerExecutor(@Provided DriveTrain driveTrain, @Provided DriveCommands driveCommands,
                               @Provided NavXGyro gyro, @Provided RobotShuffleboard shuffleboard,
@@ -79,86 +58,94 @@ public class PathTracerExecutor extends CommandBase {
         addRequirements(driveTrain);
     }
 
-    public static Scalar fromAWT(Color color) {
-        return new Scalar(color.getBlue(), color.getGreen(), color.getRed());
-    }
-
-    private void initGraph() {
-        //TODO fix graph scaling
-        double mWidth = path.getExtrema().getA() + BORDER_WIDTH;
-        double mHeight = path.getExtrema().getB() + BORDER_WIDTH;
-        scale = Math.max(WIDTH / mWidth, HEIGHT / mHeight);
-        thickness = (int) (scale *  (0.1));
-
-        graphPublish = CameraServer.getInstance().putVideo(PATH_TRACER, (int) mWidth, (int) mHeight);
-        boolean makeWidget = true;
-        for (ShuffleboardComponent<?> comp : tab.getAPITab().getComponents()) {
-            if (comp.getTitle().equals(PATH_TRACER)) {
-                makeWidget = false;
-                break;
-            }
-        }
-        if (makeWidget) {
-            tab.getAPITab().add(PATH_TRACER, graphPublish).withProperties(Map.of("Crosshair color", "Black"));
-        }
-
-        mat = new Mat(WIDTH, HEIGHT, CvType.CV_8UC3, new Scalar(255, 255, 255));
-        for (int i = 0; i < path.getPrecomputedSpline().size(); i++) {
-            drawGraphPoint(path.getPrecomputedSpline().get(i), fromAWT(Color.ORANGE), fromAWT(Color.CYAN), i);
-            graphPublish.putFrame(mat);
-        }
-    }
-
-    private void drawGraphPoint(SPOutput out, Scalar posColor, Scalar velColor, int index) {
-        Point posBounds = new Point((int) (out.getPosX() * scale), (int) (out.getPosY() * -scale));
-        if (index % ARROW_DENSITY == 0) {
-            Point velBounds = new Point((int) (posBounds.x + out.getVelX() * VEL_SCALE), (int) (posBounds.y + out.getVelY() * VEL_SCALE));
-            Imgproc.arrowedLine(mat, posBounds, velBounds, velColor, thickness);
-        }
-        Imgproc.circle(mat, posBounds, thickness, posColor, -1);
-    }
-
     @Override
     public void initialize() {
+        gyro.resetGyro();
+        gyroOffset = 0;
+        pXAccum = 0;
+        pYAccum = 0;
         t = 0;
-        initGraph();
+        tab.setEntry("ptReset", true);
         if (constraints.getAbsPos()) {
             path.addPathPoint(0, new SplinePoint(driveTrain.getPose()));
             path.recalculatePath();
         } else if (constraints.getAbsHeading()) {
             rotateToPointHeading(path.getPathPoints().get(0));
         } else {
+            double firstAngle = MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
             gyroOffset = MathUtil.wrapToCircle(gyro.getYaw())
                 - MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
+            tab.setEntry("firstAngle", firstAngle);
         }
+        if (constraints.getReversed()) {
+            gyroOffset = MathUtil.wrapToCircle(gyroOffset + 180);
+        }
+        path.recalculatePath();
+        tab.setEntry("gyroOffset", gyroOffset);
         tab.setEntry("totalTime", path.getTotalTime());
-        tab.setEntry("scale", scale);
         tab.setEntry("totalDist", path.getTotalDistance());
         tab.setEntry("vLMax", 0);
         tab.setEntry("vRMax", 0);
     }
 
-    public void rotateToPointHeading(SplinePoint pt) {
+    private void rotateToPointHeading(SplinePoint pt) {
         driveCommands.rotateTo(pt.isPrecomputedTan() ? Math.acos(pt.getTanVX()) : pt.getHeading()).schedule();
+    }
+
+    private static double angDiff(double a1, double a2) {
+        a1 = MathUtil.wrapToCircle(a1);
+        a2 = MathUtil.wrapToCircle(a2);
+        if (a1 - a2 < -180) {
+            a2 -= 360;
+        } else if (a1 - a2 > 180) {
+            a2 += 360;
+        }
+        return a1 - a2;
     }
 
     @Override
     public void execute() {
+        tab.setEntry("ptReset", t < 0.2);
         if (t < path.getTotalTime()) {
-            SPOutput calc = path.calculate(t);
-            drawGraphPoint(calc, fromAWT(Color.RED), fromAWT(Color.BLUE), loopRun);
-            loopRun++;
-            graphPublish.putFrame(mat);
+            double timeParam = t;
+            if (constraints.getReversed()) {
+                timeParam = path.getTotalTime() - t;
+            }
+            SPOutput calc = path.calculate(timeParam);
+            double fAng = -MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
+            double gAng = MathUtil.wrapToCircle(gyro.getYaw());
+            tab.setEntry("fAng", fAng);
+            tab.setEntry("gAng", gAng);
+            double angErr = angDiff(fAng, gAng);
+            tab.setEntry("angErr", angErr);
+
             tab.setEntry("currTime", t);
+            tab.setEntry("pX", calc.getPosX());
+            tab.setEntry("pY", calc.getPosY());
             tab.setEntry("vX", calc.getVelX());
             tab.setEntry("vY", calc.getVelY());
             tab.setEntry("aX", calc.getAccelX());
             tab.setEntry("aY", calc.getAccelY());
-            tab.setEntry("simAngleAuto", Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
-            // Pair<Double> wheelSpeeds = path.getLRVel(calc.getVelX(), calc.getVelY(), Math.toRadians(gyro.getYaw() - gyroOffset));
+
+            pXAccum += calc.getVelX() * SplinePath.RIO_LOOP_TIME_MS;
+            pYAccum += calc.getVelY() * SplinePath.RIO_LOOP_TIME_MS;
+            tab.setEntry("pXA", pXAccum);
+            tab.setEntry("pYA", pYAccum);
+
             Pair<Double> wheelSpeeds = path.getLRVel(calc);
+            if (constraints.getReversed()) {
+                wheelSpeeds.setA(-wheelSpeeds.getA());
+                wheelSpeeds.setB(-wheelSpeeds.getB());
+            }
+            angErr *= ANGULAR_KP;
+            if (angErr > 0) {
+                wheelSpeeds.setA(wheelSpeeds.getA() + angErr);
+            } else {
+                wheelSpeeds.setB(wheelSpeeds.getB() - angErr);
+            }
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
+
             double vLMax = tab.getEntry("vLMax").getDouble(0);
             double vRMax = tab.getEntry("vRMax").getDouble(0);
             if (Math.abs(vLMax) < Math.abs(wheelSpeeds.getA())) {
@@ -169,18 +156,24 @@ public class PathTracerExecutor extends CommandBase {
             }
             driveTrain.setVelocity(wheelSpeeds.getA(), wheelSpeeds.getB());
         }
-        t += 0.01; // time scale
+        t += SplinePath.RIO_LOOP_TIME_MS;
     }
 
     @Override
     public void end(boolean interrupted) {
-        if (!interrupted) {
-            rotateToPointHeading(path.getPathPoints().get(path.getPathPoints().size() - 1));
-        }
+        path.resetOmega();
+        driveTrain.setVelocity(0);
+        driveTrain.setPower(0, 0);
+        tab.setEntry("vX", 0);
+        tab.setEntry("vY", 0);
+        tab.setEntry("aX", 0);
+        tab.setEntry("aY", 0);
+        tab.setEntry("vL", 0);
+        tab.setEntry("vR", 0);
     }
 
     @Override
     public boolean isFinished() {
-        return t >= path.getTotalTime() + BUFFER_SECONDS;
+        return t >= path.getTotalTime();
     }
 }

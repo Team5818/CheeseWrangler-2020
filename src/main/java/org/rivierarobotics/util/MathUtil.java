@@ -54,7 +54,7 @@ public class MathUtil {
         return wrapToCircle(angle, 360); //default 360 degrees/circle
     }
 
-    public static double wrapToCircle(double angle, int fullCircle) {
+    public static double wrapToCircle(double angle, double fullCircle) {
         angle %= fullCircle;
         if (angle < 0) {
             return fullCircle + angle;
