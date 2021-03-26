@@ -31,7 +31,6 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
-import org.rivierarobotics.subsystems.Hook;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.subsystems.SubsystemModule;
 import org.rivierarobotics.subsystems.Turret;
@@ -55,7 +54,6 @@ public abstract class GlobalComponent {
         getEjector();
         getCheeseWheel();
         getClimb();
-        getHook();
         getNavXGyro();
         getShuffleboard();
         getButtonConfiguration();
@@ -82,8 +80,6 @@ public abstract class GlobalComponent {
     public abstract CheeseWheel getCheeseWheel();
 
     public abstract Climb getClimb();
-
-    public abstract Hook getHook();
 
     public abstract NavXGyro getNavXGyro();
 

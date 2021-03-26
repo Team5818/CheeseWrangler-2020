@@ -40,12 +40,13 @@ public class ClimbControl extends CommandBase {
         this.coDriverRightJs = coDriverRightJs;
         this.driverButtons = driverButtons;
         this.climb = climb;
+        addRequirements(climb);
     }
 
     @Override
     public void execute() {
-        if (driverButtons.getRawButton(3)) {
-            climb.setPower(MathUtil.fitDeadband(coDriverRightJs.getY()));
+        if (driverButtons.getRawButtonPressed(6)) {
+//            climb.setPower(MathUtil.fitDeadband(-coDriverRightJs.getY()));
         }
     }
 }

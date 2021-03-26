@@ -29,6 +29,7 @@ import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Climb;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -120,18 +121,6 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverButtons, 1)
                 .whenPressed(cmds.drive().resetGyro());
 
-        // Challenges
-        new JoystickButton(driverButtons, 9)
-                .whenPressed(cmds.vision().galacticSearch(true));
-        new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.vision().galacticSearch(false));
-        new JoystickButton(driverButtons, 6)
-                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BARREL_RACING));
-        new JoystickButton(driverButtons, 5)
-                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_SLALOM));
-        new JoystickButton(driverButtons, 4)
-                .whenPressed(cmds.auto().challengePath(ChallengePath.AN_BOUNCE));
-
         // Testing/dev
         new JoystickButton(driverLeft, 1)
                 .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
@@ -141,15 +130,17 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.flywheel().stepTolerance(20));
         new JoystickButton(driverRight, 2)
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
-        new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING,
-                        PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
-        new JoystickButton(driverButtons, 1)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.TESTING));
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT));
         new JoystickButton(driverButtons, 7)
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE,
                         PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
+
+        new JoystickButton(driverButtons, 3)
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX));
+        new JoystickButton(driverButtons, 2)
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF));
+        new JoystickButton(driverButtons, 1)
+                .whenPressed(cmds.climb().resetEncoder());
     }
 }

@@ -28,17 +28,14 @@ public class ClimbCommands {
     private final ClimbSetPositionCreator climbSetPositionCreator;
     private final ClimbSetPowerCreator climbSetPowerCreator;
     private final ClimbSetZeroCreator climbSetZeroCreator;
-    private final HookSetPositionCreator hookSetPositionCreator;
 
     @Inject
     public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
                          ClimbSetPowerCreator climbSetPowerCreator,
-                         ClimbSetZeroCreator climbSetZeroCreator,
-                         HookSetPositionCreator hookSetPositionCreator) {
+                         ClimbSetZeroCreator climbSetZeroCreator) {
         this.climbSetPositionCreator = climbSetPositionCreator;
         this.climbSetZeroCreator = climbSetZeroCreator;
         this.climbSetPowerCreator = climbSetPowerCreator;
-        this.hookSetPositionCreator = hookSetPositionCreator;
     }
 
     public ClimbSetPosition setClimbPosition(double position) {
@@ -55,9 +52,5 @@ public class ClimbCommands {
 
     public ClimbSetPower setPower(double power) {
         return climbSetPowerCreator.create(power);
-    }
-
-    public HookSetPosition setHookPosition(double position) {
-        return hookSetPositionCreator.create(position);
     }
 }

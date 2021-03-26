@@ -36,7 +36,7 @@ import javax.inject.Provider;
 
 
 public class Climb extends SubsystemBase implements RRSubsystem {
-    private static final double MAX_TICKS = 39114 * 35.93;
+    private static final double MAX_TICKS = 39114 * 34.5;
     private final WPI_TalonFX climbTalon;
     private final Provider<ClimbControl> command;
     private final MechLogger logger;
@@ -48,8 +48,8 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         this.logger = Logging.getLogger(getClass());
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-                new PIDConfig(0, 0, 0, 0), 0, climbTalon);
-        climbTalon.setSensorPhase(true);
+                new PIDConfig(100, 0, 0, 0), 0, climbTalon);
+        climbTalon.setSensorPhase(false);
         climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         climbTalon.configForwardSoftLimitThreshold(MAX_TICKS);
         climbTalon.configForwardSoftLimitEnable(true);

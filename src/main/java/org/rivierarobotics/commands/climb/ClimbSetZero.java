@@ -36,7 +36,7 @@ public class ClimbSetZero extends CommandBase {
 
     @Override
     public void execute() {
-        climb.setPower(0.1);
+        climb.setPower(-0.25);
     }
 
     @Override
