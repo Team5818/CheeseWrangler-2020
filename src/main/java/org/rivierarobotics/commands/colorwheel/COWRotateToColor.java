@@ -18,28 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.shooting;
+package org.rivierarobotics.commands.colorwheel;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.ShooterConstants;
+import org.rivierarobotics.subsystems.ColorWheel;
 
 @GenerateCreator
-public class ChangeSpeed extends InstantCommand {
-    private final PhysicsUtil physics;
-    private final double amount;
+public class COWRotateToColor extends COWRotateNTimes {
+    private final ColorWheel.GameColor color;
 
-    public ChangeSpeed(@Provided PhysicsUtil physics, double amount) {
-        this.physics = physics;
-        this.amount = amount;
+    public COWRotateToColor(@Provided ColorWheel colorWheel, ColorWheel.GameColor color, boolean isField) {
+        super(colorWheel, 0, 0.1);
+        this.color = isField ? robotToFieldColor(color) : color;
+    }
+
+    private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
+        ColorWheel.GameColor[] gcs = ColorWheel.GameColor.values();
+        return gcs[(robotColor.ordinal() + 2) % gcs.length];
     }
 
     @Override
-    public void execute() {
-        physics.setVelocity(MathUtil.limit(physics.getTargetVelocity() + amount,
-                ShooterConstants.getShooterMinVelocity(), ShooterConstants.getShooterMaxVelocity()));
+    public boolean isFinished() {
+        return colorWheel.getGameColor().equals(color);
     }
 }

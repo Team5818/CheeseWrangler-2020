@@ -18,7 +18,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.vision;
+package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.Timer;
 import org.rivierarobotics.subsystems.DriveTrain;
@@ -57,7 +57,7 @@ public class AutoAimUtil {
     public void setValues(PhysicsUtil physics, double hoodAngle, double ballVel, double turretAngle, boolean useVelocity) {
         if (hoodAngle > hood.getZeroedAngle(hood.getBackLimit())) {
             tab.setEntry("Limit?:", "Hood Angle");
-            ballVel = physics.getBallVel(hood.getZeroedAngle(hood.getForwardLimit()));
+            ballVel = ShooterConstants.getDefaultBallVel();
             hoodAngle = hood.getZeroedAngle(hood.getBackLimit());
         } else if (ballVel < ShooterConstants.getShooterMinVelocity()) {
             tab.setEntry("Limit?:", "Slow Ball Velocity");

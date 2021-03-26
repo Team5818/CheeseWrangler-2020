@@ -26,6 +26,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.AutoAimUtil;
 import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.ShooterConstants;
@@ -67,10 +68,5 @@ public class VisionAim extends CommandBase {
     public void end(boolean interrupted) {
         flywheel.setPower(0);
         physics.setExtraDistance(0);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

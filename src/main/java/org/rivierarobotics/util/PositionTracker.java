@@ -31,7 +31,6 @@ import javax.inject.Singleton;
 @Singleton
 public class PositionTracker {
     private double[] pos = new double[2];
-    private double gyroSpeed = 0;
     private double previousGyro = 0;
     private double beforeT = 0;
     private final DriveTrain driveTrain;
@@ -42,7 +41,8 @@ public class PositionTracker {
     private final NavXGyro gyro;
 
     @Inject
-    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret, Hood hood, RobotShuffleboard shuffleboard, NavXGyro gyro) {
+    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret,
+                           Hood hood, RobotShuffleboard shuffleboard, NavXGyro gyro) {
         this.turret = turret;
         this.vision = vision;
         this.gyro = gyro;
@@ -53,18 +53,14 @@ public class PositionTracker {
 
     public void trackPosition() {
         double timeDifference = Timer.getFPGATimestamp() - beforeT;
-        this.gyroSpeed = (gyro.getYaw() - previousGyro) / timeDifference;
-        previousGyro = gyro.getYaw();
         beforeT = Timer.getFPGATimestamp();
         pos[0] -= driveTrain.getXVelocity() * timeDifference;
         pos[1] -= driveTrain.getYVelocity() * timeDifference;
-        tab.setEntry("GyroSpeed", gyroSpeed);
+        //TODO change manual gyro rate to gyro.getRate() in next branch
+        tab.setEntry("GyroSpeed", (gyro.getYaw() - previousGyro) / timeDifference);
+        previousGyro = gyro.getYaw();
         tab.setEntry("xFromGoal", pos[1]);
         tab.setEntry("zFromGoal", pos[0]);
-    }
-
-    public double getGyroSpeed() {
-        return gyroSpeed;
     }
 
     public void correctPosition() {

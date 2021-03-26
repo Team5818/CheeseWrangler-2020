@@ -44,9 +44,4 @@ public class CheeseWheelControl extends CommandBase {
     public void execute() {
         cheeseWheel.setPower(MathUtil.fitDeadband(coDriverLeftJs.getY()));
     }
-
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
 }

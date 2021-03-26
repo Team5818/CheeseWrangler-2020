@@ -27,6 +27,7 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
+import org.rivierarobotics.util.AutoAimUtil;
 import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
@@ -65,10 +66,5 @@ public class CalcAim extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         flywheel.setPower(0);
-    }
-
-    @Override
-    public boolean isFinished() {
-        return false;
     }
 }

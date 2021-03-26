@@ -22,9 +22,9 @@ package org.rivierarobotics.subsystems;
 
 import dagger.Module;
 import dagger.Provides;
+import edu.wpi.first.wpilibj.I2C;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
-import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.ejector.EjectorControl;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.commands.turret.TurretControl;
@@ -49,6 +49,7 @@ public class SubsystemModule {
     private static final int CLIMB_FALCON = 11;
 
     private static final int CAMERA_SERVO = 0;
+    private static final I2C.Port COLOR_WHEEL_SENSOR = I2C.Port.kOnboard;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
         new DTMotorIds(1, 0, 0, 1);
@@ -119,13 +120,19 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
+    public static ColorWheel provideColorWheel() {
+        return new ColorWheel(1, COLOR_WHEEL_SENSOR);
+    }
+
+    @Provides
+    @Singleton
     public static CameraServo provideCameraServo() {
         return new CameraServo(CAMERA_SERVO);
     }
 
     @Provides
     @Singleton
-    public static Climb provideClimb(Provider<ClimbControl> command) {
-        return new Climb(CLIMB_FALCON, command);
+    public static Climb provideClimb() {
+        return new Climb(CLIMB_FALCON);
     }
 }
