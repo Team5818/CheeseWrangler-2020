@@ -63,6 +63,10 @@ public class MathUtil {
         }
     }
 
+    public static double limit(double value, double minmax) {
+        return limit(value, -minmax, minmax);
+    }
+
     public static double limit(double value, double min, double max) {
         if (value > max) {
             return max;

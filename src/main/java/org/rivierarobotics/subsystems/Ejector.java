@@ -20,7 +20,11 @@
 
 package org.rivierarobotics.subsystems;
 
+import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.rivierarobotics.appjack.Logging;
+import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.commands.ejector.EjectorControl;
 import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.Side;
@@ -31,26 +35,25 @@ import javax.inject.Singleton;
 
 @Singleton
 public class Ejector extends SubsystemBase {
-    private final EjectorSide left;
-    private final EjectorSide right;
     private final Provider<EjectorControl> command;
+    private final WPI_VictorSPX ejectorVictor;
+    private final MechLogger logger;
 
-    @Inject
-    public Ejector(@Sided(Side.LEFT) EjectorSide left,
-                   @Sided(Side.RIGHT) EjectorSide right,
-                   Provider<EjectorControl> command) {
-        this.left = left;
-        this.right = right;
+    public Ejector(int id, Provider<EjectorControl> command) {
+        this.ejectorVictor = new WPI_VictorSPX(id);
         this.command = command;
+        ejectorVictor.configFactoryDefault();
+        ejectorVictor.setNeutralMode(NeutralMode.Brake);
+        logger = Logging.getLogger(getClass());
     }
 
     public void setPower(double pwr) {
-        setPower(pwr, pwr);
+        logger.powerChange(pwr);
+        ejectorVictor.set(pwr);
     }
 
-    public void setPower(double leftPwr, double rightPwr) {
-        left.setPower(leftPwr);
-        right.setPower(rightPwr);
+    public double getPower() {
+        return ejectorVictor.get();
     }
 
     @Override

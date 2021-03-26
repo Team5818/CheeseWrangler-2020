@@ -20,15 +20,45 @@
 
 package org.rivierarobotics.commands.climb;
 
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.MotionMagicSetPosition;
 import org.rivierarobotics.subsystems.Climb;
-import org.rivierarobotics.util.RobotShuffleboard;
 
 @GenerateCreator
-public class ClimbSetPosition extends MotionMagicSetPosition<Climb> {
-    public ClimbSetPosition(@Provided Climb climb, @Provided RobotShuffleboard shuffleboard, double position) {
-        super(climb, climb::getPositionTicks, climb::setPositionTicks, position, 50, 5, shuffleboard);
+public class ClimbSetPosition extends CommandBase {
+    private final Climb climb;
+    private final double setPosition;
+    private double signum;
+
+    public ClimbSetPosition(@Provided Climb climb, double setPosition) {
+        this.climb = climb;
+        this.setPosition = setPosition;
+        addRequirements(climb);
+    }
+
+    @Override
+    public void initialize() {
+        double pos = climb.getPositionTicks();
+        signum = pos > setPosition ? -1 : 1;
+    }
+
+    @Override
+    public void execute() {
+        climb.setPower(signum);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        climb.setPower(0);
+    }
+
+    @Override
+    public boolean isFinished() {
+        if (signum == 1) {
+            return climb.getPositionTicks() >= setPosition;
+        } else {
+            return climb.getPositionTicks() <= setPosition;
+        }
     }
 }

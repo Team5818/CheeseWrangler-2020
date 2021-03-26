@@ -18,23 +18,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.camera;
+package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import net.octyl.aptcreator.GenerateCreator;
-import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.util.RobotShuffleboard;
+public class Pair<T> {
+    private final T a;
+    private final T b;
 
-@GenerateCreator
-public class ShuffleboardPause extends InstantCommand {
-    private final RobotShuffleboard shuffleboard;
-
-    public ShuffleboardPause(@Provided RobotShuffleboard shuffleboard) {
-        this.shuffleboard = shuffleboard;
+    public Pair(T a, T b) {
+        this.a = a;
+        this.b = b;
     }
 
-    @Override
-    public void execute() {
-        shuffleboard.setPaused(!shuffleboard.isPaused());
+    public T getA() {
+        return a;
+    }
+
+    public T getB() {
+        return b;
     }
 }

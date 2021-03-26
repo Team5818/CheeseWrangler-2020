@@ -18,35 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.hood;
+package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.rivierarobotics.inject.Input;
-import org.rivierarobotics.subsystems.Hood;
+import org.rivierarobotics.subsystems.Climb;
 import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 
-public class HoodControl extends CommandBase {
-    private final Joystick driverButtons;
-    private final Hood hood;
+public class ClimbControl extends CommandBase {
     private final Joystick coDriverRightJs;
+    private final Joystick driverButtons;
+    private final Climb climb;
 
     @Inject
-    public HoodControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
-                       @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
-                       Hood hood) {
-        this.hood = hood;
-        this.driverButtons = driverButtons;
+    public ClimbControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
+                        @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
+                        Climb climb) {
         this.coDriverRightJs = coDriverRightJs;
-        addRequirements(hood);
+        this.driverButtons = driverButtons;
+        this.climb = climb;
+        addRequirements(climb);
     }
 
     @Override
     public void execute() {
-        if (!driverButtons.getRawButtonPressed(6)) {
-            hood.setPower(MathUtil.fitDeadband(-coDriverRightJs.getY()));
+        if (driverButtons.getRawButtonPressed(6)) {
+//            climb.setPower(MathUtil.fitDeadband(-coDriverRightJs.getY()));
         }
     }
 }

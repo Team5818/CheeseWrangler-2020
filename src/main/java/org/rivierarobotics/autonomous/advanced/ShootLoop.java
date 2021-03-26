@@ -39,7 +39,7 @@ public class ShootLoop extends SequentialCommandGroup {
         super(
                 sequence(new WaitCommand(1), shoot.shootNWedges(5))
                     .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
-                auto.pathweaver(loop).deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
+                auto.pathtracer(loop).deadlineWith(collect.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                 sequence(new WaitCommand(2), shoot.shootNWedges(5))
                         .deadlineWith(aim.encoderAim(VisionTarget.INNER)),
                 shoot.shootNWedges(5)

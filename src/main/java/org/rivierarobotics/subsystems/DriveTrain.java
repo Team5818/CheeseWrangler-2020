@@ -22,7 +22,6 @@ package org.rivierarobotics.subsystems;
 
 import edu.wpi.first.wpilibj.geometry.Pose2d;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.commands.drive.DriveControlCreator;
@@ -39,7 +38,6 @@ public class DriveTrain extends SubsystemBase {
     private final DriveTrainSide left;
     private final DriveTrainSide right;
     private final NavXGyro gyro;
-    private final DifferentialDriveKinematics kinematics;
     private final DifferentialDriveOdometry odometry;
 
     @Inject
@@ -49,9 +47,12 @@ public class DriveTrain extends SubsystemBase {
         this.gyro = gyro;
         this.left = left;
         this.right = right;
-        this.kinematics = new DifferentialDriveKinematics(TRACKWIDTH);
         this.odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(-gyro.getYaw()));
         setDefaultCommand(controlCreator.create(this));
+    }
+
+    public static double getTrackwidth() {
+        return TRACKWIDTH;
     }
 
     public void setVelocity(double velocity) {
@@ -91,10 +92,6 @@ public class DriveTrain extends SubsystemBase {
 
     public DriveTrainSide getRight() {
         return right;
-    }
-
-    public DifferentialDriveKinematics getKinematics() {
-        return kinematics;
     }
 
     public Pose2d getPose() {

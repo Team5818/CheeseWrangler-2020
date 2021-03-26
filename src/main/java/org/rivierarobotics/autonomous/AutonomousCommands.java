@@ -32,31 +32,39 @@ import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 import javax.inject.Inject;
 
 public class AutonomousCommands {
-    private final PathweaverExecutorCreator pathweaverExecutorCreator;
+    private final PathTracerExecutorCreator pathTracerExecutorCreator;
     private final ForwardAutoCreator forwardAutoCreator;
     private final ShootAndDriveCreator shootAndDriveCreator;
     private final ShootLoopCreator shootLoopCreator;
     private final TrenchRunCreator trenchRunCreator;
 
     @Inject
-    public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
+    public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
                               ForwardAutoCreator forwardAutoCreator,
                               ShootAndDriveCreator shootAndDriveCreator,
                               ShootLoopCreator shootLoopCreator,
                               TrenchRunCreator trenchRunCreator) {
-        this.pathweaverExecutorCreator = pathweaverExecutorCreator;
+        this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
         this.shootLoopCreator = shootLoopCreator;
         this.trenchRunCreator = trenchRunCreator;
     }
 
-    public PathweaverExecutor pathweaver(Pose2dPath path) {
-        return pathweaverExecutorCreator.create(path);
+    public PathTracerExecutor challengePath(ChallengePath cPath) {
+        return pathtracer(cPath.getPath());
     }
 
-    public PathweaverExecutor pathweaver(Pose2dPath path, boolean isAbsolute, boolean flip) {
-        return pathweaverExecutorCreator.create(path, isAbsolute, flip);
+    public PathTracerExecutor pathtracer(Pose2dPath path) {
+        return pathtracer(path, PathConstraints.create());
+    }
+
+    public PathTracerExecutor pathtracer(Pose2dPath path, PathConstraints constraints) {
+        return pathtracer(new SplinePath(path.getSpline(), constraints));
+    }
+
+    public PathTracerExecutor pathtracer(SplinePath path) {
+        return pathTracerExecutorCreator.create(path);
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {

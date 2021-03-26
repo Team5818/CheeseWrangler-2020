@@ -37,7 +37,7 @@ import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
     private static final int ZERO_TICKS = 2800;
-    private static final int FORWARD_LIMIT_TICKS = 2500;
+    private static final int FORWARD_LIMIT_TICKS = 2550;
     private static final int BACK_LIMIT_TICKS = 2200;
     private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;

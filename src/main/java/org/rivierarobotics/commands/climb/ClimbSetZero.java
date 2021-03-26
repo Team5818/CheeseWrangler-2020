@@ -18,31 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.climb;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import org.rivierarobotics.appjack.Logging;
-import org.rivierarobotics.appjack.MechLogger;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Climb;
 
-public class EjectorSide {
-    private final WPI_VictorSPX ejectorVictor;
-    private final MechLogger logger;
+@GenerateCreator
+public class ClimbSetZero extends CommandBase {
+    private final Climb climb;
 
-    public EjectorSide(int id, boolean invert) {
-        ejectorVictor = new WPI_VictorSPX(id);
-        ejectorVictor.configFactoryDefault();
-        ejectorVictor.setInverted(invert);
-        ejectorVictor.setNeutralMode(NeutralMode.Brake);
-        logger = Logging.getLogger(getClass(), invert ? "left" : "right");
+    public ClimbSetZero(@Provided Climb climb) {
+        this.climb = climb;
     }
 
-    public void setPower(double pwr) {
-        logger.powerChange(pwr);
-        ejectorVictor.set(pwr);
+    @Override
+    public void execute() {
+        climb.setPower(-0.25);
     }
 
-    public double getPower() {
-        return ejectorVictor.get();
+    @Override
+    public boolean isFinished() {
+        return climb.isAtBottom();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        climb.resetEncoder();
+        climb.setPower(0);
     }
 }
