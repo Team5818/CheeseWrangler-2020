@@ -29,19 +29,24 @@ import org.rivierarobotics.util.MathUtil;
 import javax.inject.Inject;
 
 public class HoodControl extends CommandBase {
+    private final Joystick driverButtons;
     private final Hood hood;
     private final Joystick coDriverRightJs;
 
     @Inject
-    public HoodControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick js,
+    public HoodControl(@Input(Input.Selector.CODRIVER_RIGHT) Joystick coDriverRightJs,
+                       @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
                        Hood hood) {
         this.hood = hood;
-        this.coDriverRightJs = js;
+        this.driverButtons = driverButtons;
+        this.coDriverRightJs = coDriverRightJs;
         addRequirements(hood);
     }
 
     @Override
     public void execute() {
-        hood.setPower(MathUtil.fitDeadband(-coDriverRightJs.getY()));
+        if (!driverButtons.getRawButtonPressed(6)) {
+            hood.setPower(MathUtil.fitDeadband(-coDriverRightJs.getY()));
+        }
     }
 }

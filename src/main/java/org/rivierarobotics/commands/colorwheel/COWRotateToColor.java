@@ -18,31 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.colorwheel;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import org.rivierarobotics.appjack.Logging;
-import org.rivierarobotics.appjack.MechLogger;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.ColorWheel;
 
-public class EjectorSide {
-    private final WPI_VictorSPX ejectorVictor;
-    private final MechLogger logger;
+@GenerateCreator
+public class COWRotateToColor extends COWRotateNTimes {
+    private final ColorWheel.GameColor color;
 
-    public EjectorSide(int id, boolean invert) {
-        ejectorVictor = new WPI_VictorSPX(id);
-        ejectorVictor.configFactoryDefault();
-        ejectorVictor.setInverted(invert);
-        ejectorVictor.setNeutralMode(NeutralMode.Brake);
-        logger = Logging.getLogger(getClass(), invert ? "left" : "right");
+    public COWRotateToColor(@Provided ColorWheel colorWheel, ColorWheel.GameColor color, boolean isField) {
+        super(colorWheel, 0, 1);
+        this.color = isField ? robotToFieldColor(color) : color;
     }
 
-    public void setPower(double pwr) {
-        logger.powerChange(pwr);
-        ejectorVictor.set(pwr);
+    private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
+        ColorWheel.GameColor[] gcs = ColorWheel.GameColor.values();
+        return gcs[(robotColor.ordinal() + 2) % gcs.length];
     }
 
-    public double getPower() {
-        return ejectorVictor.get();
+    @Override
+    public boolean isFinished() {
+        return colorWheel.getGameColor().equals(color);
     }
 }

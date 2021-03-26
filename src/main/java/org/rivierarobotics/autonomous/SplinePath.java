@@ -250,7 +250,6 @@ public class SplinePath {
             if (addPrecomputed) {
                 precomputed.add(tempOut);
             }
-
             instTempVel = getLRVel(tempOut);
             if (instTempVel.getA() < lastTempVel.getA() + MAX_VEL_DIFF && instTempVel.getB() < lastTempVel.getB() + MAX_VEL_DIFF) {
                 if (Math.abs(instTempVel.getA()) > maxObservedVel) {

@@ -32,7 +32,7 @@ public class PathConstraints {
 
     private PathConstraints() {
     }
-
+  
     public PathConstraints(double maxAccel, double maxVel, boolean absPos, boolean absHeading,
                            CreationMode creationMode, double crKnotParam, boolean reversed, boolean straight) {
         this.maxAccel = maxAccel;
@@ -64,7 +64,7 @@ public class PathConstraints {
         this.absHeading = absHeading;
         return this;
     }
-
+  
     public PathConstraints setCreationMode(CreationMode creationMode) {
         this.creationMode = creationMode;
         return this;
@@ -89,7 +89,7 @@ public class PathConstraints {
         this.straight = straight;
         return this;
     }
-
+  
     public double getMaxAccel() {
         return maxAccel;
     }

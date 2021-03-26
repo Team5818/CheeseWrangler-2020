@@ -18,16 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.climb;
 
-public enum ClimbPosition {
-    FORTY_FIVE(0),
-    SIXTY(0),
-    SEVENTY_TWO(0);
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.Climb;
 
-    public final int position;
+@GenerateCreator
+public class ClimbSetZero extends CommandBase {
+    private final Climb climb;
 
-    ClimbPosition(int position) {
-        this.position = position;
+    public ClimbSetZero(@Provided Climb climb) {
+        this.climb = climb;
+    }
+
+    @Override
+    public void execute() {
+        climb.setPower(-0.25);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return climb.isAtBottom();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        climb.resetEncoder();
+        climb.setPower(0);
     }
 }

@@ -18,47 +18,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.climb;
+package org.rivierarobotics.commands.colorwheel;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Climb;
+import org.rivierarobotics.subsystems.ColorWheel;
 
 @GenerateCreator
-public class ClimbSetPosition extends CommandBase {
-    private final Climb climb;
-    private final double setPosition;
-    private double signum;
+public class COWCenterOnColor extends CommandBase {
+    private static final int TICKS_PER_HALF_SLICE = 1024;
+    private static final double MAX_POWER = 0.1;
+    private final ColorWheel colorWheel;
+    private ColorWheel.GameColor centerColor;
+    private double tickStart;
+    private int stage = 0;
 
-    public ClimbSetPosition(@Provided Climb climb, double setPosition) {
-        this.climb = climb;
-        this.setPosition = setPosition;
-        addRequirements(climb);
+    public COWCenterOnColor(@Provided ColorWheel colorWheel) {
+        this.colorWheel = colorWheel;
+        addRequirements(colorWheel);
     }
 
     @Override
     public void initialize() {
-        double pos = climb.getPositionTicks();
-        signum = pos > setPosition ? -1 : 1;
+        centerColor = colorWheel.getGameColor();
     }
 
     @Override
     public void execute() {
-        climb.setPower(signum);
+        if (stage == 0) {
+            if (!colorWheel.getGameColor().equals(centerColor)) {
+                stage++;
+                tickStart = colorWheel.getPositionTicks();
+            } else {
+                colorWheel.setPower(MAX_POWER);
+            }
+        } else if (stage == 1) {
+            if (colorWheel.getPositionTicks() - tickStart >= TICKS_PER_HALF_SLICE) {
+                stage++;
+            } else {
+                colorWheel.setPower(-MAX_POWER);
+            }
+        }
     }
 
     @Override
     public void end(boolean interrupted) {
-        climb.setPower(0);
+        colorWheel.setPower(0);
     }
 
     @Override
     public boolean isFinished() {
-        if (signum == 1) {
-            return climb.getPositionTicks() >= setPosition;
-        } else {
-            return climb.getPositionTicks() <= setPosition;
-        }
+        return stage == 2;
     }
 }

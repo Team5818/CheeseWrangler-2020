@@ -22,39 +22,73 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
-public class Climb extends SubsystemBase implements RRSubsystem {
-    //private final WPI_TalonSRX climbTalon;
-    //private final MechLogger logger;
+import javax.inject.Provider;
 
-    public Climb(int id) {
-        //climbTalon = new WPI_TalonSRX(id);
-        //MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
-        //        new PIDConfig((1023 * 0.1) / 500, 0, 0, (1023.0 * 0.75) / 15900), 0, climbTalon);
-        //logger = Logging.getLogger(getClass());
-        //climbTalon.setSensorPhase(true);
-        //climbTalon.setNeutralMode(NeutralMode.Brake);
+
+public class Climb extends SubsystemBase implements RRSubsystem {
+    private static final double MAX_TICKS = 39114 * 34.5;
+    private final WPI_TalonFX climbTalon;
+    private final MechLogger logger;
+
+    public Climb(int motorId) {
+        this.climbTalon = new WPI_TalonFX(motorId);
+        this.logger = Logging.getLogger(getClass());
+
+        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
+                new PIDConfig(100, 0, 0, 0), 0, climbTalon);
+        climbTalon.setSensorPhase(false);
+        climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        climbTalon.configForwardSoftLimitThreshold(MAX_TICKS);
+        climbTalon.configForwardSoftLimitEnable(true);
+        climbTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        climbTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public boolean isAtBottom() {
+        return climbTalon.isRevLimitSwitchClosed() == 1;
+    }
+
+    public void resetEncoder() {
+        climbTalon.setSelectedSensorPosition(0);
     }
 
     public void setPositionTicks(double position) {
-        //climbTalon.set(ControlMode.MotionMagic, position);
+        climbTalon.set(ControlMode.MotionMagic, position);
     }
 
     @Override
     public double getPositionTicks() {
-        //return climbTalon.getSelectedSensorPosition();
-        throw new UnsupportedOperationException();
+        return climbTalon.getSelectedSensorPosition();
     }
 
     @Override
     public void setPower(double pwr) {
-        //logger.powerChange(pwr);
-        //climbTalon.set(ControlMode.PercentOutput, pwr);
+        logger.powerChange(pwr);
+        climbTalon.set(ControlMode.PercentOutput, pwr);
+    }
+
+    public enum Position {
+        ZERO(0.03),
+        HALF(0.5),
+        MAX(1.0);
+
+        private final double ticks;
+
+        Position(double pctMax) {
+            this.ticks = pctMax * MAX_TICKS;
+        }
+
+        public double getTicks() {
+            return ticks;
+        }
     }
 }

@@ -39,9 +39,9 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 630;
-    private static final double MAX_ANGLE = 10;
-    private static final double MIN_ANGLE = -200;
+    private static final double ZERO_TICKS = 1030;
+    private static final double MAX_ANGLE = 7;
+    private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
     private final WPI_TalonSRX turretTalon;
