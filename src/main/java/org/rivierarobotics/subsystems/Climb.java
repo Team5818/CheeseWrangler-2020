@@ -29,7 +29,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
-import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.util.MotorUtil;
 
 import javax.inject.Provider;
@@ -38,13 +37,10 @@ import javax.inject.Provider;
 public class Climb extends SubsystemBase implements RRSubsystem {
     private static final double MAX_TICKS = 39114 * 34.5;
     private final WPI_TalonFX climbTalon;
-    private final Provider<ClimbControl> command;
     private final MechLogger logger;
 
-
-    public Climb(int motorId, Provider<ClimbControl> command) {
+    public Climb(int motorId) {
         this.climbTalon = new WPI_TalonFX(motorId);
-        this.command = command;
         this.logger = Logging.getLogger(getClass());
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
@@ -78,14 +74,6 @@ public class Climb extends SubsystemBase implements RRSubsystem {
     public void setPower(double pwr) {
         logger.powerChange(pwr);
         climbTalon.set(ControlMode.PercentOutput, pwr);
-    }
-
-    @Override
-    public void periodic() {
-        if (getDefaultCommand() == null) {
-            setDefaultCommand(command.get());
-        }
-        super.periodic();
     }
 
     public enum Position {

@@ -25,7 +25,6 @@ import dagger.Provides;
 import edu.wpi.first.wpilibj.I2C;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelControl;
-import org.rivierarobotics.commands.climb.ClimbControl;
 import org.rivierarobotics.commands.ejector.EjectorControl;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.commands.turret.TurretControl;
@@ -122,8 +121,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static ColorWheel provideColorWheel() {
-        int COLOR_WHEEL_FALCON = 1;
-        return new ColorWheel(COLOR_WHEEL_FALCON, COLOR_WHEEL_SENSOR);
+        return new ColorWheel(1, COLOR_WHEEL_SENSOR);
     }
 
     @Provides
@@ -134,7 +132,7 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Climb provideClimb(Provider<ClimbControl> command) {
-        return new Climb(CLIMB_FALCON, command);
+    public static Climb provideClimb() {
+        return new Climb(CLIMB_FALCON);
     }
 }

@@ -128,8 +128,8 @@ public class PathTracerExecutor extends CommandBase {
         } else if (constraints.getAbsHeading()) {
             rotateToPointHeading(path.getPathPoints().get(0));
         } else {
-            gyroOffset = MathUtil.wrapToCircle(gyro.getYaw()) -
-                    MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
+            gyroOffset = MathUtil.wrapToCircle(gyro.getYaw())
+                - MathUtil.wrapToCircle(path.getPathPoints().get(0).getHeading());
         }
         tab.setEntry("totalTime", path.getTotalTime());
         tab.setEntry("scale", scale);
