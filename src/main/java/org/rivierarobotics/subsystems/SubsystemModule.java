@@ -122,6 +122,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static ColorWheel provideColorWheel() {
+        int COLOR_WHEEL_FALCON = 1;
         return new ColorWheel(COLOR_WHEEL_FALCON, COLOR_WHEEL_SENSOR);
     }
 
