@@ -45,7 +45,7 @@ public enum ChallengePath {
      * @param controlSeq a sequence of 2-char control strings formatted as [A:E][1:11].
      */
     ChallengePath(PathConstraints constraints, String... controlSeq) {
-        constraints = constraints.setFixedTheta(false);
+        constraints = constraints.setCreationMode(PathConstraints.CreationMode.CATMULL_ROM);
         List<SplinePoint> points = new LinkedList<>();
         for (String control : controlSeq) {
             if (control.length() < 2) {
