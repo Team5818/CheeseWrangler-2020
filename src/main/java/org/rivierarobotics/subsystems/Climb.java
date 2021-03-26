@@ -89,10 +89,18 @@ public class Climb extends SubsystemBase implements RRSubsystem {
     }
 
     public enum Position {
-        ZERO, HALF, MAX;
+        ZERO(0.03),
+        HALF(0.5),
+        MAX(1.0);
+
+        private final double ticks;
+
+        Position(double pctMax) {
+            this.ticks = pctMax * MAX_TICKS;
+        }
 
         public double getTicks() {
-            return this.ordinal() / 2.0 * MAX_TICKS;
+            return ticks;
         }
     }
 }

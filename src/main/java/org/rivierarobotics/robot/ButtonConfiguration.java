@@ -136,11 +136,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE,
                         PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
 
+        new JoystickButton(driverButtons, 6)
+                .whenPressed(cmds.climb().resetEncoder());
         new JoystickButton(driverButtons, 3)
                 .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX));
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF));
         new JoystickButton(driverButtons, 1)
-                .whenPressed(cmds.climb().resetEncoder());
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.ZERO));
     }
 }
