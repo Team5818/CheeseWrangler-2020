@@ -21,6 +21,7 @@
 package org.rivierarobotics.commands.colorwheel;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -29,7 +30,7 @@ import org.rivierarobotics.subsystems.ColorWheel;
 @GenerateCreator
 public class COWRotateNTimes extends CommandBase {
     protected static final int NUM_COLOR_SLICES_PER_ROT = 8;
-    protected static final int TIMEOUT_SECONDS = 10;
+    protected static final int TIMEOUT_SECONDS = 20;
     protected final ColorWheel colorWheel;
     protected final double rotations;
     private final double rotatePower;
@@ -57,10 +58,11 @@ public class COWRotateNTimes extends CommandBase {
     public void execute() {
         colorWheel.setPower(rotatePower);
         ColorWheel.GameColor currentColor = colorWheel.getGameColor();
-        if (lastColor == null || !lastColor.equals(currentColor)) {
+        if (currentColor != ColorWheel.GameColor.NULL && (lastColor == null || !lastColor.equals(currentColor))) {
             colorChangeCtr++;
             lastColor = currentColor;
         }
+        SmartDashboard.putNumber("cchange", colorChangeCtr);
     }
 
     @Override

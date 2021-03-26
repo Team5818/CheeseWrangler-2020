@@ -29,7 +29,7 @@ public class COWRotateToColor extends COWRotateNTimes {
     private final ColorWheel.GameColor color;
 
     public COWRotateToColor(@Provided ColorWheel colorWheel, ColorWheel.GameColor color, boolean isField) {
-        super(colorWheel, 0, 0.1);
+        super(colorWheel, 0, 1);
         this.color = isField ? robotToFieldColor(color) : color;
     }
 

@@ -30,6 +30,7 @@ import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Climb;
+import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -136,11 +137,6 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.flywheel().stepTolerance(20));
         new JoystickButton(driverRight, 2)
                 .whenPressed(cmds.flywheel().stepTolerance(-20));
-        new JoystickButton(driverButtons, 9)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.STRAIGHT));
-        new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.FLEX_TAPE,
-                        PathConstraints.create().setMaxVel(1).setMaxAccel(1)));
 
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.climb().resetEncoder());

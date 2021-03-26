@@ -148,6 +148,7 @@ public class Robot extends TimedRobot {
         var physics = globalComponent.getPhysicsUtil();
         var climb = globalComponent.getClimb();
         var shuffleboard = globalComponent.getShuffleboard();
+        var cow = globalComponent.getColorWheel();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())
@@ -198,8 +199,13 @@ public class Robot extends TimedRobot {
             .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
             .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
 
+        var sensorColor = cow.getSensorColor();
         shuffleboard.getTab("Climb")
             .setEntry("Limit Closed", climb.isAtBottom())
-            .setEntry("Rel Pos", climb.getPositionTicks());
+            .setEntry("Rel Pos", climb.getPositionTicks())
+            .setEntry("Color R", sensorColor.red)
+            .setEntry("Color G", sensorColor.green)
+            .setEntry("Color B", sensorColor.blue)
+            .setEntry("Match Color", cow.getGameColor().name());
     }
 }

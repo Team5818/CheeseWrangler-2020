@@ -20,9 +20,6 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorMatchResult;
 import com.revrobotics.ColorSensorV3;
@@ -37,20 +34,16 @@ import javax.inject.Singleton;
 
 @Singleton
 public class ColorWheel extends SubsystemBase implements RRSubsystem {
-    private final WPI_TalonFX wheelFalcon;
+    private final CheeseWheel cheeseWheel;
     private final ColorSensorV3 colorSensor;
     private final ColorMatch colorMatcher;
     private final MechLogger logger;
 
-    public ColorWheel(int motorId, I2C.Port sensorId) {
-        this.wheelFalcon = new WPI_TalonFX(motorId);
+    public ColorWheel(I2C.Port sensorId, CheeseWheel cheeseWheel) {
+        this.cheeseWheel = cheeseWheel;
         this.colorSensor = new ColorSensorV3(sensorId);
         this.colorMatcher = new ColorMatch();
         this.logger = Logging.getLogger(getClass());
-
-        wheelFalcon.configFactoryDefault();
-        wheelFalcon.setInverted(false);
-        wheelFalcon.setNeutralMode(NeutralMode.Brake);
 
         colorMatcher.addColorMatch(GameColor.RED.matchColor);
         colorMatcher.addColorMatch(GameColor.GREEN.matchColor);
@@ -62,14 +55,14 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
     public GameColor getGameColor() {
         ColorMatchResult matchedColor = colorMatcher.matchColor(getSensorColor());
         if (matchedColor == null) {
-            return null;
+            return GameColor.NULL;
         }
         for (GameColor color : GameColor.values()) {
             if (matchedColor.color.equals(color.matchColor)) {
                 return color;
             }
         }
-        return null;
+        return GameColor.NULL;
     }
 
     // Sensor color is raw feedback from color sensor
@@ -79,18 +72,18 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
 
     public void setPositionTicks(double pos) {
         logger.setpointChange(pos);
-        wheelFalcon.set(ControlMode.MotionMagic, pos);
+        cheeseWheel.setPositionTicks(pos);
     }
 
     @Override
     public double getPositionTicks() {
-        return wheelFalcon.getSelectedSensorPosition();
+        return cheeseWheel.getPositionTicks();
     }
 
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        wheelFalcon.set(ControlMode.PercentOutput, pwr);
+        cheeseWheel.setPositionTicks(pwr);
     }
 
     public static String getFMSString() {
@@ -110,10 +103,11 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
 
     // Corrupt is bad data, null is nothing matching
     public enum GameColor {
-        RED(0.561, 0.232, 0.114),
+        RED(0.561, 0.351, 0.114),
         GREEN(0.197, 0.561, 0.240),
         BLUE(0.143, 0.427, 0.429),
-        YELLOW(0.361, 0.524, 0.113);
+        YELLOW(0.361, 0.524, 0.113),
+        NULL(0, 0, 0);
 
         private final char gameChar = name().toLowerCase().charAt(0);
         private final Color matchColor;
@@ -129,7 +123,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
                     return color;
                 }
             }
-            return null;
+            return GameColor.NULL;
         }
     }
 }

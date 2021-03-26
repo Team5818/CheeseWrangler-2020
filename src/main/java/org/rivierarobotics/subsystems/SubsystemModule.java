@@ -120,8 +120,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static ColorWheel provideColorWheel() {
-        return new ColorWheel(1, COLOR_WHEEL_SENSOR);
+    public static ColorWheel provideColorWheel(@Provided CheeseWheel cheeseWheel) {
+        return new ColorWheel(COLOR_WHEEL_SENSOR, cheeseWheel);
     }
 
     @Provides
