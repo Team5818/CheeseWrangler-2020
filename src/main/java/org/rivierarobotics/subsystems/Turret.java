@@ -39,11 +39,12 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 1030;
+    private static final double ZERO_TICKS = 880;
     private static final double MAX_ANGLE = 7;
     private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
+    private static final int DETECT_BUFFER_TICKS = 100;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -51,6 +52,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final RobotShuffleboardTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
+    private final int wrapErrOffset;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         this.command = command;
@@ -59,7 +61,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.tab = shuffleboard.getTab("TurretHood");
         this.logger = Logging.getLogger(getClass());
 
-
         this.turretTalon = new WPI_TalonSRX(id);
         this.multiPID = new MultiPID(turretTalon,
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0),
@@ -67,7 +68,16 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 800, turretTalon);
         multiPID.applyAllConfigs();
-        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
+
+        // Checks for turret overshoot / undershoot encoder issue
+        double currPos = getPositionTicks();
+        boolean isOverRotated = currPos > FORWARD_LIMIT_TICKS + DETECT_BUFFER_TICKS;
+        boolean isUnderRotated = currPos < BACK_LIMIT_TICKS - DETECT_BUFFER_TICKS;
+        this.wrapErrOffset = isOverRotated ? -4096 : isUnderRotated ? 4096 : 0;
+        tab.setEntry("Wrap Error", isOverRotated ? "Over" : isUnderRotated ? "Under" : "None");
+
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS - wrapErrOffset,
+            BACK_LIMIT_TICKS - wrapErrOffset, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
     }
@@ -82,7 +92,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return turretTalon.getSelectedSensorPosition();
+        return turretTalon.getSelectedSensorPosition() + wrapErrOffset;
     }
 
     public double getVelocity() {
@@ -112,6 +122,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public void setPositionTicks(double positionTicks) {
+        positionTicks -= wrapErrOffset;
         tab.setEntry("TurretSetPosTicks", positionTicks);
         multiPID.selectConfig(MultiPID.Type.POSITION);
         turretTalon.set(ControlMode.MotionMagic, positionTicks);
@@ -136,6 +147,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         if (initialTicks == max || initialTicks == min) {
             initialTicks = getPositionTicks() - ZERO_TICKS < 0 ? ticks : max;
         }
+        initialTicks -= wrapErrOffset;
         tab.setEntry("TFinalAngleTicks", initialTicks);
         logger.setpointChange(initialTicks);
         multiPID.selectConfig(MultiPID.Type.POSITION);
@@ -147,7 +159,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         tab.setEntry("setVelTicks", ticksPer100ms);
         multiPID.selectConfig(MultiPID.Type.VELOCITY);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
-        tab.setEntry("whatever", turretTalon.getClosedLoopTarget());
+        tab.setEntry("ctrlTarget", turretTalon.getClosedLoopTarget());
     }
 
     @Override

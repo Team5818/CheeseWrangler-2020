@@ -59,8 +59,9 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         climbTalon.setSelectedSensorPosition(0);
     }
 
-    public void setPositionTicks(double position) {
-        climbTalon.set(ControlMode.MotionMagic, position);
+    public void setPositionTicks(double positionTicks) {
+        logger.setpointChange(positionTicks);
+        climbTalon.set(ControlMode.MotionMagic, positionTicks);
     }
 
     @Override

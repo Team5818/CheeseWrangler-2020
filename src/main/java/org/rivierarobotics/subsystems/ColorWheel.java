@@ -71,9 +71,9 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         return colorSensor.getColor();
     }
 
-    public void setPositionTicks(double pos) {
-        logger.setpointChange(pos);
-        cheeseWheel.setPositionTicks(pos);
+    public void setPositionTicks(double positionTicks) {
+        logger.setpointChange(positionTicks);
+        cheeseWheel.setPositionTicks(positionTicks);
     }
 
     @Override
@@ -102,12 +102,23 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         }
     }
 
+    public static GameColor getFMSColor() {
+        char actualChar = getFMSChar();
+        for (GameColor color : GameColor.values()) {
+            if (color.gameChar == actualChar) {
+                return color;
+            }
+        }
+        return GameColor.NULL;
+    }
+
     // Corrupt is bad data, null is nothing matching
     public enum GameColor {
         RED(0.561, 0.351, 0.114),
         GREEN(0.197, 0.561, 0.240),
         BLUE(0.143, 0.427, 0.429),
         YELLOW(0.361, 0.524, 0.113),
+        CORRUPT(0, 0, 0),
         NULL(0, 0, 0);
 
         private final char gameChar = name().toLowerCase().charAt(0);
@@ -115,16 +126,6 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
 
         GameColor(double r, double g, double b) {
             this.matchColor = new Color(r, g, b);
-        }
-
-        public static GameColor getFMSColor() {
-            char actualChar = getFMSChar();
-            for (GameColor color : GameColor.values()) {
-                if (color.gameChar == actualChar) {
-                    return color;
-                }
-            }
-            return GameColor.NULL;
         }
     }
 }

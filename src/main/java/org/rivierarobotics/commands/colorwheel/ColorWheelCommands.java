@@ -47,7 +47,7 @@ public class ColorWheelCommands {
     }
 
     public COWRotateToColor rotateToFMS() {
-        return cowRotateToColorCreator.create(ColorWheel.GameColor.getFMSColor(), true);
+        return cowRotateToColorCreator.create(ColorWheel.getFMSColor(), true);
     }
 
     public COWCenterOnColor centerOnColor() {
