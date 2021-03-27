@@ -26,10 +26,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.commands.ejector.EjectorControl;
-import org.rivierarobotics.inject.Sided;
-import org.rivierarobotics.util.Side;
 
-import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 

@@ -31,9 +31,6 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
-import javax.inject.Provider;
-
-
 public class Climb extends SubsystemBase implements RRSubsystem {
     private static final double MAX_TICKS = 39114 * 34.5;
     private final WPI_TalonFX climbTalon;
@@ -43,8 +40,9 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         this.climbTalon = new WPI_TalonFX(motorId);
         this.logger = Logging.getLogger(getClass());
 
+        // This PID is not tuned, currently not used
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-                new PIDConfig(100, 0, 0, 0), 0, climbTalon);
+                new PIDConfig(10, 0, 0, 0), 0, climbTalon);
         climbTalon.setSensorPhase(false);
         climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
         climbTalon.configForwardSoftLimitThreshold(MAX_TICKS);

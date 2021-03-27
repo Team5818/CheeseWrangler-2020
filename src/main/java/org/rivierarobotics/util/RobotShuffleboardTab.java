@@ -33,7 +33,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableRegistry;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 public class RobotShuffleboardTab {
     private final ShuffleboardTab tab;

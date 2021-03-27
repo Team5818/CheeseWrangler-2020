@@ -21,13 +21,13 @@
 package org.rivierarobotics.commands.climb;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Climb;
 
 @GenerateCreator
 public class ClimbSetZero extends CommandBase {
+    private static final double MAX_POWER = 0.25;
     private final Climb climb;
 
     public ClimbSetZero(@Provided Climb climb) {
@@ -36,7 +36,7 @@ public class ClimbSetZero extends CommandBase {
 
     @Override
     public void execute() {
-        climb.setPower(-0.25);
+        climb.setPower(-MAX_POWER);
     }
 
     @Override

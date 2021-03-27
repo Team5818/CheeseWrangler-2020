@@ -40,6 +40,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
     private final MechLogger logger;
 
     public ColorWheel(I2C.Port sensorId, CheeseWheel cheeseWheel) {
+        // Uses CheeseWheel motor for movement, no PID/feedback
         this.cheeseWheel = cheeseWheel;
         this.colorSensor = new ColorSensorV3(sensorId);
         this.colorMatcher = new ColorMatch();

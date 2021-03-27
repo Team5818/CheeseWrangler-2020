@@ -21,16 +21,13 @@
 package org.rivierarobotics.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.autonomous.PathConstraints;
-import org.rivierarobotics.autonomous.Pose2dPath;
-import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Climb;
-import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.VisionTarget;
 
@@ -63,7 +60,7 @@ public class ButtonConfiguration {
     }
 
     public void initTeleop() {
-        // Collecting
+        // Collecting CoDriver
         new JoystickButton(coDriverLeft, 1)
                 .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
                         .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
@@ -73,10 +70,26 @@ public class ButtonConfiguration {
                         .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
                         cmds.camera().setServo(CameraPosition.BACK)));
 
-        // Shooting
+        // Shooting CoDriver
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootNWedges(1));
         new JoystickButton(coDriverRight, 2)
+                .whileHeld(cmds.cheeseWheel().continuousShoot());
+
+        // Collecting Driver
+        new JoystickButton(driverLeft, 1)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
+                                cmds.camera().setServo(CameraPosition.FRONT)));
+        new JoystickButton(driverLeft, 2)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
+                                cmds.camera().setServo(CameraPosition.BACK)));
+
+        // Shooting Driver
+        new JoystickButton(driverRight, 1)
+                .whenPressed(cmds.cheeseWheel().shootNWedges(1));
+        new JoystickButton(driverRight, 2)
                 .whileHeld(cmds.cheeseWheel().continuousShoot());
 
         // CheeseWheel manual cycles
@@ -94,10 +107,6 @@ public class ButtonConfiguration {
                     CheeseWheel.AngleOffset.COLLECT_FRONT, CheeseSlot.State.EITHER));
 
         // Autoaim
-        new JoystickButton(coDriverButtons, 7)
-                .whileHeld(cmds.vision().visionAim(VisionTarget.INNER));
-        new JoystickButton(coDriverButtons, 8)
-                .whileHeld(cmds.vision().visionAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 9)
                 .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 10)
@@ -126,21 +135,7 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 7)
             .whenPressed(cmds.colorWheel().rotateToFMS());
 
-        // Misc
-        new JoystickButton(coDriverButtons, 4)
-                .toggleWhenPressed(cmds.flywheel().setVelocity());
-        new JoystickButton(coDriverButtons, 1)
-                .whenPressed(cmds.drive().resetGyro());
-
-        new JoystickButton(driverLeft, 1)
-                .whenPressed(cmds.flywheel().changeAutoAimSpeed(1));
-        new JoystickButton(driverLeft, 2)
-                .whenPressed(cmds.flywheel().changeAutoAimSpeed(-1));
-        new JoystickButton(driverRight, 1)
-                .whenPressed(cmds.flywheel().stepTolerance(20));
-        new JoystickButton(driverRight, 2)
-                .whenPressed(cmds.flywheel().stepTolerance(-20));
-
+        // Climb
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.climb().resetEncoder());
         new JoystickButton(driverButtons, 3)
@@ -149,5 +144,13 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF));
         new JoystickButton(driverButtons, 1)
                 .whenPressed(cmds.climb().setClimbPosition(Climb.Position.ZERO));
+
+        // Misc
+        new JoystickButton(coDriverButtons, 4)
+                .toggleWhenPressed(cmds.flywheel().setVelocity());
+        new JoystickButton(coDriverButtons, 1)
+                .whenPressed(cmds.drive().resetGyro());
+        new JoystickButton(driverButtons, 4)
+                .whenPressed(() -> CommandScheduler.getInstance().cancelAll());
     }
 }
