@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
@@ -108,9 +109,9 @@ public class ButtonConfiguration {
 
         // Autoaim
         new JoystickButton(coDriverButtons, 9)
-                .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.TOP));
-        new JoystickButton(coDriverButtons, 10)
                 .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.INNER));
+        new JoystickButton(coDriverButtons, 10)
+                .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.vision().correctPosition());
         new JoystickButton(coDriverButtons, 12)
@@ -131,9 +132,9 @@ public class ButtonConfiguration {
 
         // Color Wheel
         new JoystickButton(driverButtons, 9)
-            .whenPressed(cmds.colorWheel().rotateNTimes(4));
+                .whenPressed(cmds.colorWheel().rotateNTimes(4));
         new JoystickButton(driverButtons, 7)
-            .whenPressed(cmds.colorWheel().rotateToFMS());
+                .whenPressed(cmds.colorWheel().rotateToFMS());
 
         // Climb
         new JoystickButton(driverButtons, 6)
@@ -152,5 +153,11 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.drive().resetGyro());
         new JoystickButton(driverButtons, 4)
                 .whenPressed(() -> CommandScheduler.getInstance().cancelAll());
+
+        // Dev/testing
+        new JoystickButton(coDriverButtons, 8)
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_SLALOM));
+        new JoystickButton(coDriverButtons, 7)
+                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_BARREL_RACING));
     }
 }

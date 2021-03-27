@@ -31,9 +31,9 @@ public class ClimbSetPosition extends CommandBase {
     private final double setPosition;
     private double signum;
 
-    public ClimbSetPosition(@Provided Climb climb, double setPosition) {
+    public ClimbSetPosition(@Provided Climb climb, double setPosition, boolean isInches) {
         this.climb = climb;
-        this.setPosition = setPosition;
+        this.setPosition = setPosition * (isInches ? climb.getTicksPerInch() : 1);
         addRequirements(climb);
     }
 
@@ -55,10 +55,7 @@ public class ClimbSetPosition extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if (signum == 1) {
-            return climb.getPositionTicks() >= setPosition;
-        } else {
-            return climb.getPositionTicks() <= setPosition;
-        }
+        double pos = climb.getPositionTicks();
+        return signum == 1 ? pos >= setPosition : pos <= setPosition;
     }
 }

@@ -32,7 +32,8 @@ import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
 public class Climb extends SubsystemBase implements RRSubsystem {
-    private static final double MAX_TICKS = 39114 * 34.5;
+    private static final double TICKS_PER_INCH = 39114;
+    private static final double MAX_INCHES = 34.5;
     private final WPI_TalonFX climbTalon;
     private final MechLogger logger;
 
@@ -45,10 +46,14 @@ public class Climb extends SubsystemBase implements RRSubsystem {
                 new PIDConfig(10, 0, 0, 0), 0, climbTalon);
         climbTalon.setSensorPhase(false);
         climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        climbTalon.configForwardSoftLimitThreshold(MAX_TICKS);
+        climbTalon.configForwardSoftLimitThreshold(MAX_INCHES * TICKS_PER_INCH);
         climbTalon.configForwardSoftLimitEnable(true);
         climbTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
         climbTalon.setNeutralMode(NeutralMode.Brake);
+    }
+
+    public double getTicksPerInch() {
+        return TICKS_PER_INCH;
     }
 
     public boolean isAtBottom() {
@@ -75,6 +80,13 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         climbTalon.set(ControlMode.PercentOutput, pwr);
     }
 
+    @Override
+    public void periodic() {
+        if (isAtBottom() && climbTalon.get() < 0) {
+            climbTalon.stopMotor();
+        }
+    }
+
     public enum Position {
         ZERO(0.03),
         HALF(0.5),
@@ -83,7 +95,7 @@ public class Climb extends SubsystemBase implements RRSubsystem {
         private final double ticks;
 
         Position(double pctMax) {
-            this.ticks = pctMax * MAX_TICKS;
+            this.ticks = pctMax * TICKS_PER_INCH * MAX_INCHES;
         }
 
         public double getTicks() {

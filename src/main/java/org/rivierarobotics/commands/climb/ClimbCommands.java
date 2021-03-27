@@ -38,12 +38,16 @@ public class ClimbCommands {
         this.climbSetPowerCreator = climbSetPowerCreator;
     }
 
-    public ClimbSetPosition setClimbPosition(double position) {
-        return climbSetPositionCreator.create(position);
+    public ClimbSetPosition setPositionInches(double setPosition) {
+        return climbSetPositionCreator.create(setPosition, true);
+    }
+
+    public ClimbSetPosition setPositionTicks(double setPosition) {
+        return climbSetPositionCreator.create(setPosition, false);
     }
 
     public ClimbSetPosition setClimbPosition(Climb.Position position) {
-        return climbSetPositionCreator.create(position.getTicks());
+        return climbSetPositionCreator.create(position.getTicks(), false);
     }
 
     public ClimbSetZero resetEncoder() {
