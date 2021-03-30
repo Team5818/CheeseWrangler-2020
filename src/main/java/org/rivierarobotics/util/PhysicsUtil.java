@@ -135,15 +135,6 @@ public class PhysicsUtil {
     }
 
     private double captainKalbag() {
-        //Equation: (vx*y - vy*x)/((vx^2 + vy^2)*t^2 + (-2*vx*x - 2*vy*y)*t + x^2 + y^2)
-        //Returns change in ticks per 100ms
-        //double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2 * vy * y) * t + x * x + y * y);
-        //double velocityInDegrees = velocityInRads * (180 / Math.PI);
-        double x = getX();
-        double y = getY();
-        double vx = driveTrain.getYVelocity();
-        double vy = driveTrain.getXVelocity();
-
         double targetAngle = getAngleToTarget();
         double currentAngle = (turret.getAngle(false) + gyro.getYaw()) % 360;
         double angleDiff = targetAngle - currentAngle;
