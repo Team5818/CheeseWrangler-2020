@@ -99,7 +99,6 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     }
 
     public void setAngle(double angle) {
-        angle += 8;
         double ticks = ZERO_TICKS - MathUtil.degreesToTicks(angle);
         shuffleTab.setEntry("setAngle", angle);
         shuffleTab.setEntry("setTicks", ticks);

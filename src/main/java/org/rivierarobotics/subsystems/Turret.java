@@ -39,7 +39,7 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 880;
+    private static final double ZERO_TICKS = 480;
     private static final double MAX_ANGLE = 7;
     private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
@@ -52,7 +52,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final RobotShuffleboardTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
-    private final int wrapErrOffset;
+    private int wrapErrOffset;
+    private long errLoopCtr;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         this.command = command;
@@ -68,18 +69,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 800, turretTalon);
         multiPID.applyAllConfigs();
-
-        // Checks for turret overshoot / undershoot encoder issue
-        double currPos = getPositionTicks();
-        boolean isOverRotated = currPos > FORWARD_LIMIT_TICKS + DETECT_BUFFER_TICKS;
-        boolean isUnderRotated = currPos < BACK_LIMIT_TICKS - DETECT_BUFFER_TICKS;
-        this.wrapErrOffset = isOverRotated ? -4096 : isUnderRotated ? 4096 : 0;
-        tab.setEntry("Wrap Error", isOverRotated ? "Over" : isUnderRotated ? "Under" : "None");
-
-        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS - wrapErrOffset,
-            BACK_LIMIT_TICKS - wrapErrOffset, turretTalon);
+        MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
+        checkWrapError();
     }
 
     public int getForwardLimit() {
@@ -168,8 +161,29 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.PercentOutput, pwr);
     }
 
+    // Checks for turret overshoot / undershoot encoder issue
+    private void checkWrapError() {
+        final int lastWrapOffset = wrapErrOffset;
+        final double currPos = turretTalon.getSelectedSensorPosition();
+        boolean isOverRotated = currPos > FORWARD_LIMIT_TICKS + DETECT_BUFFER_TICKS;
+        boolean isUnderRotated = currPos < BACK_LIMIT_TICKS - DETECT_BUFFER_TICKS;
+        this.wrapErrOffset = isOverRotated ? -4096 : isUnderRotated ? 4096 : 0;
+
+        if (lastWrapOffset != wrapErrOffset) {
+            tab.setEntry("Wrap Error", isOverRotated ? "Over" : isUnderRotated ? "Under" : "None");
+            MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS - wrapErrOffset,
+                    BACK_LIMIT_TICKS - wrapErrOffset, turretTalon);
+        }
+    }
+
     @Override
     public void periodic() {
+        // Runs every 5s after init (5s/0.02s=250x)
+        errLoopCtr++;
+        if (errLoopCtr >= 250) {
+            checkWrapError();
+            errLoopCtr = 0;
+        }
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }
