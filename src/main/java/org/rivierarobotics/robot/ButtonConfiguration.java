@@ -140,11 +140,14 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.climb().resetEncoder());
         new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX));
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
+                        .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
         new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF));
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF)
+                        .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
         new JoystickButton(driverButtons, 1)
-                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.ZERO));
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.ZERO)
+                        .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
 
         // Misc
         new JoystickButton(coDriverButtons, 4)
@@ -156,8 +159,8 @@ public class ButtonConfiguration {
 
         // Dev/testing
         new JoystickButton(coDriverButtons, 8)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_SLALOM));
+                .whenPressed(cmds.vision().galacticSearch(true));
         new JoystickButton(coDriverButtons, 7)
-                .whenPressed(cmds.auto().pathtracer(Pose2dPath.AN_BARREL_RACING));
+                .whenPressed(cmds.vision().galacticSearch(false));
     }
 }

@@ -39,7 +39,7 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 480;
+    private static final double ZERO_TICKS = 470;
     private static final double MAX_ANGLE = 7;
     private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
@@ -108,7 +108,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         double angleA = Math.PI / 2 - tx;
         double z = ShooterConstants.getLLtoTurretZ();
         double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
-        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a)));
+        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a))) + 2;
 
         finalAngle = tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
         return new double[] { a, MathUtil.wrapToCircle(finalAngle + getAngle(true)) };
