@@ -34,7 +34,7 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
     private static final String PATH_TRACER = "PathTracer";
-    private static final double ANGULAR_KP = 0.01;
+    private static final double ANGULAR_KP = 0.05;
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
     private final NavXGyro gyro;

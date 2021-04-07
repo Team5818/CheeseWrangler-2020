@@ -49,13 +49,13 @@ import java.util.List;
 @GenerateCreator
 public class GalacticSearch extends CommandBase {
     private static final Pair<Scalar> RGB_MASK_BOUNDS =
-            new Pair<>(new Scalar(37, 131, 200), new Scalar(255, 255, 211));
-    private static final Pair<Double> BALL_AREA_LEFT = new Pair<>(0.45, 0.5);
+            new Pair<>(new Scalar(0, 0, 229), new Scalar(200, 255, 255));
+    private static final Pair<Double> BALL_AREA_LEFT = new Pair<>(0.5, 0.5);
     private static final Pair<Integer> BALL_NUM_LEFT = new Pair<>(1, 2);
-    private static final Pair<Integer> ENCL_CIRCLE_RADIUS = new Pair<>(5, 25);
+    private static final Pair<Integer> ENCL_CIRCLE_RADIUS = new Pair<>(2, 55);
     private static final double MIN_CONTOUR_AREA = 0;
     private static final double MAX_ASPECT_TOLERANCE = 1;
-    private static final double MIN_BOUNDBOX_FILLED = 0.25;
+    private static final double MIN_BOUNDBOX_FILLED = 0;
     private static final int ERODE_ITERATIONS = 0;
     private static final int DILATE_ITERATIONS = 7;
 
@@ -79,11 +79,12 @@ public class GalacticSearch extends CommandBase {
     public void initialize() {
         Mat frame = new Mat();
         CameraServer.getInstance().getVideo("Flipped").grabFrame(frame);
-        frame = frame.submat(new Rect(0, (int) (frame.height() * 0.6),
-            frame.width(), (int) (frame.height() * 0.4)));
+        frame = frame.submat(new Rect(0, (int) (frame.height() * 0.35),
+            frame.width(), (int) (frame.height() * 0.65)));
         List<Point> ballLocs = findBallLocations(frame);
         double leftArea = isPathA ? BALL_AREA_LEFT.getA() : BALL_AREA_LEFT.getB();
         int countLeft = 0;
+        tab.setEntry("numBalls", ballLocs.size());
         for (Point loc : ballLocs) {
             if (loc.x < frame.width() * leftArea) {
                 countLeft++;

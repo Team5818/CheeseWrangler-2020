@@ -32,6 +32,7 @@ import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.Vec2D;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -42,16 +43,24 @@ import java.util.List;
 @GenerateCreator
 public class RecordPath extends CommandBase {
     private final DriveTrain driveTrain;
+    private final Joystick driverLeft;
+    private final Joystick driverRight;
     private final Joystick driverButtons;
     private final RobotShuffleboardTab tab;
+    private final boolean isPower;
     private List<Vec2D> vel;
     private String recName;
 
     public RecordPath(@Provided DriveTrain driveTrain,
+                      @Provided @Input(Input.Selector.DRIVER_LEFT) Joystick driverLeft,
+                      @Provided @Input(Input.Selector.DRIVER_RIGHT) Joystick driverRight,
                       @Provided @Input(Input.Selector.DRIVER_BUTTONS) Joystick driverButtons,
-                      @Provided RobotShuffleboard shuffleboard) {
+                      @Provided RobotShuffleboard shuffleboard, boolean isPower) {
         this.driveTrain = driveTrain;
+        this.driverLeft = driverLeft;
+        this.driverRight = driverRight;
         this.driverButtons = driverButtons;
+        this.isPower = isPower;
         this.tab = shuffleboard.getTab("PathTracer");
     }
 
@@ -65,7 +74,11 @@ public class RecordPath extends CommandBase {
 
     @Override
     public void execute() {
-        vel.add(new Vec2D(driveTrain.getXVelocity(), driveTrain.getYVelocity()));
+        if (isPower) {
+            vel.add(new Vec2D(driverRight.getX(), driverLeft.getY()));
+        } else {
+            vel.add(new Vec2D(driveTrain.getXVelocity(), driveTrain.getYVelocity()));
+        }
     }
 
     private static Path getPathDir() {
@@ -74,33 +87,41 @@ public class RecordPath extends CommandBase {
                 : Filesystem.getLaunchDirectory().toPath().resolve("PathWeaver/Paths");
     }
 
-    private static void writeCsvString(FileWriter file, Object... data) throws IOException {
+    private static void writeCsvString(BufferedWriter file, Object... data) throws IOException {
         for (Object d : data) {
             file.write(d.toString() + ",");
         }
         file.write("\n");
+        file.flush();
     }
 
     @Override
     public void end(boolean interrupted) {
-        tab.setEntry("Rec Path", false);
         File out = getPathDir().resolve(recName).toFile();
-        try (FileWriter file = new FileWriter(out)) {
-            file.write("X,Y,Tangent X,Tangent Y,Fixed Theta,Reversed,Name\n");
-            double vxAccum = 0;
-            double vyAccum = 0;
-            for (Vec2D vPair : vel) {
-                vxAccum += vPair.getX() * SplinePath.RIO_LOOP_TIME_MS;
-                vxAccum += vPair.getY() * SplinePath.RIO_LOOP_TIME_MS;
-                writeCsvString(file, vxAccum, vyAccum, vPair.getX(), vPair.getY(), true, false);
+        tab.setEntry("outDir", out.getAbsolutePath());
+        try (BufferedWriter file = new BufferedWriter(new FileWriter(out))) {
+            if (isPower) {
+                for (Vec2D vPair : vel) {
+                    writeCsvString(file, vPair.getX(), vPair.getY());
+                }
+            } else {
+                file.write("X,Y,Tangent X,Tangent Y,Fixed Theta,Reversed,Name\n");
+                double vxAccum = 0;
+                double vyAccum = 0;
+                for (Vec2D vPair : vel) {
+                    vxAccum += vPair.getX() * SplinePath.RIO_LOOP_TIME_MS;
+                    vxAccum += vPair.getY() * SplinePath.RIO_LOOP_TIME_MS;
+                    writeCsvString(file, vxAccum, vyAccum, vPair.getX(), vPair.getY(), true, false);
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        tab.setEntry("Rec Path", false);
     }
 
     @Override
     public boolean isFinished() {
-        return driverButtons.getRawButton(1);
+        return driverButtons.getRawButton(5);
     }
 }

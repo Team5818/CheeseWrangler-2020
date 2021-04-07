@@ -96,4 +96,33 @@ public class MathUtil {
     public static boolean isWithinTolerance(double value, double target, double tolerance) {
         return Math.abs(value - target) < tolerance;
     }
+
+    public static double[] arcadeDrive(double x, double y) {
+        double left;
+        double right;
+
+        double max = Math.max(Math.abs(x), Math.abs(y));
+        double diff = y - x;
+        double sum = y + x;
+        if (y > 0) {
+            if (x > 0) {
+                left = max;
+                right = diff;
+            } else {
+                left = sum;
+                right = max;
+            }
+        } else {
+            if (x > 0) {
+                left = sum;
+                right = -max;
+            } else {
+                left = -max;
+                right = diff;
+            }
+        }
+        return new double[] {
+            left, right
+        };
+    }
 }

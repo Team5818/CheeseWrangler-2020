@@ -111,8 +111,9 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         if (autonomousCommand != null) {
             autonomousCommand.cancel();
+        } else {
+            globalComponent.getNavXGyro().resetGyro();
         }
-        globalComponent.getNavXGyro().resetGyro();
         commandComponent.flywheel().setPower(0).schedule();
         globalComponent.getButtonConfiguration().initTeleop();
     }
@@ -143,8 +144,8 @@ public class Robot extends TimedRobot {
         var cw = globalComponent.getCheeseWheel();
         var physics = globalComponent.getPhysicsUtil();
         var climb = globalComponent.getClimb();
-        var shuffleboard = globalComponent.getShuffleboard();
         var cow = globalComponent.getColorWheel();
+        var shuffleboard = globalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
             .setEntry("Hood Pos Ticks", hood.getPositionTicks())

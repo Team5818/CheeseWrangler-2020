@@ -30,10 +30,10 @@ import java.util.List;
 
 public enum ChallengePath {
     // Galactic search (2.4.6)
-    GS_A_RED("C0", "C3", "D5", "A6", "A10"),
-    GS_A_BLUE("C-1", "E7", "B7", "C9", "D10"),
-    GS_B_RED("C0", "B3", "D5", "B7", "A10"),
-    GS_B_BLUE("C0", "D6", "B8", "D10", "E10"),
+    GS_A_RED("C0.5", "C3", "D5", "A6", "A11.5"),
+    GS_A_BLUE("C0", "E6", "B7", "C9", "E12"),
+    GS_B_RED("C0.5", "B3", "D5", "B7", "A11.5"),
+    GS_B_BLUE("C0.5", "D6", "B8", "D10", "E11.5"),
 
     // AutoNav (2.4.7)
     AN_BARREL_RACING(Pose2dPath.AN_BARREL_RACING),

@@ -49,7 +49,7 @@ public class CameraFlip extends Thread {
                 // https://first.wpi.edu/FRC/roborio/release/docs/java/org/opencv/core/Core.html#flip(org.opencv.core.Mat,org.opencv.core.Mat,int)
                 // https://docs.wpilib.org/en/stable/docs/software/vision-processing/introduction/using-the-cameraserver-on-the-roborio.html
                 // 0 = flip about x axis
-                Core.flip(source, output, 0);
+                Core.flip(source, output, -1);
             } else {
                 output = source.clone();
             }

@@ -38,7 +38,8 @@ public class AutonomousCommands {
     private final ShootAndDriveCreator shootAndDriveCreator;
     private final ShootLoopCreator shootLoopCreator;
     private final TrenchRunCreator trenchRunCreator;
-    private RecordPathCreator recordPathCreator;
+    private final RecordPathCreator recordPathCreator;
+    private final PowerReplayCreator powerReplayCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
@@ -46,13 +47,15 @@ public class AutonomousCommands {
                               ShootAndDriveCreator shootAndDriveCreator,
                               ShootLoopCreator shootLoopCreator,
                               TrenchRunCreator trenchRunCreator,
-                              RecordPathCreator recordPathCreator) {
+                              RecordPathCreator recordPathCreator,
+                              PowerReplayCreator powerReplayCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
         this.shootLoopCreator = shootLoopCreator;
         this.trenchRunCreator = trenchRunCreator;
         this.recordPathCreator = recordPathCreator;
+        this.powerReplayCreator = powerReplayCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -87,7 +90,11 @@ public class AutonomousCommands {
         return trenchRunCreator.create();
     }
 
-    public RecordPath recordPath() {
-        return recordPathCreator.create();
+    public RecordPath recordPath(boolean isPower) {
+        return recordPathCreator.create(isPower);
+    }
+
+    public PowerReplay powerReplay() {
+        return powerReplayCreator.create();
     }
 }

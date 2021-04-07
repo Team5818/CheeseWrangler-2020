@@ -47,30 +47,7 @@ public class DriveControl extends CommandBase {
     public void execute() {
         double x = MathUtil.fitDeadband(rightJs.getX());
         double y = MathUtil.fitDeadband(-leftJs.getY());
-        double left;
-        double right;
-
-        double max = Math.max(Math.abs(x), Math.abs(y));
-        double diff = y - x;
-        double sum = y + x;
-        if (y > 0) {
-            if (x > 0) {
-                left = max;
-                right = diff;
-            } else {
-                left = sum;
-                right = max;
-            }
-        } else {
-            if (x > 0) {
-                left = sum;
-                right = -max;
-            } else {
-                left = -max;
-                right = diff;
-            }
-        }
-
-        driveTrain.setPower(left, right);
+        double[] pwr = MathUtil.arcadeDrive(x, y);
+        driveTrain.setPower(pwr[0], pwr[1]);
     }
 }
