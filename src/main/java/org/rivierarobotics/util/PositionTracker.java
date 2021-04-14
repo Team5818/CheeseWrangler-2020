@@ -30,45 +30,40 @@ import javax.inject.Singleton;
 
 @Singleton
 public class PositionTracker {
-    private double[] pos = new double[2];
-    private double previousGyro = 0;
-    private double beforeT = 0;
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
     private final RobotShuffleboardTab tab;
-    private final NavXGyro gyro;
+    private double[] pos = new double[2];
+    private double lastTime = 0;
 
     @Inject
-    public PositionTracker(DriveTrain dt, VisionUtil vision, Turret turret,
-                           Hood hood, RobotShuffleboard shuffleboard, NavXGyro gyro) {
-        this.turret = turret;
+    public PositionTracker(DriveTrain driveTrain, VisionUtil vision, Turret turret,
+                           Hood hood, RobotShuffleboard shuffleboard) {
+        this.driveTrain = driveTrain;
         this.vision = vision;
-        this.gyro = gyro;
-        this.driveTrain = dt;
+        this.turret = turret;
         this.hood = hood;
         this.tab = shuffleboard.getTab("Auto Aim");
     }
 
     public void trackPosition() {
-        double timeDifference = Timer.getFPGATimestamp() - beforeT;
-        beforeT = Timer.getFPGATimestamp();
+        double timeDifference = Timer.getFPGATimestamp() - lastTime;
+        lastTime = Timer.getFPGATimestamp();
         pos[0] -= driveTrain.getXVelocity() * timeDifference;
         pos[1] -= driveTrain.getYVelocity() * timeDifference;
-        //TODO change manual gyro rate to gyro.getRate() in next branch
-        tab.setEntry("GyroSpeed", (gyro.getYaw() - previousGyro) / timeDifference);
-        previousGyro = gyro.getYaw();
-        tab.setEntry("xFromGoal", pos[1]);
-        tab.setEntry("zFromGoal", pos[0]);
+        tab.setEntry("xFromTarget", pos[1]);
+        tab.setEntry("yFromTarget", pos[0]);
     }
 
     public void correctPosition() {
         if (vision.getLLValue("tv") == 0) {
             return;
         }
-        double dist = turret.getTurretCalculations(0, hood.getAngle())[0];
-        double turretAngle = turret.getTurretCalculations(0, hood.getAngle())[1];
+        double[] turretCalc = turret.getTurretCalculations(0, hood.getAngle());
+        double dist = turretCalc[0];
+        double turretAngle = turretCalc[1];
         double xFromTarget = dist * Math.sin(Math.toRadians(turretAngle));
         double yFromTarget = dist * Math.cos(Math.toRadians(turretAngle));
         pos[0] = xFromTarget;

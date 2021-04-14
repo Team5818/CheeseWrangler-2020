@@ -31,7 +31,7 @@ public class ShooterConstants {
     }
 
     public static double getShooterMinVelocity() {
-        return 8;
+        return 5;
     }
 
     public static double getShooterMaxVelocity() {
@@ -41,6 +41,11 @@ public class ShooterConstants {
     public static double getLLtoTurretZ() {
         //return 0.1778;
         return 0.14; // meters
+    }
+
+    public static double getLLtoTurretY() {
+        //return 0.1778;
+        return 0.1; // meters
     }
 
     public static double getDistanceFromOuterToInnerTarget() {

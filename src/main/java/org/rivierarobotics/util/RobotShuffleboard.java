@@ -21,27 +21,17 @@
 package org.rivierarobotics.util;
 
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
 public class RobotShuffleboard {
-    private static final int maxSendCtr = 50; //Maximum value changes per update
-    private static final int updateInterval = 200; //Time between updates in ms
     private final Map<String, RobotShuffleboardTab> tabs;
-    private final List<BufferEntry> buffer;
-    private int robotLoopCtr;
-    private boolean paused;
 
     @Inject
     public RobotShuffleboard() {
         this.tabs = new LinkedHashMap<>();
-        this.buffer = new LinkedList<>();
-        this.robotLoopCtr = 0;
-        this.paused = false;
     }
 
     public RobotShuffleboardTab getTab(String tabName) {
@@ -61,89 +51,5 @@ public class RobotShuffleboard {
 
     public void removeTab(String tabName) {
         tabs.remove(tabName);
-    }
-
-    public void update() {
-        if (paused) {
-            return;
-        }
-        if (++robotLoopCtr % (updateInterval / 20) == 0) {
-            buffer.clear();
-            int updateCtr = 0;
-            for (Map.Entry<String, RobotShuffleboardTab> tabEntry : tabs.entrySet()) {
-                RobotShuffleboardTab tab = tabEntry.getValue();
-                int len = tab.getQueueLength() - 1;
-                if (updateCtr + len < maxSendCtr) {
-                    tab.update(0, len);
-                } else if (updateCtr < maxSendCtr) {
-                    tab.update(0, maxSendCtr - updateCtr);
-                    buffer.add(new BufferEntry(tab, maxSendCtr - updateCtr, len));
-                } else {
-                    buffer.add(new BufferEntry(tab, 0, len));
-                }
-                updateCtr += len;
-            }
-            robotLoopCtr = 0;
-        } else if (buffer.size() != 0) {
-            List<BufferEntry> tempBuffer = new LinkedList<>();
-            int updateCtr = 0;
-            for (BufferEntry entry : buffer) {
-                int min = entry.getMin();
-                int max = entry.getMax();
-                if (updateCtr + (max - min) < maxSendCtr) {
-                    entry.getTab().update(min, max);
-                } else if (updateCtr < maxSendCtr) {
-                    int sendDiff = maxSendCtr - updateCtr;
-                    entry.getTab().update(min, max - sendDiff);
-                    entry.setMax(max - sendDiff);
-                    tempBuffer.add(entry);
-                } else {
-                    tempBuffer.add(entry);
-                }
-                updateCtr += max - min;
-            }
-            buffer.clear();
-            buffer.addAll(tempBuffer);
-        }
-    }
-
-    public void setPaused(boolean paused) {
-        this.paused = paused;
-    }
-
-    public boolean isPaused() {
-        return paused;
-    }
-
-    private static class BufferEntry {
-        private final RobotShuffleboardTab tab;
-        private int min;
-        private int max;
-
-        public BufferEntry(RobotShuffleboardTab tab, int min, int max) {
-            this.tab = tab;
-            this.min = min;
-            this.max = max;
-        }
-
-        public RobotShuffleboardTab getTab() {
-            return tab;
-        }
-
-        public int getMin() {
-            return min;
-        }
-
-        public int getMax() {
-            return max;
-        }
-
-        public void setMin(int min) {
-            this.min = min;
-        }
-
-        public void setMax(int max) {
-            this.max = max;
-        }
     }
 }

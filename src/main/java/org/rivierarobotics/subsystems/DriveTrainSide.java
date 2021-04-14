@@ -23,7 +23,6 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatusFrameEnhanced;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
@@ -32,39 +31,28 @@ import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
 public class DriveTrainSide implements RRSubsystem {
-    private static final double TICKS_PER_METER = 7916 / 1.8288;
-    private static final double MOTOR_TO_WHEEL_RATIO = 17.0 / 48;
-    private final WPI_TalonFX masterLeft;
-    private final WPI_TalonFX slaveRight;
+    private static final double TICKS_PER_METER = 4380;
+    private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
+    private final WPI_TalonFX mainLeft;
+    private final WPI_TalonFX secondaryRight;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        this.masterLeft = new WPI_TalonFX(motors.master);
-        this.slaveRight = new WPI_TalonFX(motors.slave);
+        this.mainLeft = new WPI_TalonFX(motors.main);
+        this.secondaryRight = new WPI_TalonFX(motors.secondary);
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(0.05, 0, 0, 0), 0, masterLeft, slaveRight);
-        setStatusFrames(10, 10, 0x1240,
-                StatusFrameEnhanced.Status_4_AinTempVbat.value,
-                StatusFrameEnhanced.Status_2_Feedback0.value);
-        masterLeft.setInverted(invert);
-        slaveRight.setInverted(invert);
-        masterLeft.setNeutralMode(NeutralMode.Brake);
-        slaveRight.setNeutralMode(NeutralMode.Brake);
-        slaveRight.follow(masterLeft);
+            new PIDConfig(0.22, 0, 0, 0.051), 0, mainLeft, secondaryRight);
+        mainLeft.setInverted(invert);
+        secondaryRight.setInverted(invert);
+        mainLeft.setNeutralMode(NeutralMode.Brake);
+        secondaryRight.setNeutralMode(NeutralMode.Brake);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
         shaftEncoder.setDistancePerPulse(1 / TICKS_PER_METER);
-    }
-
-    private void setStatusFrames(int periodMs, int timeoutMs, int... frames) {
-        for (int frame : frames) {
-            masterLeft.setStatusFramePeriod(frame, periodMs, timeoutMs);
-            slaveRight.setStatusFramePeriod(frame, periodMs, timeoutMs);
-        }
     }
 
     @Override
@@ -75,11 +63,12 @@ public class DriveTrainSide implements RRSubsystem {
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        masterLeft.set(TalonFXControlMode.PercentOutput, pwr);
+        mainLeft.set(TalonFXControlMode.PercentOutput, pwr);
+        secondaryRight.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
     public double getVoltage(boolean isMasterLeft) {
-        return isMasterLeft ? masterLeft.getMotorOutputVoltage() : slaveRight.getMotorOutputVoltage();
+        return isMasterLeft ? mainLeft.getMotorOutputVoltage() : secondaryRight.getMotorOutputVoltage();
     }
 
     public double getPosition() {
@@ -92,15 +81,15 @@ public class DriveTrainSide implements RRSubsystem {
 
     public void setVelocity(double vel) {
         // Converts m/s to ticks/100ms and sets velocity
-        double set = (vel * TICKS_PER_METER) / (MOTOR_TO_WHEEL_RATIO * 10);
+        double set = vel * TICKS_PER_METER / MOTOR_TO_WHEEL_RATIO / 10;
         logger.setpointChange(set);
-        masterLeft.set(ControlMode.Velocity, set);
+        mainLeft.set(ControlMode.Velocity, set);
+        secondaryRight.set(ControlMode.Velocity, set);
     }
 
     public void setVoltage(double volts) {
-        logger.stateChange("voltageSet", volts);
-        masterLeft.setVoltage(volts);
-        slaveRight.setVoltage(volts);
+        mainLeft.setVoltage(volts);
+        secondaryRight.setVoltage(volts);
     }
 
     public void resetEncoder() {

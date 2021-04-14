@@ -27,6 +27,8 @@ public @interface Input {
     Selector value();
 
     enum Selector {
-        DRIVER_LEFT, DRIVER_RIGHT, DRIVER_BUTTONS, CODRIVER_LEFT, CODRIVER_RIGHT, CODRIVER_BUTTONS
+        DRIVER_LEFT, DRIVER_RIGHT,
+        CODRIVER_LEFT, CODRIVER_RIGHT,
+        DRIVER_BUTTONS, CODRIVER_BUTTONS
     }
 }

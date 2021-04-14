@@ -26,18 +26,17 @@ import org.rivierarobotics.util.CameraFlip;
 
 @GenerateCreator
 public class CameraImageFlip extends InstantCommand {
-    private final boolean flipSetState;
+    private Boolean flipSetState;
 
     public CameraImageFlip(boolean flipSetState) {
         this.flipSetState = flipSetState;
     }
 
     public CameraImageFlip() {
-        this(!CameraFlip.DO_FLIP);
     }
 
     @Override
     public void execute() {
-        CameraFlip.DO_FLIP = flipSetState;
+        CameraFlip.DO_FLIP = flipSetState == null && !CameraFlip.DO_FLIP;
     }
 }

@@ -18,16 +18,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.colorwheel;
 
-public enum ClimbPosition {
-    FORTY_FIVE(0),
-    SIXTY(0),
-    SEVENTY_TWO(0);
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.ColorWheel;
 
-    public final int position;
+@GenerateCreator
+public class COWRotateToColor extends COWRotateNTimes {
+    private final ColorWheel.GameColor color;
 
-    ClimbPosition(int position) {
-        this.position = position;
+    public COWRotateToColor(@Provided ColorWheel colorWheel, ColorWheel.GameColor color, boolean isField) {
+        super(colorWheel, 0, 1);
+        this.color = isField ? robotToFieldColor(color) : color;
+    }
+
+    private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
+        ColorWheel.GameColor[] gcs = ColorWheel.GameColor.values();
+        return gcs[(robotColor.ordinal() + 2) % gcs.length];
+    }
+
+    @Override
+    public boolean isFinished() {
+        return colorWheel.getGameColor().equals(color);
     }
 }

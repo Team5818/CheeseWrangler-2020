@@ -18,23 +18,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.camera;
+package org.rivierarobotics.commands.climb;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.subsystems.Climb;
 
 @GenerateCreator
-public class ShuffleboardPause extends InstantCommand {
-    private final RobotShuffleboard shuffleboard;
+public class ClimbSetZero extends CommandBase {
+    private static final double MAX_POWER = 0.25;
+    private final Climb climb;
 
-    public ShuffleboardPause(@Provided RobotShuffleboard shuffleboard) {
-        this.shuffleboard = shuffleboard;
+    public ClimbSetZero(@Provided Climb climb) {
+        this.climb = climb;
     }
 
     @Override
     public void execute() {
-        shuffleboard.setPaused(!shuffleboard.isPaused());
+        climb.setPower(-MAX_POWER);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return climb.isAtBottom();
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        climb.resetEncoder();
+        climb.setPower(0);
     }
 }

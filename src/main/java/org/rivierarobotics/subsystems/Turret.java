@@ -39,11 +39,12 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 630;
-    private static final double MAX_ANGLE = 10;
-    private static final double MIN_ANGLE = -200;
+    private static final double ZERO_TICKS = 470;
+    private static final double MAX_ANGLE = 7;
+    private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
+    private static final int DETECT_BUFFER_TICKS = 100;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -51,6 +52,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final RobotShuffleboardTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
+    private int wrapErrOffset;
+    private long errLoopCtr;
 
     public Turret(int id, Provider<TurretControl> command, NavXGyro gyro, VisionUtil vision, RobotShuffleboard shuffleboard) {
         this.command = command;
@@ -58,7 +61,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.vision = vision;
         this.tab = shuffleboard.getTab("TurretHood");
         this.logger = Logging.getLogger(getClass());
-
 
         this.turretTalon = new WPI_TalonSRX(id);
         this.multiPID = new MultiPID(turretTalon,
@@ -70,6 +72,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS, BACK_LIMIT_TICKS, turretTalon);
         turretTalon.setSensorPhase(false);
         turretTalon.setNeutralMode(NeutralMode.Brake);
+        checkWrapError();
     }
 
     public int getForwardLimit() {
@@ -82,7 +85,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return turretTalon.getSelectedSensorPosition();
+        return turretTalon.getSelectedSensorPosition() + wrapErrOffset;
     }
 
     public double getVelocity() {
@@ -90,8 +93,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle(boolean isAbsolute) {
-        return isAbsolute ? MathUtil.wrapToCircle(gyro.getYaw() + MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS)) :
-                MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
+        double relAngle = MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
+        return isAbsolute ? MathUtil.wrapToCircle(gyro.getYaw() + relAngle) : relAngle;
     }
 
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
@@ -105,13 +108,14 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         double angleA = Math.PI / 2 - tx;
         double z = ShooterConstants.getLLtoTurretZ();
         double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
-        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a)));
+        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a))) + 2;
 
         finalAngle = tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
         return new double[] { a, MathUtil.wrapToCircle(finalAngle + getAngle(true)) };
     }
 
     public void setPositionTicks(double positionTicks) {
+        positionTicks -= wrapErrOffset;
         tab.setEntry("TurretSetPosTicks", positionTicks);
         multiPID.selectConfig(MultiPID.Type.POSITION);
         turretTalon.set(ControlMode.MotionMagic, positionTicks);
@@ -136,6 +140,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         if (initialTicks == max || initialTicks == min) {
             initialTicks = getPositionTicks() - ZERO_TICKS < 0 ? ticks : max;
         }
+        initialTicks -= wrapErrOffset;
         tab.setEntry("TFinalAngleTicks", initialTicks);
         logger.setpointChange(initialTicks);
         multiPID.selectConfig(MultiPID.Type.POSITION);
@@ -147,7 +152,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         tab.setEntry("setVelTicks", ticksPer100ms);
         multiPID.selectConfig(MultiPID.Type.VELOCITY);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
-        tab.setEntry("whatever", turretTalon.getClosedLoopTarget());
+        tab.setEntry("ctrlTarget", turretTalon.getClosedLoopTarget());
     }
 
     @Override
@@ -156,8 +161,29 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.PercentOutput, pwr);
     }
 
+    // Checks for turret overshoot / undershoot encoder issue
+    private void checkWrapError() {
+        final int lastWrapOffset = wrapErrOffset;
+        final double currPos = turretTalon.getSelectedSensorPosition();
+        boolean isOverRotated = currPos > FORWARD_LIMIT_TICKS + DETECT_BUFFER_TICKS;
+        boolean isUnderRotated = currPos < BACK_LIMIT_TICKS - DETECT_BUFFER_TICKS;
+        this.wrapErrOffset = isOverRotated ? -4096 : isUnderRotated ? 4096 : 0;
+
+        if (lastWrapOffset != wrapErrOffset) {
+            tab.setEntry("Wrap Error", isOverRotated ? "Over" : isUnderRotated ? "Under" : "None");
+            MotorUtil.setSoftLimits(FORWARD_LIMIT_TICKS - wrapErrOffset,
+                    BACK_LIMIT_TICKS - wrapErrOffset, turretTalon);
+        }
+    }
+
     @Override
     public void periodic() {
+        // Runs every 5s after init (5s/0.02s=250x)
+        errLoopCtr++;
+        if (errLoopCtr >= 250) {
+            checkWrapError();
+            errLoopCtr = 0;
+        }
         if (getDefaultCommand() == null) {
             setDefaultCommand(command.get());
         }

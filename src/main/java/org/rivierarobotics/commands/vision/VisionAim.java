@@ -57,7 +57,7 @@ public class VisionAim extends CommandBase {
         physics.setAimMode(PhysicsUtil.AimMode.VISION);
         physics.setExtraDistance(extraDistance);
         if (vision.getLLValue("tv") == 1) {
-            physics.calculateVelocities(false);
+            physics.calculateVelocities(physics.getX() < 4);
             double ballVel = physics.getBallVel();
             double hoodAngle = physics.getCalculatedHoodAngle();
             autoAimUtil.setValues(physics, hoodAngle, ballVel, physics.getAngleToTarget(), false);

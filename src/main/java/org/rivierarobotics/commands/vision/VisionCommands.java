@@ -32,6 +32,7 @@ public class VisionCommands {
     private final Provider<TrackerCorrectPosition> correctPositionProvider;
     private final EncoderAimCreator encoderAimCreator;
     private final ToggleAutoAimCreator autoAimCreator;
+    private final GalacticSearchCreator galacticSearchCreator;
     private final CalcAimCreator calcAimCreator;
 
     @Inject
@@ -40,13 +41,15 @@ public class VisionCommands {
                           Provider<TrackerCorrectPosition> correctPositionProvider,
                           EncoderAimCreator encoderAimCreator,
                           ToggleAutoAimCreator autoAimCreator,
-                          CalcAimCreator calcAimCreater) {
+                          CalcAimCreator calcAimCreater,
+                          GalacticSearchCreator galacticSearchCreator) {
         this.calcAimCreator = calcAimCreater;
         this.visionAimCreator = visionAimCreator;
         this.limelightLedSetStateCreator = limelightLedSetStateCreator;
         this.correctPositionProvider = correctPositionProvider;
         this.encoderAimCreator = encoderAimCreator;
         this.autoAimCreator = autoAimCreator;
+        this.galacticSearchCreator = galacticSearchCreator;
     }
 
     public CalcAim calcAim(VisionTarget target) {
@@ -71,5 +74,9 @@ public class VisionCommands {
 
     public LimelightLedSetState limelightSetState(LimelightLEDState state) {
         return limelightLedSetStateCreator.create(state);
+    }
+
+    public GalacticSearch galacticSearch(boolean isPathA) {
+        return galacticSearchCreator.create(isPathA);
     }
 }

@@ -22,18 +22,25 @@ package org.rivierarobotics.autonomous;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotBase;
-import edu.wpi.first.wpilibj.trajectory.Trajectory;
-import edu.wpi.first.wpilibj.trajectory.TrajectoryUtil;
 
 import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 public enum Pose2dPath {
     // An underscore indicates a camelCase filename, keep all lowercase filenames and uppercase enums otherwise
+    AN_BARREL_RACING,
+    AN_BOUNCE,
+    AN_SLALOM,
+    LOOP_TEST,
+
+    TESTING,
+    TESTING_CURVE,
+    TESTING_CURVE_LEFT,
     STRAIGHT,
     FLEX,
     FLEX_TAPE,
@@ -54,58 +61,42 @@ public enum Pose2dPath {
     LEFT_CENTER_BALL_TO_SHOOT,
     TRENCH_END_TO_SHOOT;
 
-    private Path trajectoryJson;
-    private Trajectory trajectory;
-    private String id;
+    private final Path pathFile;
+    private final String id;
 
     Pose2dPath() {
-        id = name().toLowerCase(Locale.US);
-        var builder = new StringBuilder(id);
+        var builder = new StringBuilder(name().toLowerCase(Locale.US));
         for (int i = builder.indexOf("_"); i != -1; i = builder.indexOf("_", i)) {
             builder.setCharAt(i + 1, Character.toUpperCase(builder.charAt(i + 1)));
             builder.deleteCharAt(i);
         }
-        id = builder.toString();
-        trajectoryJson = getPath();
-        if (!Files.exists(trajectoryJson)) {
-            throw new IllegalStateException("No path JSON for " + id);
+        this.id = builder.toString();
+        this.pathFile = getPath();
+        if (!Files.exists(pathFile)) {
+            throw new IllegalStateException("No path for " + id);
         }
     }
 
     private Path getPath() {
         var baseDir = RobotBase.isReal()
                 ? Filesystem.getDeployDirectory().toPath().resolve("paths/")
-                : Filesystem.getLaunchDirectory().toPath().resolve("pathWeaver/main");
-        return baseDir.resolve(id + ".wpilib.json");
+                : Filesystem.getLaunchDirectory().toPath().resolve("PathWeaver/Paths");
+        return baseDir.resolve(id);
     }
 
-    public Trajectory getTrajectory() {
-        if (trajectory == null) {
-            trajectory = loadTrajectory(trajectoryJson);
-        }
-        return trajectory;
-    }
-
-    private static Trajectory loadTrajectory(Path trajectoryJson) {
+    public List<SplinePoint> getSpline() {
         try {
-            return TrajectoryUtil.fromPathweaverJson(trajectoryJson);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
-    }
-
-    public static Trajectory group(Pose2dPath... paths) {
-        Trajectory traj = null;
-        StringBuilder sb = new StringBuilder();
-        try {
-            for (Pose2dPath path : paths) {
-                String fullJson = Files.readString(path.getPath(), StandardCharsets.UTF_8);
-                sb.append(sb.length() == 0 ? fullJson : fullJson.substring(fullJson.indexOf("Name\n") + 4));
+            List<String> rawPath = Files.readAllLines(pathFile);
+            List<SplinePoint> points = new LinkedList<>();
+            for (String str : rawPath.subList(1, rawPath.size())) {
+                String[] values = str.split(",");
+                points.add(new SplinePoint(Double.parseDouble(values[0]), Double.parseDouble(values[1]),
+                        Double.parseDouble(values[2]), Double.parseDouble(values[3])));
             }
-            traj = TrajectoryUtil.deserializeTrajectory(sb.toString());
+            return points;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return traj;
+        return new ArrayList<>();
     }
 }

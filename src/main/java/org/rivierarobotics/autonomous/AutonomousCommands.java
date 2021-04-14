@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
 import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
 import org.rivierarobotics.autonomous.advanced.TrenchRun;
@@ -32,31 +33,45 @@ import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 import javax.inject.Inject;
 
 public class AutonomousCommands {
-    private final PathweaverExecutorCreator pathweaverExecutorCreator;
+    private final PathTracerExecutorCreator pathTracerExecutorCreator;
     private final ForwardAutoCreator forwardAutoCreator;
     private final ShootAndDriveCreator shootAndDriveCreator;
     private final ShootLoopCreator shootLoopCreator;
     private final TrenchRunCreator trenchRunCreator;
+    private final RecordPathCreator recordPathCreator;
+    private final PowerReplayCreator powerReplayCreator;
 
     @Inject
-    public AutonomousCommands(PathweaverExecutorCreator pathweaverExecutorCreator,
+    public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
                               ForwardAutoCreator forwardAutoCreator,
                               ShootAndDriveCreator shootAndDriveCreator,
                               ShootLoopCreator shootLoopCreator,
-                              TrenchRunCreator trenchRunCreator) {
-        this.pathweaverExecutorCreator = pathweaverExecutorCreator;
+                              TrenchRunCreator trenchRunCreator,
+                              RecordPathCreator recordPathCreator,
+                              PowerReplayCreator powerReplayCreator) {
+        this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
         this.shootLoopCreator = shootLoopCreator;
         this.trenchRunCreator = trenchRunCreator;
+        this.recordPathCreator = recordPathCreator;
+        this.powerReplayCreator = powerReplayCreator;
     }
 
-    public PathweaverExecutor pathweaver(Pose2dPath path) {
-        return pathweaverExecutorCreator.create(path);
+    public PathTracerExecutor challengePath(ChallengePath cPath) {
+        return pathtracer(cPath.getPath());
     }
 
-    public PathweaverExecutor pathweaver(Pose2dPath path, boolean isAbsolute, boolean flip) {
-        return pathweaverExecutorCreator.create(path, isAbsolute, flip);
+    public PathTracerExecutor pathtracer(Pose2dPath path) {
+        return pathtracer(path, PathConstraints.create());
+    }
+
+    public PathTracerExecutor pathtracer(Pose2dPath path, PathConstraints constraints) {
+        return pathtracer(new SplinePath(path.getSpline(), constraints));
+    }
+
+    public PathTracerExecutor pathtracer(SplinePath path) {
+        return pathTracerExecutorCreator.create(path);
     }
 
     public ForwardAuto forwardAuto(boolean useVisionAim) {
@@ -73,5 +88,13 @@ public class AutonomousCommands {
 
     public TrenchRun trenchRun() {
         return trenchRunCreator.create();
+    }
+
+    public RecordPath recordPath(boolean isPower) {
+        return recordPathCreator.create(isPower);
+    }
+
+    public PowerReplay powerReplay() {
+        return powerReplayCreator.create();
     }
 }

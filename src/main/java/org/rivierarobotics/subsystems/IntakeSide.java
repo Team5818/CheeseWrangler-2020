@@ -30,11 +30,11 @@ public class IntakeSide {
     private final MechLogger logger;
 
     public IntakeSide(int id, boolean invert) {
-        intakeVictor = new WPI_VictorSPX(id);
+        this.intakeVictor = new WPI_VictorSPX(id);
         intakeVictor.configFactoryDefault();
         intakeVictor.setInverted(invert);
         intakeVictor.setNeutralMode(NeutralMode.Brake);
-        logger = Logging.getLogger(getClass(), invert ? "left" : "right");
+        this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
     }
 
     public void setPower(double pwr) {

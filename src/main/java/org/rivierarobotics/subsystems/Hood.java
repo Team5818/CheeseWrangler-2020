@@ -37,19 +37,19 @@ import javax.inject.Provider;
 
 public class Hood extends SubsystemBase implements RRSubsystem {
     private static final int ZERO_TICKS = 2800;
-    private static final int FORWARD_LIMIT_TICKS = 2500;
+    private static final int FORWARD_LIMIT_TICKS = 2550;
     private static final int BACK_LIMIT_TICKS = 2200;
     private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
-    private final RobotShuffleboardTab shuffleTab;
+    private final RobotShuffleboardTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
 
     public Hood(int motorId, Provider<HoodControl> command, RobotShuffleboard shuffleboard) {
         this.command = command;
         this.logger = Logging.getLogger(getClass());
-        this.shuffleTab = shuffleboard.getTab("TurretHood");
+        this.tab = shuffleboard.getTab("TurretHood");
 
         this.hoodTalon = new WPI_TalonSRX(motorId);
         this.multiPID = new MultiPID(hoodTalon,
@@ -100,15 +100,15 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
     public void setAngle(double angle) {
         double ticks = ZERO_TICKS - MathUtil.degreesToTicks(angle);
-        shuffleTab.setEntry("setAngle", angle);
-        shuffleTab.setEntry("setTicks", ticks);
+        tab.setEntry("setAngle", angle);
+        tab.setEntry("setTicks", ticks);
         logger.setpointChange(ticks);
         multiPID.selectConfig(MultiPID.Type.POSITION);
         hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 
     public void setVelocity(double vel) {
-        shuffleTab.setEntry("setVel", vel);
+        tab.setEntry("setVel", vel);
         multiPID.selectConfig(MultiPID.Type.VELOCITY);
         hoodTalon.set(ControlMode.Velocity, vel);
     }

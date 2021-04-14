@@ -20,27 +20,38 @@
 
 package org.rivierarobotics.commands.climb;
 
-import org.rivierarobotics.subsystems.ClimbPosition;
+import org.rivierarobotics.subsystems.Climb;
 
 import javax.inject.Inject;
 
 public class ClimbCommands {
     private final ClimbSetPositionCreator climbSetPositionCreator;
     private final ClimbSetPowerCreator climbSetPowerCreator;
+    private final ClimbSetZeroCreator climbSetZeroCreator;
 
     @Inject
     public ClimbCommands(ClimbSetPositionCreator climbSetPositionCreator,
-                         ClimbSetPowerCreator climbSetPowerCreator) {
+                         ClimbSetPowerCreator climbSetPowerCreator,
+                         ClimbSetZeroCreator climbSetZeroCreator) {
         this.climbSetPositionCreator = climbSetPositionCreator;
+        this.climbSetZeroCreator = climbSetZeroCreator;
         this.climbSetPowerCreator = climbSetPowerCreator;
     }
 
-    public ClimbSetPosition setPosition(double position) {
-        return climbSetPositionCreator.create(position);
+    public ClimbSetPosition setPositionInches(double setPosition) {
+        return climbSetPositionCreator.create(setPosition, true);
     }
 
-    public ClimbSetPosition setPosition(ClimbPosition height) {
-        return climbSetPositionCreator.create(height.position);
+    public ClimbSetPosition setPositionTicks(double setPosition) {
+        return climbSetPositionCreator.create(setPosition, false);
+    }
+
+    public ClimbSetPosition setClimbPosition(Climb.Position position) {
+        return climbSetPositionCreator.create(position.getTicks(), false);
+    }
+
+    public ClimbSetZero resetEncoder() {
+        return climbSetZeroCreator.create();
     }
 
     public ClimbSetPower setPower(double power) {

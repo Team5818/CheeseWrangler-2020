@@ -27,6 +27,7 @@ import org.rivierarobotics.commands.camera.CameraCommands;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.climb.ClimbCommands;
 import org.rivierarobotics.commands.collect.CollectionCommands;
+import org.rivierarobotics.commands.colorwheel.ColorWheelCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.commands.flywheel.FlywheelCommands;
@@ -38,9 +39,9 @@ import org.rivierarobotics.commands.vision.VisionCommands;
 public abstract class CommandComponent {
     public abstract DriveCommands drive();
 
-    public abstract HoodCommands hood();
-
     public abstract TurretCommands turret();
+
+    public abstract HoodCommands hood();
 
     public abstract FlywheelCommands flywheel();
 
@@ -48,15 +49,17 @@ public abstract class CommandComponent {
 
     public abstract EjectorCommands ejector();
 
-    public abstract VisionCommands vision();
-
     public abstract CheeseWheelCommands cheeseWheel();
 
-    public abstract AutonomousCommands auto();
+    public abstract ColorWheelCommands colorWheel();
+
+    public abstract ClimbCommands climb();
 
     public abstract CameraCommands camera();
 
-    public abstract ClimbCommands climb();
+    public abstract VisionCommands vision();
+
+    public abstract AutonomousCommands auto();
 
     @Module(subcomponents = CommandComponent.class)
     public interface CCModule {

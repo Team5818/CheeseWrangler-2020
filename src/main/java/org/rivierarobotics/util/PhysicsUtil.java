@@ -46,17 +46,17 @@ public class PhysicsUtil {
     private double[] vXYZ = new double[3];
 
     @Inject
-    public PhysicsUtil(DriveTrain dt, Turret turret, Hood hood,
-                       RobotShuffleboard robotShuffleboard, PositionTracker positionTracker,
+    public PhysicsUtil(DriveTrain driveTrain, Turret turret, Hood hood,
+                       RobotShuffleboard shuffleboard, PositionTracker positionTracker,
                        NavXGyro gyro, Flywheel flywheel) {
         this.turret = turret;
-        this.driveTrain = dt;
+        this.driveTrain = driveTrain;
         this.hood = hood;
         this.gyro = gyro;
         this.positionTracker = positionTracker;
         this.flywheel = flywheel;
-        this.tab = robotShuffleboard.getTab("Auto Aim");
-        this.graphTab = robotShuffleboard.getTab("Physics");
+        this.tab = shuffleboard.getTab("Auto Aim");
+        this.graphTab = shuffleboard.getTab("Physics");
     }
 
     public double getX() {
@@ -112,6 +112,11 @@ public class PhysicsUtil {
         if (Math.abs(driveTrain.getYVelocity()) > 0.1) {
             hoodAngle += (driveTrain.getYVelocity());
         }
+        double targetDist = getDistanceToTarget();
+        hoodAngle -= (7 - targetDist) * 0.2;
+        if (targetDist < 4) {
+            hoodAngle = 52; // max for close shot
+        }
         tab.setEntry("Hood Angle", hoodAngle);
         return hoodAngle;
     }
@@ -129,21 +134,14 @@ public class PhysicsUtil {
     public double getBallVel() {
         //Returns ball's velocity in m/s
         double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
-
+        if (getDistanceToTarget() >= 4) {
+            ballVel += 0.3;
+        }
         tab.setEntry("ballVel", ballVel);
         return ballVel;
     }
 
     private double captainKalbag() {
-        //Equation: (vx*y - vy*x)/((vx^2 + vy^2)*t^2 + (-2*vx*x - 2*vy*y)*t + x^2 + y^2)
-        //Returns change in ticks per 100ms
-        //double velocityInRads = (vx * y - vy * x) / ((vx * vx + vy * vy) * t * t + (-2 * vx * x - 2 * vy * y) * t + x * x + y * y);
-        //double velocityInDegrees = velocityInRads * (180 / Math.PI);
-        double x = getX();
-        double y = getY();
-        double vx = driveTrain.getYVelocity();
-        double vy = driveTrain.getXVelocity();
-
         double targetAngle = getAngleToTarget();
         double currentAngle = (turret.getAngle(false) + gyro.getYaw()) % 360;
         double angleDiff = targetAngle - currentAngle;
@@ -162,10 +160,10 @@ public class PhysicsUtil {
         double x = getX();
         double y = getY();
         double z = getZ();
-        double xVEl = driveTrain.getYVelocity();
-        double yVEL = driveTrain.getXVelocity();
+        double xVel = driveTrain.getYVelocity();
+        double yVel = driveTrain.getXVelocity();
 
-        double[] tempXYZ = { x / ShooterConstants.getTConstant() - xVEl, y / ShooterConstants.getTConstant() - yVEL, ShooterConstants.getZVelocityConstant() };
+        double[] tempXYZ = { x / ShooterConstants.getTConstant() - xVel, y / ShooterConstants.getTConstant() - yVel, ShooterConstants.getZVelocityConstant() };
         if (!perpendicularShot) {
             tab.setEntry("Trajectory: ", "Curve");
             tab.setEntry("ED", extraDistance);
@@ -181,7 +179,7 @@ public class PhysicsUtil {
             if (Double.isNaN(tStraight)) {
                 tab.setEntry("Trajectory: ", "ARC");
             }
-            vXYZ = !Double.isNaN(t) ? new double[]{x / t - xVEl, y / t - yVEL, z / t + g * t} : tempXYZ;
+            vXYZ = !Double.isNaN(t) ? new double[]{x / t - xVel, y / t - yVel, z / t + g * t} : tempXYZ;
         } else {
             graphTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;
@@ -197,8 +195,8 @@ public class PhysicsUtil {
         graphTab.setEntry("x", x);
         graphTab.setEntry("y", y);
         graphTab.setEntry("z", z);
-        graphTab.setEntry("driveTrainVX", xVEl);
-        graphTab.setEntry("driveTrainVY", yVEL);
+        graphTab.setEntry("driveTrainVX", xVel);
+        graphTab.setEntry("driveTrainVY", yVel);
         graphTab.setEntry("vx", vXYZ[0]);
         graphTab.setEntry("vy", vXYZ[1]);
         graphTab.setEntry("vz", vXYZ[2]);

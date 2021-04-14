@@ -18,31 +18,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.subsystems;
+package org.rivierarobotics.commands.drive;
 
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
-import org.rivierarobotics.appjack.Logging;
-import org.rivierarobotics.appjack.MechLogger;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import net.octyl.aptcreator.GenerateCreator;
+import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.DriveTrain;
 
-public class EjectorSide {
-    private final WPI_VictorSPX ejectorVictor;
-    private final MechLogger logger;
+@GenerateCreator
+public class DriveSetVelocity extends CommandBase {
+    private final DriveTrain driveTrain;
+    private final double vel;
 
-    public EjectorSide(int id, boolean invert) {
-        ejectorVictor = new WPI_VictorSPX(id);
-        ejectorVictor.configFactoryDefault();
-        ejectorVictor.setInverted(invert);
-        ejectorVictor.setNeutralMode(NeutralMode.Brake);
-        logger = Logging.getLogger(getClass(), invert ? "left" : "right");
+    public DriveSetVelocity(@Provided DriveTrain driveTrain, double vel) {
+        this.driveTrain = driveTrain;
+        this.vel = vel;
+        addRequirements(driveTrain);
     }
 
-    public void setPower(double pwr) {
-        logger.powerChange(pwr);
-        ejectorVictor.set(pwr);
+    @Override
+    public void execute() {
+        driveTrain.setVelocity(vel);
     }
 
-    public double getPower() {
-        return ejectorVictor.get();
+    @Override
+    public void end(boolean interrupted) {
+        driveTrain.setVelocity(0);
     }
 }
+
