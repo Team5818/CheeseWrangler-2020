@@ -39,9 +39,9 @@ import org.rivierarobotics.commands.vision.VisionCommands;
 public abstract class CommandComponent {
     public abstract DriveCommands drive();
 
-    public abstract HoodCommands hood();
-
     public abstract TurretCommands turret();
+
+    public abstract HoodCommands hood();
 
     public abstract FlywheelCommands flywheel();
 
@@ -49,17 +49,17 @@ public abstract class CommandComponent {
 
     public abstract EjectorCommands ejector();
 
-    public abstract VisionCommands vision();
-
     public abstract CheeseWheelCommands cheeseWheel();
 
     public abstract ColorWheelCommands colorWheel();
 
-    public abstract AutonomousCommands auto();
+    public abstract ClimbCommands climb();
 
     public abstract CameraCommands camera();
 
-    public abstract ClimbCommands climb();
+    public abstract VisionCommands vision();
+
+    public abstract AutonomousCommands auto();
 
     @Module(subcomponents = CommandComponent.class)
     public interface CCModule {

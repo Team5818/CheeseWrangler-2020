@@ -36,7 +36,7 @@ public class AutoTuner {
     private final BaseTalon motor;
     private final double set;
     private final List<Double> zeroTimes;
-    private PIDConfig config;
+    private final PIDConfig config;
     private RobotShuffleboardTab tab;
 
     public AutoTuner(BaseTalon motor, double set) {

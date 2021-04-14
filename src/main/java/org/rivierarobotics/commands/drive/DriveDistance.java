@@ -39,6 +39,10 @@ public class DriveDistance extends CommandBase {
         addRequirements(driveTrain);
     }
 
+    public DriveDistance(@Provided DriveTrain driveTrain, double finalMeters) {
+        this(driveTrain, finalMeters, 0.5);
+    }
+
     @Override
     public void initialize() {
         startMeters = driveTrain.getLeft().getPosition();

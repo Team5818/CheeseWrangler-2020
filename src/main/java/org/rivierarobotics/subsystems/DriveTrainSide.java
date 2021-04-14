@@ -33,22 +33,22 @@ import org.rivierarobotics.util.MotorUtil;
 public class DriveTrainSide implements RRSubsystem {
     private static final double TICKS_PER_METER = 4380;
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
-    private final WPI_TalonFX masterLeft;
-    private final WPI_TalonFX slaveRight;
+    private final WPI_TalonFX mainLeft;
+    private final WPI_TalonFX secondaryRight;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
-        this.masterLeft = new WPI_TalonFX(motors.master);
-        this.slaveRight = new WPI_TalonFX(motors.slave);
+        this.mainLeft = new WPI_TalonFX(motors.main);
+        this.secondaryRight = new WPI_TalonFX(motors.secondary);
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
 
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(0.22, 0, 0, 0.051), 0, masterLeft, slaveRight);
-        masterLeft.setInverted(invert);
-        slaveRight.setInverted(invert);
-        masterLeft.setNeutralMode(NeutralMode.Brake);
-        slaveRight.setNeutralMode(NeutralMode.Brake);
+            new PIDConfig(0.22, 0, 0, 0.051), 0, mainLeft, secondaryRight);
+        mainLeft.setInverted(invert);
+        secondaryRight.setInverted(invert);
+        mainLeft.setNeutralMode(NeutralMode.Brake);
+        secondaryRight.setNeutralMode(NeutralMode.Brake);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
@@ -63,12 +63,12 @@ public class DriveTrainSide implements RRSubsystem {
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        masterLeft.set(TalonFXControlMode.PercentOutput, pwr);
-        slaveRight.set(TalonFXControlMode.PercentOutput, pwr);
+        mainLeft.set(TalonFXControlMode.PercentOutput, pwr);
+        secondaryRight.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
     public double getVoltage(boolean isMasterLeft) {
-        return isMasterLeft ? masterLeft.getMotorOutputVoltage() : slaveRight.getMotorOutputVoltage();
+        return isMasterLeft ? mainLeft.getMotorOutputVoltage() : secondaryRight.getMotorOutputVoltage();
     }
 
     public double getPosition() {
@@ -83,14 +83,13 @@ public class DriveTrainSide implements RRSubsystem {
         // Converts m/s to ticks/100ms and sets velocity
         double set = vel * TICKS_PER_METER / MOTOR_TO_WHEEL_RATIO / 10;
         logger.setpointChange(set);
-        masterLeft.set(ControlMode.Velocity, set);
-        slaveRight.set(ControlMode.Velocity, set);
+        mainLeft.set(ControlMode.Velocity, set);
+        secondaryRight.set(ControlMode.Velocity, set);
     }
 
     public void setVoltage(double volts) {
-        logger.stateChange("voltageSet", volts);
-        masterLeft.setVoltage(volts);
-        slaveRight.setVoltage(volts);
+        mainLeft.setVoltage(volts);
+        secondaryRight.setVoltage(volts);
     }
 
     public void resetEncoder() {

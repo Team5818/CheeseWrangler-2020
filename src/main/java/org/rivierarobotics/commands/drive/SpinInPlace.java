@@ -37,7 +37,8 @@ public class SpinInPlace extends CommandBase {
     private double initialDegrees;
     private int signum = 1;
 
-    public SpinInPlace(@Provided DriveTrain driveTrain, @Provided NavXGyro gyro, double turnDegrees, boolean isAbsolute) {
+    public SpinInPlace(@Provided DriveTrain driveTrain, @Provided NavXGyro gyro,
+                       double turnDegrees, boolean isAbsolute) {
         this.driveTrain = driveTrain;
         this.gyro = gyro;
         this.turnDegrees = turnDegrees;
@@ -47,9 +48,9 @@ public class SpinInPlace extends CommandBase {
 
     @Override
     public void initialize() {
-        this.initialDegrees = gyro.getYaw();
+        initialDegrees = gyro.getYaw();
         if ((isAbsolute && turnDegrees < initialDegrees) || (turnDegrees < 0)) {
-            this.signum = -1;
+            signum = -1;
         }
     }
 

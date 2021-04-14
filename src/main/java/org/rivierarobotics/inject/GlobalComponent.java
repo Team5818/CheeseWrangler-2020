@@ -57,12 +57,12 @@ public abstract class GlobalComponent {
         getColorWheel();
         getClimb();
         getNavXGyro();
+        getCameraServo();
+        getVisionUtil();
+        getPhysicsUtil();
+        getPositionTracker();
         getShuffleboard();
         getButtonConfiguration();
-        getVisionUtil();
-        getCameraServo();
-        getPositionTracker();
-        getPhysicsUtil();
     }
 
     public abstract DriveTrain getDriveTrain();
@@ -75,8 +75,6 @@ public abstract class GlobalComponent {
 
     public abstract Intake getIntake();
 
-    public abstract PhysicsUtil getPhysicsUtil();
-
     public abstract Ejector getEjector();
 
     public abstract CheeseWheel getCheeseWheel();
@@ -87,15 +85,17 @@ public abstract class GlobalComponent {
 
     public abstract NavXGyro getNavXGyro();
 
-    public abstract RobotShuffleboard getShuffleboard();
-
-    public abstract ButtonConfiguration getButtonConfiguration();
+    public abstract CameraServo getCameraServo();
 
     public abstract VisionUtil getVisionUtil();
 
-    public abstract CameraServo getCameraServo();
+    public abstract PhysicsUtil getPhysicsUtil();
 
     public abstract PositionTracker getPositionTracker();
+
+    public abstract RobotShuffleboard getShuffleboard();
+
+    public abstract ButtonConfiguration getButtonConfiguration();
 
     public abstract CommandComponent.Builder getCommandComponentBuilder();
 }

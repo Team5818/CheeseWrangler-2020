@@ -61,18 +61,17 @@ public enum Pose2dPath {
     LEFT_CENTER_BALL_TO_SHOOT,
     TRENCH_END_TO_SHOOT;
 
-    private Path pathFile;
-    private String id;
+    private final Path pathFile;
+    private final String id;
 
     Pose2dPath() {
-        id = name().toLowerCase(Locale.US);
-        var builder = new StringBuilder(id);
+        var builder = new StringBuilder(name().toLowerCase(Locale.US));
         for (int i = builder.indexOf("_"); i != -1; i = builder.indexOf("_", i)) {
             builder.setCharAt(i + 1, Character.toUpperCase(builder.charAt(i + 1)));
             builder.deleteCharAt(i);
         }
-        id = builder.toString();
-        pathFile = getPath();
+        this.id = builder.toString();
+        this.pathFile = getPath();
         if (!Files.exists(pathFile)) {
             throw new IllegalStateException("No path for " + id);
         }

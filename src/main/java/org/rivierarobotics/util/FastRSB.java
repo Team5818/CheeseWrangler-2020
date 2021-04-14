@@ -47,11 +47,11 @@ public class FastRSB {
     private InetAddress broadcastIp;
 
     private FastRSB() {
-        data = new LinkedHashMap<>();
-        thread = null;
+        this.data = new LinkedHashMap<>();
+        this.thread = null;
         try {
-            broadcastIp = getRioBroadcastAddress();
-            socket = new DatagramSocket();
+            this.broadcastIp = getRioBroadcastAddress();
+            this.socket = new DatagramSocket();
         } catch (SocketException | UnknownHostException e) {
             e.printStackTrace();
         }

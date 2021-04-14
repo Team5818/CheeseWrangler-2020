@@ -67,11 +67,11 @@ public class GalacticSearch extends CommandBase {
 
     public GalacticSearch(@Provided AutonomousCommands autonomousCommands,
                           @Provided CollectionCommands collectionCommands,
-                          @Provided RobotShuffleboard robotShuffleboard,
+                          @Provided RobotShuffleboard shuffleboard,
                           boolean isPathA) {
         this.autonomousCommands = autonomousCommands;
         this.collectionCommands = collectionCommands;
-        this.tab = robotShuffleboard.getTab("Vision");
+        this.tab = shuffleboard.getTab("Vision");
         this.isPathA = isPathA;
     }
 
@@ -104,7 +104,7 @@ public class GalacticSearch extends CommandBase {
         return cmd != null && cmd.isScheduled();
     }
 
-    private List<Point> findBallLocations(Mat img) {
+    public static List<Point> findBallLocations(Mat img) {
         List<Point> out = new ArrayList<>();
         Mat matA = img.clone();
         Mat matB = new Mat();

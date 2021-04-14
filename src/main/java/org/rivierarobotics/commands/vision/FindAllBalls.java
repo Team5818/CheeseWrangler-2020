@@ -34,9 +34,7 @@ import org.rivierarobotics.autonomous.SplinePoint;
 import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Pair;
-import org.rivierarobotics.util.VisionUtil;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import javax.inject.Inject;
@@ -46,16 +44,12 @@ public class FindAllBalls extends CommandBase {
     private static final Pair<Double> FOCAL_LENGTH_PX = new Pair<>(0.0, 0.0);
     private final AutonomousCommands autonomousCommands;
     private final CollectionCommands collectionCommands;
-    private final VisionUtil visionUtil;
     private ParallelDeadlineGroup cmd;
 
     @Inject
-    public FindAllBalls(AutonomousCommands autonomousCommands,
-                        CollectionCommands collectionCommands,
-                        VisionUtil visionUtil) {
+    public FindAllBalls(AutonomousCommands autonomousCommands, CollectionCommands collectionCommands) {
         this.autonomousCommands = autonomousCommands;
         this.collectionCommands = collectionCommands;
-        this.visionUtil = visionUtil;
     }
 
     @Override
@@ -70,7 +64,7 @@ public class FindAllBalls extends CommandBase {
         intrinsic = intrinsic.invert();
 
         List<SplinePoint> points = new LinkedList<>();
-        List<Point> cvBalls = new ArrayList<>(); /*visionUtil.findBallLocations(frame);*/
+        List<Point> cvBalls = GalacticSearch.findBallLocations(frame);
         for (Point ballPt : cvBalls) {
             SimpleMatrix ballMatrix = new SimpleMatrix(3, 1, MatrixType.DDRM);
             ballMatrix.setColumn(0, 0, ballPt.x, ballPt.y, 1);

@@ -21,12 +21,12 @@
 package org.rivierarobotics.autonomous;
 
 public class SPOutput {
-    private double posX;
-    private double posY;
-    private double velX;
-    private double velY;
-    private double accelX;
-    private double accelY;
+    private final double posX;
+    private final double posY;
+    private final double velX;
+    private final double velY;
+    private final double accelX;
+    private final double accelY;
 
     public SPOutput(double posX, double posY, double velX, double velY, double accelX, double accelY) {
         this.posX = posX;
@@ -34,30 +34,6 @@ public class SPOutput {
         this.velX = velX;
         this.velY = velY;
         this.accelX = accelX;
-        this.accelY = accelY;
-    }
-
-    public void setPosX(double posX) {
-        this.posX = posX;
-    }
-
-    public void setPosY(double posY) {
-        this.posY = posY;
-    }
-
-    public void setVelX(double velX) {
-        this.velX = velX;
-    }
-
-    public void setVelY(double velY) {
-        this.velY = velY;
-    }
-
-    public void setAccelX(double accelX) {
-        this.accelX = accelX;
-    }
-
-    public void setAccelY(double accelY) {
         this.accelY = accelY;
     }
 

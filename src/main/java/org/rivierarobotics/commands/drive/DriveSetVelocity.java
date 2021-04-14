@@ -28,7 +28,7 @@ import org.rivierarobotics.subsystems.DriveTrain;
 @GenerateCreator
 public class DriveSetVelocity extends CommandBase {
     private final DriveTrain driveTrain;
-    private double vel = 0;
+    private final double vel;
 
     public DriveSetVelocity(@Provided DriveTrain driveTrain, double vel) {
         this.driveTrain = driveTrain;

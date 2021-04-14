@@ -93,8 +93,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     }
 
     public double getAngle(boolean isAbsolute) {
-        return isAbsolute ? MathUtil.wrapToCircle(gyro.getYaw() + MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS)) :
-                MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
+        double relAngle = MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
+        return isAbsolute ? MathUtil.wrapToCircle(gyro.getYaw() + relAngle) : relAngle;
     }
 
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {

@@ -34,32 +34,33 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
+    private static final double PWR_CONST = 1.0;
+    private static final int SLOT_TOLERANCE = 60;
     private final Intake intake;
-    private double frontPower;
-    private double backPower;
     private final CheeseWheel cheeseWheel;
     private final CheeseWheelCommands cheeseWheelCommands;
-    private static final double pwrConstant = 1.0;
-    private static final int tolerance = 60;
-    private boolean firstMoveDone = false;
-    private final RobotShuffleboardTab shuffleTab;
-    private CWCycleSlot cycleSlot;
+    private final RobotShuffleboardTab tab;
     private final CheeseWheel.AngleOffset mode;
+    private double frontPower;
+    private double backPower;
+    private boolean firstMoveDone = false;
+    private CWCycleSlot cycleSlot;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
-                          @Provided CheeseWheelCommands cheeseWheelCommands, @Provided RobotShuffleboard rsb,
+                          @Provided CheeseWheelCommands cheeseWheelCommands,
+                          @Provided RobotShuffleboard shuffleboard,
                           CheeseWheel.AngleOffset mode) {
         this.intake = intake;
         this.cheeseWheel = cheeseWheel;
         this.cheeseWheelCommands = cheeseWheelCommands;
-        this.shuffleTab = rsb.getTab("Cheese Wheel");
+        this.tab = shuffleboard.getTab("Cheese Wheel");
         this.mode = mode;
         addRequirements(intake);
     }
 
     @Override
     public void initialize() {
-        if (!cheeseWheel.onSlot(mode, tolerance) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
+        if (!cheeseWheel.onSlot(mode, SLOT_TOLERANCE) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
             cycleSlot = !isFull() ? cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30) :
                     cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.EITHER, 30);
             cycleSlot.schedule();
@@ -68,27 +69,24 @@ public class CollectInfiniteWedges extends CommandBase {
 
     @Override
     public void execute() {
-
-        if (cycleSlot == null || !CommandScheduler.getInstance().isScheduled(cycleSlot) || cheeseWheel.onSlot(mode, tolerance)) {
+        if (cycleSlot == null || !CommandScheduler.getInstance().isScheduled(cycleSlot) || cheeseWheel.onSlot(mode, SLOT_TOLERANCE)) {
             firstMoveDone = true;
         }
 
         if (firstMoveDone) {
             switch (mode) {
                 case COLLECT_FRONT:
-                    frontPower = pwrConstant;
+                    frontPower = PWR_CONST;
                     backPower = 0.0;
                     break;
                 case COLLECT_BACK:
                     frontPower = 0.0;
-                    backPower = pwrConstant;
+                    backPower = PWR_CONST;
                     break;
                 default:
                     throw new IllegalArgumentException("Invalid side");
             }
         }
-
-
 
         if (isFull() || !firstMoveDone) {
             frontPower = 0;
@@ -99,9 +97,9 @@ public class CollectInfiniteWedges extends CommandBase {
 
         int index = cheeseWheel.getIndex(mode);
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
-        shuffleTab.setEntry("ClosestIndex", closest.ordinal());
-        shuffleTab.setEntry("ClosestHasBall", closest.hasBall());
-        if (closest.hasBall() && cheeseWheel.onSlot(mode, tolerance) && !isFull()) {
+        tab.setEntry("ClosestIndex", closest.ordinal());
+        tab.setEntry("ClosestHasBall", closest.hasBall());
+        if (closest.hasBall() && cheeseWheel.onSlot(mode, SLOT_TOLERANCE) && !isFull()) {
             cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
         }
     }
