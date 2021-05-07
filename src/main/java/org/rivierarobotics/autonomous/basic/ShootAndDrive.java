@@ -26,6 +26,16 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 
+/**
+ * Default autonomous routine. Only shoots preloaded balls, does not collect
+ * or use PathTracer. Non-dynamic auto. Moves into field for point value.
+ *
+ * <p>Process:</p>
+ * <ol>
+ *     <li>Shoot preloaded balls x5</li>
+ *     <li>Drive 1m back at 25% power</li>
+ * </ol>
+ */
 @GenerateCreator
 public class ShootAndDrive extends SequentialCommandGroup {
     public ShootAndDrive(@Provided DriveCommands drive,

@@ -33,19 +33,17 @@ tasks.register<Copy>("copyPathTracerLocal") {
 }
 tasks.getByName("compilePathWeaver").finalizedBy(tasks.getByName("copyPathTracerLocal"))
 
-tasks.register("windowsLaunchSim") {
+// Errors with libjpeg8 (default), manually set LD_PRELOAD to libjpeg7
+// https://github.com/wpilibsuite/PathWeaver/issues/246
+task("PathWeaver-libjpeg7-force") {
+    group = "GradleRIO"
     doLast {
-        project.exec{
-            workingDir = file("./build/")
-            commandLine("cmd", "/C", "start", "gradlerio_simulateJava.bat")
+        project.exec {
+            environment("LD_PRELOAD", "/usr/lib/libjpeg.so.7")
+            commandLine("./gradlew", "PathWeaver")
         }
     }
 }
-/*
-if (edu.wpi.first.toolchain.NativePlatforms.desktopOS() == "windows") {
-    tasks.getByName("simulateExternalJava").finalizedBy(tasks.getByName("windowsLaunchSim"))
-}
-*/
 
 dependencies {
     simulation("edu.wpi.first.halsim:halsim_ds_socket:${wpi.wpilibVersion}:${edu.wpi.first.toolchain.NativePlatforms.desktop}@zip")

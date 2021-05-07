@@ -32,6 +32,13 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.LinkedList;
 
+/**
+ * Records and then replays a path based on joystick power inputs. Does not
+ * store the path or have error correction. Should not be used if PathTracer
+ * use is an option. Works in three stages. Press driver button 5 to
+ * transition from record mode to reset mode (the user should drive the robot
+ * back to the start point) and then again to redrive the path.
+ */
 @GenerateCreator
 public class PowerReplay extends CommandBase {
     private final DriveTrain driveTrain;

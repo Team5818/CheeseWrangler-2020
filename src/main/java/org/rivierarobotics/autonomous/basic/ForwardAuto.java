@@ -32,6 +32,21 @@ import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
+/**
+ * Basic-type autonomous routine. Does not use PathTracer, not a dynamic auto
+ * (i.e. no path selection, no error correction). Shoots, goes forward,
+ * collects, shoots again.
+ *
+ * <p>Process:</p>
+ * <ol>
+ *     <li>Shoot preloaded balls x5</li>
+ *     <li>Continuous side-intelligent collect</li>
+ *     <li>Drive 5m back @ 25% pwr, max 6 seconds</li>
+ *     <li>Drive 5m forwards @ 25% pwr, max 6 seconds</li>
+ *     <li>If useAutoAim: calcAim to inner target for 2s</li>
+ *     <li>Shoot collected balls x5</li>
+ * </ol>
+ */
 @GenerateCreator
 public class ForwardAuto extends SequentialCommandGroup {
     public ForwardAuto(@Provided DriveCommands drive,
@@ -42,14 +57,15 @@ public class ForwardAuto extends SequentialCommandGroup {
         addCommands(
             cheeseWheel.shootNWedges(5),
             new ParallelDeadlineGroup(
-                new SequentialCommandGroup(
-                    drive.driveDistance(-5, 0.25).withTimeout(6.0),
-                    drive.driveDistance(5, 0.5).withTimeout(6.0)
-                ),
+                drive.driveDistance(-5, 0.25).withTimeout(6.0),
+                intake.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+            ),
+            new ParallelDeadlineGroup(
+                drive.driveDistance(5, 0.5).withTimeout(6.0),
                 intake.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
             ),
             useAutoAim
-                ? vision.encoderAim(VisionTarget.INNER).withTimeout(1.0)
+                ? vision.calcAim(VisionTarget.INNER).withTimeout(2.0)
                 : new InstantCommand(),
             cheeseWheel.shootNWedges(5)
         );

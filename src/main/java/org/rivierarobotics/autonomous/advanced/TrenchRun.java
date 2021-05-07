@@ -32,6 +32,25 @@ import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
+/**
+ * Autonomous command to drive under the trench/color wheel and make a
+ * shooting loop. Not a dynamic auto (i.e. no path params). May need to be
+ * modified to fit inside autonomous time window (long).
+ *
+ * <p>Process:</p>
+ * <ol>
+ *     <li>Start inner target AutoAim</li>
+ *     <li>Turn to align with trench</li>
+ *     <li>Shoot preloaded balls x5</li>
+ *     <li>Drive direct distance (encoders) 1.8m @ 25% pwr</li>
+ *     <li>Collect front</li>
+ *     <li>Return to shooting position</li>
+ *     <li>Shoot collected balls x5 (max x3)</li>
+ *     <li>Move to center bar balls x2</li>
+ *     <li>Return to shooting position</li>
+ *     <li>Shoot collected balls x5</li>
+ * </ol>
+ */
 @GenerateCreator
 public class TrenchRun extends SequentialCommandGroup {
     public TrenchRun(@Provided AutonomousCommands auto, @Provided DriveCommands drive, @Provided CollectionCommands collect,

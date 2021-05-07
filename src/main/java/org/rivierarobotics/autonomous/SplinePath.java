@@ -30,6 +30,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Performs calculations for PathTracer paths. Pass waypoints in with a
+ * <code>PathConstraints</code> object, and run <code>calculate()</code> to
+ * generate an interpolated path (after once running
+ * <code>recalculatePath()</code>. Supports all three trajectory generation
+ * methods as listed in <code>CreationMode</code>. All units are in meters,
+ * meters per second (velocity), or meters per second squared (acceleration).
+ * Note that acceleration limits do not work completely.
+ *
+ * @see PathTracerExecutor
+ * @see PathConstraints
+ * @see SplinePoint
+ * @see Section
+ */
 public class SplinePath {
     public static final double MAX_POSSIBLE_VEL = 4.5; // m/s
     public static final double MAX_POSSIBLE_ACCEL = 2.0; // m/s^2
@@ -77,10 +91,23 @@ public class SplinePath {
         }
     }
 
+    // Wrapper constructor with default PathConstraints
     public SplinePath(List<SplinePoint> points) {
         this(points, PathConstraints.create());
     }
 
+    /**
+     * Extrapolates and endpoint based on the slope between two neighboring
+     * points in a line. Used for Catmull-Rom generation (endpoints are used
+     * for the control sequence, not as waypoints).
+     *
+     * @param p0idx the index of the first passed point within all waypoints.
+     * @param p1idx the index of the second passed point within all waypoints.
+     * @param focusIdx the index of the waypoint to which the extrapolated
+     *     endpoint should be added to.
+     * @param invert true if the endpoint is before the focus point, else false.
+     * @return a new Vec2D containing an extrapolated endpoint.
+     */
     private Vec2D extrapolateEndpoint(int p0idx, int p1idx, int focusIdx, boolean invert) {
         final double m = 0.1;
         double dy = points.get(p1idx).getY() - points.get(p0idx).getY();
@@ -88,6 +115,13 @@ public class SplinePath {
         return points.get(focusIdx).addVec(new Vec2D(invert ? -m : m * dx, invert ? -m : m * dy));
     }
 
+    /**
+     * Recalculate the path from waypoints. Will interpolate between each set
+     * of two points (daisy-chained together) and store a series of
+     * <code>Section</code> objects with set time and acceleration goals.
+     * Must be called before running a <code>SplinePath</code> to run initial
+     * interpolation and ensure an approximately correct run time.
+     */
     public void recalculatePath() {
         totalTime = 0;
         sections.clear();
@@ -98,13 +132,23 @@ public class SplinePath {
             sc = new Section(points.get(i - 1), points.get(i), i - 1);
             scTime = Math.max(0.05, timeAtLimited(sc, true));
             sc.setTime(scTime);
-            sc.setAccel(calculate(sc, RIO_LOOP_TIME_MS, false), calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
+            sc.setAccel(calculate(sc, RIO_LOOP_TIME_MS, false),
+                calculate(sc, 1 - RIO_LOOP_TIME_MS, false));
             sections.put(totalTime, sc);
             totalTime += scTime;
         }
         resetOmega();
     }
 
+    /**
+     * Calculate the interpolated path output at a specific time. Uses
+     * precomputed sections from <code>recalculatePath()</code> and
+     * bound-checks overall time to be between the [0, 1] time parameter for
+     * each section.
+     *
+     * @param t the current time of the path in seconds.
+     * @return the interpolated spline position, velocity, and acceleration.
+     */
     public SPOutput calculate(double t) {
         double prev = 0;
         for (double d : sections.keySet()) {
@@ -118,6 +162,17 @@ public class SplinePath {
         return calculate(curr, (t - prev) / curr.time, true);
     }
 
+    /**
+     * Calculate the interpolated path output at a specific time
+     * parameter [0, 1]. Uses precomputed sections from <code>recalculatePath()
+     * </code>. Uses creation mode as specified in path constraints.
+     *
+     * @param section the precomputed section to interpolate between.
+     * @param t the time parameter [0, 1] used to determine position.
+     * @param timeCorrected if velocity and acceleration should be divided by
+     *     the section time and be "corrected" to fit under constrained max.
+     * @return the interpolated spline position, velocity, and acceleration.
+     */
     public SPOutput calculate(Section section, double t, boolean timeCorrected) {
         double[] te = {
             1, t, t * t, t * t * t, t * t * t * t, t * t * t * t * t
@@ -215,7 +270,15 @@ public class SplinePath {
         }
     }
 
-    // Assumes the robot is moving with the correct trajectory
+    /**
+     * Converts an XY velocity to a left-right (LR) velocity.
+     * Assumes the robot is moving with the correct trajectory.
+     * Effectively a pure pursuit controller (adaptive in executor).
+     *
+     * @param calc the input XY velocity wrapped by an SPOutput object
+     *     (intended to be from the calculate() method).
+     * @return the left and right velocities in meters/second.
+     */
     public Pair<Double> getLRVel(SPOutput calc) {
         double omega = Math.atan2(calc.getVelY(), calc.getVelX());
         double tempOmega = omega;
@@ -240,6 +303,18 @@ public class SplinePath {
         );
     }
 
+    /**
+     * Calculate the time a section will take at a limited speed and
+     * acceleration. Uses basic linear kinematics, assumes trapezoidal curves
+     * (for simplicity, estimates may vary). Runs through whole path
+     * interpolation. Will store values as precomputed if addPrecomputed is
+     * true. Does not take into account velocity delta greater than the maximum.
+     *
+     * @param section the section to interpolate and find the time between.
+     * @param addPrecomputed if the values should be added to the precomputed
+     *     interpolated path point list.
+     * @return the time in seconds that the section will take.
+     */
     public double timeAtLimited(Section section, boolean addPrecomputed) {
         Pair<Double> lastTempVel = new Pair<>(0.0, 0.0);
         Pair<Double> instTempVel;
@@ -263,6 +338,10 @@ public class SplinePath {
         return maxObservedVel / maxVel;
     }
 
+    /**
+     * Resets last angular speed. Used each time the path ends for error
+     * correction and pure pursuit methods.
+     */
     public void resetOmega() {
         lastOmega = null;
     }
@@ -279,6 +358,13 @@ public class SplinePath {
         return points;
     }
 
+    /**
+     * Add a waypoint to the path at a certain index. Should not be used for
+     * interpolated points, only initial waypoints.
+     *
+     * @param idx the index to add the point at.
+     * @param point the point to add.
+     */
     public void addPathPoint(int idx, SplinePoint point) {
         points.add(idx, point);
     }
@@ -295,6 +381,13 @@ public class SplinePath {
         return totalTime;
     }
 
+    /**
+     * Get the total linear distance of the path. Calculated based on a
+     * straight line from the first and last points of each section. May be
+     * an underestimate if paths are curved.
+     *
+     * @return the total linear distance in meters of the path.
+     */
     public double getTotalDistance() {
         double dist = 0;
         for (Section s : sections.values()) {
@@ -307,6 +400,12 @@ public class SplinePath {
         return constraints;
     }
 
+    /**
+     * Generic class for a section of the path between two
+     * <code>SplinePoint</code> interpolated points. Contains data for
+     * tangent velocities, tangent acceleration, time, linear distance,
+     * and precomputed indices.
+     */
     public static class Section {
         private final SplinePoint p0;
         private final SplinePoint p1;
