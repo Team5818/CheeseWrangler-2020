@@ -38,6 +38,10 @@ import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
+/**
+ * Shoot a single ball. Waits for AutoAim to be within tolerance before
+ * shooting. Designed to be called continuously (button held).
+ */
 @GenerateCreator
 public class ContinuousShoot extends CommandBase {
     private final CheeseWheelCommands cheeseWheelCommands;

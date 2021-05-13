@@ -32,6 +32,16 @@ import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 
+/**
+ * Collect balls using intake/tentacles on one side. Stops after CheeseWheel
+ * is filled (x5). Moves CheeseWheel to safe intake position before starting
+ * collection process. Intended to be held while being used. Uses CWCycleSlot
+ * command calls to perform movement actions. Does not support dual-sided
+ * collection. Variable intake power and slot tolerance.
+ *
+ * @see CWCycleSlot
+ * @see CheeseWheel.AngleOffset
+ */
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
     private static final double PWR_CONST = 1.0;

@@ -27,6 +27,14 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.util.MathUtil;
 
+/**
+ * Shoots all stored balls (up to five) sequentially. Rotates one time with
+ * 1000 tick forward tolerance. Use other shooting commands if possible. Does
+ * not use a PID - dead reckoning only. May jam due to quick rotation.
+ *
+ * @see ShootNWedges
+ * @see ContinuousShoot
+ */
 @GenerateCreator
 public class All5Shoot extends CommandBase {
     private final CheeseWheel cheeseWheel;

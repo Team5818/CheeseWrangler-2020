@@ -46,6 +46,18 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Finds balls on the field and drives through them using PathTracer
+ * Catmull-Rom trajectory generation. OpenCV used to detect balls on field.
+ * Calibration may be required, use ball-calibration.py. Paths preset with
+ * Galactic Search FRC At Home 2021 challenges.
+ *
+ * <p>Works by changing counting the number of balls on the left hand side
+ * of the screen and determining the path based on detection.</p>
+ *
+ * @see org.rivierarobotics.autonomous.PathTracerExecutor
+ * @see org.rivierarobotics.util.CameraFlip
+ */
 @GenerateCreator
 public class GalacticSearch extends CommandBase {
     private static final Pair<Scalar> RGB_MASK_BOUNDS =
@@ -104,6 +116,22 @@ public class GalacticSearch extends CommandBase {
         return cmd != null && cmd.isScheduled();
     }
 
+    /**
+     * Isolate balls and retrieve their screen locations.
+     *
+     * <p>Process:</p>
+     * <ol>
+     *     <li>Blur initial image</li>
+     *     <li>Create mask between two RGB bounds</li>
+     *     <li>Erode and dilate mask</li>
+     *     <li>Find contours on mask</li>
+     *     <li>Check contours for area, aspect ratio, fill</li>
+     *     <li>Return center coordinates of min enclosing circles</li>
+     * </ol>
+     *
+     * @param img the image containing balls to process
+     * @return the list of ball coordinates
+     */
     public static List<Point> findBallLocations(Mat img) {
         List<Point> out = new ArrayList<>();
         Mat matA = img.clone();

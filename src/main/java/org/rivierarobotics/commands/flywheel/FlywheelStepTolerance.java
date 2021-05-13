@@ -25,6 +25,10 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Flywheel;
 
+/**
+ * Change the AutoAim tolerance of the flywheel in the subsystem
+ * (system-wide). Impacts end time of certain PID commands.
+ */
 @GenerateCreator
 public class FlywheelStepTolerance extends InstantCommand {
     private final Flywheel flywheel;

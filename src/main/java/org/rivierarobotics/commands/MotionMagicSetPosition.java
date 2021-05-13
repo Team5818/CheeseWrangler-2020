@@ -31,6 +31,11 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
 
+/**
+ * Set the position of a MotionMagic enabled subsystem. Allows for timeout,
+ * safety limits (position), and custom get/set methods. Intention is to
+ * override this class for each subsystem.
+ */
 public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> extends CommandBase {
     protected final T subsystem;
     protected final DoubleSupplier getPosition;

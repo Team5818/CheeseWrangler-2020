@@ -25,6 +25,11 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.Climb;
 
+/**
+ * Move the climb to the bottom of the range (ignore safeties) and reset
+ * position encoder value. Power defined by constant, no PID. Uses limit
+ * switch at bottom to detect end of range.
+ */
 @GenerateCreator
 public class ClimbSetZero extends CommandBase {
     private static final double MAX_POWER = 0.25;

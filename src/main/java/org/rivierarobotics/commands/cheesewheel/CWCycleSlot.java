@@ -29,6 +29,20 @@ import org.rivierarobotics.util.RobotShuffleboard;
 
 import javax.inject.Inject;
 
+/**
+ * Command to cycle the CheeseWheel one slot. Direction depends on passed
+ * enum. May not be exactly one slot if AngleOffset is different from the
+ * previous set. Will move with respect to the new slot setting (i.e. the
+ * wheel may pass over more than one ball (or none) if going to a shooting
+ * position from a collect position. Either AngleOffset value should work for
+ * both collection sides, but the correct one should be used to avoid invalid
+ * safety movements.
+ *
+ * @see CWCycleSlotInterrupt
+ * @see CheeseWheel.Direction
+ * @see CheeseWheel.AngleOffset
+ * @see CheeseSlot.State
+ */
 @GenerateCreator
 public class CWCycleSlot extends MotionMagicSetPosition<CheeseWheel> {
     @Inject

@@ -39,6 +39,13 @@ import java.util.LinkedList;
 import java.util.List;
 import javax.inject.Inject;
 
+/**
+ * Finds all the balls on the field and retrieves their positions in
+ * robot-space. Uses OpenCV and relies on flipped secondary camera.
+ *
+ * @see org.rivierarobotics.util.CameraFlip
+ * @see GalacticSearch
+ */
 @GenerateCreator
 public class FindAllBalls extends CommandBase {
     private static final Pair<Double> FOCAL_LENGTH_PX = new Pair<>(0.0, 0.0);

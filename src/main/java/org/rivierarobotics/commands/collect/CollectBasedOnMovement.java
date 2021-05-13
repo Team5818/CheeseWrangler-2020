@@ -26,6 +26,13 @@ import org.rivierarobotics.subsystems.DriveTrain;
 
 import javax.inject.Inject;
 
+/**
+ * Collect balls based on which direction the robot is moving. Average
+ * velocity is used to determine the direction. Calls base command
+ * <code>CollectInfiniteWedges</code> to perform directional action.
+ *
+ * @see CollectInfiniteWedges
+ */
 public class CollectBasedOnMovement extends ConditionalCommand {
     @Inject
     public CollectBasedOnMovement(DriveTrain driveTrain, CollectInfiniteWedgesCreator collectInfiniteWedgesCreator) {

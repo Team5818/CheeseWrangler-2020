@@ -26,6 +26,14 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 
+/**
+ * An interrupt for CWCycleSlot. Needed so that CWCycleSlot can be
+ * interrupted while moving and set to another slot, or to stop the PID if it
+ * is not tuned correctly (oscillation around setpoint). An
+ * <code>InstantCommand</code> that creates and schedules a cycle slot command.
+ *
+ * @see CWCycleSlot
+ */
 @GenerateCreator
 public class CWCycleSlotInterrupt extends InstantCommand {
     private final CheeseWheel.Direction direction;
@@ -33,8 +41,8 @@ public class CWCycleSlotInterrupt extends InstantCommand {
     private final CheeseSlot.State requiredState;
     private final CWCycleSlotCreator cwCycleSlot;
 
-    public CWCycleSlotInterrupt(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode,
-                                CheeseSlot.State requiredState, @Provided CWCycleSlotCreator cwCycleSlot) {
+    public CWCycleSlotInterrupt(@Provided CWCycleSlotCreator cwCycleSlot, CheeseWheel.Direction direction,
+                                CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
         this.direction = direction;
         this.mode = mode;
         this.requiredState = requiredState;
