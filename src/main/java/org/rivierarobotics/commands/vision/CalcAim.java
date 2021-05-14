@@ -34,6 +34,9 @@ import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 
+/**
+ * Uses position tracking and velocity based aim to track and shoot at target
+ */
 @GenerateCreator
 public class CalcAim extends CommandBase {
     private final AutoAimUtil autoAimUtil;

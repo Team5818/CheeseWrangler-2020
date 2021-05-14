@@ -30,6 +30,11 @@ import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 
+/**
+ *  Acts as a utility class which processes
+ *  PhysicsUtil's data and translates that into specialized
+ *  movement for different situations
+ */
 public class AutoAimUtil {
     private final Hood hood;
     private final Flywheel flywheel;
@@ -54,6 +59,17 @@ public class AutoAimUtil {
         this.driveTrain = null;
     }
 
+    /**
+     * Sets values provided by the command and translates that into physical movement.
+     *
+     * All processing must be done within the command. This only manages limits, different states, and
+     * determining whether or not to use a velocity control.
+     *
+     * @param hoodAngle hood angle provided by PhysicsUtil
+     * @param ballVel ball velocity provided by PhysicsUtil
+     * @param turretAngle turret angle provided by PhysicsUtil
+     * @param useVelocity if true, uses velocity and position PID on turret. if False, only uses position PID
+     */
     public void setValues(PhysicsUtil physics, double hoodAngle, double ballVel, double turretAngle, boolean useVelocity) {
         if (hoodAngle > hood.getZeroedAngle(hood.getBackLimit())) {
             tab.setEntry("Limit?:", "Hood Angle");
