@@ -22,6 +22,13 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
+/**
+ * Stores a PIDF configuration through loop gain constants.
+ *
+ * <p>Terms may be accessed or changed through standard getters/setters.
+ * Contains helper method to apply terms to a given CTRE motor controller.
+ * Should be used in all places where PIDF loops are needed.</p>
+ */
 public class PIDConfig {
     private double kP;
     private double kI;
@@ -90,6 +97,20 @@ public class PIDConfig {
         return this;
     }
 
+    /**
+     * Applies the current PIDF configuration to a given CTRE motor controller.
+     *
+     * <p>The slot number is [0, 3] as dictated by the 4 slots per controller.
+     * Configurations only need to be applied once, then switched between with
+     * <code>motor.selectProfileSlot(idx, 0)</code>. Note that the 0 represents
+     * the primary controller. It is suggested to remain on the primary for quick
+     * switching (i.e. position to velocity) and resort to auxiliary if more
+     * than four configurations are needed (unlikely) or two controllers need
+     * to be running simultaneously (not recommended).</p>
+     *
+     * @param motor the CTRE motor to apply the current configuration to.
+     * @param slotIdx the index of the profile slot to apply the configuration to.
+     */
     public void applyTo(BaseTalon motor, int slotIdx) {
         motor.config_kP(slotIdx, kP);
         motor.config_kI(slotIdx, kI);

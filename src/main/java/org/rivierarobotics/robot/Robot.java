@@ -40,6 +40,9 @@ import org.rivierarobotics.util.RSTOptions;
 
 import java.util.Objects;
 
+/**
+ * Main robot class for 2020/2021 robot CheeseWrangler.
+ */
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
@@ -49,10 +52,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        // Dagger initialization
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
 
+        // Create autonomous options
         chooser = new SendableChooser<>();
         chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
         chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
@@ -63,12 +68,14 @@ public class Robot extends TimedRobot {
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
 
+        // Secondary camera initialize
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
             cameraThread.start();
         }
 
+        // Misc logging config
         try {
             globalComponent.getShuffleboard().getTab("Driver")
                     .setSendable(chooser, new RSTOptions(2, 1, 0, 4))
@@ -92,9 +99,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        // Reset everything at autonomous begin
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getDriveTrain().resetOdometry();
         globalComponent.getPositionTracker().reset();
+        // Choose autonomous path (or default)
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
             () -> commandComponent.auto().shootAndDrive()
@@ -114,6 +123,7 @@ public class Robot extends TimedRobot {
         } else {
             globalComponent.getNavXGyro().resetGyro();
         }
+        // Force flywheel to stop
         commandComponent.flywheel().setPower(0).schedule();
         globalComponent.getButtonConfiguration().initTeleop();
     }
@@ -135,6 +145,7 @@ public class Robot extends TimedRobot {
     }
 
     private void displayShuffleboard() {
+        // Periodic logging to Shuffleboard
         var turret = globalComponent.getTurret();
         var hood = globalComponent.getHood();
         var gyro = globalComponent.getNavXGyro();

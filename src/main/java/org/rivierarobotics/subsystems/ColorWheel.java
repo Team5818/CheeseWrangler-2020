@@ -32,6 +32,14 @@ import org.rivierarobotics.appjack.MechLogger;
 
 import javax.inject.Singleton;
 
+/**
+ * Subsystem for spinning the color wheel. Consists of a motor that spins a
+ * rubber wheel and a REV color sensor. Motor controller is the same as the
+ * CheeseWheel. No feedback from motor (no encoders), hence no PID.
+ *
+ * @see CheeseWheel
+ * @see ColorWheel.GameColor
+ */
 @Singleton
 public class ColorWheel extends SubsystemBase implements RRSubsystem {
     private final CheeseWheel cheeseWheel;
@@ -40,7 +48,6 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
     private final MechLogger logger;
 
     public ColorWheel(I2C.Port sensorId, CheeseWheel cheeseWheel) {
-        // Uses CheeseWheel motor for movement, no PID/feedback
         this.cheeseWheel = cheeseWheel;
         this.colorSensor = new ColorSensorV3(sensorId);
         this.colorMatcher = new ColorMatch();
@@ -52,7 +59,12 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         colorMatcher.addColorMatch(GameColor.YELLOW.matchColor);
     }
 
-    // Game color is matched against possible values
+    /**
+     * Match sensor color against possible values and convert to
+     * <code>GameColor</code> internal storage unit.
+     *
+     * @return the current color as a GameColor.
+     */
     public GameColor getGameColor() {
         ColorMatchResult matchedColor = colorMatcher.matchColor(getSensorColor());
         if (matchedColor == null) {
@@ -66,7 +78,11 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         return GameColor.NULL;
     }
 
-    // Sensor color is raw feedback from color sensor
+    /**
+     * Get raw color returned from sensor.
+     *
+     * @return the RGB color from the sensor.
+     */
     public Color getSensorColor() {
         return colorSensor.getColor();
     }
@@ -87,13 +103,26 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         cheeseWheel.setPositionTicks(pwr);
     }
 
+    /**
+     * Retrieve game-specific strings passed to the driver station from the FMS.
+     *
+     * @return the string from the FMS if present, else an empty string.
+     */
     public static String getFMSString() {
         return DriverStation.getInstance().getGameSpecificMessage();
     }
 
-    // Possible 2020 values (upper case):
-    // R = red, B = blue, G = green, Y = yellow
-    // C = corrupt (error)
+    /**
+     * Converts retrieved game-specific strings into usable characters for
+     * 2020/2021 game as noted below or in rule book.
+     *
+     * <p>Possible 2020 values (upper case):
+     * R = red, B = blue, G = green, Y = yellow
+     * C = corrupt (error)</p>
+     *
+     * @return the FMS color character.
+     */
+    //
     public static char getFMSChar() {
         try {
             return getFMSString().charAt(0);
@@ -102,6 +131,11 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         }
     }
 
+    /**
+     * Get <code>GameColor</code> matching returned color character from FMS.
+     *
+     * @return the color corresponding to the FMS color character.
+     */
     public static GameColor getFMSColor() {
         char actualChar = getFMSChar();
         for (GameColor color : GameColor.values()) {
@@ -112,7 +146,13 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
         return GameColor.NULL;
     }
 
-    // Corrupt is bad data, null is nothing matching
+    /**
+     * Defines possible characters that may be returned from the FMS as
+     * game-specific strings. Entries may also be used as matches for the
+     * color sensor matcher.
+     *
+     * <p>Corrupt = bad data, null = nothing matching</p>
+     */
     public enum GameColor {
         RED(0.561, 0.351, 0.114),
         GREEN(0.197, 0.561, 0.240),

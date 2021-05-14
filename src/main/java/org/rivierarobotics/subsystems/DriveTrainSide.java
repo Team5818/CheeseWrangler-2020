@@ -30,6 +30,14 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
+/**
+ * Component part of drive train. Each side has two motors driven with the
+ * same inversion status. A shaft encoder is present on each side (external)
+ * to keep track of position, compensated for by gear ratio calculations.
+ * Contains a velocity PIDF loop for PathTracer controlled per-motor.
+ *
+ * @see DriveTrain
+ */
 public class DriveTrainSide implements RRSubsystem {
     private static final double TICKS_PER_METER = 4380;
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
@@ -79,8 +87,13 @@ public class DriveTrainSide implements RRSubsystem {
         return shaftEncoder.getRate();
     }
 
+    /**
+     * Sets the velocity of each motor individually with a PIDF loop.
+     * Converts from m/s to ticks/100ms internally (set units).
+     *
+     * @param vel the velocity in meters per second to set.
+     */
     public void setVelocity(double vel) {
-        // Converts m/s to ticks/100ms and sets velocity
         double set = vel * TICKS_PER_METER / MOTOR_TO_WHEEL_RATIO / 10;
         logger.setpointChange(set);
         mainLeft.set(ControlMode.Velocity, set);

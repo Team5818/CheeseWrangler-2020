@@ -37,6 +37,11 @@ import org.rivierarobotics.util.VisionUtil;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+/**
+ * Provides all subsystems to the Dagger injection graph. Each is marked as a
+ * Singleton. Component parts are provided instead of subsystems where
+ * applicable. Also stores CAN IDs for motors passed to subsystems.
+ */
 @Module
 public class SubsystemModule {
     private static final int TURRET_TALON = 7;
@@ -75,7 +80,8 @@ public class SubsystemModule {
 
     @Provides
     @Singleton
-    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro, @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard) {
+    public static Turret provideTurret(Provider<TurretControl> command, @Provided NavXGyro gyro,
+                                       @Provided VisionUtil vision, @Provided RobotShuffleboard shuffleboard) {
         return new Turret(TURRET_TALON, command, gyro, vision, shuffleboard);
     }
 

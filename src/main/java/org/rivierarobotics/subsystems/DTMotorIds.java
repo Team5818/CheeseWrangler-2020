@@ -20,6 +20,13 @@
 
 package org.rivierarobotics.subsystems;
 
+/**
+ * Holds motor identifiers for a drive train side. Consists of two motor CAN
+ * IDs and a single shaft encoder with two DIO pins.
+ *
+ * @see DriveTrainSide
+ * @see DriveTrain
+ */
 public class DTMotorIds {
     public final int main;
     public final int secondary;

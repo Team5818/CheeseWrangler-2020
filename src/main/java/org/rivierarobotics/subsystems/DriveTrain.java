@@ -32,6 +32,13 @@ import org.rivierarobotics.util.Side;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Subsystem for the drive train. Uses two component sides for drive.
+ * This subsystem is used as a wrapper/holder class for the sides. Tracks
+ * movement with WPILib odometry handling.
+ *
+ * @see DriveTrainSide
+ */
 @Singleton
 public class DriveTrain extends SubsystemBase {
     private static final double TRACKWIDTH = 0.7366; // meters
@@ -94,10 +101,20 @@ public class DriveTrain extends SubsystemBase {
         return right;
     }
 
+    /**
+     * Returns the pose (position and heading) as tracked by WPILib odometry
+     * classes. Updated every 20ms in periodic (every loop) via shaft encoders.
+     *
+     * @return the current pose of the robot in meters (and radians).
+     */
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
 
+    /**
+     * Resets the odometry and encoders on both drive sides. Reinitializes
+     * them both with zero position and current yaw setting.
+     */
     public void resetOdometry() {
         odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(-gyro.getYaw()));
         left.resetEncoder();

@@ -59,6 +59,10 @@ public class ButtonConfiguration {
         this.cmds = component.build();
     }
 
+    /**
+     * Configuration for buttons within teleoperated mode. Reset each time
+     * the robot is disabled and reinitialized on <code>teleopInit()</code>.
+     */
     public void initTeleop() {
         // Collecting CoDriver
         new JoystickButton(coDriverLeft, 1)
