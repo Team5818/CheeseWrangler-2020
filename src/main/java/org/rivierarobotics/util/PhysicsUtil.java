@@ -66,7 +66,6 @@ public class PhysicsUtil {
     /**
      * Returns the X Value to the target depending on the vision mode selected.
      * (With a fun little "temporary" twist)
-     *
      * If aim mode is on vision it will use the lime light only, else it will use the
      * position tracker
      *
@@ -82,7 +81,6 @@ public class PhysicsUtil {
 
     /**
      * Returns the Y Value to the target depending on the vision mode selected.
-     *
      * If aim mode is on vision it will use the lime light only, else it will use the
      * position tracker
      *
@@ -98,8 +96,7 @@ public class PhysicsUtil {
     }
 
     /**
-     * Returns the Z Vertical distance from the shooter to the target
-     *
+     * Returns the Z Vertical distance from the shooter to the target.
      * @return z vertical distance to target
      */
     public double getZ() {
@@ -130,8 +127,7 @@ public class PhysicsUtil {
     }
 
     /**
-     *  Returns the 2D distance to the target using the x and y values from the lime light
-     *
+     *  Returns the 2D distance to the target using the x and y values from the lime light.
      * REQUIRES DIRECT LINE OF SIGHT TO TARGET
      *
      * @return distance to target
@@ -146,7 +142,7 @@ public class PhysicsUtil {
 
     /**
      * Returns the angle required to launch a ball at the specified velocities given
-     * through the calculateVelocities class
+     * through the calculateVelocities class.
      *
      * @return turret angle to launch ball at
      */
@@ -159,10 +155,9 @@ public class PhysicsUtil {
 
     /**
      * Returns the angle required to launch a ball at the specified velocities given
-     * through the calculateVelocities class
-     *
+     * through the calculateVelocities class.
      * Also includes adjustments for the hood angle which helped account for
-     * inconsistencies at longer shots
+     * inconsistencies at longer shots.
      *
      * @return hood angle to launch ball at
      */
@@ -182,7 +177,7 @@ public class PhysicsUtil {
     }
 
     /**
-     * Returns the velocity which the ball should be launched at
+     * Returns the velocity which the ball should be launched at.
      *
      * @return required ball velocity
      */
@@ -197,6 +192,7 @@ public class PhysicsUtil {
     }
 
     /**
+     * Does what getTurretVelocity does.
      * @see #getTurretVelocity
      */
     private double captainKalbag() {
@@ -211,27 +207,24 @@ public class PhysicsUtil {
     /**
      * Calculates the x y and z velocities required to hit the
      * specified target. Supports two firing modes, perpendicular and normal.
-     *
+     * ---------------------------------------------------------------------
      * Perpendicular shot means that the ball will be calculated to come into contact with
      * the target at a 90 degree angle. This provides a better range than our dynamic shooting mode,
      * which is locked to its physical velocity limitations.
-     *
+     *----------------------------------------------------------------------
      * The dynamic shooting mode provides an accurate shot at a set velocity, meaning we
      * can achieve a much cleaner shot by picking the speed at which our turret is most accurate.
      * Using these two equations:
      * Straight Shot: sqrt(-4*g*z + 2*v^2 - 2*sqrt(-4*g^2*x^2 - 4*g^2*y^2 - 4*g*v^2*z + v^4))/(2*g)
      * Arc Shot: sqrt(2)*sqrt(-2*g*z + v^2 + sqrt(-4*g^2*x^2 - 4*g^2*y^2 - 4*g*v^2*z + v^4))/(2*g)
-     *
      * We solve for time, and translate that into a velocity which then gets subtracted from our robots
      * moving velocity.
-     *
      * This provides us with an accurate shot given any distance with our velocity, given it is within
      * the physical range of our robot.
-     *
      * It also allows us to have a much stronger PID on the flywheel, tuning it for only achieving a specific speed
      * in the quickest way possible.
-     *
-     * This is also responsible for tuning the auto aim, with our 3D graph script taking data from this method
+     *----------------------------------------------------------------------
+     * This method is also responsible for tuning the auto aim, with our 3D graph script taking data from this method
      */
     public void calculateVelocities(boolean perpendicularShot) {
         double x = getX();
@@ -286,7 +279,7 @@ public class PhysicsUtil {
 
     /**
      * Returns a velocity based off of the current error in the
-     * turret which should be actively updated
+     * turret which should be actively updated.
      *
      * @return velocity for turret
      */
@@ -296,13 +289,14 @@ public class PhysicsUtil {
 
     /**
      * Sets the velocity to be used by
-     * calculateVelocities calculations
+     * calculateVelocities' calculations.
      */
     public void setVelocity(double velocity) {
         this.velocity = velocity;
     }
 
     /**
+     * Returns the target velocity for the shooter.
      * @return target velocity for the shooter
      */
     public double getTargetVelocity() {
@@ -311,7 +305,6 @@ public class PhysicsUtil {
 
     /**
      * Sets an extra amount of distance in the x direction
-     *
      * useful for the inner target.
      */
     public void setExtraDistance(double extraDistance) {

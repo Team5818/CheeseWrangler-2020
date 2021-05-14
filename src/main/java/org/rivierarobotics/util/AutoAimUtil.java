@@ -33,7 +33,7 @@ import org.rivierarobotics.util.ShooterConstants;
 /**
  *  Acts as a utility class which processes
  *  PhysicsUtil's data and translates that into specialized
- *  movement for different situations
+ *  movement for different situations.
  */
 public class AutoAimUtil {
     private final Hood hood;
@@ -61,7 +61,6 @@ public class AutoAimUtil {
 
     /**
      * Sets values provided by the command and translates that into physical movement.
-     *
      * All processing must be done within the command. This only manages limits, different states, and
      * determining whether or not to use a velocity control.
      *

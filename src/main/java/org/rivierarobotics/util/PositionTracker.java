@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 
 /**
  * Tracks the robots position on the field using
- * drive train encoders
+ * drive train encoders.
  */
 @Singleton
 public class PositionTracker {
@@ -51,9 +51,9 @@ public class PositionTracker {
         this.hood = hood;
         this.tab = shuffleboard.getTab("Auto Aim");
     }
+
     /**
      * Must be called periodically.
-     *
      * Tracks the position of the robot using drive train velocity encoders and time passed.
      */
     public void trackPosition() {
@@ -67,7 +67,7 @@ public class PositionTracker {
 
     /**
      * Corrects the positional readings of the robot with the LimeLight to
-     * fix any errors which may have occurred due to slippage
+     * fix any errors which may have occurred due to slippage.
      */
     public void correctPosition() {
         if (vision.getLLValue("tv") == 0) {
