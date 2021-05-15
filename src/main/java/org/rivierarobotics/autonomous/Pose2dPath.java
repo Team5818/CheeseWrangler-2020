@@ -41,9 +41,8 @@ import java.util.Locale;
  * preexisting commands or try the {@code PathWeaver</code>} task for more
  * information.
  *
- * <p>Each enum constant is a path with associated JSON. An underscore
- * indicates a camelCase filename, otherwise enums are uppercase with
- * lowercase filenames.</p>
+ * <p>Each enum constant is a path with associated JSON. All filenames are
+ * camelCase. An underscore represents a word break (i.e. CAMEL_CASE).</p>
  */
 public enum Pose2dPath {
     AN_BARREL_RACING,

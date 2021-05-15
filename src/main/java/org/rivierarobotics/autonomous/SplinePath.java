@@ -91,7 +91,11 @@ public class SplinePath {
         }
     }
 
-    // Wrapper constructor with default PathConstraints
+    /**
+     * Wrapper constructor with default PathConstraints.
+     *
+     * @param points the list of points to interpolate between.
+     */
     public SplinePath(List<SplinePoint> points) {
         this(points, PathConstraints.create());
     }
