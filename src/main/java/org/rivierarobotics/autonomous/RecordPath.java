@@ -28,8 +28,8 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.Vec2D;
 
 import java.io.BufferedWriter;
@@ -52,7 +52,7 @@ public class RecordPath extends CommandBase {
     private final Joystick driverLeft;
     private final Joystick driverRight;
     private final Joystick driverButtons;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final boolean isPower;
     private List<Vec2D> vel;
     private String recName;

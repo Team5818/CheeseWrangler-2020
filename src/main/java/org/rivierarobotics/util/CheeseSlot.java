@@ -22,9 +22,16 @@ package org.rivierarobotics.util;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 
+/**
+ * Holder for slots on the Cheese Wheel with limit switches. Facing like the
+ * robot, on the right of the cheese wheel, to the right of the
+ * number 1, is slot 0. Labeled with labelmaker (small) labels
+ *
+ * @see org.rivierarobotics.subsystems.CheeseWheel
+ * @see CheeseSlot.State
+ */
 public enum CheeseSlot {
-    // Facing like the robot, on the right of the cheese wheel, to the right of the number 1, is slot 0
-    // Labeled with labelmaker (small) labels
+    //
     ZERO, ONE, TWO, THREE, FOUR;
 
     private final DigitalInput sensor;

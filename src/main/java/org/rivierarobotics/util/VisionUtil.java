@@ -27,6 +27,9 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Utility class for interfacing with limelight and secondary camera.
+ */
 @Singleton
 public class VisionUtil {
     private final NetworkTable limelight;

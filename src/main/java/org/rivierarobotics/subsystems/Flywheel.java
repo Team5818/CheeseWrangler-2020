@@ -30,8 +30,8 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 
 /**
@@ -43,7 +43,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private static double tolerance = 70;
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());

@@ -28,8 +28,8 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 /**
  * Main PathTracer executor command class. Moves a robot along a path as
@@ -57,7 +57,7 @@ public class PathTracerExecutor extends CommandBase {
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
     private final NavXGyro gyro;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final SplinePath path;
     private final PathConstraints constraints;
     private double gyroOffset;

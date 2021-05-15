@@ -36,7 +36,7 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.RSTOptions;
+import org.rivierarobotics.util.RSTileOptions;
 
 import java.util.Objects;
 
@@ -78,9 +78,9 @@ public class Robot extends TimedRobot {
         // Misc logging config
         try {
             globalComponent.getShuffleboard().getTab("Driver")
-                    .setSendable(chooser, new RSTOptions(2, 1, 0, 4))
-                    .setCamera("Flipped", new RSTOptions(4, 4, 0, 0))
-                    .setCamera("limelight", new RSTOptions(4, 4, 4, 0));
+                    .setSendable(chooser, new RSTileOptions(2, 1, 0, 4))
+                    .setCamera("Flipped", new RSTileOptions(4, 4, 0, 0))
+                    .setCamera("limelight", new RSTileOptions(4, 4, 4, 0));
         } catch (VideoException ignored) {
             // Padding for checkstyle
         }
@@ -203,9 +203,9 @@ public class Robot extends TimedRobot {
             .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
 
         shuffleboard.getTab("Driver")
-            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTOptions(1, 1, 2, 4))
-            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
-            .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
+            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 2, 4))
+            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 4))
+            .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTileOptions(1, 1, 4, 4));
 
         var sensorColor = cow.getSensorColor();
         shuffleboard.getTab("Climb")

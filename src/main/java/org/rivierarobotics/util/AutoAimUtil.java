@@ -25,10 +25,6 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.RobotShuffleboardTab;
-import org.rivierarobotics.util.ShooterConstants;
 
 /**
  *  Acts as a utility class which processes
@@ -39,11 +35,11 @@ public class AutoAimUtil {
     private final Hood hood;
     private final Flywheel flywheel;
     private final Turret turret;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final DriveTrain driveTrain;
     private double start = 0;
 
-    public AutoAimUtil(Hood hood, Flywheel flywheel, Turret turret, RobotShuffleboardTab tab, DriveTrain driveTrain) {
+    public AutoAimUtil(Hood hood, Flywheel flywheel, Turret turret, RSTab tab, DriveTrain driveTrain) {
         this.hood = hood;
         this.flywheel = flywheel;
         this.turret = turret;
@@ -51,7 +47,7 @@ public class AutoAimUtil {
         this.driveTrain = driveTrain;
     }
 
-    public AutoAimUtil(Hood hood, Flywheel flywheel, Turret turret, RobotShuffleboardTab tab) {
+    public AutoAimUtil(Hood hood, Flywheel flywheel, Turret turret, RSTab tab) {
         this.hood = hood;
         this.flywheel = flywheel;
         this.turret = turret;

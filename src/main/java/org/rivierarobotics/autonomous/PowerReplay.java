@@ -27,8 +27,8 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.LinkedList;
 
@@ -45,7 +45,7 @@ public class PowerReplay extends CommandBase {
     private final Joystick driverLeft;
     private final Joystick driverRight;
     private final Joystick driverButtons;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private LinkedList<double[]> pwrs;
     private int phase;
 

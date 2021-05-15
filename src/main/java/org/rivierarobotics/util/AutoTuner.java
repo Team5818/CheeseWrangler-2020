@@ -28,6 +28,11 @@ import org.rivierarobotics.subsystems.PIDConfig;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Automatic PID tuner using the Ziegler–Nichols method. Increases
+ * proportional (P) until oscillations, then calculate other gains. Attempts
+ * to gain "no overshoot" PID tuning automatically. Not currently used.
+ */
 public class AutoTuner {
     private static final double RUN_TIME = 5;
     private static final double MAX_POS_ERR = 10;
@@ -37,7 +42,7 @@ public class AutoTuner {
     private final double set;
     private final List<Double> zeroTimes;
     private final PIDConfig config;
-    private RobotShuffleboardTab tab;
+    private RSTab tab;
 
     public AutoTuner(BaseTalon motor, double set) {
         this.motor = motor;
@@ -46,7 +51,12 @@ public class AutoTuner {
         this.config = new PIDConfig(0.5, 0, 0);
     }
 
-    public void withRST(RobotShuffleboardTab tab) {
+    /**
+     * Log the PID constants and status out to a <code>RSTab</code>.
+     *
+     * @param tab the Shuffleboard tab object to add to.
+     */
+    public void withRST(RSTab tab) {
         this.tab = tab;
         setRSTEntry("isFinalPID", false);
         setRSTEntry("Set", set);
@@ -61,6 +71,9 @@ public class AutoTuner {
         }
     }
 
+    /**
+     * Get the time between "zeros" = loops around the start position.
+     */
     private void getZeros() {
         config.applyTo(motor, 0);
         int initPos = (int) motor.getSelectedSensorPosition();
@@ -80,6 +93,10 @@ public class AutoTuner {
         motor.set(ControlMode.MotionMagic, initPos);
     }
 
+    /**
+     * Calculate PID gains based on the difference between zero position
+     * times (oscillation period), equivalent to T_u and K_u.
+     */
     private void calculateGains() {
         double oscPeriod = 0;
 
@@ -97,6 +114,11 @@ public class AutoTuner {
         setRSTEntry("kD", config.getD());
     }
 
+    /**
+     * Ensure a steady oscillation at the current P gain.
+     *
+     * @return if a steady oscillation has been reached.
+     */
     private boolean ensureOscillation() {
         double tDiff;
         double lastTDiff = 0;
@@ -117,6 +139,11 @@ public class AutoTuner {
         return true;
     }
 
+    /**
+     * Main auto-tuning method. Will calculate gains per use.
+     *
+     * @return the automatically generated configuration.
+     */
     public PIDConfig tune() {
         while (zeroTimes.size() == 0 || !ensureOscillation()) {
             getZeros();

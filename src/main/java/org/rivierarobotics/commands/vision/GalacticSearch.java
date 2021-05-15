@@ -40,8 +40,8 @@ import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.Pair;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,7 +74,7 @@ public class GalacticSearch extends CommandBase {
     private final AutonomousCommands autonomousCommands;
     private final CollectionCommands collectionCommands;
     private final boolean isPathA;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private ParallelDeadlineGroup cmd;
 
     public GalacticSearch(@Provided AutonomousCommands autonomousCommands,

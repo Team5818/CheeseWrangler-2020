@@ -39,8 +39,8 @@ public class PhysicsUtil {
     private final Hood hood;
     private final Turret turret;
     private final Flywheel flywheel;
-    private final RobotShuffleboardTab tab;
-    private final RobotShuffleboardTab graphTab;
+    private final RSTab tab;
+    private final RSTab graphTab;
     private final NavXGyro gyro;
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
@@ -260,7 +260,7 @@ public class PhysicsUtil {
         tab.setEntry("vz", vXYZ[2]);
 
         graphTab.getTable("Auto Aim Stuff",
-                new RSTOptions(3, 3, 0, 0)).addTabData(tab);
+                new RSTileOptions(3, 3, 0, 0)).addTabData(tab);
 
         graphTab.setEntry("x", x);
         graphTab.setEntry("y", y);

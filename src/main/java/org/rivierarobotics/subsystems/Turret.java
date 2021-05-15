@@ -31,8 +31,8 @@ import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
@@ -56,7 +56,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
     private int wrapErrOffset;

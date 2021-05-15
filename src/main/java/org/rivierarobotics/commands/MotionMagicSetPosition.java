@@ -25,8 +25,8 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.subsystems.RRSubsystem;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import java.util.function.DoubleConsumer;
 import java.util.function.DoubleSupplier;
@@ -45,7 +45,7 @@ public class MotionMagicSetPosition<T extends SubsystemBase & RRSubsystem> exten
     protected final double maxError;
     protected final double setPoint;
     protected final double timeout;
-    protected final RobotShuffleboardTab tab;
+    protected final RSTab tab;
     private double start;
 
     public MotionMagicSetPosition(T subsystem, DoubleSupplier getPosition, DoubleConsumer setPosition,

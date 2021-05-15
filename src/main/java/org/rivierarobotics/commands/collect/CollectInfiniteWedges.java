@@ -29,8 +29,8 @@ import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.Intake;
 import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 /**
  * Collect balls using intake/tentacles on one side. Stops after CheeseWheel
@@ -49,7 +49,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private final Intake intake;
     private final CheeseWheel cheeseWheel;
     private final CheeseWheelCommands cheeseWheelCommands;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final CheeseWheel.AngleOffset mode;
     private double frontPower;
     private double backPower;

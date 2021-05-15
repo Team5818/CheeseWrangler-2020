@@ -38,7 +38,7 @@ public class PositionTracker {
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private double[] pos = new double[2];
     private double lastTime = 0;
 

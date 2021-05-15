@@ -30,8 +30,8 @@ import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Provider;
 
@@ -48,7 +48,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
 
