@@ -30,22 +30,27 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 
+/**
+ * Subsystem for flywheel. Spins at a velocity and shoots balls previously
+ * pushed by ejectors from Cheese Wheel.
+ */
 public class Flywheel extends SubsystemBase implements RRSubsystem {
     private static double targetVel = 0;
     private static double tolerance = 70;
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
         this.tab = shuffleboard.getTab("Vision");
 
         this.flywheelFalcon = new WPI_TalonFX(id);
+        // Previous configuration, also works
         //new PIDConfig((1023.0 * 0.5) / 500, (1023.0 * 0.01) / 500, 0.0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(1.5, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
@@ -58,6 +63,11 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         return flywheelFalcon.getSelectedSensorVelocity();
     }
 
+    /**
+     * Get the velocity that a ball will have at the current velocity.
+     *
+     * @return the ball velocity in meters per second.
+     */
     public double getBallVelocity() {
         return ShooterConstants.ticksToVelocity(flywheelFalcon.getSelectedSensorVelocity());
     }
@@ -68,10 +78,21 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         flywheelFalcon.set(ControlMode.PercentOutput, pwr);
     }
 
+    /**
+     * Check if the velocity is within tolerance of the target.
+     *
+     * @return if the velocity is within tolerance of target.
+     */
     public boolean withinTolerance() {
         return MathUtil.isWithinTolerance(getPositionTicks(), targetVel, tolerance);
     }
 
+    /**
+     * Change the flywheel pre-shoot tolerance. A lower value will cause more
+     * accurate shots with a longer spool-up time. Minimum 0.
+     *
+     * @param amount the offset amount to change the tolerance by.
+     */
     public void stepTolerance(int amount) {
         tolerance = Math.max(0, tolerance + amount);
         tab.setEntry("SetTolerance", tolerance);
@@ -81,6 +102,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         return tolerance;
     }
 
+    /**
+     * Set the velocity of the flywheel. Controlled by PIDF loop. Will cut
+     * off current and set velocity to zero if stopped. Passed velocity is
+     * automatically set as target.
+     *
+     * @param vel the velocity in ticks per 100ms to set.
+     */
     public void setVelocity(double vel) {
         tab.setEntry("Flywheel Set Vel", vel);
         targetVel = vel;

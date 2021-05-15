@@ -26,6 +26,10 @@ import edu.wpi.first.cameraserver.CameraServer;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
+/**
+ * Flips secondary camera and outputs to new camera server stream "Flipped".
+ * State controlled by {@code DO_FLIP} boolean through commands.
+ */
 public class CameraFlip extends Thread {
     public static boolean DO_FLIP = false;
     private final CvSink cvSink;

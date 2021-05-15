@@ -20,6 +20,10 @@
 
 package org.rivierarobotics.subsystems;
 
+/**
+ * Base interface for all subsystems. Mandates that subsystems contain
+ * certain functions expected of motor-driven subsystems.
+ */
 public interface RRSubsystem {
     double getPositionTicks();
 

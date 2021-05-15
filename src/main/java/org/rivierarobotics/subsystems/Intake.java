@@ -27,6 +27,13 @@ import org.rivierarobotics.util.Side;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Subsystem for intake tentacles. Consists of two component front/back
+ * sides. Collection system uses spinning "tentacles" to intake balls to
+ * Cheese Wheel.
+ *
+ * @see IntakeSide
+ */
 @Singleton
 public class Intake extends SubsystemBase {
     private final IntakeSide front;
@@ -42,5 +49,13 @@ public class Intake extends SubsystemBase {
     public void setPower(double frontPwr, double backPwr) {
         front.setPower(frontPwr);
         back.setPower(backPwr);
+    }
+
+    public void setPowerFront(double pwr) {
+        front.setPower(pwr);
+    }
+
+    public void setPowerBack(double pwr) {
+        back.setPower(pwr);
     }
 }

@@ -20,6 +20,13 @@
 
 package org.rivierarobotics.subsystems;
 
+/**
+ * Positions for secondary camera servo. Also stores flip value for
+ * {@link org.rivierarobotics.util.CameraFlip} when the servo is moved.
+ *
+ * @see CameraServo
+ * @see org.rivierarobotics.util.CameraFlip
+ */
 public enum CameraPosition {
     FRONT(0.9, false),
     BACK(0.0, true),

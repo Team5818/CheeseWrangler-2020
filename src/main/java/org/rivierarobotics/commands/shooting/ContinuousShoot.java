@@ -35,9 +35,13 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
+/**
+ * Shoot a single ball. Waits for AutoAim to be within tolerance before
+ * shooting. Designed to be called continuously (button held).
+ */
 @GenerateCreator
 public class ContinuousShoot extends CommandBase {
     private final CheeseWheelCommands cheeseWheelCommands;
@@ -46,7 +50,7 @@ public class ContinuousShoot extends CommandBase {
     private final Turret turret;
     private ParallelRaceGroup cmd;
     private final Flywheel flywheel;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
 
     public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
                            @Provided EjectorCommands ejectorCommands,

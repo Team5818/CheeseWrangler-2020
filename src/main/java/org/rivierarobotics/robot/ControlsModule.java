@@ -27,6 +27,12 @@ import org.rivierarobotics.inject.Input;
 
 import javax.inject.Singleton;
 
+/**
+ * Provides {@code Joystick} objects to injection graph that match input
+ * selection qualifier. Managed by Dagger.
+ *
+ * @see Input
+ */
 @Module
 public class ControlsModule {
     private static final int DRIVER_LEFT_JS = 0;

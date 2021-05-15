@@ -38,6 +38,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Faster method of transferring data to client(s) than NetworkTables. Uses a
+ * 20ms loop (RoboRio minimum) instead of 100ms+ of NetworkTables
+ * (Shuffleboard). UDP broadcast transport within FRC-legal ports.
+ */
 public class FastRSB {
     private static FastRSB INSTANCE = null;
     private static final int PORT = 5808;
@@ -57,8 +62,16 @@ public class FastRSB {
         }
     }
 
-    // Get broadcast address of RoboRio automatically
-    // Broadcast address will be: up, not loopback, start with "10."
+    /**
+     * Get broadcast address of RoboRio automatically. Will get the address
+     * starting with the 10.TE.AM.XXX prefix (from a matching interface,
+     * which should be ethernet). Avoids localhost and loopback addresses.
+     * Guesses if no broadcast address is found.
+     *
+     * @return the broadcast address of the RoboRio.
+     * @throws SocketException if an interface is invalid.
+     * @throws UnknownHostException if an interface cannot be routed.
+     */
     private static InetAddress getRioBroadcastAddress() throws SocketException, UnknownHostException {
         Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces();
         while (interfaces.hasMoreElements()) {
@@ -96,7 +109,13 @@ public class FastRSB {
         return this;
     }
 
-    // Encoding: all ASCII, 0x01<key>0x02<value>...
+    /**
+     * Encodes data to be sent from socket. Works on a key-value map system.
+     * A 0x01 value is placed before a key and 0x02 before a value. All
+     * values must be ASCII and single-byte within String objects.
+     *
+     * @return the encoded data in bytes to send to the socket.
+     */
     private List<Byte> encodeData() {
         List<Byte> encData = new LinkedList<>();
         for (Map.Entry<String, Object> entry : data.entrySet()) {
@@ -113,6 +132,9 @@ public class FastRSB {
         return encData;
     }
 
+    /**
+     * Send encoded data to the client(s).
+     */
     private void send() {
         List<Byte> encData = encodeData();
         byte[] sendData = new byte[encData.size()];
@@ -135,6 +157,12 @@ public class FastRSB {
         start(20); // Match RIO loop time
     }
 
+    /**
+     * Starts sending packets every msPeriod with a thread executor. Does not
+     * use normal threads or clock implementation for efficiency.
+     *
+     * @param msPeriod milliseconds between data sending.
+     */
     public void start(int msPeriod) {
         if (!isStarted()) {
             ScheduledExecutorService execSvc = Executors.newSingleThreadScheduledExecutor();

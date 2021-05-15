@@ -30,6 +30,10 @@ import org.rivierarobotics.commands.ejector.EjectorControl;
 import javax.inject.Provider;
 import javax.inject.Singleton;
 
+/**
+ * Subsystem for ejectors. Two sets of wheels that push balls from the Cheese
+ * Wheel towards the flywheel. Single victor control. No feedback (encoders).
+ */
 @Singleton
 public class Ejector extends SubsystemBase {
     private final Provider<EjectorControl> command;

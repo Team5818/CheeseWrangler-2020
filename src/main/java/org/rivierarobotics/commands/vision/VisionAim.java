@@ -33,6 +33,9 @@ import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 import org.rivierarobotics.util.VisionUtil;
 
+/**
+ * Uses only lime light values to shoot at target.
+ */
 @GenerateCreator
 public class VisionAim extends CommandBase {
     private final PhysicsUtil physics;

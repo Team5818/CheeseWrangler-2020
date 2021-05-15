@@ -22,6 +22,10 @@ package org.rivierarobotics.inject;
 
 import javax.inject.Qualifier;
 
+/**
+ * Qualifier for input selectors. Stores values for driver and codriver;
+ * buttons, left, and right. All are used for Joysticks.
+ */
 @Qualifier
 public @interface Input {
     Selector value();

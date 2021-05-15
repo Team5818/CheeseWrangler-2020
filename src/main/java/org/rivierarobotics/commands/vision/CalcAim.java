@@ -29,11 +29,14 @@ import org.rivierarobotics.subsystems.Hood;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.AutoAimUtil;
 import org.rivierarobotics.util.PhysicsUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionTarget;
 
+/**
+ * Uses position tracking and velocity based aim to track and shoot at target.
+ */
 @GenerateCreator
 public class CalcAim extends CommandBase {
     private final AutoAimUtil autoAimUtil;
@@ -47,7 +50,7 @@ public class CalcAim extends CommandBase {
         this.flywheel = flywheel;
         this.physics = physics;
         this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
-        RobotShuffleboardTab tab = shuffleboard.getTab("Auto Aim");
+        RSTab tab = shuffleboard.getTab("Auto Aim");
         this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, tab, driveTrain);
         addRequirements(hood, flywheel, turret);
     }

@@ -31,13 +31,20 @@ import org.rivierarobotics.commands.turret.TurretControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.NavXGyro;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.ShooterConstants;
 import org.rivierarobotics.util.VisionUtil;
 
 import javax.inject.Provider;
 
+/**
+ * Subsystem for the turret. Rotates on a limited range around Cheese Wheel
+ * shoot opening to direct balls towards a target. Suggested use case is to
+ * shoot in the same direction as Cheese Wheel travel. Has an issue with
+ * wrapping around +/- 4096 ticks (full rotation), countered by wrapErr.
+ * Contains a dual PID for position and velocity.
+ */
 public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 470;
     private static final double MAX_ANGLE = 7;
@@ -49,7 +56,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
     private final VisionUtil vision;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
     private int wrapErrOffset;
@@ -92,11 +99,25 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return turretTalon.getSelectedSensorVelocity();
     }
 
+    /**
+     * Get the angle of the turret, where zero is straight forward (relative).
+     *
+     * @param isAbsolute if the angle should consider the robot heading.
+     * @return the angle of the turret in degrees.
+     */
     public double getAngle(boolean isAbsolute) {
         double relAngle = MathUtil.ticksToDegrees(getPositionTicks() - ZERO_TICKS);
         return isAbsolute ? MathUtil.wrapToCircle(gyro.getYaw() + relAngle) : relAngle;
     }
 
+    /**
+     * Calculate AutoAim distance and angle for the turret. Requires input of
+     * hood angle for accurate shooting characteristics.
+     *
+     * @param extraDistance physics util extra shooting distance.
+     * @param hoodAngle angle of the hood in degrees.
+     * @return a double array containing a distance and angle.
+     */
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
         double initialD = ShooterConstants.getTopHeight() / Math.sin(Math.toRadians(vision.getActualTY(hoodAngle)));
         double tx = Math.toRadians(vision.getLLValue("tx"));
@@ -114,6 +135,11 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         return new double[] { a, MathUtil.wrapToCircle(finalAngle + getAngle(true)) };
     }
 
+    /**
+     * Set the position of the turret. Uses position PID loop configuration.
+     *
+     * @param positionTicks the position to set in ticks.
+     */
     public void setPositionTicks(double positionTicks) {
         positionTicks -= wrapErrOffset;
         tab.setEntry("TurretSetPosTicks", positionTicks);
@@ -121,6 +147,14 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.MotionMagic, positionTicks);
     }
 
+    /**
+     * Set the angle of the turret. Uses position PID loop configuration.
+     * Wraps set value to be within safety bounds and take the shortest
+     * distance/path. Will consider robot yaw if absolute
+     *
+     * @param angle the angle to set in degrees.
+     * @param isAbsolute if the set angle should be absolute.
+     */
     public void setAngle(double angle, boolean isAbsolute) {
         tab.setEntry("TSetAngle", angle);
         angle %= 360;
@@ -147,6 +181,11 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
 
+    /**
+     * Set the velocity of the turret. Uses velocity PID loop configuration.
+     *
+     * @param ticksPer100ms the velocity to set in ticks per 100ms.
+     */
     public void setVelocity(double ticksPer100ms) {
         logger.stateChange("Velocity Set", ticksPer100ms);
         tab.setEntry("setVelTicks", ticksPer100ms);
@@ -161,7 +200,11 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         turretTalon.set(ControlMode.PercentOutput, pwr);
     }
 
-    // Checks for turret overshoot / undershoot encoder issue
+    /**
+     * Checks for turret overshoot / undershoot encoder issue.
+     * Encoder will jump +/- 4096 ticks (full rotation) during runtime.
+     * Fixes by offsetting returned values and modifying soft limits.
+     */
     private void checkWrapError() {
         final int lastWrapOffset = wrapErrOffset;
         final double currPos = turretTalon.getSelectedSensorPosition();

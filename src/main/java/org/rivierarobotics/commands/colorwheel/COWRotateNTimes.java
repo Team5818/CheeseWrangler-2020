@@ -26,6 +26,15 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.ColorWheel;
 
+/**
+ * Rotate the color wheel a certain number (N) of times. Supports decimal
+ * amounts of rotations. Number required by manual is 3-5. Does not use PID
+ * as the color wheel has no encoder feedback. Will stop immediately after
+ * the color wheel has rotated a certain number of times as determined by the
+ * number of "color changes" the color sensor has detected.
+ *
+ * @see ColorWheel.GameColor
+ */
 @GenerateCreator
 public class COWRotateNTimes extends CommandBase {
     private static final int NUM_COLOR_SLICES_PER_ROT = 8;

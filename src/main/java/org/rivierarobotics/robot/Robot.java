@@ -36,10 +36,13 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.RSTOptions;
+import org.rivierarobotics.util.RSTileOptions;
 
 import java.util.Objects;
 
+/**
+ * Main robot class for 2020/2021 robot CheeseWrangler.
+ */
 public class Robot extends TimedRobot {
     private GlobalComponent globalComponent;
     private CommandComponent commandComponent;
@@ -49,10 +52,12 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotInit() {
+        // Dagger initialization
         globalComponent = DaggerGlobalComponent.create();
         globalComponent.robotInit();
         commandComponent = globalComponent.getCommandComponentBuilder().build();
 
+        // Create autonomous options
         chooser = new SendableChooser<>();
         chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
         chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
@@ -63,17 +68,19 @@ public class Robot extends TimedRobot {
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
 
+        // Secondary camera initialize
         CameraServer.getInstance().startAutomaticCapture();
         if (cameraThread == null) {
             cameraThread = new CameraFlip();
             cameraThread.start();
         }
 
+        // Misc logging config
         try {
             globalComponent.getShuffleboard().getTab("Driver")
-                    .setSendable(chooser, new RSTOptions(2, 1, 0, 4))
-                    .setCamera("Flipped", new RSTOptions(4, 4, 0, 0))
-                    .setCamera("limelight", new RSTOptions(4, 4, 4, 0));
+                    .setSendable(chooser, new RSTileOptions(2, 1, 0, 4))
+                    .setCamera("Flipped", new RSTileOptions(4, 4, 0, 0))
+                    .setCamera("limelight", new RSTileOptions(4, 4, 4, 0));
         } catch (VideoException ignored) {
             // Padding for checkstyle
         }
@@ -92,9 +99,11 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousInit() {
+        // Reset everything at autonomous begin
         globalComponent.getNavXGyro().resetGyro();
         globalComponent.getDriveTrain().resetOdometry();
         globalComponent.getPositionTracker().reset();
+        // Choose autonomous path (or default)
         autonomousCommand = Objects.requireNonNullElseGet(
             chooser.getSelected(),
             () -> commandComponent.auto().shootAndDrive()
@@ -114,6 +123,7 @@ public class Robot extends TimedRobot {
         } else {
             globalComponent.getNavXGyro().resetGyro();
         }
+        // Force flywheel to stop
         commandComponent.flywheel().setPower(0).schedule();
         globalComponent.getButtonConfiguration().initTeleop();
     }
@@ -135,6 +145,7 @@ public class Robot extends TimedRobot {
     }
 
     private void displayShuffleboard() {
+        // Periodic logging to Shuffleboard
         var turret = globalComponent.getTurret();
         var hood = globalComponent.getHood();
         var gyro = globalComponent.getNavXGyro();
@@ -192,9 +203,9 @@ public class Robot extends TimedRobot {
             .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
 
         shuffleboard.getTab("Driver")
-            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTOptions(1, 1, 2, 4))
-            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTOptions(1, 1, 3, 4))
-            .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTOptions(1, 1, 4, 4));
+            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 2, 4))
+            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 4))
+            .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTileOptions(1, 1, 4, 4));
 
         var sensorColor = cow.getSensorColor();
         shuffleboard.getTab("Climb")

@@ -24,6 +24,16 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.ColorWheel;
 
+/**
+ * Rotate the color wheel until a certain color is reached. Will stop
+ * immediately upon reaching the passed color. If the passed color is a field
+ * color, the robot will calculate the (different) color needed under the
+ * sensor. It is suggested to call {@link COWCenterOnColor} after this
+ * command to ensure correct placement. No error correction.
+ *
+ * @see COWCenterOnColor
+ * @see ColorWheel.GameColor
+ */
 @GenerateCreator
 public class COWRotateToColor extends COWRotateNTimes {
     private final ColorWheel.GameColor color;

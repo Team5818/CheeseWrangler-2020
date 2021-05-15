@@ -25,6 +25,15 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.subsystems.ColorWheel;
 
+/**
+ * Center the color wheel spinner within a single color. Does not seek out a
+ * specific color. Will only center the wheel within the active color. Does
+ * not use PID since color wheel has no positional feedback (drive motor tied
+ * to CheeseWheel). Uses a 3-stage sequence, works by finding bounds and
+ * calculating based on wheel circumference. No error correction.
+ *
+ * @see ColorWheel.GameColor
+ */
 @GenerateCreator
 public class COWCenterOnColor extends CommandBase {
     private static final int TICKS_PER_HALF_SLICE = 1024;

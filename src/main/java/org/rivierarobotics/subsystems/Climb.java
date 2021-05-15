@@ -31,62 +31,87 @@ import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
+/**
+ * Subsystem for the climb. A simple rack-and-pinion climb. Uses a relative
+ * encoder. No PID because of high gear reduction ratio. Inches used instead
+ * of meters for convenience. Contains an external limit switch wired into the
+ * reverse limit switch of the motor (Falcon) to detect minimum safe
+ * operating range. Maximum calculated off theoretical maximums. Soft limits
+ * used for maximum range enforcement.
+ *
+ * @see Climb.Position
+ */
 public class Climb extends SubsystemBase implements RRSubsystem {
     private static final double TICKS_PER_INCH = 39114;
     private static final double MAX_INCHES = 34.5;
-    private final WPI_TalonFX climbTalon;
+    private final WPI_TalonFX climbFalcon;
     private final MechLogger logger;
 
     public Climb(int motorId) {
-        this.climbTalon = new WPI_TalonFX(motorId);
+        this.climbFalcon = new WPI_TalonFX(motorId);
         this.logger = Logging.getLogger(getClass());
 
         // This PID is not tuned, currently not used
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-                new PIDConfig(10, 0, 0, 0), 0, climbTalon);
-        climbTalon.setSensorPhase(false);
-        climbTalon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
-        climbTalon.configForwardSoftLimitThreshold(MAX_INCHES * TICKS_PER_INCH);
-        climbTalon.configForwardSoftLimitEnable(true);
-        climbTalon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
-        climbTalon.setNeutralMode(NeutralMode.Brake);
+                new PIDConfig(10, 0, 0, 0), 0, climbFalcon);
+        climbFalcon.setSensorPhase(false);
+        climbFalcon.configForwardLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.NormallyOpen);
+        climbFalcon.configForwardSoftLimitThreshold(MAX_INCHES * TICKS_PER_INCH);
+        climbFalcon.configForwardSoftLimitEnable(true);
+        climbFalcon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
+        climbFalcon.setNeutralMode(NeutralMode.Brake);
     }
 
     public double getTicksPerInch() {
         return TICKS_PER_INCH;
     }
 
+    /**
+     * Checks the limit switch to see if the climb is at the bottom of its
+     * safe movement range. Wired into reverse limit switch port. Required as
+     * the climb encoder is relative (not absolute/pulse width).
+     *
+     * @return if the climb is at the bottom of its safe movement range.
+     */
     public boolean isAtBottom() {
-        return climbTalon.isRevLimitSwitchClosed() == 1;
+        return climbFalcon.isRevLimitSwitchClosed() == 1;
     }
 
+    /**
+     * Reset the encoder to zero ticks. Default selected sensor is relative
+     * (correct for the climb), not absolute.
+     */
     public void resetEncoder() {
-        climbTalon.setSelectedSensorPosition(0);
+        climbFalcon.setSelectedSensorPosition(0);
     }
 
     public void setPositionTicks(double positionTicks) {
         logger.setpointChange(positionTicks);
-        climbTalon.set(ControlMode.MotionMagic, positionTicks);
+        climbFalcon.set(ControlMode.MotionMagic, positionTicks);
     }
 
     @Override
     public double getPositionTicks() {
-        return climbTalon.getSelectedSensorPosition();
+        return climbFalcon.getSelectedSensorPosition();
     }
 
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        climbTalon.set(ControlMode.PercentOutput, pwr);
+        climbFalcon.set(ControlMode.PercentOutput, pwr);
     }
 
     @Override
     public void periodic() {
-        if (isAtBottom() && climbTalon.get() < 0) {
-            climbTalon.stopMotor();
+        if (isAtBottom() && climbFalcon.get() < 0) {
+            climbFalcon.stopMotor();
         }
     }
 
+    /**
+     * Defines the position of the climb for certain presets. Enum constants
+     * contain percentages, stored as ticks (calculated).
+     */
     public enum Position {
         ZERO(0.03),
         HALF(0.5),
@@ -94,8 +119,8 @@ public class Climb extends SubsystemBase implements RRSubsystem {
 
         private final double ticks;
 
-        Position(double pctMax) {
-            this.ticks = pctMax * TICKS_PER_INCH * MAX_INCHES;
+        Position(double pct) {
+            this.ticks = pct * TICKS_PER_INCH * MAX_INCHES;
         }
 
         public double getTicks() {

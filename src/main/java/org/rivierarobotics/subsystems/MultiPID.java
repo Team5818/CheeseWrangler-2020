@@ -22,6 +22,18 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
+/**
+ * Manages multiple different PID configurations on a
+ * single CTRE motor controller.
+ *
+ * <p>Most often used for separate position and velocity PID
+ * constants though it has the capability to be used for
+ * any number of configurations. Uses the {@link PIDConfig}
+ * system to store PID modes/constant sets.</p>
+ *
+ * @see PIDConfig
+ * @see MultiPID.Type
+ */
 public class MultiPID {
     private final BaseTalon motor;
     private final PIDConfig[] configs;
@@ -46,6 +58,11 @@ public class MultiPID {
         selectConfig(type.ordinal());
     }
 
+    /**
+     * Selects the configuration stored at a certain index.
+     *
+     * @param idx the index to select at.
+     */
     public void selectConfig(int idx) {
         if (currentIdx != idx) {
             motor.selectProfileSlot(idx, 0);
@@ -53,12 +70,19 @@ public class MultiPID {
         }
     }
 
+    /**
+     * Apply all configurations to the selected motor.
+     */
     public void applyAllConfigs() {
         for (int i = 0; i < configs.length; i++) {
             configs[i].applyTo(motor, i);
         }
     }
 
+    /**
+     * Represents physics movement types (position, velocity, and acceleration)
+     * for use in {@link MultiPID} managers.
+     */
     public enum Type {
         POSITION, VELOCITY, ACCELERATION
     }

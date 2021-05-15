@@ -32,6 +32,21 @@ import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
+/**
+ * Autonomous command to drive around the field in a loop while collecting
+ * balls and shooting at intervals. Only works with {@link Pose2dPath}
+ * loops that contain {@code SHOOT_LOOP}. Intended for use at the
+ * beginning of a match. Uses AutoAim and PathTracer.
+ *
+ * <p>Process:</p>
+ * <ol>
+ *     <li>Buffer wait 1s, start AutoAim</li>
+ *     <li>Shoot preloaded balls x5</li>
+ *     <li>Move along path, collect front</li>
+ *     <li>Buffer wait 2s, start AutoAim</li>
+ *     <li>Shoot collected balls x5 (max)</li>
+ * </ol>
+ */
 @GenerateCreator
 public class ShootLoop extends SequentialCommandGroup {
     public ShootLoop(@Provided AutonomousCommands auto, @Provided CollectionCommands collect,

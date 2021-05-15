@@ -28,13 +28,17 @@ import org.rivierarobotics.subsystems.Turret;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+/**
+ * Tracks the robots position on the field using
+ * drive train encoders.
+ */
 @Singleton
 public class PositionTracker {
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final VisionUtil vision;
     private final Turret turret;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private double[] pos = new double[2];
     private double lastTime = 0;
 
@@ -48,6 +52,10 @@ public class PositionTracker {
         this.tab = shuffleboard.getTab("Auto Aim");
     }
 
+    /**
+     * Must be called periodically.
+     * Tracks the position of the robot using drive train velocity encoders and time passed.
+     */
     public void trackPosition() {
         double timeDifference = Timer.getFPGATimestamp() - lastTime;
         lastTime = Timer.getFPGATimestamp();
@@ -57,6 +65,10 @@ public class PositionTracker {
         tab.setEntry("yFromTarget", pos[0]);
     }
 
+    /**
+     * Corrects the positional readings of the robot with the LimeLight to
+     * fix any errors which may have occurred due to slippage.
+     */
     public void correctPosition() {
         if (vision.getLLValue("tv") == 0) {
             return;
@@ -69,6 +81,7 @@ public class PositionTracker {
         pos[0] = xFromTarget;
         pos[1] = yFromTarget;
     }
+
 
     public void reset() {
         pos[0] = 0;

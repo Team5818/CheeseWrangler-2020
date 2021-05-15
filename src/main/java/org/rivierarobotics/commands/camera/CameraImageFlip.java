@@ -24,6 +24,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import org.rivierarobotics.util.CameraFlip;
 
+/**
+ * Command to flip the secondary driver camera. Can either be set to a
+ * specific state via constructor or toggled (no-parameter constructor).
+ * Works by leaving packed Boolean as null and setting the associated
+ * {@link CameraFlip} boolean.
+ *
+ * @see CameraFlip
+ */
 @GenerateCreator
 public class CameraImageFlip extends InstantCommand {
     private Boolean flipSetState;

@@ -28,9 +28,28 @@ import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Pair;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
+/**
+ * Main PathTracer executor command class. Moves a robot along a path as
+ * described by a passed {@link SplinePath} object. Contains a series of
+ * waypoints interpolated by a {@link PathConstraints.CreationMode}
+ * into a smooth path. Contains an angular proportional loop for error
+ * correction. There is no linear error correction at present.
+ *
+ * <p>Use {@link Pose2dPath} and the PathWeaver GUI to create new paths.
+ * All features are supported by PathTracer. Supports field-centric and
+ * robot-centric paths (given correct gyroscopic alignment and
+ * drivetrain tracking). Does not use a pose estimator (e.x. Kalman
+ * Filter). Calculations delegated to {@link SplinePath} objects.
+ * Created because PathWeaver had substaintial issues running
+ * on the 2020 robot.</p>
+ *
+ * @see SplinePath
+ * @see PathConstraints
+ * @see Pose2dPath
+ */
 @GenerateCreator
 public class PathTracerExecutor extends CommandBase {
     private static final String PATH_TRACER = "PathTracer";
@@ -38,7 +57,7 @@ public class PathTracerExecutor extends CommandBase {
     private final DriveTrain driveTrain;
     private final DriveCommands driveCommands;
     private final NavXGyro gyro;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final SplinePath path;
     private final PathConstraints constraints;
     private double gyroOffset;
@@ -58,6 +77,12 @@ public class PathTracerExecutor extends CommandBase {
         addRequirements(driveTrain);
     }
 
+    /**
+     * Initializes command each time it is run (constructor is once globally).
+     * Determines if the robot should turn to the start heading, move to a
+     * start position, or stay in the same place and reset the drivetrain.
+     * Also initializes logging and calculates path interpolation.
+     */
     @Override
     public void initialize() {
         gyro.resetGyro();
@@ -88,10 +113,24 @@ public class PathTracerExecutor extends CommandBase {
         tab.setEntry("vRMax", 0);
     }
 
+    /**
+     * Turns the robot to a heading as determined by a passed point. Given
+     * directly if the tangent velocity is not precomputed (anything except
+     * Quintic Hermite path trajectory generation).
+     *
+     * @param pt the SplinePoint to retrieve the heading from.
+     */
     private void rotateToPointHeading(SplinePoint pt) {
         driveCommands.rotateTo(pt.isPrecomputedTan() ? Math.acos(pt.getTanVX()) : pt.getHeading()).schedule();
     }
 
+    /**
+     * Returns the minimum distance between two angles.
+     *
+     * @param a1 the first angle to compare, in degrees.
+     * @param a2 the second angle to compare, in degrees.
+     * @return the difference between the angles.
+     */
     private static double angDiff(double a1, double a2) {
         a1 = MathUtil.wrapToCircle(a1);
         a2 = MathUtil.wrapToCircle(a2);
@@ -103,15 +142,24 @@ public class PathTracerExecutor extends CommandBase {
         return a1 - a2;
     }
 
+    /**
+     * Execute method called every 20ms while the command is running.
+     * Retrieves calculations from {@link SplinePath} object and then
+     * converts XY to LR velocities. Angular corrections added in, then set
+     * to drivetrain as PIDF loops on separate sides.
+     */
     @Override
     public void execute() {
         tab.setEntry("ptReset", t < 0.2);
         if (t < path.getTotalTime()) {
+            // Figure out time parameter, opposite if reversed
+            // Determines calculates position on path
             double timeParam = t;
             if (constraints.getReversed()) {
                 timeParam = path.getTotalTime() - t;
             }
             SPOutput calc = path.calculate(timeParam);
+            // Calculate angular error amount and log
             double fAng = -MathUtil.wrapToCircle(Math.toDegrees(Math.atan2(calc.getVelY(), calc.getVelX())));
             double gAng = MathUtil.wrapToCircle(gyro.getYaw());
             tab.setEntry("fAng", fAng);
@@ -119,6 +167,7 @@ public class PathTracerExecutor extends CommandBase {
             double angErr = angDiff(fAng, gAng);
             tab.setEntry("angErr", angErr);
 
+            // Assorted logging functions regarding calculated path
             tab.setEntry("currTime", t);
             tab.setEntry("pX", calc.getPosX());
             tab.setEntry("pY", calc.getPosY());
@@ -132,11 +181,13 @@ public class PathTracerExecutor extends CommandBase {
             tab.setEntry("pXA", pXAccum);
             tab.setEntry("pYA", pYAccum);
 
+            // Convert XY velocity to LR velocity, reverse if necessary
             Pair<Double> wheelSpeeds = path.getLRVel(calc);
             if (constraints.getReversed()) {
                 wheelSpeeds.setA(-wheelSpeeds.getA());
                 wheelSpeeds.setB(-wheelSpeeds.getB());
             }
+            // Add correction based on angular error
             angErr *= ANGULAR_KP;
             if (angErr > 0) {
                 wheelSpeeds.setA(wheelSpeeds.getA() + angErr);
@@ -146,6 +197,7 @@ public class PathTracerExecutor extends CommandBase {
             tab.setEntry("vL", wheelSpeeds.getA());
             tab.setEntry("vR", wheelSpeeds.getB());
 
+            // Log maximum left and right velocities
             double vLMax = tab.getEntry("vLMax").getDouble(0);
             double vRMax = tab.getEntry("vRMax").getDouble(0);
             if (Math.abs(vLMax) < Math.abs(wheelSpeeds.getA())) {
@@ -159,6 +211,11 @@ public class PathTracerExecutor extends CommandBase {
         t += SplinePath.RIO_LOOP_TIME_MS;
     }
 
+    /**
+     * Called after the command has ended (i.e. when isFinished() returns
+     * true). Resets last path heading, turns off drivetrain, and resets
+     * logging outputs on the Shuffleboard.
+     */
     @Override
     public void end(boolean interrupted) {
         path.resetOmega();
@@ -172,6 +229,12 @@ public class PathTracerExecutor extends CommandBase {
         tab.setEntry("vR", 0);
     }
 
+    /**
+     * Override to end the path command.
+     *
+     * @return if the elapsed time is greater than the total duration of the
+     *     path time as calculated by {@link SplinePath}.
+     */
     @Override
     public boolean isFinished() {
         return t >= path.getTotalTime();

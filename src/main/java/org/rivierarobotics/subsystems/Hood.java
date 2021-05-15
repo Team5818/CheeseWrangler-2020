@@ -30,11 +30,17 @@ import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.commands.hood.HoodControl;
 import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 
 import javax.inject.Provider;
 
+/**
+ * Subsystem for the hood. Moves up/down to change attack angle of shot.
+ * Limited range of movement due to mechanical limits. Uses curved power
+ * system to prevent derailment. Absolute encoder attached to axle (will
+ * never lose/skip ticks). Contains a velocity and position PID.
+ */
 public class Hood extends SubsystemBase implements RRSubsystem {
     private static final int ZERO_TICKS = 2800;
     private static final int FORWARD_LIMIT_TICKS = 2550;
@@ -42,7 +48,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
     private static final double CURVE_FACTOR = 1.5;
     private final WPI_TalonSRX hoodTalon;
     private final Provider<HoodControl> command;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final MultiPID multiPID;
     private final MechLogger logger;
 
@@ -81,6 +87,11 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         return hoodTalon.getSelectedSensorPosition();
     }
 
+    /**
+     * Set power to the hood on a e-shaped bell curve.
+     *
+     * @param pwr the input power [-1, 1].
+     */
     public void setPower(double pwr) {
         double range = FORWARD_LIMIT_TICKS - BACK_LIMIT_TICKS;
         double pos = CURVE_FACTOR - (pwr >= 0 ? CURVE_FACTOR / (range / Math.abs((FORWARD_LIMIT_TICKS - getPositionTicks()))) :
@@ -90,14 +101,32 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.set(ControlMode.PercentOutput, pwr);
     }
 
+    /**
+     * Get the current angle of the hood in degrees. Considers zero degrees
+     * to be when the front of the hood is straight up/down.
+     *
+     * @return the adjusted angle of the hood in degrees.
+     */
     public double getAngle() {
         return MathUtil.ticksToDegrees(ZERO_TICKS - getPositionTicks());
     }
 
+    /**
+     * Adjusts angle with ticks at zero degrees. Used as a convenience method
+     * for AutoAim internal calls. toZero is typically an angle measure.
+     *
+     * @param toZero the measurement to zero in ticks.
+     * @return the zeroed angle in degrees.
+     */
     public double getZeroedAngle(double toZero) {
         return MathUtil.ticksToDegrees(ZERO_TICKS - toZero);
     }
 
+    /**
+     * Set the angle of the hood. Uses position PID loop configuration.
+     *
+     * @param angle the angle to set in degrees.
+     */
     public void setAngle(double angle) {
         double ticks = ZERO_TICKS - MathUtil.degreesToTicks(angle);
         tab.setEntry("setAngle", angle);
@@ -107,6 +136,11 @@ public class Hood extends SubsystemBase implements RRSubsystem {
         hoodTalon.set(ControlMode.MotionMagic, ticks);
     }
 
+    /**
+     * Set the velocity of the hood. Uses velocity PID loop configuration.
+     *
+     * @param vel the velocity to set in ticks per 100ms.
+     */
     public void setVelocity(double vel) {
         tab.setEntry("setVel", vel);
         multiPID.selectConfig(MultiPID.Type.VELOCITY);

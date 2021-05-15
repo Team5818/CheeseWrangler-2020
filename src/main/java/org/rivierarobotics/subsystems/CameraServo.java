@@ -37,7 +37,12 @@ public class CameraServo extends SubsystemBase {
         servo.set(value);
     }
 
-    // Range: 0 (front) to 180 (back)
+    /**
+     * Set the angle of the camera servo in degrees. Has a range of 0 (front)
+     * to 180 (back). Modify by changing mounting bracket.
+     *
+     * @param degrees the set position of the servo in degrees.
+     */
     public void setAngle(double degrees) {
         double range = CameraPosition.BACK.getServoValue() - CameraPosition.FRONT.getServoValue();
         servo.set(CameraPosition.FRONT.getServoValue() + ((degrees / 180) * range));

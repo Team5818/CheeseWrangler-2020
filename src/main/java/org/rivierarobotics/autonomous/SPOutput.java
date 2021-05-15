@@ -20,6 +20,13 @@
 
 package org.rivierarobotics.autonomous;
 
+/**
+ * Generic class for {@link SplinePath} outputs. Contains a position,
+ * velocity, and acceleration vector. Split into X and Y components and
+ * stored as doubles. Designed for high-efficiency use.
+ *
+ * @see SplinePath
+ */
 public class SPOutput {
     private final double posX;
     private final double posY;

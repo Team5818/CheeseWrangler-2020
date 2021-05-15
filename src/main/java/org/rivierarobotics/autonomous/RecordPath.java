@@ -28,8 +28,8 @@ import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.DriveTrain;
+import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.RobotShuffleboardTab;
 import org.rivierarobotics.util.Vec2D;
 
 import java.io.BufferedWriter;
@@ -40,13 +40,19 @@ import java.nio.file.Path;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * Records a path traveled based on velocity of each wheel side. Writes to a
+ * file on the RoboRio at ~/paths/ titled GEN_[mstime]. Records tangent
+ * velocity to be used for Quintic Hermite spline trajectory generation. Use
+ * with PathTracer (a compatible JSON will be the output).
+ */
 @GenerateCreator
 public class RecordPath extends CommandBase {
     private final DriveTrain driveTrain;
     private final Joystick driverLeft;
     private final Joystick driverRight;
     private final Joystick driverButtons;
-    private final RobotShuffleboardTab tab;
+    private final RSTab tab;
     private final boolean isPower;
     private List<Vec2D> vel;
     private String recName;

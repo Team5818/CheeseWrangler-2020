@@ -25,6 +25,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 
+/**
+ * Component part of the intake subsystem. Each side has a single motor
+ * controller (Victor) that spins the tentacles and collects balls. No
+ * feedback (no encoders).
+ */
 public class IntakeSide {
     private final WPI_VictorSPX intakeVictor;
     private final MechLogger logger;

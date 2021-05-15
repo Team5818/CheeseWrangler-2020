@@ -20,6 +20,18 @@
 
 package org.rivierarobotics.autonomous;
 
+/**
+ * PathTracer constraints for a given path. To be used with
+ * {@link Pose2dPath} objects. Default values represent an optimized
+ * path for either trajectory generation method with global maximums. Note
+ * that global velocity maximum may exceed maximum errorless trajectory
+ * following capabilities.
+ *
+ * @see PathTracerExecutor
+ * @see Pose2dPath
+ * @see CreationMode
+ * @see CRKnotParam
+ */
 public class PathConstraints {
     private double maxAccel = SplinePath.MAX_POSSIBLE_ACCEL;
     private double maxVel = SplinePath.MAX_POSSIBLE_VEL;
@@ -30,6 +42,9 @@ public class PathConstraints {
     private boolean reversed = false;
     private boolean straight = false;
 
+    /**
+     * Use PathConstraints.create() for external object creation.
+     */
     private PathConstraints() {
     }
   
@@ -126,12 +141,61 @@ public class PathConstraints {
         return new PathConstraints();
     }
 
+    /**
+     * Creation mode for PathTracer trajectory generation. Each has a
+     * different set of fixed/ignored values and goals. Note these are
+     * representative enums for use with PathConstraints objects.
+     */
     public enum CreationMode {
-        QUINTIC_HERMITE, CUBIC_HERMITE, CATMULL_ROM
+        /**
+         * Quintic Hermite: Set tangent acceleration, velocity, and position
+         * as vectors at given waypoints. Interpolates between the points to
+         * create a path with constant curvature in C2.
+         */
+        QUINTIC_HERMITE,
+
+        /**
+         * Cubic Hermite: Same as Quintic Hermite except without
+         * tangent acceleration. Constant curvature in C1. Equivalent to
+         * putting 0 as acceleration tangent in Quintic Hermite.
+         */
+        CUBIC_HERMITE,
+
+        /**
+         * Catmull-Rom: No tangent velocity or acceleration. Use for
+         * fastest path creation (waypoint positions only).
+         * Interpolates between the points to create an "optimal" path with
+         * smooth velocity curve. Does not guarantee reaching all waypoints.
+         * Curve sharpness can be adjusted with {@link CRKnotParam}.
+         * Different generation method than Hermite.
+         */
+        CATMULL_ROM
     }
 
+    /**
+     * Parametrization configuration for Catmull-Rom generated splines. Three
+     * main types with alpha values ranging form 0 to 1. A larger value
+     * equates to a sharper turn. It is suggested to use a value between 0.25
+     * and 0.75 if not using one of these enums.
+     */
     public enum CRKnotParam {
-        UNIFORM, CENTRIPETAL, CHORDAL;
+        /**
+         * Uniform (a=0): Sharpest option, tends to make corners when
+         * used with robots. May produce a loop at end point if too sharp.
+         */
+        UNIFORM,
+
+        /**
+         * Centripetal (a=0.5): Default option, closest to optimal
+         * curved path. May deviate from exact path.
+         */
+        CENTRIPETAL,
+
+        /**
+         * Chordal (a=1): Large deviations from path, creates swooping
+         * curves. May overshoot on robots due to turning inaccuracy.
+         */
+        CHORDAL;
 
         public double alpha() {
             return this.ordinal() / 2.0;

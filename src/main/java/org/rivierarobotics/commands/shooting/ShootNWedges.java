@@ -31,6 +31,11 @@ import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
 
+/**
+ * Shoot a number (N) of balls sequentially. Does not wait for AutoAim.
+ * Better than {@link All5Shoot} for variable count and use of caller
+ * CycleSlot command. Set timeout between shooting to prevent jamming.
+ */
 @GenerateCreator
 public class ShootNWedges extends SequentialCommandGroup {
     private final CheeseWheelCommands cheeseWheelCommands;
