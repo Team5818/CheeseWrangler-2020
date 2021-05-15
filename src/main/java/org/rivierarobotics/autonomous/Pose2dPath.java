@@ -42,7 +42,8 @@ import java.util.Locale;
  * information.
  *
  * <p>Each enum constant is a path with associated JSON. All filenames are
- * camelCase. An underscore represents a word break (i.e. CAMEL_CASE).</p>
+ * {@code camelCase}. An underscore represents a word break
+ * (e.g. {@code TWO_WORDS} -> {@code twoWords}).</p>
  */
 public enum Pose2dPath {
     AN_BARREL_RACING,
