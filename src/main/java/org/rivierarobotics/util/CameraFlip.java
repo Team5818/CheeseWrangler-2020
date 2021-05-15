@@ -28,7 +28,7 @@ import org.opencv.core.Mat;
 
 /**
  * Flips secondary camera and outputs to new camera server stream "Flipped".
- * State controlled by <code>DO_FLIP</code> boolean through commands.
+ * State controlled by {@code DO_FLIP} boolean through commands.
  */
 public class CameraFlip extends Thread {
     public static boolean DO_FLIP = false;

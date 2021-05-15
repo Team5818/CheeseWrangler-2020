@@ -34,8 +34,8 @@ import org.rivierarobotics.util.VisionTarget;
 
 /**
  * Autonomous command to drive around the field in a loop while collecting
- * balls and shooting at intervals. Only works with <code>Pose2dPath</code>
- * loops that contain <code>SHOOT_LOOP</code>. Intended for use at the
+ * balls and shooting at intervals. Only works with {@link Pose2dPath}
+ * loops that contain {@code SHOOT_LOOP}. Intended for use at the
  * beginning of a match. Uses AutoAim and PathTracer.
  *
  * <p>Process:</p>

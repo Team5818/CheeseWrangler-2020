@@ -35,12 +35,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Represents a <code>Shuffleboard</code> tab as part of the <code>RobotShuffleboard</code>.
+ * Represents a {@code Shuffleboard} tab as part of the {@link RobotShuffleboard}.
  *
  * <p>Contains WPILib API tab object and internal lists for tiles.
- * Can add primitives, <code>Sendable</code>s, <code>CameraServer</code> streams,
- * and <code>VideoSources</code>. Tables can also be created in tabs.
- * Positioning and sizing of each tile is managed by <code>RSTileOptions</code>.</p>
+ * Can add primitives, {@code Sendable}s, {@code CameraServer} streams,
+ * and {@code VideoSources}. Tables can also be created in tabs.
+ * Positioning and sizing of each tile is managed by {@link RSTileOptions}.</p>
  *
  * <p>Methods are arranged as a builder. Daisy-chaining is encouraged.</p>
  *
@@ -57,11 +57,11 @@ public class RSTab {
     /**
      * Creates a new tab with a specified name.
      *
-     * <p>If an existing tab exists on the <code>Shuffleboard</code> with the same name,
-     * any <code>SimpleWidget</code> tiles will be logged as entries. Existing
+     * <p>If an existing tab exists on the {@code Shuffleboard} with the same name,
+     * any {@code SimpleWidget} tiles will be logged as entries. Existing
      * tables will not be logged and may either be added again or re-initialized.</p>
      *
-     * @param name the title/name of the <code>Shuffleboard</code> tab to create.
+     * @param name the title/name of the {@code Shuffleboard} tab to create.
      */
     public RSTab(String name) {
         this.tab = Shuffleboard.getTab(name);
@@ -77,7 +77,7 @@ public class RSTab {
     }
 
     /**
-     * Adds a named <code>CameraServer</code> stream to the <code>RSTab</code>.
+     * Adds a named {@code CameraServer} stream to the {@link RSTab}.
      * Uses default {@link RSTileOptions}.
      *
      * <p>Wrapper for {@link #setCamera(String, RSTileOptions)}.</p>
@@ -89,15 +89,15 @@ public class RSTab {
     }
 
     /**
-     * Adds a named <code>CameraServer</code> stream to the <code>RSTab</code> with properties.
-     * Grabs stream source from the <code>CameraServer</code>.
+     * Adds a named {@code CameraServer} stream to the {@link RSTab} with properties.
+     * Grabs stream source from the {@code CameraServer}.
      *
      * <p>Wrapper for {@link #setVideoSource(VideoSource, RSTileOptions)}.</p>
      *
-     * @param name the named <code>CameraServer</code> to add.
-     * @param options camera placement and sizing options on the <code>RSTab</code>.
-     * @return the current <code>RSTab</code> where the <code>CameraServer</code> stream was added.
-     * @throws VideoException if a video error occurred while retrieving the <code>CameraServer</code> stream.
+     * @param name the named {@code CameraServer} to add.
+     * @param options camera placement and sizing options on the {@link RSTab}.
+     * @return the current {@link RSTab} where the {@code CameraServer} stream was added.
+     * @throws VideoException if a video error occurred while retrieving the {@code CameraServer} stream.
      *
      * @see #setVideoSource(VideoSource, RSTileOptions)
      */
@@ -106,13 +106,13 @@ public class RSTab {
     }
 
     /**
-     * Adds a <code>VideoSource</code> to the <code>RSTab</code>.
+     * Adds a {@code VideoSource} to the {@link RSTab}.
      * Uses default {@link RSTileOptions}.
      *
      * <p>Wrapper for {@link #setVideoSource(VideoSource, RSTileOptions)}.</p>
      *
-     * @param src the <code>VideoSource</code> to add.
-     * @return the current <code>RSTab</code> where the <code>VideoSource</code> stream was added.
+     * @param src the {@code VideoSource} to add.
+     * @return the current {@link RSTab} where the {@code VideoSource} stream was added.
      *
      * @see #setVideoSource(VideoSource, RSTileOptions)
      */
@@ -121,14 +121,14 @@ public class RSTab {
     }
 
     /**
-     * Adds a <code>VideoSource</code> to the <code>RSTab</code> with properties.
+     * Adds a {@code VideoSource} to the {@link RSTab} with properties.
      *
-     * <p>Applied as a <code>ComplexWidget</code> type to the WPILib <code>ShuffleboardTab</code>.<br>
-     * Title/name of <code>Shuffleboard</code> tile equal to source name of <code>VideoSource</code>.</p>
+     * <p>Applied as a {@code ComplexWidget} type to the WPILib {@code Shuffleboard}.<br>
+     * Title/name of {@code Shuffleboard} tile equal to source name of {@code VideoSource}.</p>
      *
      * @param src the video source to add.
-     * @param options video source placement and sizing options on the <code>RSTab</code>.
-     * @return the current <code>RSTab</code> where the <code>VideoSource</code> stream was added.
+     * @param options video source placement and sizing options on the {@link RSTab}.
+     * @return the current {@link RSTab} where the {@code VideoSource} stream was added.
      */
     public RSTab setVideoSource(VideoSource src, RSTileOptions options) {
         options.applyToComplex(tab.add(src.getName(), src));
@@ -136,7 +136,7 @@ public class RSTab {
     }
 
     /**
-     * Adds a <code>Sendable</code> type object to the <code>RSTab</code>.
+     * Adds a {@code Sendable} type object to the {@link RSTab}.
      * Uses default {@link RSTileOptions}.
      *
      * <p>Wrapper for {@link #setSendable(Sendable, RSTileOptions)}.</p>
@@ -148,15 +148,15 @@ public class RSTab {
     }
 
     /**
-     * Adds a <code>Sendable</code> type object to the <code>RSTab</code> with properties.
+     * Adds a {@code Sendable} type object to the {@link RSTab} with properties.
      *
-     * <p>Applied as a <code>ComplexWidget</code> type to the WPILib <code>ShuffleboardTab</code>.<br>
-     * Title/name of <code>Shuffleboard</code> tile equal to registered name of <code>Sendable</code>.<br>
-     * Typically used for WPILib <code>SendableChooser</code> objects.</p>
+     * <p>Applied as a {@code ComplexWidget} type to the WPILib {@code Shuffleboard}.<br>
+     * Title/name of {@code Shuffleboard} tile equal to registered name of {@code Sendable}.<br>
+     * Typically used for WPILib {@code SendableChooser} objects.</p>
      *
      * @param sendable the sendable type object to add.
-     * @param options placement and sizing options on the <code>RSTab</code>.
-     * @return the current <code>RSTab</code> where the <code>Sendable</code> was added.
+     * @param options placement and sizing options on the {@link RSTab}.
+     * @return the current {@link RSTab} where the {@code Sendable} was added.
      */
     public RSTab setSendable(Sendable sendable, RSTileOptions options) {
         options.applyToComplex(tab.add(SendableRegistry.getName(sendable), sendable));
@@ -164,7 +164,7 @@ public class RSTab {
     }
 
     /**
-     * Adds a primitive value to the <code>RSTab</code>.
+     * Adds a primitive value to the {@link RSTab}.
      * Uses default {@link RSTileOptions}.
      *
      * <p>Wrapper for {@link #setEntry(String, Object, RSTileOptions)}.</p>
@@ -176,19 +176,19 @@ public class RSTab {
     }
 
     /**
-     * Adds a primitive value to the <code>RSTab</code> with properties.
+     * Adds a primitive value to the {@link RSTab} with properties.
      *
      * <p>Ensures a key with the same title does not already exist in logged entries, then
-     * creates a new <code>SimpleWidget</code> with matching default value type.
+     * creates a new {@code SimpleWidget} with matching default value type.
      * If not, the entry is retrieved from the local listing and the value is set.<br>
      * Note that the tile's type will be forced to the newest value.<br>
      * It is suggested to use primitive types only, as only a limited subset of objects
-     * are compatible. Most are wrapped by other methods in <code>RSTab</code>.</p>
+     * are compatible. Most are wrapped by other methods in {@link RSTab}.</p>
      *
-     * @param title the key/title of the <code>Shuffleboard</code> tile.
+     * @param title the key/title of the {@code Shuffleboard} tile.
      * @param value the primitive value to set.
-     * @param options placement and sizing options on the <code>RSTab</code>.
-     * @return the current <code>RSTab</code> where the value was added.
+     * @param options placement and sizing options on the {@link RSTab}.
+     * @return the current {@link RSTab} where the value was added.
      */
     public <T> RSTab setEntry(String title, T value, RSTileOptions options) {
         if (!entries.containsKey(title)) {
@@ -200,14 +200,14 @@ public class RSTab {
     }
 
     /**
-     * Retrieves the <code>NetworkTableEntry</code> associated with a named tile.
+     * Retrieves the {@code NetworkTableEntry} associated with a named tile.
      *
      * <p>Entries will be taken from the pre-existing entries list. If there is no
      * entry of a matching title in the list, one will be created with a default
      * value of an empty String. Note that the value must be force-set if done
      * manually if is is not a String.</p>
      *
-     * @param title the name/key of the <code>Shuffleboard</code> tile.
+     * @param title the name/key of the {@code Shuffleboard} tile.
      * @return the logged entry associated with the name/key.
      */
     public NetworkTableEntry getEntry(String title) {
@@ -224,7 +224,7 @@ public class RSTab {
     }
 
     /**
-     * Retrieves a key/value table from the <code>RSTab</code>.
+     * Retrieves a key/value table from the {@link RSTab}.
      * Uses default {@link RSTileOptions}.
      *
      * <p>Wrapper for {@link #getTable(String, RSTileOptions)}.</p>
@@ -236,7 +236,7 @@ public class RSTab {
     }
 
     /**
-     * Retrieves a key/value table from the <code>RSTab</code> with properties.
+     * Retrieves a key/value table from the {@link RSTab} with properties.
      *
      * <p>If the table does not exist (or is not present in the logged tables list)
      * a new one will be created. Note that height for tables has a maximum of 3 units.
@@ -244,7 +244,7 @@ public class RSTab {
      * This is the suggested method of managing table access.</p>
      *
      * @param tableName the name/key/title of the table to get.
-     * @param options placement and sizing options on the <code>RSTab</code>.
+     * @param options placement and sizing options on the {@link RSTab}.
      * @return the resulting table for adding key/value pairs to.
      */
     public RSTable getTable(String tableName, RSTileOptions options) {
@@ -255,7 +255,7 @@ public class RSTab {
     }
 
     /**
-     * Adds a new key/value table to the <code>RSTab</code>.
+     * Adds a new key/value table to the {@link RSTab}.
      * Uses default {@link RSTileOptions}.
      *
      * <p>Wrapper for {@link #addTable(String, RSTileOptions)}.</p>
@@ -267,22 +267,22 @@ public class RSTab {
     }
 
     /**
-     * Adds a new key/value table to the <code>RSTab</code> with properties.
+     * Adds a new key/value table to the {@link RSTab} with properties.
      *
      * <p>Creates a new table and then places it on current tab.</p>
      *
      * @param tableName the name/key/title of the table to add.
-     * @param options placement and sizing options on the <code>RSTab</code>.
+     * @param options placement and sizing options on the {@link RSTab}.
      */
     public void addTable(String tableName, RSTileOptions options) {
         tables.put(tableName, new RSTable(tableName, this, options));
     }
 
     /**
-     * Adds an existing key/value table to the <code>RSTab</code>.
+     * Adds an existing key/value table to the {@link RSTab}.
      *
      * <p>Does not make a new table. The pre-exsting table is instead passed through and added.
-     * The table name will be preset by the <code>ShuffleboardTable</code> object.</p>
+     * The table name will be preset by the {@link RSTable} object.</p>
      *
      * @param table the table object to display on the current tab.
      *

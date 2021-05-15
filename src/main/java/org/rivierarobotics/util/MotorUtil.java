@@ -46,7 +46,7 @@ public class MotorUtil {
      * and then configures the feedback sensor based on the passed value.
      * As such is is recommended that this be the first motor configuration call
      * in any subsystem. Note that maximum velocity and acceleration will
-     * not be set if <code>maxVel == 0</code>.</p>
+     * not be set if {@code maxVel == 0}.</p>
      *
      * @param sensor the sensor attached to the controller used for loop feedback.
      * @param pidConfig the PIDF and range values to use on the controller.

@@ -28,7 +28,7 @@ import org.rivierarobotics.util.CameraFlip;
  * Command to flip the secondary driver camera. Can either be set to a
  * specific state via constructor or toggled (no-parameter constructor).
  * Works by leaving packed Boolean as null and setting the associated
- * <code>CameraFlip</code> boolean.
+ * {@link CameraFlip} boolean.
  *
  * @see CameraFlip
  */

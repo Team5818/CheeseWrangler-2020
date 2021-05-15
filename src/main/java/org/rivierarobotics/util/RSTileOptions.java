@@ -25,7 +25,7 @@ import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 
 /**
  * A utility class for storing position and sizing details of
- * <code>RobotShuffleboard</code> tiles, tabs, and tables.
+ * {@link RobotShuffleboard} tiles, tabs, and tables.
  *
  * <p>The field {@link RSTileOptions#DEFAULT} is used by default in many
  * wrapper methods to specify that the options should not be applied
@@ -79,7 +79,7 @@ public class RSTileOptions {
     }
 
     /**
-     * Applies the current properties to a <code>SimpleWidget</code> (primitive tile).
+     * Applies the current properties to a {@code SimpleWidget} (primitive tile).
      *
      * @param sWidget the simple widget to set the properties of.
      * @return the configured simple widget.
@@ -90,8 +90,8 @@ public class RSTileOptions {
     }
 
     /**
-     * Applies the current properties to a <code>ComplexWidget</code>
-     * (<code>VideoSource</code> or <code>Sendable</code>, other types).
+     * Applies the current properties to a {@code ComplexWidget}
+     * ({@code VideoSource} or {@code Sendable}, other types).
      *
      * @param cWidget the complex widget to set the properties of.
      * @return the configured complex widget.

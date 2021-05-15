@@ -31,7 +31,6 @@ import edu.wpi.first.wpilibj.DigitalInput;
  * @see CheeseSlot.State
  */
 public enum CheeseSlot {
-    //
     ZERO, ONE, TWO, THREE, FOUR;
 
     private final DigitalInput sensor;

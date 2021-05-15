@@ -61,7 +61,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
 
     /**
      * Match sensor color against possible values and convert to
-     * <code>GameColor</code> internal storage unit.
+     * {@link GameColor} internal storage unit.
      *
      * @return the current color as a GameColor.
      */
@@ -132,7 +132,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
     }
 
     /**
-     * Get <code>GameColor</code> matching returned color character from FMS.
+     * Get {@link GameColor} matching returned color character from FMS.
      *
      * @return the color corresponding to the FMS color character.
      */

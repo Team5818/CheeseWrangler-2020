@@ -33,7 +33,7 @@ import org.rivierarobotics.util.MathUtil;
 
 /**
  * Shoot a number (N) of balls sequentially. Does not wait for AutoAim.
- * Better than <code>All5Shoot</code> for variable count and use of caller
+ * Better than {@link All5Shoot} for variable count and use of caller
  * CycleSlot command. Set timeout between shooting to prevent jamming.
  */
 @GenerateCreator

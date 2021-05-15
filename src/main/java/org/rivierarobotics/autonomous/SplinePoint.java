@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj.geometry.Pose2d;
 import org.rivierarobotics.util.Vec2D;
 
 /**
- * Generic class for storing a spline vector. Uses <code>Vec2D</code> logic
+ * Generic class for storing a spline vector. Uses {@link Vec2D} logic
  * backing. May use precomputed tangents (Quintic Hermite spline generation
  * only) or a simple heading. Stored in metric units (meters/second or radians).
  *

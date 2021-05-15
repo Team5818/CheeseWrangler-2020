@@ -81,7 +81,7 @@ public class MultiPID {
 
     /**
      * Represents physics movement types (position, velocity, and acceleration)
-     * for use in <code>MultiPID</code> managers.
+     * for use in {@link MultiPID} managers.
      */
     public enum Type {
         POSITION, VELOCITY, ACCELERATION

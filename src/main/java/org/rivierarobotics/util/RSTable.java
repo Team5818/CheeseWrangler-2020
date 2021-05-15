@@ -29,12 +29,12 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Represents a <code>Shuffleboard</code>-based table displayed on a <code>RSTab</code>.
+ * Represents a {@code Shuffleboard}-based table displayed on a {@link RSTab}.
  *
- * <p>Uses <code>BuiltInLayouts.kList</code> to create a new list (table) layout on a tab.
- * Entries are then created using <code>withWidget("NetworkTableTree")</code>
+ * <p>Uses {@code BuiltInLayouts.kList} to create a new list (table) layout on a tab.
+ * Entries are then created using {@code withWidget("NetworkTableTree")}
  * or retrieved from the internal entries list.
- * Positioning and sizing of the table is managed by <code>RSTileOptions</code>.</p>
+ * Positioning and sizing of the table is managed by {@link RSTileOptions}.</p>
  *
  * <p>Methods are arranged as a builder. Daisy-chaining is encouraged.</p>
  *
@@ -48,9 +48,9 @@ public class RSTable {
     private final RSTileOptions options;
 
     /**
-     * Constructs a new table on a given <code>RSTab</code>.
+     * Constructs a new table on a given {@link RSTab}.
      *
-     * <p>Uses the <code>BuiltInLayouts.kList</code> enum to signal a table.
+     * <p>Uses the {@code BuiltInLayouts.kList} enum to signal a table.
      * (The name indicates a list but is actually a key/value list).
      * The table label is hidden by default (clutters UI).
      * Does not automatically add the tab's contents to the table, for
@@ -58,7 +58,7 @@ public class RSTable {
      *
      * @param tableName the name/title of the table to be created.
      * @param tab the tab to place the new table onto.
-     * @param options placement and sizing options for the <code>RSTable</code>.
+     * @param options placement and sizing options for the {@link RSTable}.
      */
     public RSTable(String tableName, RSTab tab, RSTileOptions options) {
         this.tableName = tableName;
@@ -78,7 +78,7 @@ public class RSTable {
      * If present, the entry's value will be updated to reflect the value passed.
      * If not present, a new entry will be created by adding it to the table
      * layout created in the constructor.
-     * Note that <code>withWidget("NetworkTableTree")</code> is called to ensure
+     * Note that {@code withWidget("NetworkTableTree")} is called to ensure
      * the key/value appears within the table and not as a separate tile.</p>
      *
      * @param name the name of the key/value pair to add.
@@ -102,7 +102,7 @@ public class RSTable {
      * <p>Wrapper for {@link #addEntries(Collection)}.</p>
      *
      * @param tab the tab to add to the current/target tab.
-     * @return the target <code>RSTable</code> which the parameter tab was appended to.
+     * @return the target {@link RSTable} which the parameter tab was appended to.
      *
      * @see #addEntries(Collection)
      */
@@ -113,12 +113,12 @@ public class RSTable {
     /**
      * Adds tiles from a list to the current table.
      *
-     * <p>Calls {@link #setEntry(String, Object)} internally for each <code>NetworkTableEntry</code>.
-     * Key/title names are based on the title of the <code>NetworkTableEntry</code>
+     * <p>Calls {@link #setEntry(String, Object)} internally for each {@code NetworkTableEntry}.
+     * Key/title names are based on the title of the {@code NetworkTableEntry}
      * and should be automatically assigned. Do not change these manually.</p>
      *
      * @param ntEntries the entries to add to the current table.
-     * @return the current <code>RSTable</code> where the entries were added.
+     * @return the current {@link RSTable} where the entries were added.
      *
      * @see #setEntry(String, Object)
      */
@@ -130,14 +130,14 @@ public class RSTable {
     }
 
     /**
-     * Copy the current table to a passed <code>RSTab</code>.
+     * Copy the current table to a passed {@link RSTab}.
      *
      * <p>Creates a new table with the same table name, options, and entries,
      * just targeted towards a new tab. Does not point the current tab
      * to the passed tab.</p>
      *
      * @param targetTab the target tab to copy the current table onto.
-     * @return the new <code>RSTable</code> where the entries were copied to.
+     * @return the new {@link RSTable} where the entries were copied to.
      */
     public RSTable copyToTab(RSTab targetTab) {
         RSTable table = new RSTable(tableName, targetTab, options).addEntries(entries.values());

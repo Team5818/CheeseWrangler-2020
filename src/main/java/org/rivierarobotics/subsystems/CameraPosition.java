@@ -22,7 +22,7 @@ package org.rivierarobotics.subsystems;
 
 /**
  * Positions for secondary camera servo. Also stores flip value for
- * <code>CameraFlip</code> when the servo is moved.
+ * {@link org.rivierarobotics.util.CameraFlip} when the servo is moved.
  *
  * @see CameraServo
  * @see org.rivierarobotics.util.CameraFlip

@@ -52,7 +52,7 @@ public class AutoTuner {
     }
 
     /**
-     * Log the PID constants and status out to a <code>RSTab</code>.
+     * Log the PID constants and status out to a {@link RSTab}.
      *
      * @param tab the Shuffleboard tab object to add to.
      */

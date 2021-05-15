@@ -30,7 +30,7 @@ import org.rivierarobotics.util.CheeseSlot;
  * An interrupt for CWCycleSlot. Needed so that CWCycleSlot can be
  * interrupted while moving and set to another slot, or to stop the PID if it
  * is not tuned correctly (oscillation around setpoint). An
- * <code>InstantCommand</code> that creates and schedules a cycle slot command.
+ * {@code InstantCommand} that creates and schedules a cycle slot command.
  *
  * @see CWCycleSlot
  */

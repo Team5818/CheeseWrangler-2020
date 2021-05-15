@@ -117,8 +117,8 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     }
 
     /**
-     * Wrapper for <code>getSlotWithDirection()</code> that handles any-sided
-     * direction. Use this method instead whenever possible.
+     * Wrapper for {@link #getSlotWithDirection(AngleOffset, Direction, CheeseSlot.State)}
+     * that handles any-sided direction. Use this method instead whenever possible.
      *
      * @param offset the angle offset closest to the returned slot.
      * @param direction the required direction from the offset to slot.

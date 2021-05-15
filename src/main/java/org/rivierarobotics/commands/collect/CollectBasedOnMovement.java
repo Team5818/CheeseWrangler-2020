@@ -29,7 +29,7 @@ import javax.inject.Inject;
 /**
  * Collect balls based on which direction the robot is moving. Average
  * velocity is used to determine the direction. Calls base command
- * <code>CollectInfiniteWedges</code> to perform directional action.
+ * {@link CollectInfiniteWedges} to perform directional action.
  *
  * @see CollectInfiniteWedges
  */

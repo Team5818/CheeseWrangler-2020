@@ -61,7 +61,7 @@ public class ButtonConfiguration {
 
     /**
      * Configuration for buttons within teleoperated mode. Reset each time
-     * the robot is disabled and reinitialized on <code>teleopInit()</code>.
+     * the robot is disabled and reinitialized on {@link Robot#teleopInit()}.
      */
     public void initTeleop() {
         // Collecting CoDriver

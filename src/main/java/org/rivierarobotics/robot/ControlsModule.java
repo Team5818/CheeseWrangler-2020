@@ -28,7 +28,7 @@ import org.rivierarobotics.inject.Input;
 import javax.inject.Singleton;
 
 /**
- * Provides <code>Joystick</code> objects to injection graph that match input
+ * Provides {@code Joystick} objects to injection graph that match input
  * selection qualifier. Managed by Dagger.
  *
  * @see Input

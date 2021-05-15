@@ -32,10 +32,10 @@ import java.util.Map;
 
 /**
  * Performs calculations for PathTracer paths. Pass waypoints in with a
- * <code>PathConstraints</code> object, and run <code>calculate()</code> to
- * generate an interpolated path (after once running
- * <code>recalculatePath()</code>. Supports all three trajectory generation
- * methods as listed in <code>CreationMode</code>. All units are in meters,
+ * {@link PathConstraints} object, and run {@link #calculate(double)}
+ * to generate an interpolated path (after once running {@link #recalculatePath()}.
+ * Supports all three trajectory generation methods as listed in
+ * {@link PathConstraints.CreationMode}. All units are in meters,
  * meters per second (velocity), or meters per second squared (acceleration).
  * Note that acceleration limits do not work completely.
  *
@@ -118,8 +118,8 @@ public class SplinePath {
     /**
      * Recalculate the path from waypoints. Will interpolate between each set
      * of two points (daisy-chained together) and store a series of
-     * <code>Section</code> objects with set time and acceleration goals.
-     * Must be called before running a <code>SplinePath</code> to run initial
+     * {@link Section} objects with set time and acceleration goals.
+     * Must be called before running a {@link SplinePath} to run initial
      * interpolation and ensure an approximately correct run time.
      */
     public void recalculatePath() {
@@ -142,7 +142,7 @@ public class SplinePath {
 
     /**
      * Calculate the interpolated path output at a specific time. Uses
-     * precomputed sections from <code>recalculatePath()</code> and
+     * precomputed sections from {@link #recalculatePath()} and
      * bound-checks overall time to be between the [0, 1] time parameter for
      * each section.
      *
@@ -164,8 +164,8 @@ public class SplinePath {
 
     /**
      * Calculate the interpolated path output at a specific time
-     * parameter [0, 1]. Uses precomputed sections from <code>recalculatePath()
-     * </code>. Uses creation mode as specified in path constraints.
+     * parameter [0, 1]. Uses precomputed sections from {@link #recalculatePath()}.
+     * Uses creation mode as specified in path constraints.
      *
      * @param section the precomputed section to interpolate between.
      * @param t the time parameter [0, 1] used to determine position.
@@ -402,7 +402,7 @@ public class SplinePath {
 
     /**
      * Generic class for a section of the path between two
-     * <code>SplinePoint</code> interpolated points. Contains data for
+     * {@link SplinePoint} interpolated points. Contains data for
      * tangent velocities, tangent acceleration, time, linear distance,
      * and precomputed indices.
      */

@@ -33,16 +33,16 @@ import org.rivierarobotics.util.RobotShuffleboard;
 
 /**
  * Main PathTracer executor command class. Moves a robot along a path as
- * described by a passed <code>SplinePath</code> object. Contains a series of
- * waypoints interpolated by a <code>CreationMode</code> into a smooth path.
- * Contains an angular proportional loop for error correction. There is no
- * linear error correction at present.
+ * described by a passed {@link SplinePath} object. Contains a series of
+ * waypoints interpolated by a {@link PathConstraints.CreationMode}
+ * into a smooth path. Contains an angular proportional loop for error
+ * correction. There is no linear error correction at present.
  *
- * <p>Use <code>Pose2dPath</code> and the PathWeaver GUI to create new paths.
+ * <p>Use {@link Pose2dPath} and the PathWeaver GUI to create new paths.
  * All features are supported by PathTracer. Supports field-centric and
  * robot-centric paths (given correct gyroscopic alignment and
  * drivetrain tracking). Does not use a pose estimator (e.x. Kalman
- * Filter). Calculations delegated to <code>SplinePath</code> objects.
+ * Filter). Calculations delegated to {@link SplinePath} objects.
  * Created because PathWeaver had substaintial issues running
  * on the 2020 robot.</p>
  *
@@ -144,7 +144,7 @@ public class PathTracerExecutor extends CommandBase {
 
     /**
      * Execute method called every 20ms while the command is running.
-     * Retrieves calculations from <code>SplinePath</code> object and then
+     * Retrieves calculations from {@link SplinePath} object and then
      * converts XY to LR velocities. Angular corrections added in, then set
      * to drivetrain as PIDF loops on separate sides.
      */
@@ -233,7 +233,7 @@ public class PathTracerExecutor extends CommandBase {
      * Override to end the path command.
      *
      * @return if the elapsed time is greater than the total duration of the
-     *     path time as calculated by <code>SplinePath</code>.
+     *     path time as calculated by {@link SplinePath}.
      */
     @Override
     public boolean isFinished() {

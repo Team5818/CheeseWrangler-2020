@@ -22,7 +22,7 @@ package org.rivierarobotics.autonomous;
 
 /**
  * PathTracer constraints for a given path. To be used with
- * <code>Pose2dPath</code> objects. Default values represent an optimized
+ * {@link Pose2dPath} objects. Default values represent an optimized
  * path for either trajectory generation method with global maximums. Note
  * that global velocity maximum may exceed maximum errorless trajectory
  * following capabilities.
@@ -42,7 +42,9 @@ public class PathConstraints {
     private boolean reversed = false;
     private boolean straight = false;
 
-    // Use PathConstraints.create() for external object creation
+    /**
+     * Use PathConstraints.create() for external object creation.
+     */
     private PathConstraints() {
     }
   
@@ -155,7 +157,7 @@ public class PathConstraints {
      *     fastest path creation (waypoint positions only).
      *     Interpolates between the points to create an "optimal" path with
      *     smooth velocity curve. Does not guarantee reaching all waypoints.
-     *     Curve sharpness can be adjusted with <code>CRKnotParam</code>.
+     *     Curve sharpness can be adjusted with {@link CRKnotParam}.
      *     Different generation method than Hermite.</li>
      * </ul>
      */

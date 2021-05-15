@@ -102,7 +102,7 @@ public class PIDConfig {
      *
      * <p>The slot number is [0, 3] as dictated by the 4 slots per controller.
      * Configurations only need to be applied once, then switched between with
-     * <code>motor.selectProfileSlot(idx, 0)</code>. Note that the 0 represents
+     * {@code motor.selectProfileSlot(idx, 0)}. Note that the 0 represents
      * the primary controller. It is suggested to remain on the primary for quick
      * switching (i.e. position to velocity) and resort to auxiliary if more
      * than four configurations are needed (unlikely) or two controllers need

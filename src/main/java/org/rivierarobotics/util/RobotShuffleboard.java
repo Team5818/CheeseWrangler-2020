@@ -26,9 +26,9 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- * Manages tiled data inside <code>Shuffleboard</code> and associated tabs.
+ * Manages tiled data inside {@code Shuffleboard} and associated tabs.
  *
- * <p>Uses separate instances of <code>RSTab</code> to store tabs, each
+ * <p>Uses separate instances of {@link RSTab} to store tabs, each
  * with a series of key/value entries of varying types. These can be updated
  * periodically (up to once every 100ms due to NetworkTables restrictions) through
  * the tab they belong to. Tabs do not enforce strict value types so long as they
@@ -42,11 +42,11 @@ public class RobotShuffleboard {
     private final Map<String, RSTab> tabs;
 
     /**
-     * Creates a new <code>Shuffleboard</code> manager.
+     * Creates a new {@code Shuffleboard} manager.
      *
      * <p>Implementations of this with Dagger and GradleRio-Redux should have a
-     * singleton <code>RobotShuffleboard</code> added to the injection graph.<br>
-     * Multiple <code>RobotShuffleboard</code>s can be created and will function
+     * singleton {@link RobotShuffleboard} added to the injection graph.<br>
+     * Multiple {@link RobotShuffleboard}s can be created and will function
      * correctly, but the idea is to use one object to control multiple tabs.</p>
      */
     @Inject
