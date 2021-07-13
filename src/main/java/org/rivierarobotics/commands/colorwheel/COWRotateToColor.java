@@ -46,7 +46,7 @@ public class COWRotateToColor extends COWRotateNTimes {
     }
 
     private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
-        switch(robotColor){
+        switch (robotColor) {
             case BLUE:
                 return ColorWheel.GameColor.RED;
             case GREEN:
