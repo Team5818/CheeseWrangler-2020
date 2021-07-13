@@ -20,8 +20,10 @@
 
 package org.rivierarobotics.commands.colorwheel;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CameraServo;
 import org.rivierarobotics.subsystems.ColorWheel;
 
 /**
@@ -44,8 +46,18 @@ public class COWRotateToColor extends COWRotateNTimes {
     }
 
     private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
-        ColorWheel.GameColor[] gcs = ColorWheel.GameColor.values();
-        return gcs[(robotColor.ordinal() + 2) % gcs.length];
+        switch(robotColor){
+            case BLUE:
+                return ColorWheel.GameColor.RED;
+            case GREEN:
+                return ColorWheel.GameColor.YELLOW;
+            case RED:
+                return ColorWheel.GameColor.BLUE;
+            case YELLOW:
+                return ColorWheel.GameColor.GREEN;
+            default:
+                return ColorWheel.GameColor.CORRUPT;
+        }
     }
 
     @Override

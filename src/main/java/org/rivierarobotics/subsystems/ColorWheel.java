@@ -100,7 +100,7 @@ public class ColorWheel extends SubsystemBase implements RRSubsystem {
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        cheeseWheel.setPositionTicks(pwr);
+        cheeseWheel.setPower(pwr);
     }
 
     /**

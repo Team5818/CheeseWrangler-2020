@@ -32,6 +32,7 @@ import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
@@ -214,6 +215,7 @@ public class Robot extends TimedRobot {
             .setEntry("Color R", sensorColor.red)
             .setEntry("Color G", sensorColor.green)
             .setEntry("Color B", sensorColor.blue)
-            .setEntry("Match Color", cow.getGameColor().name());
+            .setEntry("Match Color", cow.getGameColor().name())
+            .setEntry("target color", ColorWheel.getFMSColor().name());
     }
 }
