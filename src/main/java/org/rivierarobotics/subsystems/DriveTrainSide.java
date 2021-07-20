@@ -43,20 +43,23 @@ public class DriveTrainSide implements RRSubsystem {
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
     private final WPI_TalonFX mainLeft;
     private final WPI_TalonFX secondaryRight;
+    private final WPI_TalonFX thirdtop;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.mainLeft = new WPI_TalonFX(motors.main);
         this.secondaryRight = new WPI_TalonFX(motors.secondary);
+        this.thirdtop = new WPI_TalonFX(motors.third);
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
-
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(0.22, 0, 0, 0.051), 0, mainLeft, secondaryRight);
         mainLeft.setInverted(invert);
         secondaryRight.setInverted(invert);
+        thirdtop.setInverted(invert);
         mainLeft.setNeutralMode(NeutralMode.Brake);
         secondaryRight.setNeutralMode(NeutralMode.Brake);
+        thirdtop.setNeutralMode(NeutralMode.Brake);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
@@ -73,6 +76,7 @@ public class DriveTrainSide implements RRSubsystem {
         logger.powerChange(pwr);
         mainLeft.set(TalonFXControlMode.PercentOutput, pwr);
         secondaryRight.set(TalonFXControlMode.PercentOutput, pwr);
+        thirdtop.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
     public double getVoltage(boolean isMasterLeft) {
@@ -98,11 +102,13 @@ public class DriveTrainSide implements RRSubsystem {
         logger.setpointChange(set);
         mainLeft.set(ControlMode.Velocity, set);
         secondaryRight.set(ControlMode.Velocity, set);
+        thirdtop.set(ControlMode.Velocity, set);
     }
 
     public void setVoltage(double volts) {
         mainLeft.setVoltage(volts);
         secondaryRight.setVoltage(volts);
+        thirdtop.setVoltage(volts);
     }
 
     public void resetEncoder() {
