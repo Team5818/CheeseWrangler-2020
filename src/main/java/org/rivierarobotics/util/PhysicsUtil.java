@@ -195,8 +195,11 @@ public class PhysicsUtil {
      */
     private double captainKalbag() {
         double targetAngle = getAngleToTarget();
-        double currentAngle = (turret.getAngle(false) + gyro.getYaw()) % 360;
+        double currentAngle = turret.getAngle(true);
         double angleDiff = targetAngle - currentAngle;
+        //if () {
+
+        //}
         //BASICALLY A PID BUT WITHOUT THE ID
         double p = 0.07;
         return MathUtil.degreesToTicks((angleDiff / (p)) / 10);

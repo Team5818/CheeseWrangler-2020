@@ -73,7 +73,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.turretTalon = new WPI_TalonSRX(id);
         this.multiPID = new MultiPID(turretTalon,
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0),
-                new PIDConfig(1.0 * 1023 / 400, 0, 1.5 * 1023 * 0.001 / 400, (1023.0 * 0.3) / 70));
+                new PIDConfig(0.7 * 1023 / 400, 0, 1.5 * 1023 * 0.01 / 400, (1023.0 * 0.3) / 70));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 800, turretTalon);
         multiPID.applyAllConfigs();
@@ -120,7 +120,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      * @return a double array containing a distance and angle.
      */
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
-        double initialD = ShooterConstants.getTopHeight() / Math.sin(Math.toRadians(vision.getActualTY(hoodAngle)));
+        double initialD = ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getActualTY(hoodAngle)));
         SmartDashboard.putNumber("initialD", initialD);
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double xInitialD = Math.sin(tx) * initialD;
