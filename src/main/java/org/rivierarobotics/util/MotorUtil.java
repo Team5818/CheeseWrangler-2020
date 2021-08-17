@@ -48,10 +48,10 @@ public class MotorUtil {
      * in any subsystem. Note that maximum velocity and acceleration will
      * not be set if {@code maxVel == 0}.</p>
      *
-     * @param sensor the sensor attached to the controller used for loop feedback.
+     * @param sensor    the sensor attached to the controller used for loop feedback.
      * @param pidConfig the PIDF and range values to use on the controller.
-     * @param maxVel maximum velocity of the profile in ticks per 100ms.
-     * @param motors the motors for which Motion Magic is enabled on.
+     * @param maxVel    maximum velocity of the profile in ticks per 100ms.
+     * @param motors    the motors for which Motion Magic is enabled on.
      */
     @SafeVarargs
     public static <T extends BaseTalon> void setupMotionMagic(FeedbackDevice sensor, PIDConfig pidConfig, int maxVel, T... motors) {
@@ -95,7 +95,7 @@ public class MotorUtil {
      *
      * @param forward the maximum ticks in the forward/positive direction.
      * @param reverse the minimum ticks in the reverse/backward/negative direction.
-     * @param motors the motors to apply the soft limits onto.
+     * @param motors  the motors to apply the soft limits onto.
      */
     @SafeVarargs
     public static <T extends BaseTalon> void setSoftLimits(int forward, int reverse, T... motors) {

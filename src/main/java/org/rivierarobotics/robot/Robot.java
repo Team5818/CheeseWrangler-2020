@@ -34,11 +34,13 @@ import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.MotorTemp;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RSTileOptions;
 
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -151,6 +153,7 @@ public class Robot extends TimedRobot {
         var hood = globalComponent.getHood();
         var gyro = globalComponent.getNavXGyro();
         var visionUtil = globalComponent.getVisionUtil();
+
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
@@ -217,5 +220,16 @@ public class Robot extends TimedRobot {
             .setEntry("Color B", sensorColor.blue)
             .setEntry("Match Color", cow.getGameColor().name())
             .setEntry("target color", ColorWheel.getFMSColor().name());
+
+        var drivetrain = globalComponent.getDriveTrain();
+        ArrayList<MotorTemp> temps = new ArrayList<>();
+        temps.add(turret.getTemp());
+        temps.add(flywheel.getTemp());
+        temps.addAll(drivetrain.getTemps());
+        for (MotorTemp t : temps) {
+            shuffleboard.getTab("Motor Temps")
+                    .setEntry(t.name, "id: " + t.id + " temp: " + t.temp);
+        }
+
     }
 }

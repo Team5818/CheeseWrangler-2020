@@ -194,6 +194,10 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         tab.setEntry("ctrlTarget", turretTalon.getClosedLoopTarget());
     }
 
+    public MotorTemp getTemp() {
+        return new MotorTemp(turretTalon.getDeviceID(), turretTalon.getTemperature(), "turretTalon");
+    }
+
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);

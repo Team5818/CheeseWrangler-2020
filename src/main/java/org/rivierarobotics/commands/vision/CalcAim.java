@@ -60,7 +60,7 @@ public class CalcAim extends CommandBase {
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
         physics.getTurretVelocity();
-        physics.calculateVelocities(true);
+        physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();
         autoAimUtil.setValues(physics, hoodAngle, ballVel, physics.getAngleToTarget(), true);

@@ -76,7 +76,7 @@ public class PhysicsUtil {
                 getLLDistance() * Math.cos(Math.toRadians(getLLTurretAngle()));
         tab.setEntry("x", x);
 
-        return x - x * 0.02 + extraDistance;
+        return x + extraDistance;
     }
 
     /**
@@ -168,7 +168,7 @@ public class PhysicsUtil {
             hoodAngle += (driveTrain.getYVelocity());
         }
         double targetDist = getDistanceToTarget();
-        hoodAngle -= (7 - targetDist) * 0.2;
+
         if (targetDist < 4) {
             hoodAngle = 52; // max for close shot
         }
@@ -184,9 +184,7 @@ public class PhysicsUtil {
     public double getBallVel() {
         //Returns ball's velocity in m/s
         double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
-        if (getDistanceToTarget() >= 4) {
-            ballVel += 0.3;
-        }
+
         tab.setEntry("ballVel", ballVel);
         return ballVel;
     }

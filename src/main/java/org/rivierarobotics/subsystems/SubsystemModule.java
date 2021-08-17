@@ -57,9 +57,9 @@ public class SubsystemModule {
     private static final I2C.Port COLOR_WHEEL_SENSOR = I2C.Port.kOnboard;
 
     private static final DTMotorIds DRIVETRAIN_LEFT_MOTOR_IDS =
-        new DTMotorIds(1, 0, 420, 0, 1);
+        new DTMotorIds(1, 0, 2, 0, 1);
     private static final DTMotorIds DRIVETRAIN_RIGHT_MOTOR_IDS =
-        new DTMotorIds(13, 14, 420, 2, 4);
+        new DTMotorIds(13, 14, 12, 2, 4);
 
     private SubsystemModule() {
     }

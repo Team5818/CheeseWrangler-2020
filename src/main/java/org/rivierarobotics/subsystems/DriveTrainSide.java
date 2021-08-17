@@ -111,4 +111,12 @@ public class DriveTrainSide implements RRSubsystem {
     public void resetEncoder() {
         shaftEncoder.reset();
     }
+
+    public MotorTemp[] getTemperature() {
+        MotorTemp[] temps = new MotorTemp[3];
+        temps[0] = new MotorTemp(mainLeft.getDeviceID(), mainLeft.getTemperature(), "mainLeft");
+        temps[1] = new MotorTemp(secondaryRight.getDeviceID(), secondaryRight.getTemperature(), "secondaryRight");
+        temps[2] = new MotorTemp(secondaryTop.getDeviceID(), secondaryTop.getTemperature(), "secondaryTop");
+        return temps;
+    }
 }

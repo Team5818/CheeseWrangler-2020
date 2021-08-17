@@ -98,6 +98,10 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         tab.setEntry("SetTolerance", tolerance);
     }
 
+    public MotorTemp getTemp() {
+        return new MotorTemp(flywheelFalcon.getDeviceID(), flywheelFalcon.getTemperature(), "FlywheelFalcon");
+    }
+
     public static double getTolerance() {
         return tolerance;
     }

@@ -29,8 +29,13 @@ import org.rivierarobotics.inject.Sided;
 import org.rivierarobotics.util.NavXGyro;
 import org.rivierarobotics.util.Side;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
+
 
 /**
  * Subsystem for the drive train. Uses two component sides for drive.
@@ -119,6 +124,18 @@ public class DriveTrain extends SubsystemBase {
         odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(-gyro.getYaw()));
         left.resetEncoder();
         right.resetEncoder();
+    }
+
+    public ArrayList<MotorTemp> getTemps() {
+        ArrayList<MotorTemp> temps = new ArrayList<>();
+        int index = 0;
+        temps.addAll(Arrays.stream(right.getTemperature())
+                .map(temp -> new MotorTemp(temp.id, temp.temp, "Right: " + temp.name))
+                .collect(Collectors.toList()));
+        temps.addAll(Arrays.stream(right.getTemperature())
+                .map(temp -> new MotorTemp(temp.id, temp.temp, "Left: " + temp.name))
+                .collect(Collectors.toList()));
+        return temps;
     }
 
     @Override
