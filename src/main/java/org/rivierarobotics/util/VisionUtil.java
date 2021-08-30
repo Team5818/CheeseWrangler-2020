@@ -23,6 +23,7 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -48,7 +49,15 @@ public class VisionUtil {
     }
 
     public double getActualTY(double hoodAbsPos) {
-        return getLLValue("ty") + hoodAbsPos -  3;
+        double hoodAngle = 90 - hoodAbsPos;
+        double llHeight = Math.sin(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY() + ShooterConstants.getRobotHeight();
+        double llTy = getLLValue("ty") + hoodAbsPos;
+        double llDist = (ShooterConstants.getGoalHeight() - llHeight) / Math.tan(Math.toRadians(llTy));
+        SmartDashboard.putNumber("lldist", llDist);
+        SmartDashboard.putNumber("llHeight", ShooterConstants.getGoalHeight() - llHeight);
+        double dist = llDist + Math.cos(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY();
+        SmartDashboard.putNumber("dist", dist);
+        return Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist));
     }
 
     public void setLEDState(LimelightLEDState state) {

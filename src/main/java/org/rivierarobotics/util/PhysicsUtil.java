@@ -169,7 +169,7 @@ public class PhysicsUtil {
         }
         double targetDist = getDistanceToTarget();
 
-        if (targetDist < 4) {
+        if (targetDist < 1) {
             hoodAngle = 52; // max for close shot
         }
         tab.setEntry("Hood Angle", hoodAngle);
@@ -198,7 +198,7 @@ public class PhysicsUtil {
         double currentAngle = (turret.getAngle(false) + gyro.getYaw()) % 360;
         double angleDiff = targetAngle - currentAngle;
         //BASICALLY A PID BUT WITHOUT THE ID
-        double p = 0.08;
+        double p = 0.07;
         return MathUtil.degreesToTicks((angleDiff / (p)) / 10);
     }
 
