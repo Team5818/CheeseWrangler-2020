@@ -47,12 +47,12 @@ import javax.inject.Provider;
  * Contains a dual PID for position and velocity.
  */
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 470;
-    private static final double MAX_ANGLE = 7;
+    private static final double ZERO_TICKS = 207;
+    private static final double MAX_ANGLE = 1;
     private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
-    private static final int DETECT_BUFFER_TICKS = 100;
+    private static final int DETECT_BUFFER_TICKS = 300;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -73,7 +73,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         this.turretTalon = new WPI_TalonSRX(id);
         this.multiPID = new MultiPID(turretTalon,
                 new PIDConfig((1.5 * 1023 / 400), 0, 0, 0),
-                new PIDConfig(0.7 * 1023 / 400, 0, 1.5 * 1023 * 0.01 / 400, (1023.0 * 0.3) / 70));
+                new PIDConfig(1.0 * 1023 / 400, 0, 1.5 * 1023 * 0.001 / 400, (1023.0 * 0.3) / 70));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 800, turretTalon);
         multiPID.applyAllConfigs();
@@ -229,7 +229,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     public void periodic() {
         // Runs every 5s after init (5s/0.02s=250x)
         errLoopCtr++;
-        if (errLoopCtr >= 250) {
+        if (errLoopCtr >= 20) {
             checkWrapError();
             errLoopCtr = 0;
         }
