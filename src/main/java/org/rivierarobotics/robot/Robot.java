@@ -41,6 +41,8 @@ import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RSTileOptions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -221,15 +223,14 @@ public class Robot extends TimedRobot {
             .setEntry("Match Color", cow.getGameColor().name())
             .setEntry("target color", ColorWheel.getFMSColor().name());
 
-        var drivetrain = globalComponent.getDriveTrain();
-        ArrayList<MotorTemp> temps = new ArrayList<>();
+        List<MotorTemp> temps = new ArrayList<>();
         temps.add(turret.getTemp());
         temps.add(flywheel.getTemp());
-        temps.addAll(drivetrain.getTemps());
-        for (MotorTemp t : temps) {
-            shuffleboard.getTab("Motor Temps")
-                    .setEntry(t.name, "id: " + t.id + " temp: " + t.temp);
+        temps.addAll(Arrays.asList(dt.getLeft().getTemps()));
+        temps.addAll(Arrays.asList(dt.getRight().getTemps()));
+        var tempTab = shuffleboard.getTab("Motor Temps");
+        for (MotorTemp temp : temps) {
+            tempTab.setEntry(temp.getName(), "id: " + temp.getId() + " temp: " + temp.getValue());
         }
-
     }
 }

@@ -20,10 +20,8 @@
 
 package org.rivierarobotics.commands.colorwheel;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CameraServo;
 import org.rivierarobotics.subsystems.ColorWheel;
 
 /**

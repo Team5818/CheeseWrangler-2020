@@ -20,14 +20,51 @@
 
 package org.rivierarobotics.subsystems;
 
+/**
+ * Holds motor temperatures for any single motor on any subsystem.
+ * Contains fields for motor id, temperature value (usually in
+ * degrees celsius) and the name of the motor. Typically used for
+ * appending to Shuffleboard as an entry.
+ */
 public class MotorTemp {
-    public int id;
-    public double temp;
-    public String name;
+    private int id;
+    private double value;
+    private String name;
 
-    public MotorTemp(int id, double temp, String name) {
+    public MotorTemp(int id, double value, String name) {
         this.id = id;
-        this.temp = temp;
+        this.value = value;
         this.name = name;
+    }
+
+    public MotorTemp(int id, String name) {
+        this(id, -1, name);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public double getValue() {
+        return value;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public MotorTemp setId(int id) {
+        this.id = id;
+        return this;
+    }
+
+    public MotorTemp setValue(double value) {
+        this.value = value;
+        return this;
+    }
+
+    public MotorTemp setName(String name) {
+        this.name = name;
+        return this;
     }
 }

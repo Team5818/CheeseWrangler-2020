@@ -46,12 +46,14 @@ public class DriveTrainSide implements RRSubsystem {
     private final WPI_TalonFX secondaryTop;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
+    private final boolean invert;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.mainLeft = new WPI_TalonFX(motors.main);
         this.secondaryRight = new WPI_TalonFX(motors.secondaryOne);
         this.secondaryTop = new WPI_TalonFX(motors.secondaryTwo);
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
+        this.invert = invert;
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(0.22, 0, 0, 0.051), 0,
                 mainLeft, secondaryRight, secondaryTop);
@@ -112,11 +114,12 @@ public class DriveTrainSide implements RRSubsystem {
         shaftEncoder.reset();
     }
 
-    public MotorTemp[] getTemperature() {
+    public MotorTemp[] getTemps() {
+        final String side = (invert ? "Left" : "Right") + ": ";
         MotorTemp[] temps = new MotorTemp[3];
-        temps[0] = new MotorTemp(mainLeft.getDeviceID(), mainLeft.getTemperature(), "mainLeft");
-        temps[1] = new MotorTemp(secondaryRight.getDeviceID(), secondaryRight.getTemperature(), "secondaryRight");
-        temps[2] = new MotorTemp(secondaryTop.getDeviceID(), secondaryTop.getTemperature(), "secondaryTop");
+        temps[0] = new MotorTemp(mainLeft.getDeviceID(), mainLeft.getTemperature(), side + "mainLeft");
+        temps[1] = new MotorTemp(secondaryRight.getDeviceID(), secondaryRight.getTemperature(), side + "secondaryRight");
+        temps[2] = new MotorTemp(secondaryTop.getDeviceID(), secondaryTop.getTemperature(), side + "secondaryTop");
         return temps;
     }
 }
