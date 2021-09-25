@@ -137,7 +137,7 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.colorWheel().rotateNTimes(4));
         new JoystickButton(driverButtons, 7)
-                .whenPressed(cmds.colorWheel().rotateToFMS());
+                .whileHeld(cmds.colorWheel().rotateToFMS());
 
         // Climb
         new JoystickButton(driverButtons, 6)
