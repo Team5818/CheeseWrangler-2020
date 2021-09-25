@@ -20,16 +20,19 @@
 
 package org.rivierarobotics.commands.shooting;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.*;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.PhysicsUtil;
+import org.rivierarobotics.util.ShooterConstants;
 
 /**
  * Shoot a number (N) of balls sequentially. Does not wait for AutoAim.
@@ -37,28 +40,53 @@ import org.rivierarobotics.util.MathUtil;
  * CycleSlot command. Set timeout between shooting to prevent jamming.
  */
 @GenerateCreator
-public class ShootNWedges extends SequentialCommandGroup {
+public class ShootNWedges extends CommandBase {
     private final CheeseWheelCommands cheeseWheelCommands;
     private final EjectorCommands ejectorCommands;
+    private final Flywheel flywheel;
+    private final boolean isBack;
+    private final int wedges;
+    private SequentialCommandGroup cmd;
 
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
-                        @Provided EjectorCommands ejectorCommands, @Provided Turret turret,
+                        @Provided EjectorCommands ejectorCommands, @Provided Turret turret, @Provided Flywheel flywheel,
                         int wedges) {
         this.cheeseWheelCommands = cheeseWheelCommands;
+        this.flywheel = flywheel;
         this.ejectorCommands = ejectorCommands;
-        for (int i = 0; i < wedges; i++) {
-            addCommands(singleWedgeGroup(MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90)));
-        }
+        this.wedges = wedges;
+        isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
     }
 
     private SequentialCommandGroup singleWedgeGroup(boolean isBack) {
+        if(flywheel.getPositionTicks() <= 1000){
+            return new SequentialCommandGroup();
+        }
         return new SequentialCommandGroup(
-            cheeseWheelCommands.cycleSlot(isBack ? CheeseWheel.Direction.BACKWARDS : CheeseWheel.Direction.FORWARDS,
-                isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
-            new WaitCommand(1),
-            ejectorCommands.setPower(1.0),
-            new WaitCommand(1),
-            ejectorCommands.setPower(0)
+                cheeseWheelCommands.cycleSlot(isBack ? CheeseWheel.Direction.BACKWARDS : CheeseWheel.Direction.FORWARDS,
+                        isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
+                new WaitUntilCommand(flywheel::withinTolerance),
+                new WaitCommand(1),
+                ejectorCommands.setPower(1.0),
+                new WaitCommand(1),
+                ejectorCommands.setPower(0)
         );
+
+
+    }
+
+    @Override
+    public void initialize() {
+        SmartDashboard.putNumber("RAN", flywheel.getPositionTicks());
+        cmd = new SequentialCommandGroup();
+        for(int i = 0; i < wedges; i++) {
+            cmd.addCommands(singleWedgeGroup(isBack));
+        }
+        cmd.schedule();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return cmd != null && !CommandScheduler.getInstance().isScheduled(cmd);
     }
 }
