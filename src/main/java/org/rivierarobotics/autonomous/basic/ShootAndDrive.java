@@ -45,7 +45,7 @@ public class ShootAndDrive extends SequentialCommandGroup {
     public ShootAndDrive(@Provided DriveCommands drive,
                          @Provided CheeseWheelCommands cheeseWheel, @Provided FlywheelCommands flywheel) {
         super(
-             new ParallelDeadlineGroup(flywheel.setVelocity(), new SequentialCommandGroup(new WaitCommand(1), cheeseWheel.shootNWedges(5), drive.driveDistance(-1,-.25).withTimeout(2)))
+             new ParallelDeadlineGroup(flywheel.setVelocity(), sequence(new WaitCommand(1), cheeseWheel.shootNWedges(5), drive.driveDistance(-1,-.25).withTimeout(2)))
         );
     }
 }

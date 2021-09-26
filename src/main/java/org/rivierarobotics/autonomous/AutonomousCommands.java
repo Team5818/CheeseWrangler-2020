@@ -25,10 +25,8 @@ import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
 import org.rivierarobotics.autonomous.advanced.TrenchRun;
 import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
-import org.rivierarobotics.autonomous.basic.ForwardAuto;
-import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
-import org.rivierarobotics.autonomous.basic.ShootAndDrive;
-import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
+import org.rivierarobotics.autonomous.basic.TestCreator;
+import org.rivierarobotics.autonomous.basic.*;
 
 import javax.inject.Inject;
 
@@ -40,6 +38,7 @@ public class AutonomousCommands {
     private final TrenchRunCreator trenchRunCreator;
     private final RecordPathCreator recordPathCreator;
     private final PowerReplayCreator powerReplayCreator;
+    private final TestCreator testCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
@@ -48,7 +47,8 @@ public class AutonomousCommands {
                               ShootLoopCreator shootLoopCreator,
                               TrenchRunCreator trenchRunCreator,
                               RecordPathCreator recordPathCreator,
-                              PowerReplayCreator powerReplayCreator) {
+                              PowerReplayCreator powerReplayCreator,
+                              TestCreator testCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
@@ -56,6 +56,7 @@ public class AutonomousCommands {
         this.trenchRunCreator = trenchRunCreator;
         this.recordPathCreator = recordPathCreator;
         this.powerReplayCreator = powerReplayCreator;
+        this.testCreator = testCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -80,6 +81,10 @@ public class AutonomousCommands {
 
     public ShootAndDrive shootAndDrive() {
         return shootAndDriveCreator.create();
+    }
+
+    public Test test() {
+        return testCreator.create();
     }
 
     public ShootLoop shootLoop(Pose2dPath loop) {
