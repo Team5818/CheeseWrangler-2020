@@ -20,8 +20,11 @@
 
 package org.rivierarobotics.commands.shooting;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -31,8 +34,8 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.PhysicsUtil;
-import org.rivierarobotics.util.ShooterConstants;
+import org.rivierarobotics.util.RSTab;
+import org.rivierarobotics.util.RobotShuffleboard;
 
 /**
  * Shoot a number (N) of balls sequentially. Does not wait for AutoAim.
@@ -43,23 +46,27 @@ import org.rivierarobotics.util.ShooterConstants;
 public class ShootNWedges extends CommandBase {
     private final CheeseWheelCommands cheeseWheelCommands;
     private final EjectorCommands ejectorCommands;
+    private final Turret turret;
     private final Flywheel flywheel;
-    private final boolean isBack;
+    private final RSTab tab;
     private final int wedges;
     private SequentialCommandGroup cmd;
 
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
-                        @Provided EjectorCommands ejectorCommands, @Provided Turret turret, @Provided Flywheel flywheel,
+                        @Provided EjectorCommands ejectorCommands,
+                        @Provided Turret turret, @Provided Flywheel flywheel,
+                        @Provided RobotShuffleboard shuffleboard,
                         int wedges) {
         this.cheeseWheelCommands = cheeseWheelCommands;
-        this.flywheel = flywheel;
         this.ejectorCommands = ejectorCommands;
+        this.turret = turret;
+        this.flywheel = flywheel;
         this.wedges = wedges;
-        isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
+        this.tab = shuffleboard.getTab("TurretHood");
     }
 
     private SequentialCommandGroup singleWedgeGroup(boolean isBack) {
-        if(flywheel.getPositionTicks() <= 1000){
+        if (flywheel.isBelowMinShootingVel()) {
             return new SequentialCommandGroup();
         }
         return new SequentialCommandGroup(
@@ -71,15 +78,14 @@ public class ShootNWedges extends CommandBase {
                 new WaitCommand(1),
                 ejectorCommands.setPower(0)
         );
-
-
     }
 
     @Override
     public void initialize() {
-        SmartDashboard.putNumber("RAN", flywheel.getPositionTicks());
+        tab.setEntry("ShootN Ran", flywheel.getPositionTicks());
+        boolean isBack = MathUtil.isWithinTolerance(turret.getAngle(false), 0, 90);
         cmd = new SequentialCommandGroup();
-        for(int i = 0; i < wedges; i++) {
+        for (int i = 0; i < wedges; i++) {
             cmd.addCommands(singleWedgeGroup(isBack));
         }
         cmd.schedule();

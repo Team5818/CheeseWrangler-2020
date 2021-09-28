@@ -39,6 +39,7 @@ import org.rivierarobotics.util.ShooterConstants;
  * pushed by ejectors from Cheese Wheel.
  */
 public class Flywheel extends SubsystemBase implements RRSubsystem {
+    private static final double MIN_SHOOTING_VEL = 1000.0;
     private static double targetVel = 0;
     private static double tolerance = 70;
     private final WPI_TalonFX flywheelFalcon;
@@ -98,10 +99,6 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         tab.setEntry("SetTolerance", tolerance);
     }
 
-    public MotorTemp getTemp() {
-        return new MotorTemp(flywheelFalcon.getDeviceID(), flywheelFalcon.getTemperature(), "FlywheelFalcon");
-    }
-
     public static double getTolerance() {
         return tolerance;
     }
@@ -123,5 +120,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         } else {
             flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
         }
+    }
+
+    public boolean isBelowMinShootingVel() {
+        return getPositionTicks() < MIN_SHOOTING_VEL;
+    }
+
+    public MotorTemp getTemp() {
+        return new MotorTemp(flywheelFalcon.getDeviceID(), flywheelFalcon.getTemperature(), "FlywheelFalcon");
     }
 }

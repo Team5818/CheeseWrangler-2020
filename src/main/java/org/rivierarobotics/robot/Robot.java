@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
         chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
         chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
         chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
-        chooser.addOption("Test", commandComponent.auto().test());
+        chooser.addOption("Test", commandComponent.auto().pathTest());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
         chooser.addOption("TrenchRun", commandComponent.auto().trenchRun());
         chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));

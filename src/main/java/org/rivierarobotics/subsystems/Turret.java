@@ -83,18 +83,6 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         checkWrapError();
     }
 
-    public int getForwardLimit() {
-        return FORWARD_LIMIT_TICKS;
-    }
-    public int getForwardDeg() {
-        return (int) MAX_ANGLE;
-    }
-    public int getBackLimit() {
-        return BACK_LIMIT_TICKS;
-    }
-    public int getBackDeg() {
-        return (int) MIN_ANGLE;
-    }
     @Override
     public double getPositionTicks() {
         return turretTalon.getSelectedSensorPosition() + wrapErrOffset;
@@ -200,14 +188,30 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         tab.setEntry("ctrlTarget", turretTalon.getClosedLoopTarget());
     }
 
-    public MotorTemp getTemp() {
-        return new MotorTemp(turretTalon.getDeviceID(), turretTalon.getTemperature(), "turretTalon");
-    }
-
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
         turretTalon.set(ControlMode.PercentOutput, pwr);
+    }
+
+    public MotorTemp getTemp() {
+        return new MotorTemp(turretTalon.getDeviceID(), turretTalon.getTemperature(), "turretTalon");
+    }
+
+    public int getForwardLimit() {
+        return FORWARD_LIMIT_TICKS;
+    }
+
+    public int getForwardMaxAngle() {
+        return (int) MAX_ANGLE;
+    }
+
+    public int getBackLimit() {
+        return BACK_LIMIT_TICKS;
+    }
+
+    public int getBackMinAngle() {
+        return (int) MIN_ANGLE;
     }
 
     /**

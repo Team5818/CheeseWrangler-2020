@@ -25,8 +25,12 @@ import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
 import org.rivierarobotics.autonomous.advanced.TrenchRun;
 import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
-import org.rivierarobotics.autonomous.basic.TestCreator;
-import org.rivierarobotics.autonomous.basic.*;
+import org.rivierarobotics.autonomous.basic.ForwardAuto;
+import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
+import org.rivierarobotics.autonomous.basic.PathTester;
+import org.rivierarobotics.autonomous.basic.PathTesterCreator;
+import org.rivierarobotics.autonomous.basic.ShootAndDrive;
+import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 
 import javax.inject.Inject;
 
@@ -38,7 +42,7 @@ public class AutonomousCommands {
     private final TrenchRunCreator trenchRunCreator;
     private final RecordPathCreator recordPathCreator;
     private final PowerReplayCreator powerReplayCreator;
-    private final TestCreator testCreator;
+    private final PathTesterCreator pathTesterCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
@@ -48,7 +52,7 @@ public class AutonomousCommands {
                               TrenchRunCreator trenchRunCreator,
                               RecordPathCreator recordPathCreator,
                               PowerReplayCreator powerReplayCreator,
-                              TestCreator testCreator) {
+                              PathTesterCreator pathTesterCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
@@ -56,7 +60,7 @@ public class AutonomousCommands {
         this.trenchRunCreator = trenchRunCreator;
         this.recordPathCreator = recordPathCreator;
         this.powerReplayCreator = powerReplayCreator;
-        this.testCreator = testCreator;
+        this.pathTesterCreator = pathTesterCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -83,8 +87,8 @@ public class AutonomousCommands {
         return shootAndDriveCreator.create();
     }
 
-    public Test test() {
-        return testCreator.create();
+    public PathTester pathTest() {
+        return pathTesterCreator.create();
     }
 
     public ShootLoop shootLoop(Pose2dPath loop) {

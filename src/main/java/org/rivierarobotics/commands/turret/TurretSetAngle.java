@@ -29,6 +29,10 @@ import org.rivierarobotics.util.RobotShuffleboard;
 @GenerateCreator
 public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
     public TurretSetAngle(@Provided Turret turret, @Provided RobotShuffleboard shuffleboard, double angle, boolean isAbsolute) {
-        super(turret, () -> turret.getAngle(isAbsolute), (a) -> turret.setAngle(a, isAbsolute), turret.getForwardLimit(), turret.getBackLimit(), angle, 5, 2, shuffleboard);
+        super(turret,
+            () -> turret.getAngle(isAbsolute), a -> turret.setAngle(a, isAbsolute),
+            turret.getForwardLimit(), turret.getBackLimit(),
+            angle, 5, 2, shuffleboard
+        );
     }
 }

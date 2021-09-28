@@ -27,9 +27,8 @@ import org.rivierarobotics.autonomous.AutonomousCommands;
 import org.rivierarobotics.autonomous.Pose2dPath;
 
 @GenerateCreator
-public class Test extends SequentialCommandGroup {
-
-    public Test(@Provided AutonomousCommands auto){
+public class PathTester extends SequentialCommandGroup {
+    public PathTester(@Provided AutonomousCommands auto) {
         super(
                 auto.pathtracer(Pose2dPath.STRAIGHT)
         );
