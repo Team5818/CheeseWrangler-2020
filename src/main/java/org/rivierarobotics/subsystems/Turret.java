@@ -86,11 +86,15 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     public int getForwardLimit() {
         return FORWARD_LIMIT_TICKS;
     }
-
+    public int getForwardDeg() {
+        return (int) MAX_ANGLE;
+    }
     public int getBackLimit() {
         return BACK_LIMIT_TICKS;
     }
-
+    public int getBackDeg() {
+        return (int) MIN_ANGLE;
+    }
     @Override
     public double getPositionTicks() {
         return turretTalon.getSelectedSensorPosition() + wrapErrOffset;
