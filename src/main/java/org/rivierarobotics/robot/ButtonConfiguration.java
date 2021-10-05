@@ -137,7 +137,7 @@ public class ButtonConfiguration {
         new JoystickButton(driverButtons, 9)
                 .whenPressed(cmds.colorWheel().rotateNTimes(4));
         new JoystickButton(driverButtons, 7)
-                .whileHeld(cmds.drive().ShootThreeBalls());
+                .whileHeld(cmds.auto().shootThreeBalls());
 
         // Climb
         new JoystickButton(driverButtons, 6)
