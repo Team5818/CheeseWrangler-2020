@@ -85,7 +85,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public double getPositionTicks() {
-        return turretTalon.getSelectedSensorPosition() + wrapErrOffset;
+        return turretTalon.getSelectedSensorPosition();
     }
 
     public double getVelocity() {
@@ -150,6 +150,13 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      * @param isAbsolute if the set angle should be absolute.
      */
     public void setAngle(double angle, boolean isAbsolute) {
+        double initialTicks = getTargetTicks(angle, isAbsolute);
+        tab.setEntry("TFinalAngleTicks", initialTicks);
+        logger.setpointChange(initialTicks);
+        multiPID.selectConfig(MultiPID.Type.POSITION);
+        turretTalon.set(ControlMode.MotionMagic, initialTicks);
+    }
+    public double getTargetTicks(double angle, boolean isAbsolute) {
         tab.setEntry("TSetAngle", angle);
         angle %= 360;
         if (isAbsolute) {
@@ -169,12 +176,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             initialTicks = getPositionTicks() - ZERO_TICKS < 0 ? ticks : max;
         }
         initialTicks -= wrapErrOffset;
-        tab.setEntry("TFinalAngleTicks", initialTicks);
-        logger.setpointChange(initialTicks);
-        multiPID.selectConfig(MultiPID.Type.POSITION);
-        turretTalon.set(ControlMode.MotionMagic, initialTicks);
+        return initialTicks;
     }
-
     /**
      * Set the velocity of the turret. Uses velocity PID loop configuration.
      *

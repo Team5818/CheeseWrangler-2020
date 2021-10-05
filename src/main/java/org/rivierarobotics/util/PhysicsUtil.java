@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -195,12 +196,13 @@ public class PhysicsUtil {
      */
     private double captainKalbag() {
         double targetAngle = getAngleToTarget();
-        double currentAngle = (turret.getAngle(false) + gyro.getYaw()) % 360;
-        double angleDiff = targetAngle - currentAngle;
-
+        double targetTicks = turret.getTargetTicks(targetAngle, true);
+        double angleDiff = turret.getPositionTicks() - targetTicks;
         //BASICALLY A PID BUT WITHOUT THE ID
-        double p = 0.0725;
-        return MathUtil.degreesToTicks((angleDiff / (p)) / 10);
+        SmartDashboard.putNumber("Target ticks", targetTicks);
+        SmartDashboard.putNumber("angleDiff", angleDiff);
+        double p = 1.25;
+        return -(angleDiff * p);
     }
 
     /**
