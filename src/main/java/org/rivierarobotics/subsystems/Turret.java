@@ -156,6 +156,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         multiPID.selectConfig(MultiPID.Type.POSITION);
         turretTalon.set(ControlMode.MotionMagic, initialTicks);
     }
+
     public double getTargetTicks(double angle, boolean isAbsolute) {
         tab.setEntry("TSetAngle", angle);
         angle %= 360;
@@ -183,8 +184,11 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      *
      * @param ticksPer100ms the velocity to set in ticks per 100ms.
      */
+
     public void setVelocity(double ticksPer100ms) {
+
         logger.stateChange("Velocity Set", ticksPer100ms);
+
         tab.setEntry("setVelTicks", ticksPer100ms);
         multiPID.selectConfig(MultiPID.Type.VELOCITY);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
