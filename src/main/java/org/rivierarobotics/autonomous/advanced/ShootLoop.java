@@ -49,8 +49,10 @@ import org.rivierarobotics.util.VisionTarget;
  */
 @GenerateCreator
 public class ShootLoop extends SequentialCommandGroup {
-    public ShootLoop(@Provided AutonomousCommands auto, @Provided CollectionCommands collect,
-                     @Provided CheeseWheelCommands shoot, @Provided VisionCommands aim, Pose2dPath loop) {
+    public ShootLoop(@Provided AutonomousCommands auto,
+                     @Provided CollectionCommands collect,
+                     @Provided CheeseWheelCommands shoot,
+                     @Provided VisionCommands aim, Pose2dPath loop) {
         super(
                 sequence(new WaitCommand(1), shoot.shootNWedges(5))
                     .deadlineWith(aim.calcAim(VisionTarget.INNER)),

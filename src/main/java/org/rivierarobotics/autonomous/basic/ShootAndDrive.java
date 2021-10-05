@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.autonomous.basic;
 
-import edu.wpi.first.wpilibj2.command.CommandGroupBase;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -41,18 +40,17 @@ import org.rivierarobotics.commands.flywheel.FlywheelCommands;
  * </ol>
  */
 @GenerateCreator
-public class ShootAndDrive extends SequentialCommandGroup {
+public class ShootAndDrive extends ParallelDeadlineGroup {
     public ShootAndDrive(@Provided DriveCommands drive,
-                         @Provided CheeseWheelCommands cheeseWheel, @Provided FlywheelCommands flywheel) {
+                         @Provided CheeseWheelCommands cheeseWheel,
+                         @Provided FlywheelCommands flywheel) {
         super(
-             new ParallelDeadlineGroup(
-                     flywheel.setVelocity(),
-                     sequence(new WaitCommand(1),
-                             cheeseWheel.shootNWedges(5),
-                             drive.driveDistance(-1, -0.25)
-                                     .withTimeout(2)
-                     )
-             )
+                flywheel.setVelocity(),
+                sequence(new WaitCommand(1),
+                        cheeseWheel.shootNWedges(5),
+                        drive.driveDistance(-1, -0.25)
+                                .withTimeout(2)
+                )
         );
     }
 }

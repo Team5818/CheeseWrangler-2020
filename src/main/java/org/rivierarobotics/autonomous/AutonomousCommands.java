@@ -20,8 +20,21 @@
 
 package org.rivierarobotics.autonomous;
 
-import org.rivierarobotics.autonomous.advanced.*;
-import org.rivierarobotics.autonomous.basic.*;
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
+import org.rivierarobotics.autonomous.advanced.ShootLoop;
+import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
+import org.rivierarobotics.autonomous.advanced.TrenchRun;
+import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
+import org.rivierarobotics.autonomous.advanced.TriangleAdvanced;
+import org.rivierarobotics.autonomous.advanced.TriangleAdvancedCreator;
+import org.rivierarobotics.autonomous.basic.ForwardAuto;
+import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
+import org.rivierarobotics.autonomous.basic.PathTester;
+import org.rivierarobotics.autonomous.basic.PathTesterCreator;
+import org.rivierarobotics.autonomous.basic.ShootAndDrive;
+import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
+import org.rivierarobotics.autonomous.basic.ShootThreeBalls;
+import org.rivierarobotics.autonomous.basic.ShootThreeBallsCreator;
 
 import javax.inject.Inject;
 
