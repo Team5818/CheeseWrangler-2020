@@ -20,17 +20,8 @@
 
 package org.rivierarobotics.autonomous;
 
-import org.rivierarobotics.autonomous.advanced.ChallengePath;
-import org.rivierarobotics.autonomous.advanced.ShootLoop;
-import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
-import org.rivierarobotics.autonomous.advanced.TrenchRun;
-import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
-import org.rivierarobotics.autonomous.basic.ForwardAuto;
-import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
-import org.rivierarobotics.autonomous.basic.PathTester;
-import org.rivierarobotics.autonomous.basic.PathTesterCreator;
-import org.rivierarobotics.autonomous.basic.ShootAndDrive;
-import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
+import org.rivierarobotics.autonomous.advanced.*;
+import org.rivierarobotics.autonomous.basic.*;
 
 import javax.inject.Inject;
 
@@ -43,6 +34,8 @@ public class AutonomousCommands {
     private final RecordPathCreator recordPathCreator;
     private final PowerReplayCreator powerReplayCreator;
     private final PathTesterCreator pathTesterCreator;
+    private final ShootThreeBallsCreator shootThreeBallsCreator;
+    private final TriangleAdvancedCreator triangleAdvancedCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
@@ -52,7 +45,9 @@ public class AutonomousCommands {
                               TrenchRunCreator trenchRunCreator,
                               RecordPathCreator recordPathCreator,
                               PowerReplayCreator powerReplayCreator,
-                              PathTesterCreator pathTesterCreator) {
+                              PathTesterCreator pathTesterCreator,
+                              ShootThreeBallsCreator shootThreeBallsCreator,
+                              TriangleAdvancedCreator triangleAdvancedCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
@@ -61,6 +56,8 @@ public class AutonomousCommands {
         this.recordPathCreator = recordPathCreator;
         this.powerReplayCreator = powerReplayCreator;
         this.pathTesterCreator = pathTesterCreator;
+        this.shootThreeBallsCreator = shootThreeBallsCreator;
+        this.triangleAdvancedCreator = triangleAdvancedCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -105,5 +102,13 @@ public class AutonomousCommands {
 
     public PowerReplay powerReplay() {
         return powerReplayCreator.create();
+    }
+
+    public ShootThreeBalls shootThreeBalls() {
+        return shootThreeBallsCreator.create();
+    }
+
+    public TriangleAdvanced triangleAdvanced() {
+        return triangleAdvancedCreator.create();
     }
 }
