@@ -73,7 +73,7 @@ public class ContinuousShoot extends CommandBase {
         CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
         tab.setEntry("ccShootSlot", slot.ordinal());
 
-        if (flywheel.isBelowMinShootingVel()) {
+
             cmd = new SequentialCommandGroup(
                     cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
                     new WaitUntilCommand(flywheel::withinTolerance),
@@ -85,7 +85,7 @@ public class ContinuousShoot extends CommandBase {
             ).withTimeout(2);
             cmd.schedule();
         }
-    }
+
 
     @Override
     public boolean isFinished() {

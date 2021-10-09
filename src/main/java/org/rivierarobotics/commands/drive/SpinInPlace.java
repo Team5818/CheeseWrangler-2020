@@ -29,7 +29,7 @@ import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
 public class SpinInPlace extends CommandBase {
-    private static final double MAX_SPEED = 0.2;
+    private static final double MAX_SPEED = 0.15;
     private final DriveTrain driveTrain;
     private final NavXGyro gyro;
     private final double turnDegrees;
@@ -56,13 +56,18 @@ public class SpinInPlace extends CommandBase {
 
     @Override
     public void execute() {
+        initialDegrees = gyro.getYaw();
+        if ((isAbsolute && turnDegrees < initialDegrees) || (turnDegrees < 0)) {
+            signum = -1;
+        } else {
+            signum = 1;
+        }
         driveTrain.setPower(signum * MAX_SPEED, signum * -MAX_SPEED);
     }
 
     @Override
     public boolean isFinished() {
         double yaw = gyro.getYaw();
-        return isAbsolute ? (signum == 1 && yaw > turnDegrees) || (signum == -1 && yaw < turnDegrees) :
-                MathUtil.wrapToCircle(yaw) - MathUtil.wrapToCircle(initialDegrees) >= MathUtil.wrapToCircle(turnDegrees);
+        return MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 3);
     }
 }

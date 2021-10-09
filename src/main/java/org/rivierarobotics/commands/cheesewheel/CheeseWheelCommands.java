@@ -20,12 +20,7 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import org.rivierarobotics.commands.shooting.All5Shoot;
-import org.rivierarobotics.commands.shooting.All5ShootCreator;
-import org.rivierarobotics.commands.shooting.ContinuousShoot;
-import org.rivierarobotics.commands.shooting.ContinuousShootCreator;
-import org.rivierarobotics.commands.shooting.ShootNWedges;
-import org.rivierarobotics.commands.shooting.ShootNWedgesCreator;
+import org.rivierarobotics.commands.shooting.*;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.CheeseSlot;
 
@@ -38,19 +33,23 @@ public class CheeseWheelCommands {
     private final All5ShootCreator all5ShootCreator;
     private final CWCycleSlotCreator cycleSlotWaitCreator;
     private final ContinuousShootCreator shootCreator;
+    private final ShootUntilEmptyCreator shootUntilEmptyCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
                                CWCycleSlotInterruptCreator cycleSlotCreator,
                                ShootNWedgesCreator shootNWedgesCreator,
-                               All5ShootCreator all5ShootCreator, CWCycleSlotCreator cycleSlotWaitCreator,
-                               ContinuousShootCreator shootCreator) {
+                               All5ShootCreator all5ShootCreator,
+                               CWCycleSlotCreator cycleSlotWaitCreator,
+                               ContinuousShootCreator shootCreator,
+                               ShootUntilEmptyCreator shootUntilEmptyCreator) {
         this.setPositionCreator = setPositionCreator;
         this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
         this.all5ShootCreator = all5ShootCreator;
         this.cycleSlotWaitCreator = cycleSlotWaitCreator;
         this.shootCreator = shootCreator;
+        this.shootUntilEmptyCreator = shootUntilEmptyCreator;
     }
 
     public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
@@ -75,5 +74,9 @@ public class CheeseWheelCommands {
 
     public All5Shoot all5Shoot() {
         return all5ShootCreator.create();
+    }
+
+    public ShootUntilEmpty shootUntilEmpty() {
+        return shootUntilEmptyCreator.create();
     }
 }

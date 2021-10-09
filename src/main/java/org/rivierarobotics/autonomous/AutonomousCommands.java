@@ -49,6 +49,7 @@ public class AutonomousCommands {
     private final PathTesterCreator pathTesterCreator;
     private final ShootThreeBallsCreator shootThreeBallsCreator;
     private final TriangleAdvancedCreator triangleAdvancedCreator;
+    private final SixBallTrenchCreator sixBallTrenchCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
@@ -60,7 +61,8 @@ public class AutonomousCommands {
                               PowerReplayCreator powerReplayCreator,
                               PathTesterCreator pathTesterCreator,
                               ShootThreeBallsCreator shootThreeBallsCreator,
-                              TriangleAdvancedCreator triangleAdvancedCreator) {
+                              TriangleAdvancedCreator triangleAdvancedCreator,
+                              SixBallTrenchCreator sixBallTrenchCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
@@ -71,6 +73,7 @@ public class AutonomousCommands {
         this.pathTesterCreator = pathTesterCreator;
         this.shootThreeBallsCreator = shootThreeBallsCreator;
         this.triangleAdvancedCreator = triangleAdvancedCreator;
+        this.sixBallTrenchCreator = sixBallTrenchCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -123,5 +126,9 @@ public class AutonomousCommands {
 
     public TriangleAdvanced triangleAdvanced() {
         return triangleAdvancedCreator.create();
+    }
+
+    public SixBallTrench sixBallTrench() {
+        return sixBallTrenchCreator.create();
     }
 }

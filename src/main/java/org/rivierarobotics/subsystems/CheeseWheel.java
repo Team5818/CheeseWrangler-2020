@@ -191,6 +191,13 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
         wheelTalon.set(ControlMode.PercentOutput, pwr);
     }
 
+    public boolean hasBall() {
+        for(int i = 0; i < 5; i++) {
+            if(CheeseSlot.slotOfNum(i).hasBall()) return true;
+        }
+        return false;
+    }
+
     @Override
     public double getPositionTicks() {
         return wheelTalon.getSelectedSensorPosition();

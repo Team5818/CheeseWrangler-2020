@@ -73,6 +73,8 @@ public class Robot extends TimedRobot {
         chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
         chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
         chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
+        chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
+        chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
 
         // Secondary camera initialize
         CameraServer.getInstance().startAutomaticCapture();
