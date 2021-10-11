@@ -192,8 +192,10 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
     }
 
     public boolean hasBall() {
-        for(int i = 0; i < 5; i++) {
-            if(CheeseSlot.slotOfNum(i).hasBall()) return true;
+        for (int i = 0; i < 5; i++) {
+            if (CheeseSlot.slotOfNum(i).hasBall()) {
+                return true;
+            }
         }
         return false;
     }
