@@ -45,6 +45,7 @@ public class CameraImageFlip extends InstantCommand {
 
     @Override
     public void execute() {
-        CameraFlip.DO_FLIP = flipSetState == null && !CameraFlip.DO_FLIP;
+        if(flipSetState != null) CameraFlip.DO_FLIP = !flipSetState;
+        else CameraFlip.DO_FLIP = !CameraFlip.DO_FLIP;
     }
 }

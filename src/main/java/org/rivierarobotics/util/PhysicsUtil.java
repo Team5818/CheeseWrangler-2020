@@ -201,8 +201,9 @@ public class PhysicsUtil {
         //BASICALLY A PID BUT WITHOUT THE ID
         SmartDashboard.putNumber("Target ticks", targetTicks);
         SmartDashboard.putNumber("angleDiff", angleDiff);
-        double p = 1.25;
-        return -(angleDiff * p);
+        double p = 0.8;
+        return -angleDiff * p;
+
     }
 
     /**

@@ -23,6 +23,8 @@ package org.rivierarobotics.util;
 import edu.wpi.cscore.CvSink;
 import edu.wpi.cscore.CvSource;
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 
@@ -44,7 +46,7 @@ public class CameraFlip extends Thread {
     public void run() {
         Mat source = new Mat();
         Mat output = new Mat();
-
+        SmartDashboard.putNumber("Running", Timer.getFPGATimestamp());
         while (!Thread.interrupted()) {
             if (cvSink.grabFrame(source) == 0) {
                 continue;

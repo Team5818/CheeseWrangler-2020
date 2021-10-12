@@ -67,6 +67,8 @@ public class Robot extends TimedRobot {
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
         chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
         chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
+        chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5ball());
+        chooser.addOption("6ball", commandComponent.auto().offsetSixBallTrench());
 
         // Secondary camera initialize
         CameraServer.getInstance().startAutomaticCapture();

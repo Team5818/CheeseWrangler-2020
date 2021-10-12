@@ -20,12 +20,7 @@
 
 package org.rivierarobotics.autonomous.advanced;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -56,19 +51,23 @@ public class OffsetSixBallTrench extends CommandBase {
 
     @Override
     public void initialize() {
-        PositionTracker.setPosition(new double[]{2, 2});
+        PositionTracker.setPosition(new double[]{-1.7, 2.8});
         this.autoCommand = new ParallelDeadlineGroup(
-                visionCommands.calcAim(VisionTarget.TOP),
                 new SequentialCommandGroup(
-                        new WaitCommand(0.1),
-                        cheeseWheelCommands.shootUntilEmpty(),
-                        driveCommands.driveDistance(-1.0, 0.3),
-                        new ParallelDeadlineGroup(
-                                driveCommands.driveDistance(-1.5, 0.2),
-                                collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
-                        driveCommands.driveDistance(1, 0.3),
+                        driveCommands.driveDistance(-2.8, 0.2),
+                        new ParallelRaceGroup(
+                                collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK),
+                                new SequentialCommandGroup(
+                                        driveCommands.driveDistance(-0.9 * 2 - 0.34, 0.25),
+                                        new WaitCommand(0.75)
+                                )
+                        ),
+                        driveCommands.driveDistance(3, 0.6),
                         cheeseWheelCommands.shootUntilEmpty()
-                ));
+                ),
+                visionCommands.calcAim(VisionTarget.TOP),
+                cheeseWheelCommands.shootUntilEmpty()
+                );
 
         autoCommand.schedule();
     }

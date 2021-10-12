@@ -29,7 +29,7 @@ import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
 public class SpinInPlace extends CommandBase {
-    private static final double MAX_SPEED = 0.15;
+    private static final double MAX_SPEED = 0.2;
     private final DriveTrain driveTrain;
     private final NavXGyro gyro;
     private final double turnDegrees;
@@ -47,27 +47,23 @@ public class SpinInPlace extends CommandBase {
     }
 
     @Override
-    public void initialize() {
-        initialDegrees = gyro.getYaw();
-        if ((isAbsolute && turnDegrees < initialDegrees) || (turnDegrees < 0)) {
-            signum = -1;
-        }
-    }
-
-    @Override
     public void execute() {
-        initialDegrees = gyro.getYaw();
-        if ((isAbsolute && turnDegrees < initialDegrees) || (turnDegrees < 0)) {
-            signum = -1;
-        } else {
-            signum = 1;
-        }
+        double diff = turnDegrees - gyro.getYaw();
+
+        if(diff >= 0) signum = 1;
+        else signum = -1;
+
         driveTrain.setPower(signum * MAX_SPEED, signum * -MAX_SPEED);
     }
 
     @Override
     public boolean isFinished() {
         double yaw = gyro.getYaw();
-        return MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 3);
+        if(MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 1) ||
+                MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(360 - turnDegrees), 1)) {
+            driveTrain.setPower(0,0);
+        }
+        return MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 1 ) ||
+                MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(360 - turnDegrees), 1);
     }
 }
