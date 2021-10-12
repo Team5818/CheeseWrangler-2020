@@ -1,3 +1,23 @@
+/*
+ * This file is part of CheeseWrangler-2020, licensed under the GNU General Public License (GPLv3).
+ *
+ * Copyright (c) Riviera Robotics <https://github.com/Team5818>
+ * Copyright (c) contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package org.rivierarobotics.autonomous.advanced;
 
 import edu.wpi.first.wpilibj2.command.*;
@@ -37,21 +57,7 @@ public class EnemyTrench5ball extends CommandBase {
     @Override
     public void initialize() {
         gyro.setAngleAdjustment(180);
-        PositionTracker.setPosition(new double[]{3.62, 2.28});
-//        this.autoCommand = new SequentialCommandGroup(
-//                new ParallelDeadlineGroup(
-//                        visionCommands.calcAim(VisionTarget.TOP),
-//                        new SequentialCommandGroup(
-//                                driveCommands.rotateTo(180+39.8),
-//                                driveCommands.driveDistance(-1.45, 0.3),
-//                                cheeseWheelCommands.shootUntilEmpty(),
-//                                driveCommands.driveDistance(-1.48, 0.3),
-//                                driveCommands.rotateTo(180),
-//                                new ParallelDeadlineGroup(
-//                                        driveCommands.driveDistance(-0.85, 0.2),
-//                                        collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
-//                                cheeseWheelCommands.shootUntilEmpty()
-//                        )));
+        PositionTracker.setPosition(new double[]{5.07, 3.048});
 
         this.autoCommand = new SequentialCommandGroup(
                 new ParallelDeadlineGroup(
@@ -62,7 +68,7 @@ public class EnemyTrench5ball extends CommandBase {
                                 driveCommands.driveDistance(0.8, 0.35),
                                 new ParallelDeadlineGroup(
                                         new SequentialCommandGroup(
-                                                driveCommands.driveDistance(1.2, 0.15),
+                                                driveCommands.driveDistance(0.9, 0.15),
                                                 new WaitCommand(1.5)
                                         ),
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
@@ -70,22 +76,7 @@ public class EnemyTrench5ball extends CommandBase {
                                 driveCommands.driveDistance(-1.6, 0.4),
                                 driveCommands.rotateTo(180),
                                 cheeseWheelCommands.shootUntilEmpty()))
-                        );
-
-//        this.autoCommand = new SequentialCommandGroup(
-//                new ParallelDeadlineGroup(
-//                        visionCommands.calcAim(VisionTarget.TOP),
-//                        new SequentialCommandGroup(
-//                                driveCommands.rotateTo(90),
-//                                new WaitCommand(2),
-//                                driveCommands.rotateTo(180),
-//                                new WaitCommand(2),
-//                                driveCommands.rotateTo(270),
-//                                new WaitCommand(2),
-//                                driveCommands.rotateTo(360),
-//                                new WaitCommand(2),
-//                                driveCommands.rotateTo(20)
-//                                )));
+        );
 
 
         CommandScheduler.getInstance().schedule(autoCommand);

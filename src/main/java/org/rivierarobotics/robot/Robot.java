@@ -35,10 +35,7 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.MotorTemp;
-import org.rivierarobotics.util.CameraFlip;
-import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.RSTileOptions;
+import org.rivierarobotics.util.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,11 +61,11 @@ public class Robot extends TimedRobot {
 
         // Create autonomous options
         chooser = new SendableChooser<>();
-        chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
         chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
         chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
         chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5ball());
-        chooser.addOption("6ball", commandComponent.auto().offsetSixBallTrench());
+        chooser.addOption("OffsetSixBallTrench", commandComponent.auto().offsetSixBallTrench());
+        chooser.addOption("CenterShoot", commandComponent.auto().centerShoot());
 
         // Secondary camera initialize
         CameraServer.getInstance().startAutomaticCapture();

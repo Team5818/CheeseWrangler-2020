@@ -45,6 +45,7 @@ public class AutonomousCommands {
     private final TriangleAdvancedCreator triangleAdvancedCreator;
     private final SixBallTrenchCreator sixBallTrenchCreator;
     private final EnemyTrench5ballCreator enemyTrench5ballCreator;
+    private final CenterShootCreator centerShootCreator;
     private final OffsetSixBallTrenchCreator offsetSixBallTrenchCreator;
 
     @Inject
@@ -59,7 +60,9 @@ public class AutonomousCommands {
                               ShootThreeBallsCreator shootThreeBallsCreator,
                               TriangleAdvancedCreator triangleAdvancedCreator,
                               SixBallTrenchCreator sixBallTrenchCreator,
-                              EnemyTrench5ballCreator enemyTrench5ballCreator, OffsetSixBallTrenchCreator offsetSixBallTrenchCreator) {
+                              EnemyTrench5ballCreator enemyTrench5ballCreator,
+                              OffsetSixBallTrenchCreator offsetSixBallTrenchCreator,
+                              CenterShootCreator centerShootCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
@@ -73,6 +76,7 @@ public class AutonomousCommands {
         this.sixBallTrenchCreator = sixBallTrenchCreator;
         this.offsetSixBallTrenchCreator = offsetSixBallTrenchCreator;
         this.enemyTrench5ballCreator = enemyTrench5ballCreator;
+        this.centerShootCreator = centerShootCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -131,7 +135,15 @@ public class AutonomousCommands {
         return sixBallTrenchCreator.create();
     }
 
-    public EnemyTrench5ball enemyTrench5ball(){return enemyTrench5ballCreator.create();}
+    public EnemyTrench5ball enemyTrench5ball() {
+        return enemyTrench5ballCreator.create();
+    }
 
-    public OffsetSixBallTrench offsetSixBallTrench() {return offsetSixBallTrenchCreator.create();}
+    public OffsetSixBallTrench offsetSixBallTrench() {
+        return offsetSixBallTrenchCreator.create();
+    }
+
+    public CenterShoot centerShoot() {
+        return centerShootCreator.create();
+    }
 }

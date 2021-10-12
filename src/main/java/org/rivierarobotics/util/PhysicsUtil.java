@@ -45,7 +45,7 @@ public class PhysicsUtil {
     private final NavXGyro gyro;
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
-    private AimMode aimMode = AimMode.VISION;
+    private AimMode aimMode = AimMode.CALC;
     private double velocity = 9;
     private boolean autoAimEnabled = true;
     private double[] vXYZ = new double[3];
@@ -253,6 +253,7 @@ public class PhysicsUtil {
             }
             vXYZ = !Double.isNaN(t) ? new double[]{x / t - xVel, y / t - yVel, z / t + g * t} : tempXYZ;
         } else {
+            tab.setEntry("Trajectory: ", "PERP");
             graphTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;
         }

@@ -20,11 +20,7 @@
 
 package org.rivierarobotics.autonomous.advanced;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -56,21 +52,26 @@ public class SixBallTrench extends CommandBase {
     public void initialize() {
         this.autoCommand = new SequentialCommandGroup(
                 visionCommands.correctPosition(),
-                new ParallelDeadlineGroup(
+                new ParallelRaceGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
                                 cheeseWheelCommands.shootUntilEmpty(),
-                                driveCommands.rotateTo(-45),
-                                driveCommands.driveDistance(-1.0, 0.3),
-                                driveCommands.rotateTo(0),
+                                driveCommands.rotateTo(-28.5),
                                 new ParallelDeadlineGroup(
-                                        driveCommands.driveDistance(-1.5, 0.2),
+                                        new SequentialCommandGroup(
+                                                driveCommands.driveDistance(-3.57, 0.45),
+                                                driveCommands.rotateTo(0),
+                                                driveCommands.driveDistance(-0.9 * 2, 0.25),
+                                                new WaitCommand(0.5)
+                                        ),
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
-                                driveCommands.driveDistance(1, 0.3),
-                                cheeseWheelCommands.shootUntilEmpty()
+                                new ParallelRaceGroup(
+                                        driveCommands.driveDistance(2, 0.2),
+                                        cheeseWheelCommands.shootUntilEmpty()
+                                )
                         )));
 
-        autoCommand.schedule();
+        CommandScheduler.getInstance().schedule(autoCommand);
     }
 
     @Override
