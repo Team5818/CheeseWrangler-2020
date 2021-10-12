@@ -20,9 +20,7 @@
 
 package org.rivierarobotics.autonomous.advanced;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -33,14 +31,28 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
-public class SixBallTrench extends SequentialCommandGroup {
+public class SixBallTrench extends CommandBase {
+    private Command autoCommand;
+    private final DriveCommands driveCommands;
+    private final VisionCommands visionCommands;
+    private final CheeseWheelCommands cheeseWheelCommands;
+    private final CollectionCommands collectionCommands;
+
     public SixBallTrench(@Provided DriveCommands driveCommands,
                          @Provided VisionCommands visionCommands,
                          @Provided CheeseWheelCommands cheeseWheelCommands,
                          @Provided CollectionCommands collectionCommands) {
-        super(
+        this.visionCommands = visionCommands;
+        this.driveCommands = driveCommands;
+        this.cheeseWheelCommands = cheeseWheelCommands;
+        this.collectionCommands = collectionCommands;
+    }
+
+    @Override
+    public void initialize() {
+        this.autoCommand = new SequentialCommandGroup(
                 visionCommands.correctPosition(),
-                new ParallelCommandGroup(
+                new ParallelDeadlineGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
                                 cheeseWheelCommands.shootUntilEmpty(),
@@ -52,6 +64,13 @@ public class SixBallTrench extends SequentialCommandGroup {
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
                                 driveCommands.driveDistance(1, 0.3),
                                 cheeseWheelCommands.shootUntilEmpty()
-                                )));
+                        )));
+
+        autoCommand.schedule();
+    }
+
+    @Override
+    public boolean isFinished() {
+        return !CommandScheduler.getInstance().isScheduled(autoCommand);
     }
 }

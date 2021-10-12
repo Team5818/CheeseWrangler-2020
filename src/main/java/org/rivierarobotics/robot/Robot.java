@@ -64,15 +64,7 @@ public class Robot extends TimedRobot {
 
         // Create autonomous options
         chooser = new SendableChooser<>();
-        chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
-        chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
-        chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
-        chooser.addOption("Test", commandComponent.auto().pathTest());
         chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
-        chooser.addOption("TrenchRun", commandComponent.auto().trenchRun());
-        chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
-        chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
-        chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
         chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
         chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
 
