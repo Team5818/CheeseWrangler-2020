@@ -20,7 +20,21 @@
 
 package org.rivierarobotics.autonomous;
 
-import org.rivierarobotics.autonomous.advanced.*;
+import org.rivierarobotics.autonomous.advanced.CenterShoot;
+import org.rivierarobotics.autonomous.advanced.CenterShootCreator;
+import org.rivierarobotics.autonomous.advanced.ChallengePath;
+import org.rivierarobotics.autonomous.advanced.EnemyTrench5ball;
+import org.rivierarobotics.autonomous.advanced.EnemyTrench5ballCreator;
+import org.rivierarobotics.autonomous.advanced.OffsetSixBallTrench;
+import org.rivierarobotics.autonomous.advanced.OffsetSixBallTrenchCreator;
+import org.rivierarobotics.autonomous.advanced.ShootLoop;
+import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
+import org.rivierarobotics.autonomous.advanced.SixBallTrench;
+import org.rivierarobotics.autonomous.advanced.SixBallTrenchCreator;
+import org.rivierarobotics.autonomous.advanced.TrenchRun;
+import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
+import org.rivierarobotics.autonomous.advanced.TriangleAdvanced;
+import org.rivierarobotics.autonomous.advanced.TriangleAdvancedCreator;
 import org.rivierarobotics.autonomous.basic.ForwardAuto;
 import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
 import org.rivierarobotics.autonomous.basic.PathTester;

@@ -50,8 +50,11 @@ public class SpinInPlace extends CommandBase {
     public void execute() {
         double diff = turnDegrees - gyro.getYaw();
 
-        if(diff >= 0) signum = 1;
-        else signum = -1;
+        if (diff >= 0) {
+            signum = 1;
+        } else {
+            signum = -1;
+        }
 
         driveTrain.setPower(signum * MAX_SPEED, signum * -MAX_SPEED);
     }
@@ -59,11 +62,11 @@ public class SpinInPlace extends CommandBase {
     @Override
     public boolean isFinished() {
         double yaw = gyro.getYaw();
-        if(MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 1) ||
-                MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(360 - turnDegrees), 1)) {
-            driveTrain.setPower(0,0);
+        if (MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 1)
+                || MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(360 - turnDegrees), 1)) {
+            driveTrain.setPower(0, 0);
+            return true;
         }
-        return MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 1 ) ||
-                MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(360 - turnDegrees), 1);
+        return false;
     }
 }

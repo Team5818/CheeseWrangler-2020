@@ -27,20 +27,19 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
-import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class ShootThreeBalls extends SequentialCommandGroup {
     public ShootThreeBalls(@Provided VisionCommands visionCommands,
-                           @Provided CheeseWheelCommands cheeseWheel, @Provided DriveCommands driveCommands, @Provided CheeseWheel wheel) {
+                           @Provided CheeseWheelCommands cheeseWheel, @Provided DriveCommands driveCommands) {
         super(
                 visionCommands.correctPosition(),
-                driveCommands.driveDistance(-1, 0.2),
                 new ParallelDeadlineGroup(
                         cheeseWheel.shootUntilEmpty(),
                         visionCommands.calcAim(VisionTarget.INNER)
-                )
+                ),
+                driveCommands.driveDistance(-1, 0.2)
         );
     }
 }
