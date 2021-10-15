@@ -55,9 +55,6 @@ public class VisionUtil {
         double llDist = (ShooterConstants.getGoalHeight() - llHeight) / Math.tan(Math.toRadians(llTy));
         double dist = llDist + Math.cos(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY();
 
-        SmartDashboard.putNumber("test1", getLLValue("ty") + hoodAbsPos);
-        SmartDashboard.putNumber("test2", Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist)));
-
         return Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist));
     }
 

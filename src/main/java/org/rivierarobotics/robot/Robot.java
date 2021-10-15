@@ -218,7 +218,7 @@ public class Robot extends TimedRobot {
             .setEntry("Color G", sensorColor.green)
             .setEntry("Color B", sensorColor.blue)
             .setEntry("Match Color", cow.getGameColor().name())
-            .setEntry("target color", ColorWheel.getFMSColor().name());
+            .setEntry("Target Color", ColorWheel.getFMSColor().name());
 
         List<MotorTemp> temps = new ArrayList<>();
         temps.add(turret.getTemp());

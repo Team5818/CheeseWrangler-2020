@@ -46,7 +46,6 @@ public class CameraFlip extends Thread {
     public void run() {
         Mat source = new Mat();
         Mat output = new Mat();
-        SmartDashboard.putNumber("Running", Timer.getFPGATimestamp());
         while (!Thread.interrupted()) {
             if (cvSink.grabFrame(source) == 0) {
                 continue;
