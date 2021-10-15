@@ -43,15 +43,20 @@ public class TriangleAdvanced extends ParallelDeadlineGroup {
                 new SequentialCommandGroup(
                         new ParallelDeadlineGroup(
                                 new SequentialCommandGroup(
-                                driveCommands.driveDistance(-0.75, -0.3),
-                                driveCommands.driveDistance(-0.75, -0.1),
-                                driveCommands.rotateTo(90),
-                                driveCommands.driveDistance(1, 0.5))),
-                                collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
+                                        driveCommands.driveDistance(-0.75, -0.3),
+                                        driveCommands.driveDistance(-0.75, -0.1),
+                                        driveCommands.rotateTo(90),
+                                        driveCommands.driveDistance(1, 0.5)
+                                )
+                        ),
+
+                        collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
 
                         new SequentialCommandGroup(
                                 visionCommands.correctPosition(),
                                 visionCommands.calcAim(VisionTarget.TOP),
-                                cheeseWheelCommands.shootUntilEmpty()));
+                                cheeseWheelCommands.shootUntilEmpty()
+                        )
+        );
     }
 }

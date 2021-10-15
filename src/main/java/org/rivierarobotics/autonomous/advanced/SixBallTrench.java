@@ -75,7 +75,9 @@ public class SixBallTrench extends CommandBase {
                                         driveCommands.driveDistance(2, 0.2),
                                         cheeseWheelCommands.shootUntilEmpty()
                                 )
-                        )));
+                        )
+                )
+        );
 
         CommandScheduler.getInstance().schedule(autoCommand);
     }

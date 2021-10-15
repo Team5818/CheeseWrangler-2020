@@ -20,25 +20,11 @@
 
 package org.rivierarobotics.autonomous;
 
-import org.rivierarobotics.autonomous.advanced.CenterShoot;
+import org.rivierarobotics.autonomous.advanced.*;
 import org.rivierarobotics.autonomous.advanced.CenterShootCreator;
-import org.rivierarobotics.autonomous.advanced.ChallengePath;
-import org.rivierarobotics.autonomous.advanced.EnemyTrench5ball;
-import org.rivierarobotics.autonomous.advanced.EnemyTrench5ballCreator;
-import org.rivierarobotics.autonomous.advanced.OffsetSixBallTrench;
-import org.rivierarobotics.autonomous.advanced.OffsetSixBallTrenchCreator;
-import org.rivierarobotics.autonomous.advanced.ShootLoop;
-import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
-import org.rivierarobotics.autonomous.advanced.SixBallTrench;
-import org.rivierarobotics.autonomous.advanced.SixBallTrenchCreator;
-import org.rivierarobotics.autonomous.advanced.TrenchRun;
-import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
-import org.rivierarobotics.autonomous.advanced.TriangleAdvanced;
-import org.rivierarobotics.autonomous.advanced.TriangleAdvancedCreator;
+import org.rivierarobotics.autonomous.advanced.EnemyTrench5Ball;
 import org.rivierarobotics.autonomous.basic.ForwardAuto;
 import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
-import org.rivierarobotics.autonomous.basic.PathTester;
-import org.rivierarobotics.autonomous.basic.PathTesterCreator;
 import org.rivierarobotics.autonomous.basic.ShootAndDrive;
 import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
 import org.rivierarobotics.autonomous.basic.ShootThreeBalls;
@@ -54,11 +40,10 @@ public class AutonomousCommands {
     private final TrenchRunCreator trenchRunCreator;
     private final RecordPathCreator recordPathCreator;
     private final PowerReplayCreator powerReplayCreator;
-    private final PathTesterCreator pathTesterCreator;
     private final ShootThreeBallsCreator shootThreeBallsCreator;
     private final TriangleAdvancedCreator triangleAdvancedCreator;
     private final SixBallTrenchCreator sixBallTrenchCreator;
-    private final EnemyTrench5ballCreator enemyTrench5ballCreator;
+    private final EnemyTrench5BallCreator enemyTrench5BallCreator;
     private final CenterShootCreator centerShootCreator;
     private final OffsetSixBallTrenchCreator offsetSixBallTrenchCreator;
 
@@ -70,11 +55,10 @@ public class AutonomousCommands {
                               TrenchRunCreator trenchRunCreator,
                               RecordPathCreator recordPathCreator,
                               PowerReplayCreator powerReplayCreator,
-                              PathTesterCreator pathTesterCreator,
                               ShootThreeBallsCreator shootThreeBallsCreator,
                               TriangleAdvancedCreator triangleAdvancedCreator,
                               SixBallTrenchCreator sixBallTrenchCreator,
-                              EnemyTrench5ballCreator enemyTrench5ballCreator,
+                              EnemyTrench5BallCreator enemyTrench5BallCreator,
                               OffsetSixBallTrenchCreator offsetSixBallTrenchCreator,
                               CenterShootCreator centerShootCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
@@ -84,12 +68,11 @@ public class AutonomousCommands {
         this.trenchRunCreator = trenchRunCreator;
         this.recordPathCreator = recordPathCreator;
         this.powerReplayCreator = powerReplayCreator;
-        this.pathTesterCreator = pathTesterCreator;
         this.shootThreeBallsCreator = shootThreeBallsCreator;
         this.triangleAdvancedCreator = triangleAdvancedCreator;
         this.sixBallTrenchCreator = sixBallTrenchCreator;
         this.offsetSixBallTrenchCreator = offsetSixBallTrenchCreator;
-        this.enemyTrench5ballCreator = enemyTrench5ballCreator;
+        this.enemyTrench5BallCreator = enemyTrench5BallCreator;
         this.centerShootCreator = centerShootCreator;
     }
 
@@ -115,10 +98,6 @@ public class AutonomousCommands {
 
     public ShootAndDrive shootAndDrive() {
         return shootAndDriveCreator.create();
-    }
-
-    public PathTester pathTest() {
-        return pathTesterCreator.create();
     }
 
     public ShootLoop shootLoop(Pose2dPath loop) {
@@ -149,8 +128,8 @@ public class AutonomousCommands {
         return sixBallTrenchCreator.create();
     }
 
-    public EnemyTrench5ball enemyTrench5ball() {
-        return enemyTrench5ballCreator.create();
+    public EnemyTrench5Ball enemyTrench5Ball() {
+        return enemyTrench5BallCreator.create();
     }
 
     public OffsetSixBallTrench offsetSixBallTrench() {

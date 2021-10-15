@@ -32,7 +32,8 @@ import org.rivierarobotics.util.VisionTarget;
 @GenerateCreator
 public class ShootThreeBalls extends SequentialCommandGroup {
     public ShootThreeBalls(@Provided VisionCommands visionCommands,
-                           @Provided CheeseWheelCommands cheeseWheel, @Provided DriveCommands driveCommands) {
+                           @Provided CheeseWheelCommands cheeseWheel,
+                           @Provided DriveCommands driveCommands) {
         super(
                 visionCommands.correctPosition(),
                 new ParallelDeadlineGroup(

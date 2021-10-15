@@ -66,7 +66,7 @@ public class Robot extends TimedRobot {
         chooser = new SendableChooser<>();
         chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
         chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
-        chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5ball());
+        chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5Ball());
         chooser.addOption("OffsetSixBallTrench", commandComponent.auto().offsetSixBallTrench());
         chooser.addOption("CenterShoot", commandComponent.auto().centerShoot());
 

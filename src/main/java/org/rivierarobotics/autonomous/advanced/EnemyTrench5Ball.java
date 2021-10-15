@@ -39,7 +39,7 @@ import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
-public class EnemyTrench5ball extends CommandBase {
+public class EnemyTrench5Ball extends CommandBase {
     private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
@@ -47,7 +47,7 @@ public class EnemyTrench5ball extends CommandBase {
     private final CollectionCommands collectionCommands;
     private final NavXGyro gyro;
 
-    public EnemyTrench5ball(@Provided DriveCommands driveCommands,
+    public EnemyTrench5Ball(@Provided DriveCommands driveCommands,
                             @Provided VisionCommands visionCommands,
                             @Provided CheeseWheelCommands cheeseWheelCommands,
                             @Provided CollectionCommands collectionCommands,
