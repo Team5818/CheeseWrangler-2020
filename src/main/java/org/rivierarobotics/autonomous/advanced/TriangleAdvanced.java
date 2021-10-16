@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.autonomous.advanced;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
@@ -31,7 +30,6 @@ import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator

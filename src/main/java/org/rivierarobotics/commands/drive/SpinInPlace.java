@@ -33,29 +33,20 @@ public class SpinInPlace extends CommandBase {
     private final DriveTrain driveTrain;
     private final NavXGyro gyro;
     private final double turnDegrees;
-    private final boolean isAbsolute;
-    private double initialDegrees;
-    private int signum = 1;
 
-    public SpinInPlace(@Provided DriveTrain driveTrain, @Provided NavXGyro gyro,
-                       double turnDegrees, boolean isAbsolute) {
+    public SpinInPlace(@Provided DriveTrain driveTrain,
+                       @Provided NavXGyro gyro,
+                       double turnDegrees) {
         this.driveTrain = driveTrain;
         this.gyro = gyro;
         this.turnDegrees = turnDegrees;
-        this.isAbsolute = isAbsolute;
         addRequirements(driveTrain);
     }
 
     @Override
     public void execute() {
         double diff = turnDegrees - gyro.getYaw();
-
-        if (diff >= 0) {
-            signum = 1;
-        } else {
-            signum = -1;
-        }
-
+        double signum = diff >= 0 ? 1 : -1;
         driveTrain.setPower(signum * MAX_SPEED, signum * -MAX_SPEED);
     }
 

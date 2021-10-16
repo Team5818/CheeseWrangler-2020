@@ -62,7 +62,7 @@ public class CenterShoot extends CommandBase {
     @Override
     public void initialize() {
         gyro.setAngleAdjustment(180);
-        PositionTracker.setPosition(new double[]{3.25, 3.048});
+        PositionTracker.setPosition(new double[] { 3.25, 3.048 });
         this.autoCommand = new SequentialCommandGroup(
                 new ParallelRaceGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
@@ -83,7 +83,9 @@ public class CenterShoot extends CommandBase {
                                 driveCommands.rotateTo(180 + 30),
                                 driveCommands.driveDistance(-1.7, 0.45),
                                 cheeseWheelCommands.shootUntilEmpty()
-                        )));
+                        )
+                )
+        );
         CommandScheduler.getInstance().schedule(autoCommand);
     }
 

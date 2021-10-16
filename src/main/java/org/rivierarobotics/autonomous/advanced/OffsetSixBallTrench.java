@@ -57,7 +57,7 @@ public class OffsetSixBallTrench extends CommandBase {
 
     @Override
     public void initialize() {
-        PositionTracker.setPosition(new double[]{-1.7, 3.048});
+        PositionTracker.setPosition(new double[] { -1.7, 3.048 });
         this.autoCommand = new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                         driveCommands.driveDistance(-2.8, 0.2),
