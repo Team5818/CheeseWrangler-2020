@@ -18,21 +18,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.turret;
+package org.rivierarobotics.autonomous.basic;
 
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.MotionMagicSetPosition;
-import org.rivierarobotics.subsystems.Turret;
-import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
+import org.rivierarobotics.commands.drive.DriveCommands;
+import org.rivierarobotics.commands.vision.VisionCommands;
+import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
-public class TurretSetAngle extends MotionMagicSetPosition<Turret> {
-    public TurretSetAngle(@Provided Turret turret, @Provided RobotShuffleboard shuffleboard, double angle, boolean isAbsolute) {
-        super(turret,
-            () -> turret.getAngle(isAbsolute), a -> turret.setAngle(a, isAbsolute),
-            turret.getForwardLimit(), turret.getBackLimit(),
-            angle, 5, 2, shuffleboard
+public class ShootThreeBalls extends SequentialCommandGroup {
+    public ShootThreeBalls(@Provided VisionCommands visionCommands,
+                           @Provided CheeseWheelCommands cheeseWheel,
+                           @Provided DriveCommands driveCommands) {
+        super(
+                visionCommands.correctPosition(),
+                new ParallelDeadlineGroup(
+                        cheeseWheel.shootUntilEmpty(),
+                        visionCommands.calcAim(VisionTarget.INNER)
+                ),
+                driveCommands.driveDistance(-1, 0.2)
         );
     }
 }
+

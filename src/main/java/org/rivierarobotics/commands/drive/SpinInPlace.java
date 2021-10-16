@@ -33,36 +33,31 @@ public class SpinInPlace extends CommandBase {
     private final DriveTrain driveTrain;
     private final NavXGyro gyro;
     private final double turnDegrees;
-    private final boolean isAbsolute;
-    private double initialDegrees;
-    private int signum = 1;
 
-    public SpinInPlace(@Provided DriveTrain driveTrain, @Provided NavXGyro gyro,
-                       double turnDegrees, boolean isAbsolute) {
+    public SpinInPlace(@Provided DriveTrain driveTrain,
+                       @Provided NavXGyro gyro,
+                       double turnDegrees) {
         this.driveTrain = driveTrain;
         this.gyro = gyro;
         this.turnDegrees = turnDegrees;
-        this.isAbsolute = isAbsolute;
         addRequirements(driveTrain);
     }
 
     @Override
-    public void initialize() {
-        initialDegrees = gyro.getYaw();
-        if ((isAbsolute && turnDegrees < initialDegrees) || (turnDegrees < 0)) {
-            signum = -1;
-        }
-    }
-
-    @Override
     public void execute() {
+        double diff = turnDegrees - gyro.getYaw();
+        double signum = diff >= 0 ? 1 : -1;
         driveTrain.setPower(signum * MAX_SPEED, signum * -MAX_SPEED);
     }
 
     @Override
     public boolean isFinished() {
         double yaw = gyro.getYaw();
-        return isAbsolute ? (signum == 1 && yaw > turnDegrees) || (signum == -1 && yaw < turnDegrees) :
-                MathUtil.wrapToCircle(yaw) - MathUtil.wrapToCircle(initialDegrees) >= MathUtil.wrapToCircle(turnDegrees);
+        if (MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(turnDegrees), 1)
+                || MathUtil.isWithinTolerance(MathUtil.wrapToCircle(yaw), MathUtil.wrapToCircle(360 - turnDegrees), 1)) {
+            driveTrain.setPower(0, 0);
+            return true;
+        }
+        return false;
     }
 }

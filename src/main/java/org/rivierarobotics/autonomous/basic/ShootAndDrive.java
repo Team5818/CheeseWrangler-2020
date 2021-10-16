@@ -20,11 +20,13 @@
 
 package org.rivierarobotics.autonomous.basic;
 
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
+import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 
 /**
  * Default autonomous routine. Only shoots preloaded balls, does not collect
@@ -32,17 +34,24 @@ import org.rivierarobotics.commands.drive.DriveCommands;
  *
  * <p>Process:</p>
  * <ol>
+ *     <li>Set flywheel auto-velocity</li>
+ *     <li>Wait 1 second</li>
  *     <li>Shoot preloaded balls x5</li>
- *     <li>Drive 1m back at 25% power</li>
+ *     <li>Drive 1m back at 25% power for max 2s</li>
  * </ol>
  */
 @GenerateCreator
-public class ShootAndDrive extends SequentialCommandGroup {
+public class ShootAndDrive extends ParallelDeadlineGroup {
     public ShootAndDrive(@Provided DriveCommands drive,
-                         @Provided CheeseWheelCommands cheeseWheel) {
+                         @Provided CheeseWheelCommands cheeseWheel,
+                         @Provided FlywheelCommands flywheel) {
         super(
-            cheeseWheel.shootNWedges(5),
-            drive.driveDistance(-1, 0.25)
+                flywheel.setVelocity(),
+                sequence(new WaitCommand(1),
+                        cheeseWheel.shootNWedges(5),
+                        drive.driveDistance(-1, -0.25)
+                                .withTimeout(2)
+                )
         );
     }
 }

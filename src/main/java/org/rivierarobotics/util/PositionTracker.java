@@ -39,7 +39,7 @@ public class PositionTracker {
     private final VisionUtil vision;
     private final Turret turret;
     private final RSTab tab;
-    private double[] pos = new double[2];
+    private static double[] pos = new double[2];
     private double lastTime = 0;
 
     @Inject
@@ -86,6 +86,10 @@ public class PositionTracker {
     public void reset() {
         pos[0] = 0;
         pos[1] = 0;
+    }
+
+    public static void setPosition(double[] pos) {
+        PositionTracker.pos = pos;
     }
 
     public double[] getPosition() {

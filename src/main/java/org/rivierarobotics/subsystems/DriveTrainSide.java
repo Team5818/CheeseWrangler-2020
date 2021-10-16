@@ -31,7 +31,7 @@ import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MotorUtil;
 
 /**
- * Component part of drive train. Each side has two motors driven with the
+ * Component part of drive train. Each side has three motors driven with the
  * same inversion status. A shaft encoder is present on each side (external)
  * to keep track of position, compensated for by gear ratio calculations.
  * Contains a velocity PIDF loop for PathTracer controlled per-motor.
@@ -43,20 +43,26 @@ public class DriveTrainSide implements RRSubsystem {
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
     private final WPI_TalonFX mainLeft;
     private final WPI_TalonFX secondaryRight;
+    private final WPI_TalonFX secondaryTop;
     private final Encoder shaftEncoder;
     private final MechLogger logger;
+    private final boolean invert;
 
     public DriveTrainSide(DTMotorIds motors, boolean invert) {
         this.mainLeft = new WPI_TalonFX(motors.main);
-        this.secondaryRight = new WPI_TalonFX(motors.secondary);
+        this.secondaryRight = new WPI_TalonFX(motors.secondaryOne);
+        this.secondaryTop = new WPI_TalonFX(motors.secondaryTwo);
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
-
+        this.invert = invert;
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(0.22, 0, 0, 0.051), 0, mainLeft, secondaryRight);
+            new PIDConfig(0.22, 0, 0, 0.051), 0,
+                mainLeft, secondaryRight, secondaryTop);
         mainLeft.setInverted(invert);
         secondaryRight.setInverted(invert);
+        secondaryTop.setInverted(invert);
         mainLeft.setNeutralMode(NeutralMode.Brake);
         secondaryRight.setNeutralMode(NeutralMode.Brake);
+        secondaryTop.setNeutralMode(NeutralMode.Brake);
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
@@ -73,10 +79,7 @@ public class DriveTrainSide implements RRSubsystem {
         logger.powerChange(pwr);
         mainLeft.set(TalonFXControlMode.PercentOutput, pwr);
         secondaryRight.set(TalonFXControlMode.PercentOutput, pwr);
-    }
-
-    public double getVoltage(boolean isMasterLeft) {
-        return isMasterLeft ? mainLeft.getMotorOutputVoltage() : secondaryRight.getMotorOutputVoltage();
+        secondaryTop.set(TalonFXControlMode.PercentOutput, pwr);
     }
 
     public double getPosition() {
@@ -98,14 +101,25 @@ public class DriveTrainSide implements RRSubsystem {
         logger.setpointChange(set);
         mainLeft.set(ControlMode.Velocity, set);
         secondaryRight.set(ControlMode.Velocity, set);
+        secondaryTop.set(ControlMode.Velocity, set);
     }
 
     public void setVoltage(double volts) {
         mainLeft.setVoltage(volts);
         secondaryRight.setVoltage(volts);
+        secondaryTop.setVoltage(volts);
     }
 
     public void resetEncoder() {
         shaftEncoder.reset();
+    }
+
+    public MotorTemp[] getTemps() {
+        final String side = (invert ? "Left" : "Right") + ": ";
+        MotorTemp[] temps = new MotorTemp[3];
+        temps[0] = new MotorTemp(mainLeft.getDeviceID(), mainLeft.getTemperature(), side + "mainLeft");
+        temps[1] = new MotorTemp(secondaryRight.getDeviceID(), secondaryRight.getTemperature(), side + "secondaryRight");
+        temps[2] = new MotorTemp(secondaryTop.getDeviceID(), secondaryTop.getTemperature(), side + "secondaryTop");
+        return temps;
     }
 }

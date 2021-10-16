@@ -48,9 +48,9 @@ public class ContinuousShoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private ParallelRaceGroup cmd;
     private final Flywheel flywheel;
     private final RSTab tab;
+    private ParallelRaceGroup cmd;
 
     public ContinuousShoot(@Provided CheeseWheelCommands cheeseWheelCommands,
                            @Provided EjectorCommands ejectorCommands,
@@ -73,17 +73,22 @@ public class ContinuousShoot extends CommandBase {
         CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
         tab.setEntry("ccShootSlot", slot.ordinal());
 
+
         cmd = new SequentialCommandGroup(
-                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
-                new WaitUntilCommand(flywheel::withinTolerance),
-                ejectorCommands.setPower(1),
-                new WaitUntilCommand(() -> !slot.hasBall()).andThen(new WaitCommand(0.1)).withTimeout(3),
-                ejectorCommands.setPower(-0.1),
-                new WaitCommand(0.1),
-                ejectorCommands.setPower(0)
-        ).withTimeout(2);
+                    cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50)
+                            .withTimeout(3),
+                    new WaitUntilCommand(flywheel::withinTolerance),
+                    ejectorCommands.setPower(1),
+                    new WaitUntilCommand(() -> !slot.hasBall())
+                            .andThen(new WaitCommand(0.1))
+                            .withTimeout(3),
+                    ejectorCommands.setPower(-0.1),
+                    new WaitCommand(0.1),
+                    ejectorCommands.setPower(0)
+            ).withTimeout(2);
         cmd.schedule();
     }
+
 
     @Override
     public boolean isFinished() {

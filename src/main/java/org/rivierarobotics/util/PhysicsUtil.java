@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.util;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -44,9 +45,9 @@ public class PhysicsUtil {
     private final NavXGyro gyro;
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
-    private AimMode aimMode = AimMode.VISION;
+    private AimMode aimMode = AimMode.CALC;
     private double velocity = 9;
-    private boolean autoAimEnabled;
+    private boolean autoAimEnabled = true;
     private double[] vXYZ = new double[3];
 
     @Inject
@@ -76,7 +77,7 @@ public class PhysicsUtil {
                 getLLDistance() * Math.cos(Math.toRadians(getLLTurretAngle()));
         tab.setEntry("x", x);
 
-        return x - x * 0.02 + extraDistance;
+        return x + extraDistance;
     }
 
     /**
@@ -168,8 +169,8 @@ public class PhysicsUtil {
             hoodAngle += (driveTrain.getYVelocity());
         }
         double targetDist = getDistanceToTarget();
-        hoodAngle -= (7 - targetDist) * 0.2;
-        if (targetDist < 4) {
+
+        if (targetDist < 1) {
             hoodAngle = 52; // max for close shot
         }
         tab.setEntry("Hood Angle", hoodAngle);
@@ -184,9 +185,7 @@ public class PhysicsUtil {
     public double getBallVel() {
         //Returns ball's velocity in m/s
         double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
-        if (getDistanceToTarget() >= 4) {
-            ballVel += 0.3;
-        }
+
         tab.setEntry("ballVel", ballVel);
         return ballVel;
     }
@@ -197,11 +196,14 @@ public class PhysicsUtil {
      */
     private double captainKalbag() {
         double targetAngle = getAngleToTarget();
-        double currentAngle = (turret.getAngle(false) + gyro.getYaw()) % 360;
-        double angleDiff = targetAngle - currentAngle;
+        double targetTicks = turret.getTargetTicks(targetAngle, true);
+        double angleDiff = turret.getPositionTicks() - targetTicks;
         //BASICALLY A PID BUT WITHOUT THE ID
-        double p = 0.08;
-        return MathUtil.degreesToTicks((angleDiff / (p)) / 10);
+        SmartDashboard.putNumber("Target ticks", targetTicks);
+        SmartDashboard.putNumber("angleDiff", angleDiff);
+        double p = 0.8;
+        return -angleDiff * p;
+
     }
 
     /**
@@ -251,6 +253,7 @@ public class PhysicsUtil {
             }
             vXYZ = !Double.isNaN(t) ? new double[]{x / t - xVel, y / t - yVel, z / t + g * t} : tempXYZ;
         } else {
+            tab.setEntry("Trajectory: ", "PERP");
             graphTab.setEntry("T", ShooterConstants.getTConstant());
             vXYZ = tempXYZ;
         }

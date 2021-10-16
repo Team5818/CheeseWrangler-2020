@@ -20,15 +20,27 @@
 
 package org.rivierarobotics.autonomous;
 
+import org.rivierarobotics.autonomous.advanced.CenterShoot;
+import org.rivierarobotics.autonomous.advanced.CenterShootCreator;
 import org.rivierarobotics.autonomous.advanced.ChallengePath;
+import org.rivierarobotics.autonomous.advanced.EnemyTrench5Ball;
+import org.rivierarobotics.autonomous.advanced.EnemyTrench5BallCreator;
+import org.rivierarobotics.autonomous.advanced.OffsetSixBallTrench;
+import org.rivierarobotics.autonomous.advanced.OffsetSixBallTrenchCreator;
 import org.rivierarobotics.autonomous.advanced.ShootLoop;
 import org.rivierarobotics.autonomous.advanced.ShootLoopCreator;
+import org.rivierarobotics.autonomous.advanced.SixBallTrench;
+import org.rivierarobotics.autonomous.advanced.SixBallTrenchCreator;
 import org.rivierarobotics.autonomous.advanced.TrenchRun;
 import org.rivierarobotics.autonomous.advanced.TrenchRunCreator;
+import org.rivierarobotics.autonomous.advanced.TriangleAdvanced;
+import org.rivierarobotics.autonomous.advanced.TriangleAdvancedCreator;
 import org.rivierarobotics.autonomous.basic.ForwardAuto;
 import org.rivierarobotics.autonomous.basic.ForwardAutoCreator;
 import org.rivierarobotics.autonomous.basic.ShootAndDrive;
 import org.rivierarobotics.autonomous.basic.ShootAndDriveCreator;
+import org.rivierarobotics.autonomous.basic.ShootThreeBalls;
+import org.rivierarobotics.autonomous.basic.ShootThreeBallsCreator;
 
 import javax.inject.Inject;
 
@@ -40,6 +52,12 @@ public class AutonomousCommands {
     private final TrenchRunCreator trenchRunCreator;
     private final RecordPathCreator recordPathCreator;
     private final PowerReplayCreator powerReplayCreator;
+    private final ShootThreeBallsCreator shootThreeBallsCreator;
+    private final TriangleAdvancedCreator triangleAdvancedCreator;
+    private final SixBallTrenchCreator sixBallTrenchCreator;
+    private final EnemyTrench5BallCreator enemyTrench5BallCreator;
+    private final CenterShootCreator centerShootCreator;
+    private final OffsetSixBallTrenchCreator offsetSixBallTrenchCreator;
 
     @Inject
     public AutonomousCommands(PathTracerExecutorCreator pathTracerExecutorCreator,
@@ -48,7 +66,13 @@ public class AutonomousCommands {
                               ShootLoopCreator shootLoopCreator,
                               TrenchRunCreator trenchRunCreator,
                               RecordPathCreator recordPathCreator,
-                              PowerReplayCreator powerReplayCreator) {
+                              PowerReplayCreator powerReplayCreator,
+                              ShootThreeBallsCreator shootThreeBallsCreator,
+                              TriangleAdvancedCreator triangleAdvancedCreator,
+                              SixBallTrenchCreator sixBallTrenchCreator,
+                              EnemyTrench5BallCreator enemyTrench5BallCreator,
+                              OffsetSixBallTrenchCreator offsetSixBallTrenchCreator,
+                              CenterShootCreator centerShootCreator) {
         this.pathTracerExecutorCreator = pathTracerExecutorCreator;
         this.forwardAutoCreator = forwardAutoCreator;
         this.shootAndDriveCreator = shootAndDriveCreator;
@@ -56,6 +80,12 @@ public class AutonomousCommands {
         this.trenchRunCreator = trenchRunCreator;
         this.recordPathCreator = recordPathCreator;
         this.powerReplayCreator = powerReplayCreator;
+        this.shootThreeBallsCreator = shootThreeBallsCreator;
+        this.triangleAdvancedCreator = triangleAdvancedCreator;
+        this.sixBallTrenchCreator = sixBallTrenchCreator;
+        this.offsetSixBallTrenchCreator = offsetSixBallTrenchCreator;
+        this.enemyTrench5BallCreator = enemyTrench5BallCreator;
+        this.centerShootCreator = centerShootCreator;
     }
 
     public PathTracerExecutor challengePath(ChallengePath cPath) {
@@ -96,5 +126,29 @@ public class AutonomousCommands {
 
     public PowerReplay powerReplay() {
         return powerReplayCreator.create();
+    }
+
+    public ShootThreeBalls shootThreeBalls() {
+        return shootThreeBallsCreator.create();
+    }
+
+    public TriangleAdvanced triangleAdvanced() {
+        return triangleAdvancedCreator.create();
+    }
+
+    public SixBallTrench sixBallTrench() {
+        return sixBallTrenchCreator.create();
+    }
+
+    public EnemyTrench5Ball enemyTrench5Ball() {
+        return enemyTrench5BallCreator.create();
+    }
+
+    public OffsetSixBallTrench offsetSixBallTrench() {
+        return offsetSixBallTrenchCreator.create();
+    }
+
+    public CenterShoot centerShoot() {
+        return centerShootCreator.create();
     }
 }

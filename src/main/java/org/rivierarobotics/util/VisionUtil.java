@@ -48,7 +48,13 @@ public class VisionUtil {
     }
 
     public double getActualTY(double hoodAbsPos) {
-        return getLLValue("ty") + hoodAbsPos -  3;
+        double hoodAngle = 90 - hoodAbsPos;
+        double llHeight = Math.sin(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY() + ShooterConstants.getRobotHeight();
+        double llTy = getLLValue("ty") + hoodAbsPos;
+        double llDist = (ShooterConstants.getGoalHeight() - llHeight) / Math.tan(Math.toRadians(llTy));
+        double dist = llDist + Math.cos(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY();
+
+        return Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist));
     }
 
     public void setLEDState(LimelightLEDState state) {

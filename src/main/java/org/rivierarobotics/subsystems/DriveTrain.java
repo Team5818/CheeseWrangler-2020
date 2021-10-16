@@ -32,6 +32,8 @@ import org.rivierarobotics.util.Side;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+
+
 /**
  * Subsystem for the drive train. Uses two component sides for drive.
  * This subsystem is used as a wrapper/holder class for the sides. Tracks
@@ -41,7 +43,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class DriveTrain extends SubsystemBase {
-    private static final double TRACKWIDTH = 0.7366; // meters
+    private static final double TRACKWIDTH = 0.71; // meters
     private final DriveTrainSide left;
     private final DriveTrainSide right;
     private final NavXGyro gyro;

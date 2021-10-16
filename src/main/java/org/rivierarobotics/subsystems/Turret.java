@@ -24,6 +24,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
@@ -46,12 +47,12 @@ import javax.inject.Provider;
  * Contains a dual PID for position and velocity.
  */
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 470;
-    private static final double MAX_ANGLE = 7;
+    private static final double ZERO_TICKS = 207;
+    private static final double MAX_ANGLE = 1;
     private static final double MIN_ANGLE = -214;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
-    private static final int DETECT_BUFFER_TICKS = 100;
+    private static final int DETECT_BUFFER_TICKS = 300;
     private final WPI_TalonSRX turretTalon;
     private final Provider<TurretControl> command;
     private final NavXGyro gyro;
@@ -82,17 +83,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
         checkWrapError();
     }
 
-    public int getForwardLimit() {
-        return FORWARD_LIMIT_TICKS;
-    }
-
-    public int getBackLimit() {
-        return BACK_LIMIT_TICKS;
-    }
-
     @Override
     public double getPositionTicks() {
-        return turretTalon.getSelectedSensorPosition() + wrapErrOffset;
+        return turretTalon.getSelectedSensorPosition();
     }
 
     public double getVelocity() {
@@ -119,7 +112,8 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      * @return a double array containing a distance and angle.
      */
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
-        double initialD = ShooterConstants.getTopHeight() / Math.sin(Math.toRadians(vision.getActualTY(hoodAngle)));
+        double initialD = ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getActualTY(hoodAngle)));
+        SmartDashboard.putNumber("initialD", initialD);
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double xInitialD = Math.sin(tx) * initialD;
         double yInitialD = Math.cos(tx) * initialD + extraDistance;
@@ -156,6 +150,14 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      * @param isAbsolute if the set angle should be absolute.
      */
     public void setAngle(double angle, boolean isAbsolute) {
+        double initialTicks = getTargetTicks(angle, isAbsolute);
+        tab.setEntry("TFinalAngleTicks", initialTicks);
+        logger.setpointChange(initialTicks);
+        multiPID.selectConfig(MultiPID.Type.POSITION);
+        turretTalon.set(ControlMode.MotionMagic, initialTicks);
+    }
+
+    public double getTargetTicks(double angle, boolean isAbsolute) {
         tab.setEntry("TSetAngle", angle);
         angle %= 360;
         if (isAbsolute) {
@@ -175,19 +177,18 @@ public class Turret extends SubsystemBase implements RRSubsystem {
             initialTicks = getPositionTicks() - ZERO_TICKS < 0 ? ticks : max;
         }
         initialTicks -= wrapErrOffset;
-        tab.setEntry("TFinalAngleTicks", initialTicks);
-        logger.setpointChange(initialTicks);
-        multiPID.selectConfig(MultiPID.Type.POSITION);
-        turretTalon.set(ControlMode.MotionMagic, initialTicks);
+        return initialTicks;
     }
-
     /**
      * Set the velocity of the turret. Uses velocity PID loop configuration.
      *
      * @param ticksPer100ms the velocity to set in ticks per 100ms.
      */
+
     public void setVelocity(double ticksPer100ms) {
+
         logger.stateChange("Velocity Set", ticksPer100ms);
+
         tab.setEntry("setVelTicks", ticksPer100ms);
         multiPID.selectConfig(MultiPID.Type.VELOCITY);
         turretTalon.set(ControlMode.Velocity, ticksPer100ms);
@@ -198,6 +199,26 @@ public class Turret extends SubsystemBase implements RRSubsystem {
     public void setPower(double pwr) {
         logger.powerChange(pwr);
         turretTalon.set(ControlMode.PercentOutput, pwr);
+    }
+
+    public MotorTemp getTemp() {
+        return new MotorTemp(turretTalon.getDeviceID(), turretTalon.getTemperature(), "turretTalon");
+    }
+
+    public int getForwardLimit() {
+        return FORWARD_LIMIT_TICKS;
+    }
+
+    public int getForwardMaxAngle() {
+        return (int) MAX_ANGLE;
+    }
+
+    public int getBackLimit() {
+        return BACK_LIMIT_TICKS;
+    }
+
+    public int getBackMinAngle() {
+        return (int) MIN_ANGLE;
     }
 
     /**
@@ -221,9 +242,9 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public void periodic() {
-        // Runs every 5s after init (5s/0.02s=250x)
+        // Runs every 0.4s after init (0.4s/0.02s=20x)
         errLoopCtr++;
-        if (errLoopCtr >= 250) {
+        if (errLoopCtr >= 20) {
             checkWrapError();
             errLoopCtr = 0;
         }

@@ -27,17 +27,21 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.subsystems.Flywheel;
+import org.rivierarobotics.subsystems.MotorTemp;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
 import org.rivierarobotics.util.RSTileOptions;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -59,14 +63,11 @@ public class Robot extends TimedRobot {
 
         // Create autonomous options
         chooser = new SendableChooser<>();
-        chooser.addOption("AutoAiming 5 x 5", commandComponent.auto().forwardAuto(true));
-        chooser.addOption("NoAiming 5 x 5", commandComponent.auto().forwardAuto(false));
-        chooser.addOption("Shoot'n'drive", commandComponent.auto().shootAndDrive());
-        chooser.addOption("Just Drive!", commandComponent.drive().driveDistance(-1, 0.25));
-        chooser.addOption("TrenchRun", commandComponent.auto().trenchRun());
-        chooser.addOption("Outer ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.OUTER_SHOOT_LOOP));
-        chooser.addOption("TrenchMid ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.TRENCH_MID_SHOOT_LOOP));
-        chooser.addOption("MidOnly ShootLoop", commandComponent.auto().shootLoop(Pose2dPath.MID_ONLY_SHOOT_LOOP));
+        chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
+        chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
+        chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5Ball());
+        chooser.addOption("OffsetSixBallTrench", commandComponent.auto().offsetSixBallTrench());
+        chooser.addOption("CenterShoot", commandComponent.auto().centerShoot());
 
         // Secondary camera initialize
         CameraServer.getInstance().startAutomaticCapture();
@@ -150,6 +151,7 @@ public class Robot extends TimedRobot {
         var hood = globalComponent.getHood();
         var gyro = globalComponent.getNavXGyro();
         var visionUtil = globalComponent.getVisionUtil();
+
         var flywheel = globalComponent.getFlywheel();
         var dt = globalComponent.getDriveTrain();
         var cw = globalComponent.getCheeseWheel();
@@ -214,6 +216,17 @@ public class Robot extends TimedRobot {
             .setEntry("Color R", sensorColor.red)
             .setEntry("Color G", sensorColor.green)
             .setEntry("Color B", sensorColor.blue)
-            .setEntry("Match Color", cow.getGameColor().name());
+            .setEntry("Match Color", cow.getGameColor().name())
+            .setEntry("Target Color", ColorWheel.getFMSColor().name());
+
+        List<MotorTemp> temps = new ArrayList<>();
+        temps.add(turret.getTemp());
+        temps.add(flywheel.getTemp());
+        temps.addAll(Arrays.asList(dt.getLeft().getTemps()));
+        temps.addAll(Arrays.asList(dt.getRight().getTemps()));
+        var tempTab = shuffleboard.getTab("Motor Temps");
+        for (MotorTemp temp : temps) {
+            tempTab.setEntry(temp.getName(), "id: " + temp.getId() + " temp: " + temp.getValue());
+        }
     }
 }

@@ -43,12 +43,8 @@ public class DriveCommands {
         return driveDistanceCreator.create(finalDistance, power);
     }
 
-    public SpinInPlace spinFor(double degreesToSpin) {
-        return spinInPlaceCreator.create(degreesToSpin, false);
-    }
-
     public SpinInPlace rotateTo(double degreesHeading) {
-        return spinInPlaceCreator.create(degreesHeading, true);
+        return spinInPlaceCreator.create(degreesHeading);
     }
 
     public GyroReset resetGyro() {
@@ -58,4 +54,5 @@ public class DriveCommands {
     public DriveSetVelocity setVelocity(double vel) {
         return setVelocityCreator.create(vel);
     }
+
 }

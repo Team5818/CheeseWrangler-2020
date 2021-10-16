@@ -44,8 +44,18 @@ public class COWRotateToColor extends COWRotateNTimes {
     }
 
     private ColorWheel.GameColor robotToFieldColor(ColorWheel.GameColor robotColor) {
-        ColorWheel.GameColor[] gcs = ColorWheel.GameColor.values();
-        return gcs[(robotColor.ordinal() + 2) % gcs.length];
+        switch (robotColor) {
+            case BLUE:
+                return ColorWheel.GameColor.RED;
+            case GREEN:
+                return ColorWheel.GameColor.YELLOW;
+            case RED:
+                return ColorWheel.GameColor.BLUE;
+            case YELLOW:
+                return ColorWheel.GameColor.GREEN;
+            default:
+                return ColorWheel.GameColor.CORRUPT;
+        }
     }
 
     @Override

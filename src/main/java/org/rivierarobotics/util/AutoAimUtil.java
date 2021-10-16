@@ -83,8 +83,8 @@ public class AutoAimUtil {
             if (!useVelocity) {
                 turret.setAngle(turretAngle, true);
             } else {
-                if (driveTrain != null && MathUtil.isWithinTolerance(driveTrain.getLeft().getVelocity(), 0,  0.1)
-                        && MathUtil.isWithinTolerance(driveTrain.getRight().getVelocity(), 0, 0.1)) {
+                if (driveTrain != null && (MathUtil.isWithinTolerance(driveTrain.getLeft().getVelocity(), 0,  0.15)
+                        && MathUtil.isWithinTolerance(driveTrain.getRight().getVelocity(), 0, 0.15))) {
                     if (Timer.getFPGATimestamp() - start < 0.001) {
                         turret.setVelocity(physics.getTurretVelocity());
                     } else {

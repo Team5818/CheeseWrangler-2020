@@ -53,8 +53,11 @@ import org.rivierarobotics.util.VisionTarget;
  */
 @GenerateCreator
 public class TrenchRun extends SequentialCommandGroup {
-    public TrenchRun(@Provided AutonomousCommands auto, @Provided DriveCommands drive, @Provided CollectionCommands collect,
-                     @Provided CheeseWheelCommands shoot, @Provided VisionCommands aim) {
+    public TrenchRun(@Provided AutonomousCommands auto,
+                     @Provided DriveCommands drive,
+                     @Provided CollectionCommands collect,
+                     @Provided CheeseWheelCommands shoot,
+                     @Provided VisionCommands aim) {
         super(
                 sequence(auto.pathtracer(Pose2dPath.START_TOP_TO_SHOOT), shoot.shootNWedges(5))
                         .deadlineWith(aim.calcAim(VisionTarget.INNER)),
