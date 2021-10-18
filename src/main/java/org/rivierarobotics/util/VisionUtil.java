@@ -23,7 +23,6 @@ package org.rivierarobotics.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -54,9 +53,6 @@ public class VisionUtil {
         double llTy = getLLValue("ty") + hoodAbsPos;
         double llDist = (ShooterConstants.getGoalHeight() - llHeight) / Math.tan(Math.toRadians(llTy));
         double dist = llDist + Math.cos(Math.toRadians(hoodAngle)) * ShooterConstants.getLLtoTurretY();
-
-        SmartDashboard.putNumber("test1", getLLValue("ty") + hoodAbsPos);
-        SmartDashboard.putNumber("test2", Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist)));
 
         return Math.toDegrees(Math.atan((ShooterConstants.getGoalHeight() - llHeight) / dist));
     }

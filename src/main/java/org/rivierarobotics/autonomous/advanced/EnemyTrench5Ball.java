@@ -38,7 +38,7 @@ import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
-public class EnemyTrench5ball extends CommandBase {
+public class EnemyTrench5Ball extends CommandBase {
     private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
@@ -46,7 +46,7 @@ public class EnemyTrench5ball extends CommandBase {
     private final CollectionCommands collectionCommands;
     private final NavXGyro gyro;
 
-    public EnemyTrench5ball(@Provided DriveCommands driveCommands,
+    public EnemyTrench5Ball(@Provided DriveCommands driveCommands,
                             @Provided VisionCommands visionCommands,
                             @Provided CheeseWheelCommands cheeseWheelCommands,
                             @Provided CollectionCommands collectionCommands,
@@ -61,7 +61,7 @@ public class EnemyTrench5ball extends CommandBase {
     @Override
     public void initialize() {
         gyro.setAngleAdjustment(180);
-        PositionTracker.setPosition(new double[]{5.07, 3.3});
+        PositionTracker.setPosition(new double[] { 5.07, 3.3 });
         this.autoCommand = new SequentialCommandGroup(
                 new ParallelDeadlineGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
@@ -76,9 +76,10 @@ public class EnemyTrench5ball extends CommandBase {
                                 driveCommands.rotateTo(220),
                                 driveCommands.driveDistance(-3, 0.4),
                                 driveCommands.rotateTo(180),
-                                cheeseWheelCommands.shootUntilEmpty()))
+                                cheeseWheelCommands.shootUntilEmpty()
+                        )
+                )
         );
-
 
         CommandScheduler.getInstance().schedule(autoCommand);
     }

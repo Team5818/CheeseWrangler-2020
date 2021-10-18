@@ -40,12 +40,12 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class CenterShoot extends CommandBase {
-    private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
     private final CheeseWheelCommands cheeseWheelCommands;
     private final CollectionCommands collectionCommands;
     private final NavXGyro gyro;
+    private Command autoCommand;
 
     public CenterShoot(@Provided DriveCommands driveCommands,
                        @Provided VisionCommands visionCommands,
@@ -53,22 +53,22 @@ public class CenterShoot extends CommandBase {
                        @Provided CollectionCommands collectionCommands,
                        @Provided NavXGyro gyro) {
         this.visionCommands = visionCommands;
-        this.gyro = gyro;
         this.driveCommands = driveCommands;
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.collectionCommands = collectionCommands;
+        this.gyro = gyro;
     }
 
     @Override
     public void initialize() {
         gyro.setAngleAdjustment(180);
-        PositionTracker.setPosition(new double[]{3.25, 3.048});
+        PositionTracker.setPosition(new double[] { 3.25, 3.048 });
         this.autoCommand = new SequentialCommandGroup(
                 new ParallelRaceGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
                                 new ParallelDeadlineGroup(
-                                        driveCommands.driveDistance(1.38+1.42, 0.2),
+                                        driveCommands.driveDistance(1.38 + 1.42, 0.2),
                                         cheeseWheelCommands.shootUntilEmpty()
                                 ),
                                 driveCommands.rotateTo(180 - 34.7),
@@ -82,7 +82,9 @@ public class CenterShoot extends CommandBase {
                                 driveCommands.rotateTo(180 + 30),
                                 driveCommands.driveDistance(-1.7, 0.45),
                                 cheeseWheelCommands.shootUntilEmpty()
-                        )));
+                        )
+                )
+        );
         CommandScheduler.getInstance().schedule(autoCommand);
     }
 

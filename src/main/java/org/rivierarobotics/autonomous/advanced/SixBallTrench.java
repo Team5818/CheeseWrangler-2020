@@ -38,11 +38,11 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class SixBallTrench extends CommandBase {
-    private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
     private final CheeseWheelCommands cheeseWheelCommands;
     private final CollectionCommands collectionCommands;
+    private Command autoCommand;
 
     public SixBallTrench(@Provided DriveCommands driveCommands,
                          @Provided VisionCommands visionCommands,
@@ -77,7 +77,9 @@ public class SixBallTrench extends CommandBase {
                                         visionCommands.correctPosition(),
                                         cheeseWheelCommands.shootUntilEmpty()
                                 )
-                        )));
+                        )
+                )
+        );
 
         CommandScheduler.getInstance().schedule(autoCommand);
     }

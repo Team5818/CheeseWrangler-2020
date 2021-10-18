@@ -42,9 +42,9 @@ public class ShootUntilEmpty extends CommandBase {
     @Override
     public void execute() {
         if (wheel.hasBall() && (command == null || !CommandScheduler.getInstance().isScheduled(command))) {
-            Command c = commands.continuousShoot();
-            CommandScheduler.getInstance().schedule(c);
-            this.command = c;
+            Command shootCommand = commands.continuousShoot();
+            CommandScheduler.getInstance().schedule(shootCommand);
+            this.command = shootCommand;
         }
     }
 

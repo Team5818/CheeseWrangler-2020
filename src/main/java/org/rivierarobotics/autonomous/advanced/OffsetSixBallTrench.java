@@ -41,11 +41,11 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class OffsetSixBallTrench extends CommandBase {
-    private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
     private final CheeseWheelCommands cheeseWheelCommands;
     private final CollectionCommands collectionCommands;
+    private Command autoCommand;
 
     public OffsetSixBallTrench(@Provided DriveCommands driveCommands,
                                @Provided VisionCommands visionCommands,
@@ -59,7 +59,7 @@ public class OffsetSixBallTrench extends CommandBase {
 
     @Override
     public void initialize() {
-        PositionTracker.setPosition(new double[]{-2.1, 3.1});
+        PositionTracker.setPosition(new double[] { -2.1, 3.1 });
         this.autoCommand = new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
                         new ParallelDeadlineGroup(

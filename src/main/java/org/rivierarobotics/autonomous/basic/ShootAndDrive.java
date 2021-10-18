@@ -21,7 +21,6 @@
 package org.rivierarobotics.autonomous.basic;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
@@ -35,8 +34,10 @@ import org.rivierarobotics.commands.flywheel.FlywheelCommands;
  *
  * <p>Process:</p>
  * <ol>
+ *     <li>Set flywheel auto-velocity</li>
+ *     <li>Wait 1 second</li>
  *     <li>Shoot preloaded balls x5</li>
- *     <li>Drive 1m back at 25% power</li>
+ *     <li>Drive 1m back at 25% power for max 2s</li>
  * </ol>
  */
 @GenerateCreator

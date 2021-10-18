@@ -236,7 +236,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
 
     @Override
     public void periodic() {
-        // Runs every 5s after init (5s/0.02s=250x)
+        // Runs every 0.4s after init (0.4s/0.02s=20x)
         errLoopCtr++;
         if (errLoopCtr >= 20) {
             checkWrapError();

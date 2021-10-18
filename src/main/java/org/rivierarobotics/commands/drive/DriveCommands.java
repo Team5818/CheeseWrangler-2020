@@ -27,31 +27,24 @@ public class DriveCommands {
     private final DriveDistanceCreator driveDistanceCreator;
     private final GyroResetCreator gyroResetCreator;
     private final DriveSetVelocityCreator setVelocityCreator;
-    private final DriveArcCreator driveArcCreator;
 
     @Inject
     public DriveCommands(DriveDistanceCreator driveDistanceCreator,
                          SpinInPlaceCreator spinInPlaceCreator,
                          GyroResetCreator gyroResetCreator,
-                         DriveSetVelocityCreator setVelocityCreator,
-                         DriveArcCreator driveArcCreator) {
+                         DriveSetVelocityCreator setVelocityCreator) {
         this.driveDistanceCreator = driveDistanceCreator;
         this.spinInPlaceCreator = spinInPlaceCreator;
         this.gyroResetCreator = gyroResetCreator;
         this.setVelocityCreator = setVelocityCreator;
-        this.driveArcCreator = driveArcCreator;
     }
 
     public DriveDistance driveDistance(double finalDistance, double power) {
         return driveDistanceCreator.create(finalDistance, power);
     }
 
-    public SpinInPlace spinFor(double degreesToSpin) {
-        return spinInPlaceCreator.create(degreesToSpin, false);
-    }
-
     public SpinInPlace rotateTo(double degreesHeading) {
-        return spinInPlaceCreator.create(degreesHeading, true);
+        return spinInPlaceCreator.create(degreesHeading);
     }
 
     public GyroReset resetGyro() {
@@ -62,7 +55,4 @@ public class DriveCommands {
         return setVelocityCreator.create(vel);
     }
 
-    public DriveArc driveArc(double radius, double time) {
-        return driveArcCreator.create(radius, time);
-    }
 }

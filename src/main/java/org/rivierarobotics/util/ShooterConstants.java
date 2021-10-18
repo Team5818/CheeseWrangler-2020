@@ -32,7 +32,11 @@ public class ShooterConstants {
     }
 
     public static double getRobotHeight() {
+<<<<<<< HEAD
         return .55;
+=======
+        return 0.61;
+>>>>>>> master
     }
 
     public static double getGoalHeight() {
@@ -58,7 +62,7 @@ public class ShooterConstants {
 
     public static double getLLtoTurretY() {
         //return 0.1778;
-        return .19; // meters
+        return 0.19; // meters
     }
 
     public static double getDistanceFromOuterToInnerTarget() {

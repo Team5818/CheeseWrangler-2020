@@ -61,7 +61,7 @@ public class Robot extends TimedRobot {
         chooser = new SendableChooser<>();
         chooser.addOption("SixBallTrench", commandComponent.auto().sixBallTrench());
         chooser.addOption("ShootThreeBalls", commandComponent.auto().shootThreeBalls());
-        chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5ball());
+        chooser.addOption("EnemyTrench5Ball", commandComponent.auto().enemyTrench5Ball());
         chooser.addOption("OffsetSixBallTrench", commandComponent.auto().offsetSixBallTrench());
         chooser.addOption("CenterShoot", commandComponent.auto().centerShoot());
 
@@ -219,6 +219,7 @@ public class Robot extends TimedRobot {
 
         var sensorColor = cow.getSensorColor();
         shuffleboard.getTab("Climb")
+<<<<<<< HEAD
                 .setEntry("Limit Closed", climb.isAtBottom())
                 .setEntry("Rel Pos", climb.getPositionTicks())
                 .setEntry("Color R", sensorColor.red)
@@ -226,6 +227,15 @@ public class Robot extends TimedRobot {
                 .setEntry("Color B", sensorColor.blue)
                 .setEntry("Match Color", cow.getGameColor().name())
                 .setEntry("target color", ColorWheel.getFMSColor().name());
+=======
+            .setEntry("Limit Closed", climb.isAtBottom())
+            .setEntry("Rel Pos", climb.getPositionTicks())
+            .setEntry("Color R", sensorColor.red)
+            .setEntry("Color G", sensorColor.green)
+            .setEntry("Color B", sensorColor.blue)
+            .setEntry("Match Color", cow.getGameColor().name())
+            .setEntry("Target Color", ColorWheel.getFMSColor().name());
+>>>>>>> master
 
         List<MotorTemp> temps = new ArrayList<>();
         temps.add(turret.getTemp());

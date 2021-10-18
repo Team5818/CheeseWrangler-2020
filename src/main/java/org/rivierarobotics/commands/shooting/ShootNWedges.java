@@ -54,7 +54,8 @@ public class ShootNWedges extends CommandBase {
 
     public ShootNWedges(@Provided CheeseWheelCommands cheeseWheelCommands,
                         @Provided EjectorCommands ejectorCommands,
-                        @Provided Turret turret, @Provided Flywheel flywheel,
+                        @Provided Turret turret,
+                        @Provided Flywheel flywheel,
                         @Provided RobotShuffleboard shuffleboard,
                         int wedges) {
         this.cheeseWheelCommands = cheeseWheelCommands;
