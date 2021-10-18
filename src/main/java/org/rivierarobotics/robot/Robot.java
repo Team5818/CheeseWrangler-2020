@@ -33,7 +33,10 @@ import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.ColorWheel;
 import org.rivierarobotics.subsystems.MotorTemp;
-import org.rivierarobotics.util.*;
+import org.rivierarobotics.util.CameraFlip;
+import org.rivierarobotics.util.CheeseSlot;
+import org.rivierarobotics.util.LimelightLEDState;
+import org.rivierarobotics.util.RSTileOptions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -92,13 +95,13 @@ public class Robot extends TimedRobot {
         var shuffleboard = globalComponent.getShuffleboard();
         var physics = globalComponent.getPhysicsUtil();
         var flywheel = globalComponent.getFlywheel();
-        var LL = globalComponent.getVisionUtil();
+        var ll = globalComponent.getVisionUtil();
         shuffleboard.getTab("Driver")
-                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
-                .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
-                .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1,1,5,3))
-                .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1,1,6,3))
-                .setEntry("LL", LL.getLLValue("tx"));
+            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
+            .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
+            .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1, 1, 5, 3))
+            .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 6, 3))
+            .setEntry("LL", ll.getLLValue("tx"));
         if (isEnabled()) {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -113,8 +116,8 @@ public class Robot extends TimedRobot {
         globalComponent.getPositionTracker().reset();
         // Choose autonomous path (or default)
         autonomousCommand = Objects.requireNonNullElseGet(
-                chooser.getSelected(),
-                () -> commandComponent.auto().shootThreeBalls()
+            chooser.getSelected(),
+            () -> commandComponent.auto().shootThreeBalls()
         );
         autonomousCommand.schedule();
     }
@@ -198,23 +201,23 @@ public class Robot extends TimedRobot {
                 .setEntry("YVel", dt.getYVelocity());
 
         shuffleboard.getTab("Cheese Wheel")
-                .setEntry("Position Ticks", cw.getPositionTicks())
-                .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
-                .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
-                .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
-                .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
-                .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
-                .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
-                .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
-                .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
-                .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
-                .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
+            .setEntry("Position Ticks", cw.getPositionTicks())
+            .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
+            .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
+            .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
+            .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
+            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
+            .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+            .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
+            .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
+            .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
+            .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
 
         shuffleboard.getTab("Driver")
-                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
-                .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
-                .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1,1,5,3))
-                .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1,1,6,3));
+            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
+            .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
+            .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1, 1, 5, 3))
+            .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 6, 3));
 
 
         var sensorColor = cow.getSensorColor();

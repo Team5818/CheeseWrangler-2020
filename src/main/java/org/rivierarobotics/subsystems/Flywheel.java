@@ -28,7 +28,11 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
-import org.rivierarobotics.util.*;
+import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.MotorUtil;
+import org.rivierarobotics.util.RSTab;
+import org.rivierarobotics.util.RobotShuffleboard;
+import org.rivierarobotics.util.ShooterConstants;
 
 /**
  * Subsystem for flywheel. Spins at a velocity and shoots balls previously
@@ -41,7 +45,6 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
     private final RSTab tab;
-    private double currentTarget;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
