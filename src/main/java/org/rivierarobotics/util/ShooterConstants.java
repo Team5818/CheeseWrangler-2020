@@ -32,11 +32,7 @@ public class ShooterConstants {
     }
 
     public static double getRobotHeight() {
-<<<<<<< HEAD
-        return .55;
-=======
-        return 0.61;
->>>>>>> master
+        return 0.55;
     }
 
     public static double getGoalHeight() {
