@@ -32,7 +32,7 @@ import org.rivierarobotics.subsystems.CheeseWheel;
 public class ShootUntilEmpty extends CommandBase {
     private Command command;
     private final CheeseWheel wheel;
-    private CheeseWheelCommands commands;
+    private final CheeseWheelCommands commands;
 
     public ShootUntilEmpty(@Provided CheeseWheel cheese, @Provided CheeseWheelCommands comm) {
         this.wheel = cheese;

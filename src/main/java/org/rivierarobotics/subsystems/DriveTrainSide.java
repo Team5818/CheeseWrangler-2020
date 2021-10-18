@@ -20,10 +20,7 @@
 
 package org.rivierarobotics.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
+import com.ctre.phoenix.motorcontrol.*;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
 import org.rivierarobotics.appjack.Logging;
@@ -39,7 +36,7 @@ import org.rivierarobotics.util.MotorUtil;
  * @see DriveTrain
  */
 public class DriveTrainSide implements RRSubsystem {
-    private static final double TICKS_PER_METER = 4380;
+    private static final double TICKS_PER_METER = 4280;
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
     private final WPI_TalonFX mainLeft;
     private final WPI_TalonFX secondaryRight;
@@ -52,6 +49,10 @@ public class DriveTrainSide implements RRSubsystem {
         this.mainLeft = new WPI_TalonFX(motors.main);
         this.secondaryRight = new WPI_TalonFX(motors.secondaryOne);
         this.secondaryTop = new WPI_TalonFX(motors.secondaryTwo);
+        this.mainLeft.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.secondaryRight.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.secondaryTop.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
         this.invert = invert;
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,

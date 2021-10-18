@@ -27,18 +27,13 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import org.rivierarobotics.autonomous.Pose2dPath;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.DaggerGlobalComponent;
 import org.rivierarobotics.inject.GlobalComponent;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.ColorWheel;
-import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.MotorTemp;
-import org.rivierarobotics.util.CameraFlip;
-import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.LimelightLEDState;
-import org.rivierarobotics.util.RSTileOptions;
+import org.rivierarobotics.util.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,19 +75,30 @@ public class Robot extends TimedRobot {
         // Misc logging config
         try {
             globalComponent.getShuffleboard().getTab("Driver")
-                    .setSendable(chooser, new RSTileOptions(2, 1, 0, 4))
-                    .setCamera("Flipped", new RSTileOptions(4, 4, 0, 0))
-                    .setCamera("limelight", new RSTileOptions(4, 4, 4, 0));
+                    .setSendable(chooser, new RSTileOptions(2, 1, 0, 3))
+                    .setCamera("Flipped", new RSTileOptions(3, 3, 0, 0))
+                    .setCamera("limelight", new RSTileOptions(3, 3, 3, 0));
         } catch (VideoException ignored) {
             // Padding for checkstyle
         }
         globalComponent.getNavXGyro().resetGyro();
         DriverStation.getInstance().silenceJoystickConnectionWarning(true);
+        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
     }
 
     @Override
     public void robotPeriodic() {
-        displayShuffleboard();
+        //displayShuffleboard();
+        var shuffleboard = globalComponent.getShuffleboard();
+        var physics = globalComponent.getPhysicsUtil();
+        var flywheel = globalComponent.getFlywheel();
+        var LL = globalComponent.getVisionUtil();
+        shuffleboard.getTab("Driver")
+                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
+                .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
+                .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1,1,5,3))
+                .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1,1,6,3))
+                .setEntry("LL", LL.getLLValue("tx"));
         if (isEnabled()) {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -107,8 +113,8 @@ public class Robot extends TimedRobot {
         globalComponent.getPositionTracker().reset();
         // Choose autonomous path (or default)
         autonomousCommand = Objects.requireNonNullElseGet(
-            chooser.getSelected(),
-            () -> commandComponent.auto().shootAndDrive()
+                chooser.getSelected(),
+                () -> commandComponent.auto().shootThreeBalls()
         );
         autonomousCommand.schedule();
     }
@@ -121,12 +127,11 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         if (autonomousCommand != null) {
-            autonomousCommand.cancel();
-        } else {
-            globalComponent.getNavXGyro().resetGyro();
+            CommandScheduler.getInstance().cancel(autonomousCommand);
         }
         // Force flywheel to stop
-        commandComponent.flywheel().setPower(0).schedule();
+        //commandComponent.flywheel().setPower(0).schedule();
+        //commandComponent.vision().calcAim(VisionTarget.TOP);
         globalComponent.getButtonConfiguration().initTeleop();
     }
 
@@ -143,7 +148,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
+        //globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
     }
 
     private void displayShuffleboard() {
@@ -162,63 +167,65 @@ public class Robot extends TimedRobot {
         var shuffleboard = globalComponent.getShuffleboard();
 
         shuffleboard.getTab("TurretHood")
-            .setEntry("Hood Pos Ticks", hood.getPositionTicks())
-            .setEntry("Hood Abs Angle", hood.getAngle())
-            .setEntry("Turret Abs Angle", turret.getAngle(true))
-            .setEntry("Turret Rel Angle", turret.getAngle(false))
-            .setEntry("Turret Pos Ticks", turret.getPositionTicks())
-            .setEntry("turretVel", turret.getVelocity());
+                .setEntry("Hood Pos Ticks", hood.getPositionTicks())
+                .setEntry("Hood Abs Angle", hood.getAngle())
+                .setEntry("Turret Abs Angle", turret.getAngle(true))
+                .setEntry("Turret Rel Angle", turret.getAngle(false))
+                .setEntry("Turret Pos Ticks", turret.getPositionTicks())
+                .setEntry("turretVel", turret.getVelocity());
 
         shuffleboard.getTab("Vision")
-            .setEntry("tx", visionUtil.getLLValue("tx"))
-            .setEntry("ty", visionUtil.getLLValue("ty"))
-            .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
-            .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
-            .setEntry("Gyro Angle", gyro.getYaw())
-            .setEntry("Adj tx", turret.getTurretCalculations(0, hood.getAngle())[1])
-            .setEntry("Target Velocity", physics.getTargetVelocity());
+                .setEntry("tx", visionUtil.getLLValue("tx"))
+                .setEntry("ty", visionUtil.getLLValue("ty"))
+                .setEntry("Adj. ty", visionUtil.getActualTY(hood.getAngle()))
+                .setEntry("Flywheel Velocity", flywheel.getPositionTicks())
+                .setEntry("Gyro Angle", gyro.getYaw())
+                .setEntry("Adj tx", turret.getTurretCalculations(0, hood.getAngle())[1])
+                .setEntry("Target Velocity", physics.getTargetVelocity());
 
         shuffleboard.getTab("Auto Aim")
-            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
+                .setEntry("AutoAim Enabled", physics.isAutoAimEnabled());
 
         shuffleboard.getTab("Auto Aim").getTable("Random")
-            .addTabData(shuffleboard.getTab("Cheese Wheel"));
+                .addTabData(shuffleboard.getTab("Cheese Wheel"));
 
         shuffleboard.getTab("Drive Train")
-            .setEntry("Left Enc", dt.getLeft().getPosition())
-            .setEntry("Right Enc", dt.getRight().getPosition())
-            .setEntry("Left Vel", dt.getLeft().getVelocity())
-            .setEntry("Right Vel", dt.getRight().getVelocity())
-            .setEntry("XVel", dt.getXVelocity())
-            .setEntry("YVel", dt.getYVelocity());
+                .setEntry("Left Enc", dt.getLeft().getPosition())
+                .setEntry("Right Enc", dt.getRight().getPosition())
+                .setEntry("Left Vel", dt.getLeft().getVelocity())
+                .setEntry("Right Vel", dt.getRight().getVelocity())
+                .setEntry("XVel", dt.getXVelocity())
+                .setEntry("YVel", dt.getYVelocity());
 
         shuffleboard.getTab("Cheese Wheel")
-            .setEntry("Position Ticks", cw.getPositionTicks())
-            .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
-            .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
-            .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
-            .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
-            .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
-            .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
-            .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
-            .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
-            .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
-            .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
+                .setEntry("Position Ticks", cw.getPositionTicks())
+                .setEntry("Ball 0", CheeseSlot.ZERO.hasBall())
+                .setEntry("Ball 1", CheeseSlot.ONE.hasBall())
+                .setEntry("Ball 2", CheeseSlot.TWO.hasBall())
+                .setEntry("Ball 3", CheeseSlot.THREE.hasBall())
+                .setEntry("Ball 4", CheeseSlot.FOUR.hasBall())
+                .setEntry("Front Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_FRONT))
+                .setEntry("Back Index", cw.getIndex(CheeseWheel.AngleOffset.COLLECT_BACK))
+                .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
+                .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
+                .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
 
         shuffleboard.getTab("Driver")
-            .setEntry("AutoAim Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 2, 4))
-            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 4))
-            .setEntry("Shoot Tolerance", Flywheel.getTolerance(), new RSTileOptions(1, 1, 4, 4));
+                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
+                .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
+                .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1,1,5,3))
+                .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1,1,6,3));
+
 
         var sensorColor = cow.getSensorColor();
         shuffleboard.getTab("Climb")
-            .setEntry("Limit Closed", climb.isAtBottom())
-            .setEntry("Rel Pos", climb.getPositionTicks())
-            .setEntry("Color R", sensorColor.red)
-            .setEntry("Color G", sensorColor.green)
-            .setEntry("Color B", sensorColor.blue)
-            .setEntry("Match Color", cow.getGameColor().name())
-            .setEntry("target color", ColorWheel.getFMSColor().name());
+                .setEntry("Limit Closed", climb.isAtBottom())
+                .setEntry("Rel Pos", climb.getPositionTicks())
+                .setEntry("Color R", sensorColor.red)
+                .setEntry("Color G", sensorColor.green)
+                .setEntry("Color B", sensorColor.blue)
+                .setEntry("Match Color", cow.getGameColor().name())
+                .setEntry("target color", ColorWheel.getFMSColor().name());
 
         List<MotorTemp> temps = new ArrayList<>();
         temps.add(turret.getTemp());

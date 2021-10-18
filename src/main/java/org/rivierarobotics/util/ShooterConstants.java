@@ -24,13 +24,15 @@ package org.rivierarobotics.util;
  * Stores constants relating to AutoAim and shooting.
  */
 public class ShooterConstants {
-    private static final double TICKS_PER_VEL = 1077.97;
+//    private static final double TICKS_PER_VEL = 1077.97;
+    private static final double TICKS_PER_VEL = 1130.97;
+
 
     private ShooterConstants() {
     }
 
     public static double getRobotHeight() {
-        return .61;
+        return .55;
     }
 
     public static double getGoalHeight() {

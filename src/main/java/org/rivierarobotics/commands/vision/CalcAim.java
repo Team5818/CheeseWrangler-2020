@@ -59,12 +59,11 @@ public class CalcAim extends CommandBase {
     public void execute() {
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
-        if (physics.getDistanceToTarget() >= 11) {
-            physics.setVelocity(15);
+        if (physics.getDistanceToTarget() >= 9) {
+            physics.setVelocity(12);
         } else {
             physics.setVelocity(9);
         }
-        physics.getTurretVelocity();
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();

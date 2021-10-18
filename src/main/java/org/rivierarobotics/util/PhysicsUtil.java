@@ -211,7 +211,7 @@ public class PhysicsUtil {
      * specified target. Supports two firing modes, perpendicular and normal.
      * ---------------------------------------------------------------------
      * Perpendicular shot means that the ball will be calculated to come into contact with
-     * the target at a 90 degree angle. This provides a better range than our dynamic shooting mode,
+     * the target at a 90-degree angle. This provides a better range than our dynamic shooting mode,
      * which is locked to its physical velocity limitations.
      *----------------------------------------------------------------------
      * The dynamic shooting mode provides an accurate shot at a set velocity, meaning we
@@ -275,9 +275,9 @@ public class PhysicsUtil {
         graphTab.setEntry("vz", vXYZ[2]);
         graphTab.setEntry("g", g);
 
-        graphTab.setEntry("turretAngle", turret.getAngle(true));
-        graphTab.setEntry("hoodAngle", hood.getAngle());
-        graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
+//        graphTab.setEntry("turretAngle", turret.getAngle(true));
+//        graphTab.setEntry("hoodAngle", hood.getAngle());
+//        graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
     }
 
     /**
@@ -329,6 +329,10 @@ public class PhysicsUtil {
 
     public boolean isAutoAimEnabled() {
         return autoAimEnabled;
+    }
+
+    public AimMode getAimMode() {
+        return this.aimMode;
     }
 
     public enum AimMode {

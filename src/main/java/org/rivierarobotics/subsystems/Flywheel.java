@@ -28,11 +28,7 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
-import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.MotorUtil;
-import org.rivierarobotics.util.RSTab;
-import org.rivierarobotics.util.RobotShuffleboard;
-import org.rivierarobotics.util.ShooterConstants;
+import org.rivierarobotics.util.*;
 
 /**
  * Subsystem for flywheel. Spins at a velocity and shoots balls previously
@@ -45,6 +41,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalcon;
     private final MechLogger logger;
     private final RSTab tab;
+    private double currentTarget;
 
     public Flywheel(int id, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
@@ -54,7 +51,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         // Previous configuration, also works
         //new PIDConfig((1023.0 * 0.5) / 500, (1023.0 * 0.01) / 500, 0.0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(1.5, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
+            new PIDConfig(1.8, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
         flywheelFalcon.setInverted(false);
         flywheelFalcon.setNeutralMode(NeutralMode.Coast);
     }
@@ -120,6 +117,10 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         } else {
             flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
         }
+    }
+
+    public double getTargetVel() {
+        return targetVel;
     }
 
     public boolean isBelowMinShootingVel() {

@@ -114,8 +114,8 @@ public class Climb extends SubsystemBase implements RRSubsystem {
      */
     public enum Position {
         ZERO(0.03),
-        HALF(0.5),
-        MAX(1.0);
+        HALF(0.7),
+        MAX(0.92);
 
         private final double ticks;
 

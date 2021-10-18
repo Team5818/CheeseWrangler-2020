@@ -67,9 +67,8 @@ public class CenterShoot extends CommandBase {
                 new ParallelRaceGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
-                                driveCommands.driveDistance(1.42, 0.45),
                                 new ParallelDeadlineGroup(
-                                        driveCommands.driveDistance(1.38, 0.15),
+                                        driveCommands.driveDistance(1.38+1.42, 0.2),
                                         cheeseWheelCommands.shootUntilEmpty()
                                 ),
                                 driveCommands.rotateTo(180 - 34.7),

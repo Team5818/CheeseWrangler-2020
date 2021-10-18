@@ -112,9 +112,9 @@ public class ButtonConfiguration {
 
         // Autoaim
         new JoystickButton(coDriverButtons, 9)
-                .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.INNER));
+                .whenPressed(cmds.vision().calcAim(VisionTarget.INNER));
         new JoystickButton(coDriverButtons, 10)
-                .toggleWhenPressed(cmds.vision().calcAim(VisionTarget.TOP));
+                .whenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.vision().correctPosition());
         new JoystickButton(coDriverButtons, 12)

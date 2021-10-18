@@ -22,6 +22,7 @@ package org.rivierarobotics.autonomous.basic;
 
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -34,10 +35,12 @@ public class ShootThreeBalls extends SequentialCommandGroup {
     public ShootThreeBalls(@Provided VisionCommands visionCommands,
                            @Provided CheeseWheelCommands cheeseWheel, @Provided DriveCommands driveCommands) {
         super(
+                driveCommands.resetGyro(),
+                new WaitCommand(0.5),
                 visionCommands.correctPosition(),
                 new ParallelDeadlineGroup(
                         cheeseWheel.shootUntilEmpty(),
-                        visionCommands.calcAim(VisionTarget.INNER)
+                        visionCommands.calcAim(VisionTarget.TOP)
                 ),
                 driveCommands.driveDistance(-1, 0.2)
         );
