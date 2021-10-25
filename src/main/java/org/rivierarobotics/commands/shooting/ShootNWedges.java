@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.shooting;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -89,7 +90,14 @@ public class ShootNWedges extends CommandBase {
         for (int i = 0; i < wedges; i++) {
             cmd.addCommands(singleWedgeGroup(isBack));
         }
-        cmd.schedule();
+        CommandScheduler.getInstance().schedule(cmd);
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        if(interrupted) {
+            CommandScheduler.getInstance().cancel(cmd);
+        }
     }
 
     @Override

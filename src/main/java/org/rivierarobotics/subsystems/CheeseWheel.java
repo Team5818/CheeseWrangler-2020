@@ -85,7 +85,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
      */
     public int getIndex(AngleOffset offset) {
         double target = MathUtil.wrapToCircle(getOffsetPositionTicks(offset), 4096);
-        for (int i = 1; i <= 5; i++) {
+        for (int i = 0; i <= 5; i++) {
             if (MathUtil.isWithinTolerance(INDEX_SPACING * i, target, INDEX_SPACING / 2.0)) {
                 return i == 5 ? 0 : i;
             }
@@ -105,7 +105,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
      */
     public CheeseSlot getSlotWithDirection(AngleOffset offset, Direction direction, CheeseSlot.State requiredState) {
         int modifier = direction == Direction.BACKWARDS ? 1 : -1;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i <= 5; i++) {
             CheeseSlot slot = CheeseSlot.slotOfNum((int) MathUtil.wrapToCircle(getIndex(offset) + i * modifier, 5));
             if (requiredState == CheeseSlot.State.EITHER
                     || (requiredState == CheeseSlot.State.BALL && slot.hasBall())
@@ -162,7 +162,7 @@ public class CheeseWheel extends SubsystemBase implements RRSubsystem {
 
         // Special case for offsetIndex == 0 because wrapping breaks at about 4050 ticks
         if (getIndex(offset) == 0) {
-            if (Math.abs((position % 4096) - 4096) < Math.abs(position)) {
+            if (Math.abs(position - 4096) < Math.abs(position)) {
                 position -= 4096;
             }
         }

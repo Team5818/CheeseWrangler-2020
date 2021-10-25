@@ -18,31 +18,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.ejector;
+package org.rivierarobotics.commands.cheesewheel;
 
-import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.Ejector;
+import org.rivierarobotics.inject.Input;
+import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.MathUtil;
+
+import javax.inject.Inject;
 
 @GenerateCreator
-public class EjectorSetPower extends InstantCommand {
-    private final Ejector ejector;
+public class CheeseWheelSetPower extends CommandBase {
+    private final CheeseWheel cheeseWheel;
     private final double power;
 
-    public EjectorSetPower(@Provided Ejector ejector, double power) {
-        this.ejector = ejector;
+    @Inject
+    public CheeseWheelSetPower(@Provided CheeseWheel cheeseWheel, double power) {
+        this.cheeseWheel = cheeseWheel;
         this.power = power;
-        addRequirements(ejector);
+        addRequirements(cheeseWheel);
     }
 
     @Override
     public void end(boolean interrupted) {
-        ejector.setPower(0);
+        cheeseWheel.setPower(0);
     }
 
     @Override
-    public void execute() {
-        ejector.setPower(power);
+    public void initialize() {
+        cheeseWheel.setPower(power);
     }
 }

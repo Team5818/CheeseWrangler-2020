@@ -78,7 +78,11 @@ public class AutoAimUtil {
         }
         tab.setEntry("bbvv", ballVel);
         if (physics.isAutoAimEnabled()) {
-            flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
+            if(!PhysicsUtil.dynamicMode) {
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
+            } else {
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(12));
+            }
             hood.setAngle(hoodAngle);
             if (!useVelocity) {
                 turret.setAngle(turretAngle, true);

@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.collect;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.octyl.aptcreator.GenerateCreator;
@@ -45,7 +46,7 @@ import org.rivierarobotics.util.RobotShuffleboard;
 @GenerateCreator
 public class CollectInfiniteWedges extends CommandBase {
     private static final double PWR_CONST = 1.0;
-    private static final int SLOT_TOLERANCE = 60;
+    private static final int SLOT_TOLERANCE = 30;
     private final Intake intake;
     private final CheeseWheel cheeseWheel;
     private final CheeseWheelCommands cheeseWheelCommands;
@@ -55,6 +56,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private double backPower;
     private boolean firstMoveDone = false;
     private CWCycleSlot cycleSlot;
+    private Command runningCycleSlot;
 
     CollectInfiniteWedges(@Provided Intake intake, @Provided CheeseWheel cheeseWheel,
                           @Provided CheeseWheelCommands cheeseWheelCommands,
@@ -71,34 +73,32 @@ public class CollectInfiniteWedges extends CommandBase {
     @Override
     public void initialize() {
         if (!cheeseWheel.onSlot(mode, SLOT_TOLERANCE) || CheeseSlot.slotOfNum(cheeseWheel.getIndex(mode)).hasBall()) {
-            cycleSlot = !isFull() ? cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, 30) :
-                    cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.EITHER, 30);
-            cycleSlot.schedule();
+            cycleSlot = !isFull() ? cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, SLOT_TOLERANCE) :
+                    cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.EITHER, SLOT_TOLERANCE);
+            CommandScheduler.getInstance().schedule(cycleSlot);
         }
     }
 
     @Override
     public void execute() {
-        if (cycleSlot == null || !CommandScheduler.getInstance().isScheduled(cycleSlot) || cheeseWheel.onSlot(mode, SLOT_TOLERANCE)) {
-            firstMoveDone = true;
+        if (cycleSlot != null && CommandScheduler.getInstance().isScheduled(cycleSlot)) {
+            return;
         }
 
-        if (firstMoveDone) {
-            switch (mode) {
-                case COLLECT_FRONT:
-                    frontPower = PWR_CONST;
-                    backPower = 0.0;
-                    break;
-                case COLLECT_BACK:
-                    frontPower = 0.0;
-                    backPower = PWR_CONST;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Invalid side");
-            }
+        switch (mode) {
+            case COLLECT_FRONT:
+                frontPower = PWR_CONST;
+                backPower = 0.0;
+                break;
+            case COLLECT_BACK:
+                frontPower = 0.0;
+                backPower = PWR_CONST;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid side");
         }
 
-        if (isFull() || !firstMoveDone) {
+        if (isFull()) {
             frontPower = 0;
             backPower = 0;
         }
@@ -109,8 +109,10 @@ public class CollectInfiniteWedges extends CommandBase {
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
         tab.setEntry("ClosestIndex", closest.ordinal());
         tab.setEntry("ClosestHasBall", closest.hasBall());
-        if (closest.hasBall() && cheeseWheel.onSlot(mode, SLOT_TOLERANCE) && !isFull()) {
-            cheeseWheelCommands.cycleSlot(mode.direction, mode, CheeseSlot.State.NO_BALL).schedule();
+        if (closest.hasBall() && cheeseWheel.onSlot(mode, SLOT_TOLERANCE) && !isFull() && !CommandScheduler.getInstance().isScheduled(runningCycleSlot)) {
+            runningCycleSlot = cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, SLOT_TOLERANCE);
+            CommandScheduler.getInstance().schedule(runningCycleSlot);
+            tab.setEntry("Play Sound", true);
         }
     }
 

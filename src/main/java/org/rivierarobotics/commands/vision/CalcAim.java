@@ -39,10 +39,6 @@ import org.rivierarobotics.util.VisionTarget;
  */
 @GenerateCreator
 public class CalcAim extends CommandBase {
-    private static final int MAX_NORMAL_DIST = 9;
-    private static final int NORMAL_SHOOT_SPEED = 9;
-    private static final int FAR_SHOOT_SPEED = 12;
-
     private final AutoAimUtil autoAimUtil;
     private final Flywheel flywheel;
     private final PhysicsUtil physics;
@@ -63,11 +59,14 @@ public class CalcAim extends CommandBase {
     public void execute() {
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
-        if (physics.getDistanceToTarget() >= MAX_NORMAL_DIST) {
-            physics.setVelocity(FAR_SHOOT_SPEED);
-        } else {
-            physics.setVelocity(NORMAL_SHOOT_SPEED);
+
+        if(PhysicsUtil.dynamicMode) {
+            physics.setVelocity(flywheel.getBallVelocity());
         }
+        else {
+            physics.setVelocity(physics.getDistanceToTarget() >= 9 ? 12 : 9);
+        }
+
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();

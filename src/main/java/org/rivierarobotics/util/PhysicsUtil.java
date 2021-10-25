@@ -48,6 +48,7 @@ public class PhysicsUtil {
     private AimMode aimMode = AimMode.CALC;
     private double velocity = 9;
     private boolean autoAimEnabled = true;
+    public static boolean dynamicMode = false;
     private double[] vXYZ = new double[3];
 
     @Inject

@@ -42,6 +42,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Main robot class for 2020/2021 robot CheeseWrangler.
@@ -84,9 +87,16 @@ public class Robot extends TimedRobot {
         } catch (VideoException ignored) {
             // Padding for checkstyle
         }
+
         globalComponent.getNavXGyro().resetGyro();
         DriverStation.getInstance().silenceJoystickConnectionWarning(true);
         globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
+
+//        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+//        executor.scheduleAtFixedRate(()->{
+//            globalComponent.getShuffleboard().getTab("Cheese Wheel").setEntry("Play Sound", true);
+//        }, 0, 3, TimeUnit.SECONDS);
+
     }
 
     @Override

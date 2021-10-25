@@ -74,6 +74,10 @@ public class DriveTrainSide implements RRSubsystem {
         secondaryRight.configGetSupplyCurrentLimit(CURRENT_LIMIT);
         secondaryTop.configGetSupplyCurrentLimit(CURRENT_LIMIT);
 
+        this.mainLeft.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.secondaryRight.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.secondaryTop.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
         shaftEncoder.setDistancePerPulse(1 / TICKS_PER_METER);
