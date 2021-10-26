@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.shooting;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -50,6 +51,8 @@ public class All5Shoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private Command shoot5;
     private final CheeseWheel cheeseWheel;
+    private boolean isFinished = false;
+    private double time;
 
     public All5Shoot(@Provided CheeseWheelCommands cheeseWheelCommands, @Provided EjectorCommands ejectorCommands, @Provided CheeseWheel cheeseWheel) {
         this.cheeseWheelCommands = cheeseWheelCommands;
@@ -62,10 +65,12 @@ public class All5Shoot extends CommandBase {
         PhysicsUtil.dynamicMode = true;
         shoot5 = new SequentialCommandGroup(
                 cheeseWheelCommands.cycleSlotWait(CheeseWheel.Direction.ANY, CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseSlot.State.EITHER, 60),
+                new WaitCommand(0.2),
                 new ParallelDeadlineGroup(
-                        cheeseWheelCommands.setPower(1).withTimeout(3),
+                        cheeseWheelCommands.setPower(0.8).withTimeout(3),
                         ejectorCommands.setPower(1).withTimeout(3)
-                )
+                ),
+                ejectorCommands.setPower(0)
         );
         CommandScheduler.getInstance().schedule(shoot5);
     }
@@ -76,10 +81,20 @@ public class All5Shoot extends CommandBase {
             CommandScheduler.getInstance().cancel(shoot5);
         }
         PhysicsUtil.dynamicMode = false;
+        isFinished = false;
     }
 
     @Override
     public boolean isFinished() {
-        return !cheeseWheel.hasBall() || !CommandScheduler.getInstance().isScheduled(shoot5);
+        if(!cheeseWheel.hasBall() && !isFinished) {
+            isFinished = true;
+            time = Timer.getFPGATimestamp();
+        }
+
+        if(isFinished && Timer.getFPGATimestamp() > time + 0.1) {
+            return true;
+        }
+
+        return !CommandScheduler.getInstance().isScheduled(shoot5);
     }
 }

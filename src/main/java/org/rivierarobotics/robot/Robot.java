@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
-        //displayShuffleboard();
+        displayShuffleboard();
         var shuffleboard = globalComponent.getShuffleboard();
         var physics = globalComponent.getPhysicsUtil();
         var flywheel = globalComponent.getFlywheel();

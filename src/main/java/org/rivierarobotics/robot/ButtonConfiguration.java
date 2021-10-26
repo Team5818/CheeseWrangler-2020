@@ -81,7 +81,7 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().all5Shoot());
         new JoystickButton(coDriverRight, 2)
-                .whileHeld(cmds.cheeseWheel().continuousShoot());
+                .whenPressed(cmds.cheeseWheel().continuousShoot());
 
         // Collecting Driver
         new JoystickButton(driverLeft, 1)
@@ -95,7 +95,7 @@ public class ButtonConfiguration {
 
         // Shooting Driver
         new JoystickButton(driverRight, 1)
-                .whenPressed(cmds.cheeseWheel().all5Shoot());
+                .whenPressed(cmds.cheeseWheel().all5Shoot().withTimeout(3));
         new JoystickButton(driverRight, 2)
                 .whileHeld(cmds.cheeseWheel().continuousShoot());
 

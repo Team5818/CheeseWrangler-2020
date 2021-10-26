@@ -112,7 +112,7 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      * @return a double array containing a distance and angle.
      */
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
-        double initialD = ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty") + (hoodAngle) - 1));
+        double initialD = ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty") + (hoodAngle)));
         tab.setEntry("initialD", initialD);
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double xInitialD = Math.sin(tx) * initialD;

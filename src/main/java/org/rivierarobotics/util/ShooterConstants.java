@@ -25,14 +25,14 @@ package org.rivierarobotics.util;
  */
 public class ShooterConstants {
     // private static final double TICKS_PER_VEL = 1077.97;
-    private static final double TICKS_PER_VEL = 1130.97;
+    private static final double TICKS_PER_VEL = 1000.97;
 
 
     private ShooterConstants() {
     }
 
     public static double getRobotHeight() {
-        return 0.55;
+        return 0.62;
     }
 
     public static double getGoalHeight() {

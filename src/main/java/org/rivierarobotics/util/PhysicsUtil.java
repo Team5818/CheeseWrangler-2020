@@ -46,7 +46,7 @@ public class PhysicsUtil {
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.CALC;
-    private double velocity = 9;
+    private double velocity = 15;
     private boolean autoAimEnabled = true;
     public static boolean dynamicMode = false;
     private double[] vXYZ = new double[3];
@@ -276,9 +276,9 @@ public class PhysicsUtil {
         graphTab.setEntry("vz", vXYZ[2]);
         graphTab.setEntry("g", g);
 
-        // graphTab.setEntry("turretAngle", turret.getAngle(true));
-        // graphTab.setEntry("hoodAngle", hood.getAngle());
-        // graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
+         graphTab.setEntry("turretAngle", turret.getAngle(true));
+         graphTab.setEntry("hoodAngle", hood.getAngle());
+         graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
     }
 
     /**

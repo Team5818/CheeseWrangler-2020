@@ -60,10 +60,11 @@ public class CalcAim extends CommandBase {
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
 
-        if (PhysicsUtil.dynamicMode) {
+        if(PhysicsUtil.dynamicMode) {
             physics.setVelocity(flywheel.getBallVelocity());
-        } else {
-            physics.setVelocity(physics.getDistanceToTarget() >= 9 ? 12 : 9);
+        }
+        else {
+            physics.setVelocity(physics.getDistanceToTarget() >= 8 ? 15 : 12);
         }
 
         physics.calculateVelocities(false);
