@@ -78,7 +78,7 @@ public class AutoAimUtil {
         }
         tab.setEntry("bbvv", ballVel);
         if (physics.isAutoAimEnabled()) {
-            if(!PhysicsUtil.dynamicMode) {
+            if (!PhysicsUtil.dynamicMode) {
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
             } else {
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(12));

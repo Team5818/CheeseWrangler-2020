@@ -95,7 +95,7 @@ public class ShootNWedges extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(interrupted) {
+        if (interrupted) {
             CommandScheduler.getInstance().cancel(cmd);
         }
     }

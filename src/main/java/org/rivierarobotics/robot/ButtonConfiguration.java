@@ -65,14 +65,16 @@ public class ButtonConfiguration {
      */
     public void initTeleop() {
         // Collecting CoDriver
-//        new JoystickButton(coDriverLeft, 1)
-//                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
-//                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
-//                        cmds.camera().setServo(CameraPosition.FRONT)));
-//        new JoystickButton(coDriverLeft, 2)
-//                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
-//                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
-//                        cmds.camera().setServo(CameraPosition.BACK)));
+        /*
+        new JoystickButton(coDriverLeft, 1)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
+                        cmds.camera().setServo(CameraPosition.FRONT)));
+        new JoystickButton(coDriverLeft, 2)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
+                        cmds.camera().setServo(CameraPosition.BACK)));
+         */
 
         // Shooting CoDriver
         new JoystickButton(coDriverRight, 1)

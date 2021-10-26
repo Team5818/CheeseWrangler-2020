@@ -72,7 +72,9 @@ public class All5Shoot extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(CommandScheduler.getInstance().isScheduled(shoot5)) CommandScheduler.getInstance().cancel(shoot5);
+        if (CommandScheduler.getInstance().isScheduled(shoot5)) {
+            CommandScheduler.getInstance().cancel(shoot5);
+        }
         PhysicsUtil.dynamicMode = false;
     }
 

@@ -92,11 +92,12 @@ public class Robot extends TimedRobot {
         DriverStation.getInstance().silenceJoystickConnectionWarning(true);
         globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
 
-//        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-//        executor.scheduleAtFixedRate(()->{
-//            globalComponent.getShuffleboard().getTab("Cheese Wheel").setEntry("Play Sound", true);
-//        }, 0, 3, TimeUnit.SECONDS);
-
+        /*
+        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        executor.scheduleAtFixedRate(()->{
+            globalComponent.getShuffleboard().getTab("Cheese Wheel").setEntry("Play Sound", true);
+        }, 0, 3, TimeUnit.SECONDS);
+        */
     }
 
     @Override

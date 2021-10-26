@@ -89,7 +89,9 @@ public class ContinuousShoot extends CommandBase {
 
     @Override
     public void end(boolean interrupted) {
-        if(interrupted) CommandScheduler.getInstance().cancel(cmd);
+        if (interrupted) {
+            CommandScheduler.getInstance().cancel(cmd);
+        }
     }
 
     @Override

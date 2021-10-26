@@ -20,10 +20,10 @@
 
 package org.rivierarobotics.util;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 /**
  * Manages tiled data inside {@code Shuffleboard} and associated tabs.

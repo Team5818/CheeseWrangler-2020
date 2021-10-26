@@ -35,9 +35,9 @@ import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.util.Pair;
 
-import javax.inject.Inject;
 import java.util.LinkedList;
 import java.util.List;
+import javax.inject.Inject;
 
 /**
  * Finds all the balls on the field and retrieves their positions in
