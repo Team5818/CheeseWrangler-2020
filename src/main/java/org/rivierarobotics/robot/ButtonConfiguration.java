@@ -23,6 +23,7 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
@@ -144,9 +145,10 @@ public class ButtonConfiguration {
         // Climb
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.climb().resetEncoder());
-        new JoystickButton(driverButtons, 3)
-                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
-                        .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
+        new JoystickButton(driverButtons, 3).whenHeld(cmds.flywheel().setPower(.1));
+        //new JoystickButton(driverButtons, 3)
+          //      .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
+            //            .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF)
                         .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));

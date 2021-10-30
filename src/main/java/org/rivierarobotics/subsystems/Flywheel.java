@@ -22,6 +22,7 @@ package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
@@ -42,26 +43,32 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private static final double MIN_SHOOTING_VEL = 1000.0;
     private static double targetVel = 0;
     private static double tolerance = 70;
-    private final WPI_TalonFX flywheelFalcon;
+    private final WPI_TalonFX flywheelFalconLeft;
+    private final WPI_TalonFX flywheelFalconRight;
     private final MechLogger logger;
     private final RSTab tab;
 
-    public Flywheel(int id, RobotShuffleboard shuffleboard) {
+    public Flywheel(int leftID, int rightID, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
         this.tab = shuffleboard.getTab("Vision");
 
-        this.flywheelFalcon = new WPI_TalonFX(id);
+        this.flywheelFalconLeft = new WPI_TalonFX(leftID);
+        this.flywheelFalconRight = new WPI_TalonFX(rightID);
         // Previous configuration, also works
         //new PIDConfig((1023.0 * 0.5) / 500, (1023.0 * 0.01) / 500, 0.0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(1.8, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
-        flywheelFalcon.setInverted(false);
-        flywheelFalcon.setNeutralMode(NeutralMode.Coast);
+            new PIDConfig(1.8, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalconLeft);
+        flywheelFalconLeft.setInverted(false);
+        flywheelFalconLeft.setNeutralMode(NeutralMode.Coast);
+
+        flywheelFalconRight.follow(flywheelFalconLeft);
+        flywheelFalconRight.setInverted(InvertType.OpposeMaster);
+        flywheelFalconRight.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
     public double getPositionTicks() {
-        return flywheelFalcon.getSelectedSensorVelocity();
+        return flywheelFalconLeft.getSelectedSensorVelocity();
     }
 
     /**
@@ -70,13 +77,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
      * @return the ball velocity in meters per second.
      */
     public double getBallVelocity() {
-        return ShooterConstants.ticksToVelocity(flywheelFalcon.getSelectedSensorVelocity());
+        return ShooterConstants.ticksToVelocity(flywheelFalconLeft.getSelectedSensorVelocity());
     }
 
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        flywheelFalcon.set(ControlMode.PercentOutput, pwr);
+        flywheelFalconLeft.set(ControlMode.PercentOutput, pwr);
     }
 
     /**
@@ -115,10 +122,10 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         targetVel = vel;
         logger.setpointChange(vel);
         if (vel == 0) {
-            flywheelFalcon.set(TalonFXControlMode.Velocity, 0.0);
-            flywheelFalcon.set(TalonFXControlMode.Current, 0.0);
+            flywheelFalconLeft.set(TalonFXControlMode.Velocity, 0.0);
+            flywheelFalconLeft.set(TalonFXControlMode.Current, 0.0);
         } else {
-            flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
+            flywheelFalconLeft.set(TalonFXControlMode.Velocity, vel);
         }
     }
 
@@ -131,6 +138,6 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public MotorTemp getTemp() {
-        return new MotorTemp(flywheelFalcon.getDeviceID(), flywheelFalcon.getTemperature(), "FlywheelFalcon");
+        return new MotorTemp(flywheelFalconLeft.getDeviceID(), flywheelFalconLeft.getTemperature(), "FlywheelFalcon");
     }
 }
