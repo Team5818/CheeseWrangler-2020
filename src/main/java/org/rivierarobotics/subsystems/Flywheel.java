@@ -26,7 +26,16 @@ import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator;
+import edu.wpi.first.wpilibj.estimator.KalmanFilter;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.system.LinearSystem;
+import edu.wpi.first.wpilibj.system.LinearSystemLoop;
+import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.Nat;
+import edu.wpi.first.wpiutil.math.VecBuilder;
+import edu.wpi.first.wpiutil.math.numbers.N1;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MathUtil;
@@ -47,6 +56,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalconRight;
     private final MechLogger logger;
     private final RSTab tab;
+    private final LinearSystemLoop<N1, N1, N1> m_loop;
 
     public Flywheel(int leftID, int rightID, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
@@ -54,13 +64,49 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
 
         this.flywheelFalconLeft = new WPI_TalonFX(leftID);
         this.flywheelFalconRight = new WPI_TalonFX(rightID);
-        // Previous configuration, also works
-        //new PIDConfig((1023.0 * 0.5) / 500, (1023.0 * 0.01) / 500, 0.0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
-        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(1.8, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalconLeft);
-        flywheelFalconLeft.setInverted(false);
-        flywheelFalconLeft.setNeutralMode(NeutralMode.Coast);
 
+        // Volts per (radian per second)
+        double kFlywheelKv = .3800;
+        // Volts per (radian per second squared)
+        double kFlywheelKa = .1016;
+
+        // States: [velocity], in radians per second.
+        // Inputs (what we can "put in"): [voltage], in volts.
+        // Outputs (what we can measure): [velocity], in radians per second.
+        LinearSystem<N1, N1, N1> m_flywheelPlant = LinearSystemId.identifyVelocitySystem(kFlywheelKv, kFlywheelKa);
+
+        KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
+                Nat.N1(), Nat.N1(),
+                m_flywheelPlant,
+                VecBuilder.fill(3.0), // How accurate we think our model is
+                VecBuilder.fill(0.01), // How accurate we think our encoder data is
+                0.020);
+
+        LinearQuadraticRegulator<N1, N1, N1> m_controller
+                = new LinearQuadraticRegulator<>(m_flywheelPlant,
+                VecBuilder.fill(8.0), // qelms. Velocity error tolerance, in radians per second. Decrease
+                // this to more heavily penalize state excursion, or make the controller behave more
+                // aggressively.
+                VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
+                // heavily penalize control effort, or make the controller less aggressive. 12 is a good
+                // starting point because that is the (approximate) maximum voltage of a battery.
+                0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be lower if using notifiers.
+
+        // The state-space loop combines a controller, observer, feedforward and plant for easy control.
+        //* @param plant State-space plant.
+        //* @param controller State-space controller.
+        //* @param observer State-space observer.
+        //* @param maxVoltageVolts The maximum voltage that can be applied. Commonly 12.
+        //* @param dtSeconds The nominal timestep.
+        this.m_loop = new LinearSystemLoop<>(
+                m_flywheelPlant,
+                m_controller,
+                m_observer,
+                12.0,
+                0.020);
+
+        flywheelFalconLeft.setInverted(true);
+        flywheelFalconLeft.setNeutralMode(NeutralMode.Coast);
         flywheelFalconRight.follow(flywheelFalconLeft);
         flywheelFalconRight.setInverted(InvertType.OpposeMaster);
         flywheelFalconRight.setNeutralMode(NeutralMode.Coast);
@@ -119,14 +165,8 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
      */
     public void setVelocity(double vel) {
         tab.setEntry("Flywheel Set Vel", vel);
-        targetVel = vel;
-        logger.setpointChange(vel);
-        if (vel == 0) {
-            flywheelFalconLeft.set(TalonFXControlMode.Velocity, 0.0);
-            flywheelFalconLeft.set(TalonFXControlMode.Current, 0.0);
-        } else {
-            flywheelFalconLeft.set(TalonFXControlMode.Velocity, vel);
-        }
+        SmartDashboard.putNumber("flywheel target", Math.toRadians(MathUtil.ticksToDegrees(vel)));
+        m_loop.setNextR(VecBuilder.fill(Math.toRadians(MathUtil.ticksToDegrees(vel))));
     }
 
     public double getTargetVel() {
@@ -139,5 +179,19 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
 
     public MotorTemp getTemp() {
         return new MotorTemp(flywheelFalconLeft.getDeviceID(), flywheelFalconLeft.getTemperature(), "FlywheelFalcon");
+    }
+
+    public void setVoltage(double v) {
+        flywheelFalconLeft.setVoltage(v);
+    }
+
+    @Override
+    public void periodic() {
+        SmartDashboard.putNumber("at velocity", Math.toRadians(MathUtil.ticksToDegrees(flywheelFalconLeft.getSelectedSensorVelocity())));
+        m_loop.correct(VecBuilder.fill(Math.toRadians(MathUtil.ticksToDegrees(flywheelFalconLeft.getSelectedSensorVelocity()))));
+        m_loop.predict(0.020);
+        double nextVoltage = m_loop.getU(0);
+        SmartDashboard.putNumber("Target V", nextVoltage);
+        flywheelFalconLeft.setVoltage(Math.max(0, nextVoltage));
     }
 }

@@ -20,6 +20,7 @@
 
 package org.rivierarobotics.commands.shooting;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -76,9 +77,8 @@ public class ShootNWedges extends CommandBase {
                         isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
                 new WaitUntilCommand(flywheel::withinTolerance),
                 new WaitCommand(1),
-                ejectorCommands.setPower(1.0),
-                new WaitCommand(1),
-                ejectorCommands.setPower(0)
+                ejectorCommands.setPower(1.0).raceWith(new WaitCommand(1)),
+                ejectorCommands.setPower(0).raceWith(new WaitCommand(1))
         );
     }
 
@@ -94,14 +94,8 @@ public class ShootNWedges extends CommandBase {
     }
 
     @Override
-    public void end(boolean interrupted) {
-        if (interrupted) {
-            CommandScheduler.getInstance().cancel(cmd);
-        }
-    }
-
-    @Override
     public boolean isFinished() {
+        SmartDashboard.putBoolean("SHOOTFINISHED", cmd != null && !CommandScheduler.getInstance().isScheduled(cmd));
         return cmd != null && !CommandScheduler.getInstance().isScheduled(cmd);
     }
 }

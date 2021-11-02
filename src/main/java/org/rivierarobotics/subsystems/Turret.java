@@ -48,8 +48,8 @@ import javax.inject.Provider;
  */
 public class Turret extends SubsystemBase implements RRSubsystem {
     private static final double ZERO_TICKS = 3908;
-    private static final double MAX_ANGLE = 1;
-    private static final double MIN_ANGLE = -214;
+    private static final double MAX_ANGLE = 35;
+    private static final double MIN_ANGLE = -216;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
     private static final int DETECT_BUFFER_TICKS = 300;

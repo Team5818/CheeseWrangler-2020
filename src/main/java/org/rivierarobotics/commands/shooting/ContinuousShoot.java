@@ -64,7 +64,6 @@ public class ContinuousShoot extends CommandBase {
         this.cheeseWheel = cheeseWheel;
         this.flywheel = flywheel;
         this.tab = shuffleboard.getTab("Cheese Wheel");
-        addRequirements(cheeseWheel);
     }
 
     @Override
@@ -77,21 +76,10 @@ public class ContinuousShoot extends CommandBase {
 
         cmd = new SequentialCommandGroup(
                 cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
-                new WaitUntilCommand(flywheel::withinTolerance),
-                ejectorCommands.setPower(1),
-                new WaitUntilCommand(() -> !slot.hasBall()).withTimeout(1).andThen(new WaitCommand(0.1)),
-                ejectorCommands.setPower(-0.1),
-                new WaitCommand(0.05),
-                ejectorCommands.setPower(0)
+                new WaitCommand(1).deadlineWith(ejectorCommands.setPower(1)).withInterrupt(() -> !slot.hasBall()),
+                ejectorCommands.setPower(0).withTimeout(0.1)
         ).withTimeout(2);
         CommandScheduler.getInstance().schedule(cmd);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        if (interrupted) {
-            CommandScheduler.getInstance().cancel(cmd);
-        }
     }
 
     @Override

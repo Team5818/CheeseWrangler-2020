@@ -67,8 +67,8 @@ public class All5Shoot extends CommandBase {
                 cheeseWheelCommands.cycleSlotWait(CheeseWheel.Direction.ANY, CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseSlot.State.EITHER, 60),
                 new WaitCommand(0.2),
                 new ParallelDeadlineGroup(
-                        cheeseWheelCommands.setPower(0.8).withTimeout(3),
-                        ejectorCommands.setPower(1).withTimeout(3)
+                        cheeseWheelCommands.setPower(0.85).withTimeout(4),
+                        ejectorCommands.setPower(1).withTimeout(4)
                 ),
                 ejectorCommands.setPower(0)
         );

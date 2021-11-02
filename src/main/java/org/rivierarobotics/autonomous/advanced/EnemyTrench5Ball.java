@@ -76,7 +76,8 @@ public class EnemyTrench5Ball extends CommandBase {
                                 driveCommands.rotateTo(220),
                                 driveCommands.driveDistance(-3, 0.4),
                                 driveCommands.rotateTo(180),
-                                cheeseWheelCommands.shootUntilEmpty()
+                                visionCommands.correctPosition(),
+                                cheeseWheelCommands.all5Shoot()
                         )
                 )
         );

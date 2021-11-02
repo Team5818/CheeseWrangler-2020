@@ -79,9 +79,9 @@ public class ButtonConfiguration {
 
         // Shooting CoDriver
         new JoystickButton(coDriverRight, 1)
-                .whenPressed(cmds.cheeseWheel().all5Shoot());
+                .whenPressed(cmds.cheeseWheel().shootUntilEmpty().withTimeout(4));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.cheeseWheel().continuousShoot());
+                .whenPressed(cmds.cheeseWheel().continuousShoot().withTimeout(2));
 
         // Collecting Driver
         new JoystickButton(driverLeft, 1)
@@ -95,9 +95,9 @@ public class ButtonConfiguration {
 
         // Shooting Driver
         new JoystickButton(driverRight, 1)
-                .whenPressed(cmds.cheeseWheel().all5Shoot().withTimeout(3));
+                .whenPressed(cmds.cheeseWheel().shootUntilEmpty().withTimeout(4));
         new JoystickButton(driverRight, 2)
-                .whileHeld(cmds.cheeseWheel().continuousShoot());
+                .whileHeld(cmds.cheeseWheel().continuousShoot().withTimeout(2));
 
         // CheeseWheel manual cycles
         new JoystickButton(coDriverButtons, 2)
@@ -120,8 +120,10 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.vision().correctPosition());
+//        new JoystickButton(coDriverButtons, 12)
+//                .whenPressed(cmds.vision().toggleAutoAim());
         new JoystickButton(coDriverButtons, 12)
-                .whenPressed(cmds.vision().toggleAutoAim());
+                .whenPressed(() -> CommandScheduler.getInstance().cancelAll());
 
         // Camera servo
         new JoystickButton(driverButtons, 11)
