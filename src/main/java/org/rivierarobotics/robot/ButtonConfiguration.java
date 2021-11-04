@@ -23,7 +23,6 @@ package org.rivierarobotics.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import org.rivierarobotics.commands.flywheel.FlywheelCommands;
 import org.rivierarobotics.inject.CommandComponent;
 import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CameraPosition;
@@ -65,18 +64,6 @@ public class ButtonConfiguration {
      * the robot is disabled and reinitialized on {@link Robot#teleopInit()}.
      */
     public void initTeleop() {
-        // Collecting CoDriver
-        /*
-        new JoystickButton(coDriverLeft, 1)
-                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
-                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
-                        cmds.camera().setServo(CameraPosition.FRONT)));
-        new JoystickButton(coDriverLeft, 2)
-                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
-                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
-                        cmds.camera().setServo(CameraPosition.BACK)));
-         */
-
         // Shooting CoDriver
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootUntilEmpty().withTimeout(4));
@@ -120,8 +107,6 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.vision().correctPosition());
-        // new JoystickButton(coDriverButtons, 12)
-        //      .whenPressed(cmds.vision().toggleAutoAim());
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(() -> CommandScheduler.getInstance().cancelAll());
 
@@ -147,15 +132,14 @@ public class ButtonConfiguration {
         // Climb
         new JoystickButton(driverButtons, 6)
                 .whenPressed(cmds.climb().resetEncoder());
-        new JoystickButton(driverButtons, 3).whenHeld(cmds.flywheel().setPower(.1));
-        //new JoystickButton(driverButtons, 3)
-        //      .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
-        //            .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
+        new JoystickButton(driverButtons, 3)
+              .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
+                    .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
         new JoystickButton(driverButtons, 2)
-                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF)
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MIDDLE)
                         .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
         new JoystickButton(driverButtons, 1)
-                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.ZERO)
+                .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MIN)
                         .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
 
         // Misc

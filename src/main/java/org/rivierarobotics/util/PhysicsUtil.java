@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -122,7 +121,7 @@ public class PhysicsUtil {
      * @return distance to target
      */
     public double getLLTurretAngle() {
-        //Returns angle to target using LL values
+        // Returns angle to target using LL values
         double turretAngle = turret.getTurretCalculations(extraDistance, hood.getAngle())[1];
         tab.setEntry("Turret Angle", turretAngle);
         return turretAngle;
@@ -135,7 +134,7 @@ public class PhysicsUtil {
      * @return distance to target
      */
     public double getLLDistance() {
-        //Returns distance to target using LL values
+        // Returns distance to target using LL values
         double dist = turret.getTurretCalculations(extraDistance, hood.getAngle())[0];
         tab.setEntry("LL Dist", dist);
         return dist;
@@ -164,7 +163,7 @@ public class PhysicsUtil {
      * @return hood angle to launch ball at
      */
     public double getCalculatedHoodAngle() {
-        //Returns the hood angle using the relationship between horizontal and vertical velocities
+        // Returns the hood angle using the relationship between horizontal and vertical velocities
         double hoodAngle = Math.toDegrees(Math.atan2(vXYZ[2], Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1])));
         if (Math.abs(driveTrain.getYVelocity()) > 0.1) {
             hoodAngle += (driveTrain.getYVelocity());
@@ -179,7 +178,7 @@ public class PhysicsUtil {
      * @return required ball velocity
      */
     public double getBallVel() {
-        //Returns ball's velocity in m/s
+        // Returns ball's velocity in m/s
         double ballVel = Math.sqrt(vXYZ[0] * vXYZ[0] + vXYZ[1] * vXYZ[1] + vXYZ[2] * vXYZ[2]);
 
         tab.setEntry("ballVel", ballVel);
@@ -195,9 +194,9 @@ public class PhysicsUtil {
         double targetAngle = getAngleToTarget();
         double targetTicks = turret.getTargetTicks(targetAngle, true);
         double angleDiff = turret.getPositionTicks() - targetTicks;
-        //BASICALLY A PID BUT WITHOUT THE ID
-        SmartDashboard.putNumber("Target ticks", targetTicks);
-        SmartDashboard.putNumber("angleDiff", angleDiff);
+        // BASICALLY A PID BUT WITHOUT THE ID
+        tab.setEntry("Target Ticks", targetTicks);
+        tab.setEntry("angleDiff", angleDiff);
         double p = 0.8;
         return -angleDiff * p;
 

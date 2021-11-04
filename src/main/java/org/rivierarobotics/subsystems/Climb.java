@@ -113,8 +113,8 @@ public class Climb extends SubsystemBase implements RRSubsystem {
      * contain percentages, stored as ticks (calculated).
      */
     public enum Position {
-        ZERO(0.03),
-        HALF(0.7),
+        MIN(0.03),
+        MIDDLE(0.7),
         MAX(0.92);
 
         private final double ticks;

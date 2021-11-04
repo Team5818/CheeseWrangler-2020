@@ -20,13 +20,10 @@
 
 package org.rivierarobotics.commands.cheesewheel;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.inject.Input;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.MathUtil;
 
 import javax.inject.Inject;
 

@@ -32,9 +32,7 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Ejector;
 import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.MathUtil;
 import org.rivierarobotics.util.PhysicsUtil;
 
 /**

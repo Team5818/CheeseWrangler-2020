@@ -42,9 +42,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Main robot class for 2020/2021 robot CheeseWrangler.
@@ -91,28 +88,11 @@ public class Robot extends TimedRobot {
         globalComponent.getNavXGyro().resetGyro();
         DriverStation.getInstance().silenceJoystickConnectionWarning(true);
         globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
-
-        /*
-        ScheduledExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        executor.scheduleAtFixedRate(()->{
-            globalComponent.getShuffleboard().getTab("Cheese Wheel").setEntry("Play Sound", true);
-        }, 0, 3, TimeUnit.SECONDS);
-        */
     }
 
     @Override
     public void robotPeriodic() {
-        displayShuffleboard();
-        var shuffleboard = globalComponent.getShuffleboard();
-        var physics = globalComponent.getPhysicsUtil();
-        var flywheel = globalComponent.getFlywheel();
-        var ll = globalComponent.getVisionUtil();
-        shuffleboard.getTab("Driver")
-            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
-            .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
-            .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1, 1, 5, 3))
-            .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 6, 3))
-            .setEntry("LL", ll.getLLValue("tx"));
+        displayDriverShuffleboard();
         if (isEnabled()) {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);
             globalComponent.getPositionTracker().trackPosition();
@@ -143,11 +123,7 @@ public class Robot extends TimedRobot {
         if (autonomousCommand != null) {
             CommandScheduler.getInstance().cancel(autonomousCommand);
         }
-        // Force flywheel to stop
-        //commandComponent.flywheel().setPower(0).schedule();
-        //commandComponent.vision().calcAim(VisionTarget.TOP);
         globalComponent.getButtonConfiguration().initTeleop();
-
     }
 
     @Override
@@ -163,11 +139,26 @@ public class Robot extends TimedRobot {
 
     @Override
     public void disabledPeriodic() {
-        //globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_OFF);
+        // Padding for checkstyle
     }
 
-    private void displayShuffleboard() {
-        // Periodic logging to Shuffleboard
+    private void displayDriverShuffleboard() {
+        // Periodic logging to Shuffleboard, driver tab only (minimal)
+        var shuffleboard = globalComponent.getShuffleboard();
+        var physics = globalComponent.getPhysicsUtil();
+        var flywheel = globalComponent.getFlywheel();
+        var ll = globalComponent.getVisionUtil();
+
+        shuffleboard.getTab("Driver")
+                .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
+                .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
+                .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1, 1, 5, 3))
+                .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 6, 3))
+                .setEntry("LL", ll.getLLValue("tx"));
+    }
+
+    private void displayFullShuffleboard() {
+        // Periodic logging to Shuffleboard, all components
         var turret = globalComponent.getTurret();
         var hood = globalComponent.getHood();
         var gyro = globalComponent.getNavXGyro();
@@ -224,13 +215,6 @@ public class Robot extends TimedRobot {
             .setEntry("OnIndex", cw.onSlot(CheeseWheel.AngleOffset.COLLECT_FRONT, 40))
             .setEntry("Shooter Index", cw.getIndex(CheeseWheel.AngleOffset.SHOOTER_FRONT))
             .setEntry("Shooter Ball", cw.getClosestSlot(CheeseWheel.AngleOffset.SHOOTER_BACK, CheeseWheel.Direction.BACKWARDS, CheeseSlot.State.BALL).ordinal());
-
-        shuffleboard.getTab("Driver")
-            .setEntry("AutoAim Speed", physics.getTargetVelocity(), new RSTileOptions(1, 1, 3, 3))
-            .setEntry("AutoAim Mode", physics.getAimMode().name(), new RSTileOptions(1, 1, 4, 3))
-            .setEntry("Flywheel Target Speed", flywheel.getTargetVel(), new RSTileOptions(1, 1, 5, 3))
-            .setEntry("AA Enabled", physics.isAutoAimEnabled(), new RSTileOptions(1, 1, 6, 3));
-
 
         var sensorColor = cow.getSensorColor();
         shuffleboard.getTab("Climb")

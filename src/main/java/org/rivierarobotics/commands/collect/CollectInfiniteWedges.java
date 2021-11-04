@@ -110,11 +110,12 @@ public class CollectInfiniteWedges extends CommandBase {
         CheeseSlot closest = CheeseSlot.slotOfNum(index);
         tab.setEntry("ClosestIndex", closest.ordinal());
         tab.setEntry("ClosestHasBall", closest.hasBall());
-        //added for sound script
 
         if (closest.hasBall() && cheeseWheel.onSlot(mode, SLOT_TOLERANCE) && !isFull() && !(runningCycleSlot != null && CommandScheduler.getInstance().isScheduled(runningCycleSlot))) {
             runningCycleSlot = cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, SLOT_TOLERANCE);
             CommandScheduler.getInstance().schedule(runningCycleSlot);
+
+            // Initiates sound script
             if (cheeseCount() > 1) {
                 tab.setEntry("Collecting Sound", true);
             } else {
