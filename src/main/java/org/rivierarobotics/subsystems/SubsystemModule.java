@@ -46,7 +46,8 @@ import javax.inject.Singleton;
 public class SubsystemModule {
     private static final int TURRET_TALON = 7;
     private static final int HOOD_TALON = 5;
-    private static final int FLYWHEEL_FALCON = 4;
+    private static final int FLYWHEEL_FALCON_LEFT = 4;
+    private static final int FLYWHEEL_FALCON_RIGHT = 15;
     private static final int CHEESE_WHEEL_TALON = 6;
     private static final int EJECTOR_VICTOR = 8;
     private static final int INTAKE_VICTOR_FRONT = 9;
@@ -100,7 +101,7 @@ public class SubsystemModule {
     @Provides
     @Singleton
     public static Flywheel provideFlywheel(@Provided RobotShuffleboard shuffleboard) {
-        return new Flywheel(FLYWHEEL_FALCON, shuffleboard);
+        return new Flywheel(FLYWHEEL_FALCON_LEFT, FLYWHEEL_FALCON_RIGHT, shuffleboard);
     }
 
 

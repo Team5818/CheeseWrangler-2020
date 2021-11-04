@@ -61,15 +61,12 @@ public class EnemyTrench5Ball extends CommandBase {
     @Override
     public void initialize() {
         gyro.setAngleAdjustment(180);
-        PositionTracker.setPosition(new double[] { 5.07, 3.048 });
-
+        PositionTracker.setPosition(new double[] { 5.07, 3.3 });
         this.autoCommand = new SequentialCommandGroup(
                 new ParallelDeadlineGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
-                                driveCommands.driveDistance(0.8, 0.35),
-                                driveCommands.driveDistance(0.8, 0.6),
-                                driveCommands.driveDistance(0.8, 0.35),
+                                driveCommands.driveDistance(2.25, 0.45),
                                 new ParallelDeadlineGroup(
                                         new SequentialCommandGroup(
                                                 driveCommands.driveDistance(0.9, 0.15),
@@ -77,8 +74,9 @@ public class EnemyTrench5Ball extends CommandBase {
                                         ),
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                                 driveCommands.rotateTo(220),
-                                driveCommands.driveDistance(-1.6, 0.4),
+                                driveCommands.driveDistance(-3, 0.4),
                                 driveCommands.rotateTo(180),
+                                visionCommands.correctPosition(),
                                 cheeseWheelCommands.shootUntilEmpty()
                         )
                 )

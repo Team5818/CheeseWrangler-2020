@@ -38,11 +38,11 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class SixBallTrench extends CommandBase {
-    private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
     private final CheeseWheelCommands cheeseWheelCommands;
     private final CollectionCommands collectionCommands;
+    private Command autoCommand;
 
     public SixBallTrench(@Provided DriveCommands driveCommands,
                          @Provided VisionCommands visionCommands,
@@ -57,22 +57,24 @@ public class SixBallTrench extends CommandBase {
     @Override
     public void initialize() {
         this.autoCommand = new SequentialCommandGroup(
+                driveCommands.resetGyro(),
+                new WaitCommand(0.5),
                 visionCommands.correctPosition(),
                 new ParallelRaceGroup(
-                        visionCommands.calcAim(VisionTarget.TOP),
+                        visionCommands.calcAim(VisionTarget.INNER),
                         new SequentialCommandGroup(
                                 cheeseWheelCommands.shootUntilEmpty(),
                                 driveCommands.rotateTo(-28.5),
                                 new ParallelDeadlineGroup(
                                         new SequentialCommandGroup(
-                                                driveCommands.driveDistance(-3.57, 0.45),
+                                                driveCommands.driveDistance(-3.27, 0.45),
                                                 driveCommands.rotateTo(0),
                                                 driveCommands.driveDistance(-0.9 * 2, 0.25),
                                                 new WaitCommand(0.5)
                                         ),
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
                                 new ParallelRaceGroup(
-                                        driveCommands.driveDistance(2, 0.2),
+                                        visionCommands.correctPosition(),
                                         cheeseWheelCommands.shootUntilEmpty()
                                 )
                         )

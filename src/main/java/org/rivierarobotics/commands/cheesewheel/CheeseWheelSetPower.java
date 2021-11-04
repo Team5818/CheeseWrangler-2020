@@ -18,38 +18,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.rivierarobotics.commands.shooting;
+package org.rivierarobotics.commands.cheesewheel;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
 
+import javax.inject.Inject;
+
 @GenerateCreator
-public class ShootUntilEmpty extends CommandBase {
-    private Command command;
-    private final CheeseWheel wheel;
-    private final CheeseWheelCommands commands;
+public class CheeseWheelSetPower extends CommandBase {
+    private final CheeseWheel cheeseWheel;
+    private final double power;
 
-    public ShootUntilEmpty(@Provided CheeseWheel cheese, @Provided CheeseWheelCommands comm) {
-        this.wheel = cheese;
-        this.commands = comm;
+    @Inject
+    public CheeseWheelSetPower(@Provided CheeseWheel cheeseWheel, double power) {
+        this.cheeseWheel = cheeseWheel;
+        this.power = power;
+        addRequirements(cheeseWheel);
     }
 
     @Override
-    public void execute() {
-        if (wheel.hasBall() && (command == null || !CommandScheduler.getInstance().isScheduled(command))) {
-            Command shootCommand = commands.continuousShoot();
-            CommandScheduler.getInstance().schedule(shootCommand);
-            this.command = shootCommand;
-        }
+    public void end(boolean interrupted) {
+        cheeseWheel.setPower(0);
     }
 
     @Override
-    public boolean isFinished() {
-        return !wheel.hasBall();
+    public void initialize() {
+        cheeseWheel.setPower(power);
     }
 }

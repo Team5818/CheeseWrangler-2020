@@ -75,9 +75,8 @@ public class ShootNWedges extends CommandBase {
                         isBack ? CheeseWheel.AngleOffset.SHOOTER_BACK : CheeseWheel.AngleOffset.SHOOTER_FRONT, CheeseSlot.State.BALL),
                 new WaitUntilCommand(flywheel::withinTolerance),
                 new WaitCommand(1),
-                ejectorCommands.setPower(1.0),
-                new WaitCommand(1),
-                ejectorCommands.setPower(0)
+                ejectorCommands.setPower(1.0).raceWith(new WaitCommand(1)),
+                ejectorCommands.setPower(0).raceWith(new WaitCommand(1))
         );
     }
 
@@ -89,11 +88,12 @@ public class ShootNWedges extends CommandBase {
         for (int i = 0; i < wedges; i++) {
             cmd.addCommands(singleWedgeGroup(isBack));
         }
-        cmd.schedule();
+        CommandScheduler.getInstance().schedule(cmd);
     }
 
     @Override
     public boolean isFinished() {
+        tab.setEntry("SHOOTFINISHED", cmd != null && !CommandScheduler.getInstance().isScheduled(cmd));
         return cmd != null && !CommandScheduler.getInstance().isScheduled(cmd);
     }
 }

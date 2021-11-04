@@ -20,9 +20,11 @@
 
 package org.rivierarobotics.commands.vision;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
+import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -39,36 +41,52 @@ import org.rivierarobotics.util.VisionTarget;
  */
 @GenerateCreator
 public class CalcAim extends CommandBase {
-    private static final int MAX_NORMAL_DIST = 11;
-    private static final int NORMAL_SHOOT_SPEED = 9;
-    private static final int FAR_SHOOT_SPEED = 15;
-
     private final AutoAimUtil autoAimUtil;
     private final Flywheel flywheel;
+    private final Turret turret;
     private final PhysicsUtil physics;
+    private final CheeseWheel cheeseWheel;
     private final double extraDistance;
+    private double time;
+    private boolean ready = false;
 
     public CalcAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
                    @Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard,
-                   VisionTarget target, @Provided DriveTrain driveTrain) {
+                   VisionTarget target, @Provided DriveTrain driveTrain, @Provided CheeseWheel cheeseWheel) {
         this.flywheel = flywheel;
         this.physics = physics;
         this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
         RSTab tab = shuffleboard.getTab("Auto Aim");
         this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, tab, driveTrain);
+        this.turret = turret;
+        this.cheeseWheel = cheeseWheel;
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
+        if (physics.getX() - extraDistance > 6 || !cheeseWheel.hasBall()) {
+            if (!ready) {
+                ready = true;
+                time = Timer.getFPGATimestamp();
+            } else if (Timer.getFPGATimestamp() - time > 1) {
+                turret.setAngle(0, false);
+                flywheel.setVelocity(0);
+                return;
+            }
+        } else {
+            ready = false;
+        }
+
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
-        if (physics.getDistanceToTarget() >= MAX_NORMAL_DIST) {
-            physics.setVelocity(FAR_SHOOT_SPEED);
+
+        if (PhysicsUtil.dynamicMode) {
+            physics.setVelocity(flywheel.getBallVelocity());
         } else {
-            physics.setVelocity(NORMAL_SHOOT_SPEED);
+            physics.setVelocity(15);
         }
-        physics.getTurretVelocity();
+
         physics.calculateVelocities(false);
         double ballVel = physics.getBallVel();
         double hoodAngle = physics.getCalculatedHoodAngle();

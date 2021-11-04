@@ -55,7 +55,7 @@ public class MotorUtil {
      */
     @SafeVarargs
     public static <T extends BaseTalon> void setupMotionMagic(FeedbackDevice sensor, PIDConfig pidConfig, int maxVel, T... motors) {
-        int periodMs = 10;
+        int periodMs = 20;
         int timeoutMs = 10;
         for (T motor : motors) {
             motor.configFactoryDefault();

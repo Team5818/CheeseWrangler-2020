@@ -41,6 +41,7 @@ public class CheeseWheelCommands {
     private final CWCycleSlotCreator cycleSlotWaitCreator;
     private final ContinuousShootCreator shootCreator;
     private final ShootUntilEmptyCreator shootUntilEmptyCreator;
+    private final CheeseWheelSetPowerCreator cheeseWheelSetPowerCreator;
 
     @Inject
     public CheeseWheelCommands(CWSetPositionCreator setPositionCreator,
@@ -49,7 +50,8 @@ public class CheeseWheelCommands {
                                All5ShootCreator all5ShootCreator,
                                CWCycleSlotCreator cycleSlotWaitCreator,
                                ContinuousShootCreator shootCreator,
-                               ShootUntilEmptyCreator shootUntilEmptyCreator) {
+                               ShootUntilEmptyCreator shootUntilEmptyCreator,
+                               CheeseWheelSetPowerCreator cheeseWheelSetPowerCreator) {
         this.setPositionCreator = setPositionCreator;
         this.cycleSlotCreator = cycleSlotCreator;
         this.shootNWedgesCreator = shootNWedgesCreator;
@@ -57,6 +59,7 @@ public class CheeseWheelCommands {
         this.cycleSlotWaitCreator = cycleSlotWaitCreator;
         this.shootCreator = shootCreator;
         this.shootUntilEmptyCreator = shootUntilEmptyCreator;
+        this.cheeseWheelSetPowerCreator = cheeseWheelSetPowerCreator;
     }
 
     public CWCycleSlotInterrupt cycleSlot(CheeseWheel.Direction direction, CheeseWheel.AngleOffset mode, CheeseSlot.State requiredState) {
@@ -85,5 +88,9 @@ public class CheeseWheelCommands {
 
     public ShootUntilEmpty shootUntilEmpty() {
         return shootUntilEmptyCreator.create();
+    }
+
+    public CheeseWheelSetPower setPower(double p) {
+        return this.cheeseWheelSetPowerCreator.create(p);
     }
 }

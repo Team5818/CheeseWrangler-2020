@@ -23,6 +23,7 @@ package org.rivierarobotics.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
+import com.ctre.phoenix.motorcontrol.SupplyCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.wpilibj.Encoder;
@@ -39,8 +40,10 @@ import org.rivierarobotics.util.MotorUtil;
  * @see DriveTrain
  */
 public class DriveTrainSide implements RRSubsystem {
-    private static final double TICKS_PER_METER = 4380;
+    private static final double TICKS_PER_METER = 4280;
     private static final double MOTOR_TO_WHEEL_RATIO = (1.0 / 3) * (17.0 / 48);
+    private static final SupplyCurrentLimitConfiguration CURRENT_LIMIT =
+            new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1);
     private final WPI_TalonFX mainLeft;
     private final WPI_TalonFX secondaryRight;
     private final WPI_TalonFX secondaryTop;
@@ -52,17 +55,28 @@ public class DriveTrainSide implements RRSubsystem {
         this.mainLeft = new WPI_TalonFX(motors.main);
         this.secondaryRight = new WPI_TalonFX(motors.secondaryOne);
         this.secondaryTop = new WPI_TalonFX(motors.secondaryTwo);
+
         this.logger = Logging.getLogger(getClass(), invert ? "left" : "right");
         this.invert = invert;
         MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
             new PIDConfig(0.22, 0, 0, 0.051), 0,
                 mainLeft, secondaryRight, secondaryTop);
+
         mainLeft.setInverted(invert);
         secondaryRight.setInverted(invert);
         secondaryTop.setInverted(invert);
+
         mainLeft.setNeutralMode(NeutralMode.Brake);
         secondaryRight.setNeutralMode(NeutralMode.Brake);
         secondaryTop.setNeutralMode(NeutralMode.Brake);
+
+        mainLeft.configGetSupplyCurrentLimit(CURRENT_LIMIT);
+        secondaryRight.configGetSupplyCurrentLimit(CURRENT_LIMIT);
+        secondaryTop.configGetSupplyCurrentLimit(CURRENT_LIMIT);
+
+        this.mainLeft.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.secondaryRight.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.secondaryTop.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);

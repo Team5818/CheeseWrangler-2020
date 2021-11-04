@@ -24,7 +24,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.FeedbackDevice;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonSRX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
@@ -47,9 +46,9 @@ import javax.inject.Provider;
  * Contains a dual PID for position and velocity.
  */
 public class Turret extends SubsystemBase implements RRSubsystem {
-    private static final double ZERO_TICKS = 207;
-    private static final double MAX_ANGLE = 1;
-    private static final double MIN_ANGLE = -214;
+    private static final double ZERO_TICKS = 3908;
+    private static final double MAX_ANGLE = 35;
+    private static final double MIN_ANGLE = -216;
     private static final int FORWARD_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MAX_ANGLE));
     private static final int BACK_LIMIT_TICKS = (int) (ZERO_TICKS + MathUtil.degreesToTicks(MIN_ANGLE));
     private static final int DETECT_BUFFER_TICKS = 300;
@@ -112,21 +111,15 @@ public class Turret extends SubsystemBase implements RRSubsystem {
      * @return a double array containing a distance and angle.
      */
     public double[] getTurretCalculations(double extraDistance, double hoodAngle) {
-        double initialD = ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getActualTY(hoodAngle)));
-        SmartDashboard.putNumber("initialD", initialD);
+        double initialD = ShooterConstants.getTopHeight() / Math.tan(Math.toRadians(vision.getLLValue("ty") + (hoodAngle)));
+        tab.setEntry("initialD", initialD);
         double tx = Math.toRadians(vision.getLLValue("tx"));
         double xInitialD = Math.sin(tx) * initialD;
         double yInitialD = Math.cos(tx) * initialD + extraDistance;
         double dist = Math.sqrt(xInitialD * xInitialD + yInitialD * yInitialD);
         tx = Math.atan(xInitialD / yInitialD);
-
-        double angleA = Math.PI / 2 - tx;
-        double z = ShooterConstants.getLLtoTurretZ();
-        double a = Math.sqrt(dist * dist + z * z - 2 * dist * z * Math.cos(angleA));
-        double finalAngle = Math.toDegrees(Math.asin((Math.sin(angleA) * dist / a))) + 2;
-
-        finalAngle = tx > Math.asin(z / dist) ? 90 - finalAngle : finalAngle - 90;
-        return new double[] { a, MathUtil.wrapToCircle(finalAngle + getAngle(true)) };
+        tab.setEntry("AngleToTarget", Math.toDegrees(tx) + getAngle(true));
+        return new double[] { dist, MathUtil.wrapToCircle(Math.toDegrees(tx) + getAngle(true)) };
     }
 
     /**

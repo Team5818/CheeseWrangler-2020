@@ -21,15 +21,21 @@
 package org.rivierarobotics.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.FeedbackDevice;
+import com.ctre.phoenix.motorcontrol.InvertType;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.controller.LinearQuadraticRegulator;
+import edu.wpi.first.wpilibj.estimator.KalmanFilter;
+import edu.wpi.first.wpilibj.system.LinearSystem;
+import edu.wpi.first.wpilibj.system.LinearSystemLoop;
+import edu.wpi.first.wpilibj.system.plant.LinearSystemId;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpiutil.math.Nat;
+import edu.wpi.first.wpiutil.math.VecBuilder;
+import edu.wpi.first.wpiutil.math.numbers.N1;
 import org.rivierarobotics.appjack.Logging;
 import org.rivierarobotics.appjack.MechLogger;
 import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.MotorUtil;
 import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
 import org.rivierarobotics.util.ShooterConstants;
@@ -40,28 +46,67 @@ import org.rivierarobotics.util.ShooterConstants;
  */
 public class Flywheel extends SubsystemBase implements RRSubsystem {
     private static final double MIN_SHOOTING_VEL = 1000.0;
+    private static final double DT_SECONDS = 0.020;
     private static double targetVel = 0;
     private static double tolerance = 70;
-    private final WPI_TalonFX flywheelFalcon;
+    private final WPI_TalonFX flywheelFalconLeft;
+    private final WPI_TalonFX flywheelFalconRight;
     private final MechLogger logger;
     private final RSTab tab;
+    private final LinearSystemLoop<N1, N1, N1> flywheelStateSpaceDriver;
 
-    public Flywheel(int id, RobotShuffleboard shuffleboard) {
+    public Flywheel(int leftID, int rightID, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
         this.tab = shuffleboard.getTab("Vision");
 
-        this.flywheelFalcon = new WPI_TalonFX(id);
-        // Previous configuration, also works
-        //new PIDConfig((1023.0 * 0.5) / 500, (1023.0 * 0.01) / 500, 0.0, (1023.0 * 0.75) / 15900), 0, flywheelFalcon);
-        MotorUtil.setupMotionMagic(FeedbackDevice.IntegratedSensor,
-            new PIDConfig(1.5, 0.0, 0.3, (1023.0 * 0.72) / 15900), 0, flywheelFalcon);
-        flywheelFalcon.setInverted(false);
-        flywheelFalcon.setNeutralMode(NeutralMode.Coast);
+        this.flywheelFalconLeft = new WPI_TalonFX(leftID);
+        this.flywheelFalconRight = new WPI_TalonFX(rightID);
+
+        // States: [velocity], in radians per second.
+        // Inputs (what we can "put in"): [voltage], in volts.
+        // Outputs (what we can measure): [velocity], in radians per second.
+        // kV = volts/radian/s kA = volts/radian/s*s
+        LinearSystem<N1, N1, N1> flywheelPlant = LinearSystemId.identifyVelocitySystem(0.3800, 0.1016);
+
+        KalmanFilter<N1, N1, N1> observer = new KalmanFilter<>(
+                Nat.N1(), Nat.N1(),
+                flywheelPlant,
+                VecBuilder.fill(3.0), // How accurate we think our model is
+                VecBuilder.fill(0.01), // How accurate we think our encoder data is
+                DT_SECONDS
+        );
+
+        LinearQuadraticRegulator<N1, N1, N1> controller
+                = new LinearQuadraticRegulator<>(flywheelPlant,
+                VecBuilder.fill(8.0), // Velocity error tolerance, in radians per second
+                VecBuilder.fill(12.0), // Control effort (voltage) tolerance.
+                DT_SECONDS
+        );
+
+
+        // plant State-space plant.
+        // controller State-space controller.
+        // observer State-space observer.
+        // maxVoltageVolts The maximum voltage that can be applied. Commonly 12.
+        // dtSeconds The nominal timestep.
+        this.flywheelStateSpaceDriver = new LinearSystemLoop<>(
+                flywheelPlant,
+                controller,
+                observer,
+                12.0,
+                DT_SECONDS
+        );
+
+        flywheelFalconLeft.setInverted(true);
+        flywheelFalconLeft.setNeutralMode(NeutralMode.Coast);
+        flywheelFalconRight.follow(flywheelFalconLeft);
+        flywheelFalconRight.setInverted(InvertType.OpposeMaster);
+        flywheelFalconRight.setNeutralMode(NeutralMode.Coast);
     }
 
     @Override
     public double getPositionTicks() {
-        return flywheelFalcon.getSelectedSensorVelocity();
+        return flywheelFalconLeft.getSelectedSensorVelocity();
     }
 
     /**
@@ -70,13 +115,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
      * @return the ball velocity in meters per second.
      */
     public double getBallVelocity() {
-        return ShooterConstants.ticksToVelocity(flywheelFalcon.getSelectedSensorVelocity());
+        return ShooterConstants.ticksToVelocity(flywheelFalconLeft.getSelectedSensorVelocity());
     }
 
     @Override
     public void setPower(double pwr) {
         logger.powerChange(pwr);
-        flywheelFalcon.set(ControlMode.PercentOutput, pwr);
+        flywheelFalconLeft.set(ControlMode.PercentOutput, pwr);
     }
 
     /**
@@ -112,14 +157,13 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
      */
     public void setVelocity(double vel) {
         tab.setEntry("Flywheel Set Vel", vel);
-        targetVel = vel;
-        logger.setpointChange(vel);
-        if (vel == 0) {
-            flywheelFalcon.set(TalonFXControlMode.Velocity, 0.0);
-            flywheelFalcon.set(TalonFXControlMode.Current, 0.0);
-        } else {
-            flywheelFalcon.set(TalonFXControlMode.Velocity, vel);
-        }
+        double target = Math.toRadians(MathUtil.ticksToDegrees(vel));
+        tab.setEntry("Flywheel Target", target);
+        flywheelStateSpaceDriver.setNextR(VecBuilder.fill(target));
+    }
+
+    public double getTargetVel() {
+        return targetVel;
     }
 
     public boolean isBelowMinShootingVel() {
@@ -127,6 +171,21 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     }
 
     public MotorTemp getTemp() {
-        return new MotorTemp(flywheelFalcon.getDeviceID(), flywheelFalcon.getTemperature(), "FlywheelFalcon");
+        return new MotorTemp(flywheelFalconLeft.getDeviceID(), flywheelFalconLeft.getTemperature(), "FlywheelFalcon");
+    }
+
+    public void setVoltage(double volts) {
+        flywheelFalconLeft.setVoltage(volts);
+    }
+
+    @Override
+    public void periodic() {
+        double atVelocity = Math.toRadians(MathUtil.ticksToDegrees(flywheelFalconLeft.getSelectedSensorVelocity()));
+        tab.setEntry("At Velocity", atVelocity);
+        flywheelStateSpaceDriver.correct(VecBuilder.fill(atVelocity));
+        flywheelStateSpaceDriver.predict(DT_SECONDS);
+        double nextVoltage = flywheelStateSpaceDriver.getU(0);
+        tab.setEntry("Target Voltage", nextVoltage);
+        flywheelFalconLeft.setVoltage(Math.max(0, nextVoltage));
     }
 }

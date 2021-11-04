@@ -40,12 +40,12 @@ import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class CenterShoot extends CommandBase {
-    private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
     private final CheeseWheelCommands cheeseWheelCommands;
     private final CollectionCommands collectionCommands;
     private final NavXGyro gyro;
+    private Command autoCommand;
 
     public CenterShoot(@Provided DriveCommands driveCommands,
                        @Provided VisionCommands visionCommands,
@@ -53,10 +53,10 @@ public class CenterShoot extends CommandBase {
                        @Provided CollectionCommands collectionCommands,
                        @Provided NavXGyro gyro) {
         this.visionCommands = visionCommands;
-        this.gyro = gyro;
         this.driveCommands = driveCommands;
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.collectionCommands = collectionCommands;
+        this.gyro = gyro;
     }
 
     @Override
@@ -67,9 +67,8 @@ public class CenterShoot extends CommandBase {
                 new ParallelRaceGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
-                                driveCommands.driveDistance(1.42, 0.45),
                                 new ParallelDeadlineGroup(
-                                        driveCommands.driveDistance(1.38, 0.15),
+                                        driveCommands.driveDistance(1.38 + 1.42, 0.2),
                                         cheeseWheelCommands.shootUntilEmpty()
                                 ),
                                 driveCommands.rotateTo(180 - 34.7),

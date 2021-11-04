@@ -34,16 +34,17 @@ import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
+import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
 public class OffsetSixBallTrench extends CommandBase {
-    private Command autoCommand;
     private final DriveCommands driveCommands;
     private final VisionCommands visionCommands;
     private final CheeseWheelCommands cheeseWheelCommands;
     private final CollectionCommands collectionCommands;
+    private Command autoCommand;
 
     public OffsetSixBallTrench(@Provided DriveCommands driveCommands,
                                @Provided VisionCommands visionCommands,
@@ -57,22 +58,30 @@ public class OffsetSixBallTrench extends CommandBase {
 
     @Override
     public void initialize() {
-        PositionTracker.setPosition(new double[] { -1.7, 3.048 });
+        PositionTracker.setPosition(new double[] { -2.1, 3.1 });
         this.autoCommand = new ParallelDeadlineGroup(
                 new SequentialCommandGroup(
-                        driveCommands.driveDistance(-2.8, 0.2),
+                        new ParallelDeadlineGroup(
+                                cheeseWheelCommands.shootUntilEmpty(),
+                                driveCommands.driveDistance(-2.8, 0.2)
+                        ),
+                        new ParallelRaceGroup(
+                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER),
+                                new WaitCommand(1)
+                        ),
                         new ParallelRaceGroup(
                                 collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK),
                                 new SequentialCommandGroup(
-                                        driveCommands.driveDistance(-0.9 * 2 - 0.34, 0.25),
-                                        new WaitCommand(0.75)
+                                        driveCommands.driveDistance(-0.9 * 2 - 0.67, 0.20),
+                                        new WaitCommand(1.6)
                                 )
                         ),
-                        driveCommands.driveDistance(3, 0.6),
+                        driveCommands.driveDistance(2, 0.4),
+                        visionCommands.correctPosition(),
                         cheeseWheelCommands.shootUntilEmpty()
                 ),
                 visionCommands.calcAim(VisionTarget.TOP),
-                cheeseWheelCommands.shootUntilEmpty()
+                driveCommands.resetGyro()
         );
 
         CommandScheduler.getInstance().schedule(autoCommand);

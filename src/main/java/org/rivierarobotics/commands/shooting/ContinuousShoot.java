@@ -25,7 +25,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
-import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
@@ -75,20 +74,12 @@ public class ContinuousShoot extends CommandBase {
 
 
         cmd = new SequentialCommandGroup(
-                    cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50)
-                            .withTimeout(3),
-                    new WaitUntilCommand(flywheel::withinTolerance),
-                    ejectorCommands.setPower(1),
-                    new WaitUntilCommand(() -> !slot.hasBall())
-                            .andThen(new WaitCommand(0.1))
-                            .withTimeout(3),
-                    ejectorCommands.setPower(-0.1),
-                    new WaitCommand(0.1),
-                    ejectorCommands.setPower(0)
-            ).withTimeout(2);
-        cmd.schedule();
+                cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
+                new WaitCommand(1).deadlineWith(ejectorCommands.setPower(1)).withInterrupt(() -> !slot.hasBall()),
+                ejectorCommands.setPower(0).withTimeout(0.1)
+        ).withTimeout(2);
+        CommandScheduler.getInstance().schedule(cmd);
     }
-
 
     @Override
     public boolean isFinished() {
