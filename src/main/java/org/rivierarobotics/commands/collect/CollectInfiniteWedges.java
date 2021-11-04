@@ -77,6 +77,7 @@ public class CollectInfiniteWedges extends CommandBase {
                     cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.EITHER, SLOT_TOLERANCE);
             CommandScheduler.getInstance().schedule(cycleSlot);
         }
+        tab.setEntry("startSound", true);
     }
 
     @Override

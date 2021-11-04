@@ -147,6 +147,7 @@ public class Robot extends TimedRobot {
         //commandComponent.flywheel().setPower(0).schedule();
         //commandComponent.vision().calcAim(VisionTarget.TOP);
         globalComponent.getButtonConfiguration().initTeleop();
+
     }
 
     @Override
