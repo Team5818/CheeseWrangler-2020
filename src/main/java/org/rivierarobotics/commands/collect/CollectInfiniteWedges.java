@@ -54,7 +54,6 @@ public class CollectInfiniteWedges extends CommandBase {
     private final CheeseWheel.AngleOffset mode;
     private double frontPower;
     private double backPower;
-    private boolean firstMoveDone = false;
     private CWCycleSlot cycleSlot;
     private Command runningCycleSlot;
 
@@ -102,6 +101,7 @@ public class CollectInfiniteWedges extends CommandBase {
         if (isFull()) {
             frontPower = 0;
             backPower = 0;
+            tab.setEntry("Full Sound", true);
         }
 
         intake.setPower(frontPower, backPower);
@@ -111,11 +111,15 @@ public class CollectInfiniteWedges extends CommandBase {
         tab.setEntry("ClosestIndex", closest.ordinal());
         tab.setEntry("ClosestHasBall", closest.hasBall());
         //added for sound script
-        tab.setEntry("BallCount", cheeseCount());
+
         if (closest.hasBall() && cheeseWheel.onSlot(mode, SLOT_TOLERANCE) && !isFull() && !(runningCycleSlot != null && CommandScheduler.getInstance().isScheduled(runningCycleSlot))) {
             runningCycleSlot = cheeseWheelCommands.cycleSlotWait(mode.direction, mode, CheeseSlot.State.NO_BALL, SLOT_TOLERANCE);
             CommandScheduler.getInstance().schedule(runningCycleSlot);
-            tab.setEntry("Play Sound", true);
+            if (cheeseCount() > 1) {
+                tab.setEntry("Collecting Sound", true);
+            } else {
+                tab.setEntry("Initial Sound", true);
+            }
         }
     }
 
@@ -131,7 +135,7 @@ public class CollectInfiniteWedges extends CommandBase {
     private int cheeseCount() {
         int cheeses = 0;
         for (CheeseSlot slot : CheeseSlot.values()) {
-            if (!slot.hasBall()) {
+            if (slot.hasBall()) {
                 cheeses++;
             }
         }
