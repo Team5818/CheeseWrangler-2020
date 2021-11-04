@@ -30,8 +30,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 /**
- *  Provides the physics calculations which must be done in order
- *  to aim automatically.
+ * Provides the physics calculations which must be done in order
+ * to aim automatically.
  */
 @Singleton
 public class PhysicsUtil {
@@ -87,7 +87,6 @@ public class PhysicsUtil {
      * position tracker
      *
      * @return x horizontal distance to target x|-y
-     *
      */
     public double getY() {
         double y = aimMode != AimMode.VISION ? positionTracker.getPosition()[0] :
@@ -99,6 +98,7 @@ public class PhysicsUtil {
 
     /**
      * Returns the Z Vertical distance from the shooter to the target.
+     *
      * @return z vertical distance to target
      */
     public double getZ() {
@@ -117,7 +117,7 @@ public class PhysicsUtil {
     }
 
     /**
-     *  Returns the 2D distance to the target using the x and y values.
+     * Returns the 2D distance to the target using the x and y values.
      *
      * @return distance to target
      */
@@ -129,7 +129,7 @@ public class PhysicsUtil {
     }
 
     /**
-     *  Returns the 2D distance to the target using the x and y values from the lime light.
+     * Returns the 2D distance to the target using the x and y values from the lime light.
      * REQUIRES DIRECT LINE OF SIGHT TO TARGET
      *
      * @return distance to target
@@ -169,11 +169,6 @@ public class PhysicsUtil {
         if (Math.abs(driveTrain.getYVelocity()) > 0.1) {
             hoodAngle += (driveTrain.getYVelocity());
         }
-        double targetDist = getDistanceToTarget();
-
-        if (targetDist < 1) {
-            hoodAngle = 52; // max for close shot
-        }
         tab.setEntry("Hood Angle", hoodAngle);
         return hoodAngle;
     }
@@ -193,6 +188,7 @@ public class PhysicsUtil {
 
     /**
      * Does what getTurretVelocity does.
+     *
      * @see #getTurretVelocity
      */
     private double captainKalbag() {
@@ -214,7 +210,7 @@ public class PhysicsUtil {
      * Perpendicular shot means that the ball will be calculated to come into contact with
      * the target at a 90-degree angle. This provides a better range than our dynamic shooting mode,
      * which is locked to its physical velocity limitations.
-     *----------------------------------------------------------------------
+     * ----------------------------------------------------------------------
      * The dynamic shooting mode provides an accurate shot at a set velocity, meaning we
      * can achieve a much cleaner shot by picking the speed at which our turret is most accurate.
      * Using these two equations:
@@ -226,7 +222,7 @@ public class PhysicsUtil {
      * the physical range of our robot.
      * It also allows us to have a much stronger PID on the flywheel, tuning it for only achieving a specific speed
      * in the quickest way possible.
-     *----------------------------------------------------------------------
+     * ----------------------------------------------------------------------
      * This method is also responsible for tuning the auto aim, with our 3D graph script taking data from this method
      */
     public void calculateVelocities(boolean perpendicularShot) {
@@ -236,7 +232,7 @@ public class PhysicsUtil {
         double xVel = driveTrain.getYVelocity();
         double yVel = driveTrain.getXVelocity();
 
-        double[] tempXYZ = { x / ShooterConstants.getTConstant() - xVel, y / ShooterConstants.getTConstant() - yVel, ShooterConstants.getZVelocityConstant() };
+        double[] tempXYZ = {x / ShooterConstants.getTConstant() - xVel, y / ShooterConstants.getTConstant() - yVel, ShooterConstants.getZVelocityConstant()};
         if (!perpendicularShot) {
             tab.setEntry("Trajectory: ", "Curve");
             tab.setEntry("ED", extraDistance);
@@ -276,9 +272,9 @@ public class PhysicsUtil {
         graphTab.setEntry("vz", vXYZ[2]);
         graphTab.setEntry("g", g);
 
-         graphTab.setEntry("turretAngle", turret.getAngle(true));
-         graphTab.setEntry("hoodAngle", hood.getAngle());
-         graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
+        graphTab.setEntry("turretAngle", turret.getAngle(true));
+        graphTab.setEntry("hoodAngle", hood.getAngle());
+        graphTab.setEntry("flywheelVel", flywheel.getBallVelocity());
     }
 
     /**
@@ -301,6 +297,7 @@ public class PhysicsUtil {
 
     /**
      * Returns the target velocity for the shooter.
+     *
      * @return target velocity for the shooter
      */
     public double getTargetVelocity() {

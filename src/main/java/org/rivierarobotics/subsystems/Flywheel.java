@@ -56,7 +56,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     private final WPI_TalonFX flywheelFalconRight;
     private final MechLogger logger;
     private final RSTab tab;
-    private final LinearSystemLoop<N1, N1, N1> m_loop;
+    private final LinearSystemLoop<N1, N1, N1> flywheelStateSpaceDriver;
 
     public Flywheel(int leftID, int rightID, RobotShuffleboard shuffleboard) {
         this.logger = Logging.getLogger(getClass());
@@ -65,43 +65,35 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         this.flywheelFalconLeft = new WPI_TalonFX(leftID);
         this.flywheelFalconRight = new WPI_TalonFX(rightID);
 
-        // Volts per (radian per second)
-        double kFlywheelKv = .3800;
-        // Volts per (radian per second squared)
-        double kFlywheelKa = .1016;
-
         // States: [velocity], in radians per second.
         // Inputs (what we can "put in"): [voltage], in volts.
         // Outputs (what we can measure): [velocity], in radians per second.
-        LinearSystem<N1, N1, N1> m_flywheelPlant = LinearSystemId.identifyVelocitySystem(kFlywheelKv, kFlywheelKa);
+        // kV = volts/radian/s kA = volts/radian/s*s
+        LinearSystem<N1, N1, N1> flywheelPlant = LinearSystemId.identifyVelocitySystem(.3800, .1016);
 
-        KalmanFilter<N1, N1, N1> m_observer = new KalmanFilter<>(
+        KalmanFilter<N1, N1, N1> observer = new KalmanFilter<>(
                 Nat.N1(), Nat.N1(),
-                m_flywheelPlant,
+                flywheelPlant,
                 VecBuilder.fill(3.0), // How accurate we think our model is
                 VecBuilder.fill(0.01), // How accurate we think our encoder data is
                 0.020);
 
-        LinearQuadraticRegulator<N1, N1, N1> m_controller
-                = new LinearQuadraticRegulator<>(m_flywheelPlant,
-                VecBuilder.fill(8.0), // qelms. Velocity error tolerance, in radians per second. Decrease
-                // this to more heavily penalize state excursion, or make the controller behave more
-                // aggressively.
-                VecBuilder.fill(12.0), // relms. Control effort (voltage) tolerance. Decrease this to more
-                // heavily penalize control effort, or make the controller less aggressive. 12 is a good
-                // starting point because that is the (approximate) maximum voltage of a battery.
-                0.020); // Nominal time between loops. 0.020 for TimedRobot, but can be lower if using notifiers.
+        LinearQuadraticRegulator<N1, N1, N1> controller
+                = new LinearQuadraticRegulator<>(flywheelPlant,
+                VecBuilder.fill(8.0), //Velocity error tolerance, in radians per second
+                VecBuilder.fill(12.0), // Control effort (voltage) tolerance.
+                0.020);
 
-        // The state-space loop combines a controller, observer, feedforward and plant for easy control.
-        //* @param plant State-space plant.
-        //* @param controller State-space controller.
-        //* @param observer State-space observer.
-        //* @param maxVoltageVolts The maximum voltage that can be applied. Commonly 12.
-        //* @param dtSeconds The nominal timestep.
-        this.m_loop = new LinearSystemLoop<>(
-                m_flywheelPlant,
-                m_controller,
-                m_observer,
+
+        //plant State-space plant.
+        //controller State-space controller.
+        //observer State-space observer.
+        //maxVoltageVolts The maximum voltage that can be applied. Commonly 12.
+        //dtSeconds The nominal timestep.
+        this.flywheelStateSpaceDriver = new LinearSystemLoop<>(
+                flywheelPlant,
+                controller,
+                observer,
                 12.0,
                 0.020);
 
@@ -166,7 +158,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     public void setVelocity(double vel) {
         tab.setEntry("Flywheel Set Vel", vel);
         SmartDashboard.putNumber("flywheel target", Math.toRadians(MathUtil.ticksToDegrees(vel)));
-        m_loop.setNextR(VecBuilder.fill(Math.toRadians(MathUtil.ticksToDegrees(vel))));
+        flywheelStateSpaceDriver.setNextR(VecBuilder.fill(Math.toRadians(MathUtil.ticksToDegrees(vel))));
     }
 
     public double getTargetVel() {
@@ -188,9 +180,9 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
     @Override
     public void periodic() {
         SmartDashboard.putNumber("at velocity", Math.toRadians(MathUtil.ticksToDegrees(flywheelFalconLeft.getSelectedSensorVelocity())));
-        m_loop.correct(VecBuilder.fill(Math.toRadians(MathUtil.ticksToDegrees(flywheelFalconLeft.getSelectedSensorVelocity()))));
-        m_loop.predict(0.020);
-        double nextVoltage = m_loop.getU(0);
+        flywheelStateSpaceDriver.correct(VecBuilder.fill(Math.toRadians(MathUtil.ticksToDegrees(flywheelFalconLeft.getSelectedSensorVelocity()))));
+        flywheelStateSpaceDriver.predict(0.020);
+        double nextVoltage = flywheelStateSpaceDriver.getU(0);
         SmartDashboard.putNumber("Target V", nextVoltage);
         flywheelFalconLeft.setVoltage(Math.max(0, nextVoltage));
     }

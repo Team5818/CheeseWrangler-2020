@@ -120,8 +120,8 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.vision().calcAim(VisionTarget.TOP));
         new JoystickButton(coDriverButtons, 11)
                 .whenPressed(cmds.vision().correctPosition());
-//        new JoystickButton(coDriverButtons, 12)
-//                .whenPressed(cmds.vision().toggleAutoAim());
+        // new JoystickButton(coDriverButtons, 12)
+        //      .whenPressed(cmds.vision().toggleAutoAim());
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(() -> CommandScheduler.getInstance().cancelAll());
 
@@ -149,8 +149,8 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.climb().resetEncoder());
         new JoystickButton(driverButtons, 3).whenHeld(cmds.flywheel().setPower(.1));
         //new JoystickButton(driverButtons, 3)
-          //      .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
-            //            .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
+        //      .whenPressed(cmds.climb().setClimbPosition(Climb.Position.MAX)
+        //            .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));
         new JoystickButton(driverButtons, 2)
                 .whenPressed(cmds.climb().setClimbPosition(Climb.Position.HALF)
                         .alongWith(cmds.camera().setServo(CameraPosition.CLIMB)));

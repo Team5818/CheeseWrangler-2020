@@ -86,12 +86,12 @@ public class All5Shoot extends CommandBase {
 
     @Override
     public boolean isFinished() {
-        if(!cheeseWheel.hasBall() && !isFinished) {
+        if (!cheeseWheel.hasBall() && !isFinished) {
             isFinished = true;
             time = Timer.getFPGATimestamp();
         }
 
-        if(isFinished && Timer.getFPGATimestamp() > time + 0.1) {
+        if (isFinished && Timer.getFPGATimestamp() > time + 0.1) {
             return true;
         }
 

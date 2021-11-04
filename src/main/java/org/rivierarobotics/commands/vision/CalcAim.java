@@ -65,11 +65,11 @@ public class CalcAim extends CommandBase {
 
     @Override
     public void execute() {
-        if(physics.getX() - extraDistance > 6 || !cheeseWheel.hasBall()) {
-            if(!ready) {
+        if (physics.getX() - extraDistance > 6 || !cheeseWheel.hasBall()) {
+            if (!ready) {
                 ready = true;
                 time = Timer.getFPGATimestamp();
-            } else if(Timer.getFPGATimestamp() - time > 1) {
+            } else if (Timer.getFPGATimestamp() - time > 1) {
                 turret.setAngle(0, false);
                 flywheel.setVelocity(0);
                 return;
@@ -81,7 +81,7 @@ public class CalcAim extends CommandBase {
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
 
-        if(PhysicsUtil.dynamicMode) {
+        if (PhysicsUtil.dynamicMode) {
             physics.setVelocity(flywheel.getBallVelocity());
         } else {
             physics.setVelocity(15);
