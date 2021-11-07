@@ -23,6 +23,7 @@ package org.rivierarobotics.autonomous.advanced;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -58,30 +59,25 @@ public class OffsetSixBallTrench extends CommandBase {
 
     @Override
     public void initialize() {
-        PositionTracker.setPosition(new double[] { -2.1, 3.1 });
-        this.autoCommand = new ParallelDeadlineGroup(
+        this.autoCommand = new ParallelCommandGroup(
+                visionCommands.correctPosition(),
                 new SequentialCommandGroup(
-                        new ParallelDeadlineGroup(
-                                cheeseWheelCommands.shootUntilEmpty(),
-                                driveCommands.driveDistance(-2.8, 0.2)
-                        ),
-                        new ParallelRaceGroup(
-                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER),
-                                new WaitCommand(1)
-                        ),
+                        driveCommands.driveDistance(-1, 0.45),
+                        visionCommands.correctPosition(),
+                        cheeseWheelCommands.shootUntilEmpty(),
+                        driveCommands.driveDistance(-1.7, 0.55),
                         new ParallelRaceGroup(
                                 collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK),
                                 new SequentialCommandGroup(
-                                        driveCommands.driveDistance(-0.9 * 2 - 0.67, 0.20),
+                                        driveCommands.driveDistance(-0.9 * 2, 0.35),
                                         new WaitCommand(1.6)
                                 )
                         ),
-                        driveCommands.driveDistance(2, 0.4),
+                        driveCommands.driveDistance(2, 0.55),
                         visionCommands.correctPosition(),
                         cheeseWheelCommands.shootUntilEmpty()
                 ),
-                visionCommands.calcAim(VisionTarget.TOP),
-                driveCommands.resetGyro()
+                new WaitCommand(0.1).andThen(visionCommands.calcAim(VisionTarget.TOP))
         );
 
         CommandScheduler.getInstance().schedule(autoCommand);

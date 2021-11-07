@@ -66,7 +66,7 @@ public class Flywheel extends SubsystemBase implements RRSubsystem {
         // Inputs (what we can "put in"): [voltage], in volts.
         // Outputs (what we can measure): [velocity], in radians per second.
         // kV = volts/radian/s kA = volts/radian/s*s
-        LinearSystem<N1, N1, N1> flywheelPlant = LinearSystemId.identifyVelocitySystem(0.3800, 0.1016);
+        LinearSystem<N1, N1, N1> flywheelPlant = LinearSystemId.identifyVelocitySystem(0.3800, 0.1516);
 
         KalmanFilter<N1, N1, N1> observer = new KalmanFilter<>(
                 Nat.N1(), Nat.N1(),

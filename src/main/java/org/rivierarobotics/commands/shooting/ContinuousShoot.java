@@ -34,6 +34,7 @@ import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
+import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
 
@@ -72,11 +73,11 @@ public class ContinuousShoot extends CommandBase {
         CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
         tab.setEntry("ccShootSlot", slot.ordinal());
 
-
         cmd = new SequentialCommandGroup(
                 cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
                 new WaitCommand(1).deadlineWith(ejectorCommands.setPower(1)).withInterrupt(() -> !slot.hasBall()),
-                ejectorCommands.setPower(0).withTimeout(0.1)
+                ejectorCommands.setPower(1).withTimeout(0.2),
+                ejectorCommands.setPower(0).withTimeout(0.05)
         ).withTimeout(2);
         CommandScheduler.getInstance().schedule(cmd);
     }

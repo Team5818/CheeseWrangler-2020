@@ -36,6 +36,7 @@ import org.rivierarobotics.subsystems.MotorTemp;
 import org.rivierarobotics.util.CameraFlip;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.LimelightLEDState;
+import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RSTileOptions;
 
 import java.util.ArrayList;
@@ -92,6 +93,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        //displayFullShuffleboard();
         displayDriverShuffleboard();
         if (isEnabled()) {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);

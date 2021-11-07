@@ -70,13 +70,9 @@ public class DriveTrainSide implements RRSubsystem {
         secondaryRight.setNeutralMode(NeutralMode.Brake);
         secondaryTop.setNeutralMode(NeutralMode.Brake);
 
-        mainLeft.configGetSupplyCurrentLimit(CURRENT_LIMIT);
-        secondaryRight.configGetSupplyCurrentLimit(CURRENT_LIMIT);
-        secondaryTop.configGetSupplyCurrentLimit(CURRENT_LIMIT);
-
-        this.mainLeft.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
-        this.secondaryRight.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
-        this.secondaryTop.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 30, 30, 0.1));
+        this.mainLeft.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1));
+        this.secondaryRight.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1));
+        this.secondaryTop.configGetSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.1));
 
         this.shaftEncoder = new Encoder(motors.encoderA, motors.encoderB);
         shaftEncoder.setReverseDirection(true);
@@ -90,7 +86,10 @@ public class DriveTrainSide implements RRSubsystem {
 
     @Override
     public void setPower(double pwr) {
-        logger.powerChange(pwr);
+        double signum = Math.signum(pwr);
+        pwr *= pwr;
+        pwr *= signum;
+        logger.powerChange(pwr * 0.8);
         mainLeft.set(TalonFXControlMode.PercentOutput, pwr);
         secondaryRight.set(TalonFXControlMode.PercentOutput, pwr);
         secondaryTop.set(TalonFXControlMode.PercentOutput, pwr);

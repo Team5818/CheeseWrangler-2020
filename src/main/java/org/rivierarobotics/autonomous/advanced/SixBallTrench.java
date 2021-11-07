@@ -58,7 +58,7 @@ public class SixBallTrench extends CommandBase {
     public void initialize() {
         this.autoCommand = new SequentialCommandGroup(
                 driveCommands.resetGyro(),
-                new WaitCommand(0.5),
+                new WaitCommand(0.25),
                 visionCommands.correctPosition(),
                 new ParallelRaceGroup(
                         visionCommands.calcAim(VisionTarget.INNER),
@@ -67,10 +67,10 @@ public class SixBallTrench extends CommandBase {
                                 driveCommands.rotateTo(-28.5),
                                 new ParallelDeadlineGroup(
                                         new SequentialCommandGroup(
-                                                driveCommands.driveDistance(-3.27, 0.45),
+                                                driveCommands.driveDistance(-3.27, 0.66),
                                                 driveCommands.rotateTo(0),
-                                                driveCommands.driveDistance(-0.9 * 2, 0.25),
-                                                new WaitCommand(0.5)
+                                                driveCommands.driveDistance(-0.9 * 2, 0.44),
+                                                new WaitCommand(1.5)
                                         ),
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
                                 new ParallelRaceGroup(
