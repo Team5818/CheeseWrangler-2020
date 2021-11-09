@@ -20,11 +20,9 @@
 
 package org.rivierarobotics.commands.vision;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import net.octyl.aptcreator.GenerateCreator;
 import net.octyl.aptcreator.Provided;
-import org.rivierarobotics.subsystems.CheeseWheel;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -43,48 +41,33 @@ import org.rivierarobotics.util.VisionTarget;
 public class CalcAim extends CommandBase {
     private final AutoAimUtil autoAimUtil;
     private final Flywheel flywheel;
-    private final Turret turret;
     private final PhysicsUtil physics;
-    private final CheeseWheel cheeseWheel;
     private final double extraDistance;
-    private double time;
-    private boolean ready = false;
 
-    public CalcAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
-                   @Provided PhysicsUtil physics, @Provided RobotShuffleboard shuffleboard,
-                   VisionTarget target, @Provided DriveTrain driveTrain, @Provided CheeseWheel cheeseWheel) {
+    public CalcAim(@Provided Hood hood,
+                   @Provided Flywheel flywheel,
+                   @Provided Turret turret,
+                   @Provided PhysicsUtil physics,
+                   @Provided RobotShuffleboard shuffleboard,
+                   @Provided DriveTrain driveTrain,
+                   VisionTarget target) {
         this.flywheel = flywheel;
         this.physics = physics;
         this.extraDistance = target == VisionTarget.INNER ? ShooterConstants.getDistanceFromOuterToInnerTarget() : 0;
         RSTab tab = shuffleboard.getTab("Auto Aim");
         this.autoAimUtil = new AutoAimUtil(hood, flywheel, turret, tab, driveTrain);
-        this.turret = turret;
-        this.cheeseWheel = cheeseWheel;
         addRequirements(hood, flywheel, turret);
     }
 
     @Override
     public void execute() {
-//        if (physics.getX() - extraDistance > 20 || !cheeseWheel.hasBall()) {
-//            if (!ready) {
-//                ready = true;
-//                time = Timer.getFPGATimestamp();
-//            } else if (Timer.getFPGATimestamp() - time > 1) {
-//                turret.setAngle(0, false);
-//                flywheel.setVelocity(0);
-//                return;
-//            }
-//        } else {
-//            ready = false;
-//        }
-
         physics.setAimMode(PhysicsUtil.AimMode.CALC);
         physics.setExtraDistance(extraDistance);
 
         if (PhysicsUtil.dynamicMode) {
             physics.setVelocity(flywheel.getBallVelocity());
         } else {
-            physics.setVelocity(9);
+            physics.setVelocity(PhysicsUtil.DEFAULT_BALL_VEL);
         }
 
         physics.calculateVelocities(false);

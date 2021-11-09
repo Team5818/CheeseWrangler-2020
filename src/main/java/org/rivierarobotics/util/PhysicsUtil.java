@@ -35,6 +35,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class PhysicsUtil {
+    public static final double DEFAULT_BALL_VEL = 9; // m/s
     private static final double g = 9.8 / 2;
     public static double hoodAng = 0.0;
     private final DriveTrain driveTrain;
@@ -43,7 +44,6 @@ public class PhysicsUtil {
     private final Flywheel flywheel;
     private final RSTab tab;
     private final RSTab graphTab;
-    private final NavXGyro gyro;
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.CALC;
@@ -55,11 +55,10 @@ public class PhysicsUtil {
     @Inject
     public PhysicsUtil(DriveTrain driveTrain, Turret turret, Hood hood,
                        RobotShuffleboard shuffleboard, PositionTracker positionTracker,
-                       NavXGyro gyro, Flywheel flywheel) {
+                       Flywheel flywheel) {
         this.turret = turret;
         this.driveTrain = driveTrain;
         this.hood = hood;
-        this.gyro = gyro;
         this.positionTracker = positionTracker;
         this.flywheel = flywheel;
         this.tab = shuffleboard.getTab("Auto Aim");

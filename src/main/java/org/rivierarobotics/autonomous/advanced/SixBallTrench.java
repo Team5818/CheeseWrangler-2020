@@ -72,7 +72,8 @@ public class SixBallTrench extends CommandBase {
                                                 driveCommands.driveDistance(-0.9 * 2, 0.44),
                                                 new WaitCommand(1.5)
                                         ),
-                                        collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)),
+                                        collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+                                ),
                                 new ParallelRaceGroup(
                                         visionCommands.correctPosition(),
                                         cheeseWheelCommands.shootUntilEmpty()

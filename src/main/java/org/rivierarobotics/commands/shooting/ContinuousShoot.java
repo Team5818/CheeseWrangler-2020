@@ -30,11 +30,9 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
-import org.rivierarobotics.util.PhysicsUtil;
 import org.rivierarobotics.util.RSTab;
 import org.rivierarobotics.util.RobotShuffleboard;
 
@@ -48,7 +46,6 @@ public class ContinuousShoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private final Flywheel flywheel;
     private final RSTab tab;
     private ParallelRaceGroup cmd;
 
@@ -56,13 +53,11 @@ public class ContinuousShoot extends CommandBase {
                            @Provided EjectorCommands ejectorCommands,
                            @Provided Turret turret,
                            @Provided CheeseWheel cheeseWheel,
-                           @Provided Flywheel flywheel,
                            @Provided RobotShuffleboard shuffleboard) {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.ejectorCommands = ejectorCommands;
         this.turret = turret;
         this.cheeseWheel = cheeseWheel;
-        this.flywheel = flywheel;
         this.tab = shuffleboard.getTab("Cheese Wheel");
     }
 

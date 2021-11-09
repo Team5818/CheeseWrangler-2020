@@ -24,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -35,8 +34,6 @@ import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
