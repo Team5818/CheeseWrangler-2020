@@ -60,26 +60,26 @@ public class OffsetSixBallTrench extends CommandBase {
     @Override
     public void initialize() {
         this.autoCommand = new ParallelCommandGroup(
-                visionCommands.correctPosition(),
                 new SequentialCommandGroup(
-                        driveCommands.driveDistance(-1, 0.45),
                         visionCommands.correctPosition(),
+                        new WaitCommand(1),
                         cheeseWheelCommands.shootUntilEmpty(),
-                        driveCommands.driveDistance(-1.7, 0.55),
+                        driveCommands.driveDistance(-1, 0.55),
+                        driveCommands.driveDistance(-1.5, 0.66),
                         new ParallelRaceGroup(
                                 collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK),
                                 new SequentialCommandGroup(
-                                        driveCommands.driveDistance(-0.9 * 2, 0.35),
-                                        new WaitCommand(1.6)
+                                        driveCommands.driveDistance(-0.9 * 2 - 0.2, 0.44),
+                                        new WaitCommand(1.2)
                                 )
                         ),
-                        driveCommands.driveDistance(2, 0.55),
+                        driveCommands.driveDistance(3.2, 0.77),
                         visionCommands.correctPosition(),
+                        new WaitCommand(1),
                         cheeseWheelCommands.shootUntilEmpty()
                 ),
                 new WaitCommand(0.1).andThen(visionCommands.calcAim(VisionTarget.TOP))
         );
-
         CommandScheduler.getInstance().schedule(autoCommand);
     }
 

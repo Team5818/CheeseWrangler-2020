@@ -159,7 +159,7 @@ public class ButtonConfiguration {
 
         // Misc
         new JoystickButton(coDriverButtons, 4)
-                .toggleWhenPressed(cmds.flywheel().setVelocity());
+                .whenPressed(cmds.flywheel().setVelocity());
         new JoystickButton(coDriverButtons, 1)
                 .whenPressed(cmds.drive().resetGyro());
         new JoystickButton(driverButtons, 4)
