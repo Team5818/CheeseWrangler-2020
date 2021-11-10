@@ -20,7 +20,6 @@
 
 package org.rivierarobotics.util;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.rivierarobotics.subsystems.DriveTrain;
 import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Hood;
@@ -35,7 +34,6 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class PhysicsUtil {
-    public static final double DEFAULT_BALL_VEL = 9; // m/s
     private static final double g = 9.8 / 2;
     public static double hoodAng = 0.0;
     private final DriveTrain driveTrain;
@@ -175,8 +173,7 @@ public class PhysicsUtil {
             hoodAngle += (getX() * getX()) * 0.2;
         }
 
-        SmartDashboard.putNumber("Hood Adjust", hoodAng);
-
+        tab.setEntry("Hood Adjust", hoodAng);
 
         return hoodAngle + hoodAng;
     }

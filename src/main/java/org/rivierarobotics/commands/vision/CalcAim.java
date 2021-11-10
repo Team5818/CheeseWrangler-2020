@@ -67,7 +67,7 @@ public class CalcAim extends CommandBase {
         if (PhysicsUtil.dynamicMode) {
             physics.setVelocity(flywheel.getBallVelocity());
         } else {
-            physics.setVelocity(PhysicsUtil.DEFAULT_BALL_VEL);
+            physics.setVelocity(ShooterConstants.getDefaultBallVel());
         }
 
         physics.calculateVelocities(false);
