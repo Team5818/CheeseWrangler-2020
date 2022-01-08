@@ -87,9 +87,11 @@ public class DriveTrainSide implements RRSubsystem {
     @Override
     public void setPower(double pwr) {
         double signum = Math.signum(pwr);
-        pwr *= pwr;
-        pwr *= signum;
-        logger.powerChange(pwr * 0.8);
+        setRawPower(pwr * pwr * signum);
+    }
+
+    public void setRawPower(double pwr) {
+        logger.powerChange(pwr);
         mainLeft.set(TalonFXControlMode.PercentOutput, pwr);
         secondaryRight.set(TalonFXControlMode.PercentOutput, pwr);
         secondaryTop.set(TalonFXControlMode.PercentOutput, pwr);
