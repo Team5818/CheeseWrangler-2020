@@ -43,8 +43,11 @@ public class EncoderAim extends CommandBase {
     private final Flywheel flywheel;
     private final double extraDistance;
 
-    public EncoderAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
-                      @Provided RobotShuffleboard shuffleboard, @Provided PhysicsUtil physics,
+    public EncoderAim(@Provided Hood hood,
+                      @Provided Flywheel flywheel,
+                      @Provided Turret turret,
+                      @Provided RobotShuffleboard shuffleboard,
+                      @Provided PhysicsUtil physics,
                       VisionTarget target) {
         this.flywheel = flywheel;
         this.physics = physics;

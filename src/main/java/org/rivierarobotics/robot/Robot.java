@@ -92,6 +92,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void robotPeriodic() {
+        //displayFullShuffleboard();
         displayDriverShuffleboard();
         if (isEnabled()) {
             globalComponent.getVisionUtil().setLEDState(LimelightLEDState.FORCE_ON);

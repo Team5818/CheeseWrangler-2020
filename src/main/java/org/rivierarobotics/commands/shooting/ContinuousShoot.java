@@ -30,7 +30,6 @@ import net.octyl.aptcreator.Provided;
 import org.rivierarobotics.commands.cheesewheel.CheeseWheelCommands;
 import org.rivierarobotics.commands.ejector.EjectorCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.subsystems.Flywheel;
 import org.rivierarobotics.subsystems.Turret;
 import org.rivierarobotics.util.CheeseSlot;
 import org.rivierarobotics.util.MathUtil;
@@ -47,7 +46,6 @@ public class ContinuousShoot extends CommandBase {
     private final EjectorCommands ejectorCommands;
     private final CheeseWheel cheeseWheel;
     private final Turret turret;
-    private final Flywheel flywheel;
     private final RSTab tab;
     private ParallelRaceGroup cmd;
 
@@ -55,13 +53,11 @@ public class ContinuousShoot extends CommandBase {
                            @Provided EjectorCommands ejectorCommands,
                            @Provided Turret turret,
                            @Provided CheeseWheel cheeseWheel,
-                           @Provided Flywheel flywheel,
                            @Provided RobotShuffleboard shuffleboard) {
         this.cheeseWheelCommands = cheeseWheelCommands;
         this.ejectorCommands = ejectorCommands;
         this.turret = turret;
         this.cheeseWheel = cheeseWheel;
-        this.flywheel = flywheel;
         this.tab = shuffleboard.getTab("Cheese Wheel");
     }
 
@@ -72,11 +68,11 @@ public class ContinuousShoot extends CommandBase {
         CheeseSlot slot = cheeseWheel.getClosestSlot(offset, offset.direction, CheeseSlot.State.BALL);
         tab.setEntry("ccShootSlot", slot.ordinal());
 
-
         cmd = new SequentialCommandGroup(
                 cheeseWheelCommands.cycleSlotWait(offset.direction, offset, CheeseSlot.State.BALL, 50).withTimeout(3),
                 new WaitCommand(1).deadlineWith(ejectorCommands.setPower(1)).withInterrupt(() -> !slot.hasBall()),
-                ejectorCommands.setPower(0).withTimeout(0.1)
+                ejectorCommands.setPower(1).withTimeout(0.2),
+                ejectorCommands.setPower(0).withTimeout(0.05)
         ).withTimeout(2);
         CommandScheduler.getInstance().schedule(cmd);
     }

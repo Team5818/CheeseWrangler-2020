@@ -62,7 +62,7 @@ public class ShooterConstants {
     }
 
     public static double getDistanceFromOuterToInnerTarget() {
-        return 0.74295; // meters
+        return 0.9; // meters
     }
 
     public static double getZVelocityConstant() {
@@ -110,6 +110,6 @@ public class ShooterConstants {
     }
 
     public static double getDefaultBallVel() {
-        return 10; // meters per second
+        return 9; // meters per second
     }
 }

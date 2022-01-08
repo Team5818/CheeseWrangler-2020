@@ -59,7 +59,7 @@ public class Hood extends SubsystemBase implements RRSubsystem {
 
         this.hoodTalon = new WPI_TalonSRX(motorId);
         this.multiPID = new MultiPID(hoodTalon,
-                new PIDConfig((0.8 * 1023 / 300), 0, 0, 0),
+                new PIDConfig((0.8 * 1023 / 300) * 2.5, 0, 0, 0),
                 new PIDConfig(0, 0, 0, 0));
         MotorUtil.setupMotionMagic(FeedbackDevice.PulseWidthEncodedPosition,
                 multiPID.getConfig(MultiPID.Type.POSITION), 600, hoodTalon);

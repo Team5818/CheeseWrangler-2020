@@ -23,7 +23,7 @@ package org.rivierarobotics.autonomous.advanced;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -34,8 +34,6 @@ import org.rivierarobotics.commands.collect.CollectionCommands;
 import org.rivierarobotics.commands.drive.DriveCommands;
 import org.rivierarobotics.commands.vision.VisionCommands;
 import org.rivierarobotics.subsystems.CheeseWheel;
-import org.rivierarobotics.util.CheeseSlot;
-import org.rivierarobotics.util.PositionTracker;
 import org.rivierarobotics.util.VisionTarget;
 
 @GenerateCreator
@@ -58,32 +56,27 @@ public class OffsetSixBallTrench extends CommandBase {
 
     @Override
     public void initialize() {
-        PositionTracker.setPosition(new double[] { -2.1, 3.1 });
-        this.autoCommand = new ParallelDeadlineGroup(
+        this.autoCommand = new ParallelCommandGroup(
                 new SequentialCommandGroup(
-                        new ParallelDeadlineGroup(
-                                cheeseWheelCommands.shootUntilEmpty(),
-                                driveCommands.driveDistance(-2.8, 0.2)
-                        ),
-                        new ParallelRaceGroup(
-                                cheeseWheelCommands.cycleSlot(CheeseWheel.Direction.BACKWARDS, CheeseWheel.AngleOffset.COLLECT_BACK, CheeseSlot.State.EITHER),
-                                new WaitCommand(1)
-                        ),
+                        visionCommands.correctPosition(),
+                        new WaitCommand(1),
+                        cheeseWheelCommands.shootUntilEmpty(),
+                        driveCommands.driveDistance(-1, 0.55),
+                        driveCommands.driveDistance(-1.5, 0.66),
                         new ParallelRaceGroup(
                                 collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_BACK),
                                 new SequentialCommandGroup(
-                                        driveCommands.driveDistance(-0.9 * 2 - 0.67, 0.20),
-                                        new WaitCommand(1.6)
+                                        driveCommands.driveDistance(-0.9 * 2 - 0.2, 0.44),
+                                        new WaitCommand(1.2)
                                 )
                         ),
-                        driveCommands.driveDistance(2, 0.4),
+                        driveCommands.driveDistance(3.2, 0.77),
                         visionCommands.correctPosition(),
+                        new WaitCommand(1),
                         cheeseWheelCommands.shootUntilEmpty()
                 ),
-                visionCommands.calcAim(VisionTarget.TOP),
-                driveCommands.resetGyro()
+                new WaitCommand(0.1).andThen(visionCommands.calcAim(VisionTarget.TOP))
         );
-
         CommandScheduler.getInstance().schedule(autoCommand);
     }
 

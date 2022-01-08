@@ -35,13 +35,13 @@ import javax.inject.Singleton;
 @Singleton
 public class PhysicsUtil {
     private static final double g = 9.8 / 2;
+    public static double hoodAng = 0.0;
     private final DriveTrain driveTrain;
     private final Hood hood;
     private final Turret turret;
     private final Flywheel flywheel;
     private final RSTab tab;
     private final RSTab graphTab;
-    private final NavXGyro gyro;
     private final PositionTracker positionTracker;
     private double extraDistance = 0;
     private AimMode aimMode = AimMode.CALC;
@@ -53,11 +53,10 @@ public class PhysicsUtil {
     @Inject
     public PhysicsUtil(DriveTrain driveTrain, Turret turret, Hood hood,
                        RobotShuffleboard shuffleboard, PositionTracker positionTracker,
-                       NavXGyro gyro, Flywheel flywheel) {
+                       Flywheel flywheel) {
         this.turret = turret;
         this.driveTrain = driveTrain;
         this.hood = hood;
-        this.gyro = gyro;
         this.positionTracker = positionTracker;
         this.flywheel = flywheel;
         this.tab = shuffleboard.getTab("Auto Aim");
@@ -169,7 +168,14 @@ public class PhysicsUtil {
             hoodAngle += (driveTrain.getYVelocity());
         }
         tab.setEntry("Hood Angle", hoodAngle);
-        return hoodAngle;
+
+        if (getX() - extraDistance > 2) {
+            hoodAngle += (getX() * getX()) * 0.2;
+        }
+
+        tab.setEntry("Hood Adjust", hoodAng);
+
+        return hoodAngle + hoodAng;
     }
 
     /**

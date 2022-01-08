@@ -29,7 +29,7 @@ import org.rivierarobotics.util.NavXGyro;
 
 @GenerateCreator
 public class SpinInPlace extends CommandBase {
-    private static final double MAX_SPEED = 0.2;
+    private static final double MAX_SPEED = 0.6;
     private final DriveTrain driveTrain;
     private final NavXGyro gyro;
     private final double turnDegrees;

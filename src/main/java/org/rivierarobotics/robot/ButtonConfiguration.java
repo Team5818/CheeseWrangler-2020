@@ -68,7 +68,17 @@ public class ButtonConfiguration {
         new JoystickButton(coDriverRight, 1)
                 .whenPressed(cmds.cheeseWheel().shootUntilEmpty().withTimeout(4));
         new JoystickButton(coDriverRight, 2)
-                .whenPressed(cmds.cheeseWheel().continuousShoot().withTimeout(2));
+                .whileHeld(cmds.cheeseWheel().continuousShoot().withTimeout(2));
+
+        // Collecting CoDriver
+        new JoystickButton(coDriverLeft, 1)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.FRONT),
+                                cmds.camera().setServo(CameraPosition.FRONT)));
+        new JoystickButton(coDriverLeft, 2)
+                .whenHeld(cmds.collect().continuous(CheeseWheel.AngleOffset.COLLECT_BACK)
+                        .alongWith(cmds.camera().flipImage(CameraPosition.BACK),
+                                cmds.camera().setServo(CameraPosition.BACK)));
 
         // Collecting Driver
         new JoystickButton(driverLeft, 1)
@@ -109,6 +119,10 @@ public class ButtonConfiguration {
                 .whenPressed(cmds.vision().correctPosition());
         new JoystickButton(coDriverButtons, 12)
                 .whenPressed(() -> CommandScheduler.getInstance().cancelAll());
+        new JoystickButton(coDriverButtons, 8)
+                .whenPressed(cmds.hood().adjustAutoAngle(1));
+        new JoystickButton(coDriverButtons, 7)
+                .whenPressed(cmds.hood().adjustAutoAngle(-1));
 
         // Camera servo
         new JoystickButton(driverButtons, 11)
@@ -144,7 +158,7 @@ public class ButtonConfiguration {
 
         // Misc
         new JoystickButton(coDriverButtons, 4)
-                .toggleWhenPressed(cmds.flywheel().setVelocity());
+                .whenPressed(cmds.flywheel().setVelocity());
         new JoystickButton(coDriverButtons, 1)
                 .whenPressed(cmds.drive().resetGyro());
         new JoystickButton(driverButtons, 4)

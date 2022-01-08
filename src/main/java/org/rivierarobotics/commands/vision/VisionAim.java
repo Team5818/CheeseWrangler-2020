@@ -44,8 +44,9 @@ public class VisionAim extends CommandBase {
     private final VisionUtil vision;
     private final double extraDistance;
 
-    public VisionAim(@Provided Hood hood, @Provided Flywheel flywheel, @Provided Turret turret,
-                     @Provided RobotShuffleboard shuffleboard, @Provided PhysicsUtil physics, @Provided VisionUtil vision,
+    public VisionAim(@Provided Hood hood, @Provided Flywheel flywheel,
+                     @Provided Turret turret, @Provided RobotShuffleboard shuffleboard,
+                     @Provided PhysicsUtil physics, @Provided VisionUtil vision,
                      VisionTarget target) {
         this.flywheel = flywheel;
         this.physics = physics;

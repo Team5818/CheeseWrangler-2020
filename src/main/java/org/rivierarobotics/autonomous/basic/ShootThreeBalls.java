@@ -40,10 +40,9 @@ public class ShootThreeBalls extends SequentialCommandGroup {
                 new WaitCommand(0.5),
                 visionCommands.correctPosition(),
                 new ParallelDeadlineGroup(
-                        cheeseWheel.shootUntilEmpty(),
+                        new WaitCommand(4).andThen(cheeseWheel.shootUntilEmpty()),
                         visionCommands.calcAim(VisionTarget.TOP)
-                ),
-                driveCommands.driveDistance(-1, 0.2)
+                ), driveCommands.driveDistance(1.5, 0.5)
         );
     }
 }

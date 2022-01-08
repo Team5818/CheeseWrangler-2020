@@ -20,24 +20,20 @@
 
 package org.rivierarobotics.commands.hood;
 
-import javax.inject.Inject;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import net.octyl.aptcreator.GenerateCreator;
+import org.rivierarobotics.util.PhysicsUtil;
 
-public class HoodCommands {
-    private final HoodSetAngleCreator hoodSetAngleCreator;
-    private final HoodAngleAdjustCreator hoodAngleAdjustCreator;
+@GenerateCreator
+public class HoodAngleAdjust extends InstantCommand {
+    private final double angle;
 
-    @Inject
-    public HoodCommands(HoodSetAngleCreator hoodSetAngleCreator,
-                        HoodAngleAdjustCreator hoodAngleAdjustCreator) {
-        this.hoodSetAngleCreator = hoodSetAngleCreator;
-        this.hoodAngleAdjustCreator = hoodAngleAdjustCreator;
+    public HoodAngleAdjust(double angle) {
+        this.angle = angle;
     }
 
-    public HoodSetAngle setAngle(double angle) {
-        return hoodSetAngleCreator.create(angle);
-    }
-
-    public HoodAngleAdjust adjustAutoAngle(double angle) {
-        return hoodAngleAdjustCreator.create(angle);
+    @Override
+    public void initialize() {
+        PhysicsUtil.hoodAng += angle;
     }
 }

@@ -66,15 +66,15 @@ public class EnemyTrench5Ball extends CommandBase {
                 new ParallelDeadlineGroup(
                         visionCommands.calcAim(VisionTarget.TOP),
                         new SequentialCommandGroup(
-                                driveCommands.driveDistance(2.25, 0.45),
+                                driveCommands.driveDistance(2.25, 0.66),
                                 new ParallelDeadlineGroup(
                                         new SequentialCommandGroup(
-                                                driveCommands.driveDistance(0.9, 0.15),
+                                                driveCommands.driveDistance(0.9, 0.44),
                                                 new WaitCommand(1.5)
                                         ),
                                         collectionCommands.continuous(CheeseWheel.AngleOffset.COLLECT_FRONT)),
                                 driveCommands.rotateTo(220),
-                                driveCommands.driveDistance(-3, 0.4),
+                                driveCommands.driveDistance(-3, 0.7),
                                 driveCommands.rotateTo(180),
                                 visionCommands.correctPosition(),
                                 cheeseWheelCommands.shootUntilEmpty()

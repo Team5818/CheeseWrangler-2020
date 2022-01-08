@@ -54,5 +54,4 @@ public class DriveCommands {
     public DriveSetVelocity setVelocity(double vel) {
         return setVelocityCreator.create(vel);
     }
-
 }

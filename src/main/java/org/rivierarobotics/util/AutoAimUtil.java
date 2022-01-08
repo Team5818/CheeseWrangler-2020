@@ -81,7 +81,7 @@ public class AutoAimUtil {
             if (!PhysicsUtil.dynamicMode) {
                 flywheel.setVelocity(ShooterConstants.velocityToTicks(ballVel));
             } else {
-                flywheel.setVelocity(ShooterConstants.velocityToTicks(15));
+                flywheel.setVelocity(ShooterConstants.velocityToTicks(9));
             }
             hood.setAngle(hoodAngle);
             if (!useVelocity) {
